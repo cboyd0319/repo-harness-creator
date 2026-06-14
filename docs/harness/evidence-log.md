@@ -4,6 +4,7 @@ Use this for compact current evidence. Keep raw logs out of this file.
 
 | Date | Scope | Command Or Review | Result | Notes |
 | --- | --- | --- | --- | --- |
+| 2026-06-14 | HarnessForge rename | Focused tests, full tests, entrypoints, compile, pin check, metadata validation, stale-name scan, install smoke, self-audit, diff hygiene | pass | Renamed product, import package, CLI, Action metadata, docs, templates, tests, and workflows to HarnessForge. |
 | 2026-06-14 | Local sibling harness comparison | Read-only AGY supplement plus direct file review | pass | Accepted root-agnostic init execution, PowerShell native fail-fast, optional credential-free verification, broader advisory pin signals, entropy rules, completion bars, isolated release smoke guidance, and scratch-report ignores. |
 | 2026-06-14 | Focused local-harness comparison checks | `PYTHONPATH=src:. python3 -m unittest tests.test_generate_audit tests.test_pins` | pass | 33 focused tests passed after generated/live init, pin checker, manifest, entropy, release, and ignore updates. |
 | 2026-06-14 | Full local-harness comparison verification | Unit discovery, compile, pin, self-audit, JSON, diff, no-env entrypoints, ignore checks | pass | 84 tests passed; self-audit stayed `100/100`; POSIX `--no-env` and PowerShell `-NoEnv` passed from the parent directory with seeded AI API-key environment variables. |
@@ -21,7 +22,7 @@ Use this for compact current evidence. Keep raw logs out of this file.
 | 2026-06-14 | Self-heal automation and local-path policy checks | `PYTHONPATH=src:. python3 -m unittest tests.test_cli tests.test_generate_audit tests.test_pins`, self-audit, pin, compile, diff | pass | 31 focused tests plus full unit discovery with 72 tests passed after setting self-heal to 12:00 UTC, documenting fixed-allowlist research, and adding default audit enforcement for durable local absolute paths. |
 | 2026-06-14 | POSIX verification | `./init.sh` | pass | Doctor, compile, 72 tests, pin check, and self-audit `100/100` after self-heal automation and local-path policy hardening. |
 | 2026-06-14 | PowerShell verification | `pwsh -NoProfile -File ./init.ps1` | pass | Doctor, compile, 72 tests, pin check, and self-audit `100/100` after self-heal automation and local-path policy hardening. |
-| 2026-06-14 | Monorepo and repo-harness research | Read-only `agy` pass, official source review, supplied local examples, cloned public example repos, and browser review | pass | Accepted source-backed workspace/layout markers, workflow routing markers, Terraform component boundaries, and repo-local harness routing evidence. |
+| 2026-06-14 | Monorepo and repo-local harness research | Read-only `agy` pass, official source review, supplied local examples, cloned public example repos, and browser review | pass | Accepted source-backed workspace/layout markers, workflow routing markers, Terraform component boundaries, and repo-local harness routing evidence. |
 | 2026-06-14 | Research refresh | `PYTHONPATH=src:. python3 scripts/refresh_research.py --root .` | pass | 76 sources checked; one known Red Hat 403 remains recorded. |
 | 2026-06-14 | Monorepo detection and generated inventory checks | `PYTHONPATH=src:. python3 -m unittest tests.test_detect tests.test_generate_audit tests.test_refresh_research`, compile, pin, JSON validation | pass | 46 focused tests plus compile, pin, and JSON checks passed after workspace/layout, routing-marker, Terraform component, and source-ledger updates. |
 | 2026-06-14 | POSIX verification | `./init.sh` | pass | Doctor, compile, 69 tests, pin check, and self-audit `100/100` after monorepo detection and routing-marker updates. |
@@ -34,7 +35,7 @@ Use this for compact current evidence. Keep raw logs out of this file.
 | 2026-06-14 | AGT-derived Action and policy checks | `PYTHONPATH=src:. python3 -m unittest tests.test_github_action tests.test_generate_audit tests.test_pins`, `PYTHONPATH=src:. python3 scripts/check_pins.py --root .` | pass | 25 focused tests and pin enforcement passed after Action score-range validation, contribution docs, PR template, and security policy expansion. |
 | 2026-06-14 | POSIX verification | `./init.sh` | pass | Doctor, compile, 56 tests, pin check, and self-audit `100/100` after the deeper AGT-derived changes. |
 | 2026-06-14 | PowerShell verification | `pwsh -NoProfile -File ./init.ps1` | pass | Doctor, compile, 56 tests, pin check, and self-audit `100/100` after the deeper AGT-derived changes. |
-| 2026-06-14 | Gitignore/security policy checks | `git check-ignore -v ...`, `git diff --check`, `PYTHONPATH=src:. python3 -m repo_harness_creator audit --target . --min-score 85` | pass | macOS artifacts, local credential patterns, and harness reports are ignored; diff hygiene passed; self-audit stayed `100/100`. |
+| 2026-06-14 | Gitignore/security policy checks | `git check-ignore -v ...`, `git diff --check`, `PYTHONPATH=src:. python3 -m harnessforge audit --target . --min-score 85` | pass | macOS artifacts, local credential patterns, and harness reports are ignored; diff hygiene passed; self-audit stayed `100/100`. |
 | 2026-06-14 | POSIX verification | `./init.sh` | pass | Doctor, compile, 55 tests, pin check, and self-audit `100/100` after self-heal staging hardening. |
 | 2026-06-14 | PowerShell verification | `pwsh -NoProfile -File ./init.ps1` | pass | Doctor, compile, 55 tests, pin check, and self-audit `100/100` after self-heal staging hardening. |
 | 2026-06-14 | Pin enforcement | `PYTHONPATH=src:. python3 scripts/check_pins.py --root .` | pass | Package build pins and external Action SHAs validated after self-heal workflow change. |
@@ -74,28 +75,28 @@ Use this for compact current evidence. Keep raw logs out of this file.
 | 2026-06-14 | Research refresh tests | `PYTHONPATH=src:. python3 -m unittest tests.test_refresh_research` | pass | 13 tests, including private DNS resolution and redirect-target rejection. |
 | 2026-06-14 | Pin/workflow tests | `PYTHONPATH=src:. python3 -m unittest tests.test_pins tests.test_refresh_research` | pass | 16 focused tests after read-only CI checkout credential hardening. |
 | 2026-06-14 | Research refresh | `PYTHONPATH=src:. python3 scripts/refresh_research.py --root .` | pass | 49 sources checked under DNS and redirect validation; one Red Hat 403 remains recorded. |
-| 2026-06-14 | Generated harness smoke | isolated `repo_harness_creator init` into a temp target | pass | Generated research source file contains 49 sources after adding Python urllib, actions/checkout, and OWASP SSRF guidance. |
+| 2026-06-14 | Generated harness smoke | isolated `harnessforge init` into a temp target | pass | Generated research source file contains 49 sources after adding Python urllib, actions/checkout, and OWASP SSRF guidance. |
 | 2026-06-14 | Local unit tests | `PYTHONPATH=src:. python3 -m unittest discover -s tests` | pass | 46 tests after research refresh DNS/redirect hardening and read-only CI checkout coverage. |
 | 2026-06-14 | POSIX verification | `./init.sh` | pass | Doctor, compile, 46 tests, pin check, self-audit `100/100`. |
 | 2026-06-14 | PowerShell verification | `pwsh -NoProfile -File ./init.ps1` | pass | Doctor, compile, 46 tests, pin check, self-audit `100/100`. |
 | 2026-06-14 | Local unit tests | `PYTHONPATH=src:. python3 -m unittest discover -s tests` | pass | 43 tests, including symlinked root manifests, Action `PYTHONSAFEPATH`, home-path redaction, research URL-boundary, and Action report-path regressions. |
 | 2026-06-14 | Pin enforcement | `PYTHONPATH=src:. python3 scripts/check_pins.py --root .` | pass | Package build pins and external Action SHAs validated after `action.yml` and `pyproject.toml` changes. |
-| 2026-06-14 | Self-audit | `PYTHONPATH=src:. python3 -m repo_harness_creator audit --target . --min-score 85` | pass | Self-harness scored `100/100`. |
+| 2026-06-14 | Self-audit | `PYTHONPATH=src:. python3 -m harnessforge audit --target . --min-score 85` | pass | Self-harness scored `100/100`. |
 | 2026-06-14 | POSIX verification | `./init.sh` | pass | Doctor, compile, 43 tests, pin check, self-audit. |
 | 2026-06-14 | PowerShell verification | `pwsh -NoProfile -File ./init.ps1` | pass | Doctor, compile, 43 tests, pin check, self-audit. |
 | 2026-06-14 | Research refresh | `python3 scripts/refresh_research.py --root .` | pass | 46 sources checked; OpenAI and Red Hat 403 failures recorded in the lock file. |
-| 2026-06-14 | Generated harness smoke | isolated `repo_harness_creator init` into a temp target | pass | Generated `AGENTS.md`; generated research source file contains 46 sources. |
+| 2026-06-14 | Generated harness smoke | isolated `harnessforge init` into a temp target | pass | Generated `AGENTS.md`; generated research source file contains 46 sources. |
 | 2026-06-14 | Diff hygiene | `git diff --check` | pass | No whitespace errors. |
 | 2026-06-14 | Local unit tests | `PYTHONPATH=src:. python3 -m unittest discover -s tests` | pass | 38 tests after README-source parser, research-ledger, Action manifest, and AGENTS section-contract additions. |
 | 2026-06-14 | Pin enforcement | `PYTHONPATH=src:. python3 scripts/check_pins.py --root .` | pass | Package build pins and external Action SHAs validated. |
-| 2026-06-14 | Self-audit | `PYTHONPATH=src:. python3 -m repo_harness_creator audit --target . --min-score 85` | pass | Self-harness scored `100/100`. |
+| 2026-06-14 | Self-audit | `PYTHONPATH=src:. python3 -m harnessforge audit --target . --min-score 85` | pass | Self-harness scored `100/100`. |
 | 2026-06-14 | Diff hygiene | `git diff --check` | pass | No whitespace errors. |
 | 2026-06-14 | POSIX verification | `./init.sh` | pass | Doctor, compile, 38 tests, pin check, self-audit. |
 | 2026-06-14 | PowerShell verification | `pwsh -NoProfile -File ./init.ps1` | pass | Doctor, compile, 38 tests, pin check, self-audit. |
 | 2026-06-14 | GitHub Action manifest | `PYTHONPATH=src:. python3 -m unittest tests.test_github_action` | pass | Added regression coverage for quoted Action descriptions containing colons after hosted CI rejected the manifest. |
 | 2026-06-14 | AGENTS section contract | `PYTHONPATH=src:. python3 -m unittest tests.test_generate_audit` | pass | Root, template, and generated `AGENTS.md` use the required five-section format. |
 | 2026-06-14 | Package install smoke | isolated venv install, generated target init, and target audit | pass | Installed CLI returned version `0.1.0`; generated component inventory and 32-source research starter files were present. |
-| 2026-06-14 | Generated harness smoke | `repo_harness_creator init` into isolated temp target | pass | Generated starter research source file contains 44 tracked sources. |
+| 2026-06-14 | Generated harness smoke | `harnessforge init` into isolated temp target | pass | Generated starter research source file contains 44 tracked sources. |
 | 2026-06-14 | Source research | AGY plus local source pass | pass | Reviewed Bluepeak, JobSentinel, persona, pi-harness, Walking Labs, and JobSentinel source inventory. |
 | 2026-06-14 | README research | GitHub Docs, The Turing Way, OpenSSF Scorecard, and exemplar README pass | pass | Root README rewritten as a project landing page with quick start, trust model, Action usage, verification, and source provenance. |
 | 2026-06-14 | Research refresh | `python3 scripts/refresh_research.py --root .` | pass | 44 sources checked; one Red Hat 403 recorded in the lock file. |

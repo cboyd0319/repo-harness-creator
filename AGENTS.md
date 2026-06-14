@@ -2,7 +2,7 @@
 
 ## Project overview
 
-Repo harness creator is a Python 3.13+ CLI and composite GitHub Action for
+HarnessForge is a Python 3.13+ CLI and composite GitHub Action for
 creating, assessing, and safely updating AI coding-agent harnesses in arbitrary
 repositories.
 
@@ -36,7 +36,7 @@ Focused checks:
 ```bash
 PYTHONPATH=src:. python3 -m unittest discover -s tests
 PYTHONPATH=src:. python3 scripts/check_pins.py --root .
-PYTHONPATH=src:. python3 -m repo_harness_creator audit --target . --min-score 85
+PYTHONPATH=src:. python3 -m harnessforge audit --target . --min-score 85
 ```
 
 Run `python3 scripts/refresh_research.py --root .` only when refreshing the

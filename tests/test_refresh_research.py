@@ -507,7 +507,7 @@ class RefreshResearchTests(unittest.TestCase):
         template_sources = json.loads(
             (
                 root
-                / "src/repo_harness_creator/templates/research-sources.json.tmpl"
+                / "src/harnessforge/templates/research-sources.json.tmpl"
             ).read_text(encoding="utf-8").replace("{{generated_date}}", "2026-06-14")
         )
 

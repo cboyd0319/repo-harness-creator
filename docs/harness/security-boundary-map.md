@@ -46,6 +46,6 @@ Use the smallest relevant set:
 
 - `python scripts/check_pins.py --root .`
 - `PYTHONPATH=src python3 -m unittest discover -s tests`
-- `PYTHONPATH=src python3 -m repo_harness_creator audit --target . --min-score 85`
+- `PYTHONPATH=src python3 -m harnessforge audit --target . --min-score 85`
 - `./init.sh` for full local POSIX verification.
 - `pwsh -NoProfile -File ./init.ps1` for PowerShell verification.

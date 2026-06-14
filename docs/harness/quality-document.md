@@ -26,7 +26,7 @@ unsafe to rely on without repair.
 | CLI | Documented | `python -m unittest discover -s tests` | Keep runtime dependency-free |
 | Action adapter | Documented | `tests/test_github_action.py` | Keep Action inputs mapped to library behavior |
 | Component inventory | Documented | `tests/test_detect.py` | Keep nested project routing explicit before edits |
-| Harness docs | Documented | `repo-harness audit --target .` | Keep root instructions short and detail in `docs/harness/` |
+| Harness docs | Documented | `harnessforge audit --target .` | Keep root instructions short and detail in `docs/harness/` |
 
 ## Harness Simplification
 

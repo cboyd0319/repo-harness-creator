@@ -7,8 +7,8 @@ import tempfile
 import unittest
 from pathlib import Path
 
-from repo_harness_creator.audit import audit_target
-from repo_harness_creator.generate import create_harness
+from harnessforge.audit import audit_target
+from harnessforge.generate import create_harness
 
 AGENTS_SECTION_ORDER = [
     "## Project overview",
@@ -50,7 +50,7 @@ class GenerateAuditTests(unittest.TestCase):
         repo_root = Path(__file__).resolve().parents[1]
         root_agents = (repo_root / "AGENTS.md").read_text(encoding="utf-8")
         template_agents = (
-            repo_root / "src/repo_harness_creator/templates/agents.md.tmpl"
+            repo_root / "src/harnessforge/templates/agents.md.tmpl"
         ).read_text(encoding="utf-8")
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp)
@@ -87,7 +87,7 @@ class GenerateAuditTests(unittest.TestCase):
         self.assertIn("OPENAI_API_KEY", init_sh)
         self.assertIn("PYTHON_BIN", init_sh)
         self.assertIn("scripts/check_pins.py --root .", init_sh)
-        self.assertIn("repo-harness audit --target . --min-score 85", init_sh)
+        self.assertIn("harnessforge audit --target . --min-score 85", init_sh)
         self.assertIn("Set-Location -LiteralPath $ScriptRoot", init_ps1)
         self.assertIn("function Invoke-Native", init_ps1)
         self.assertIn("[switch] $NoEnv", init_ps1)
@@ -102,7 +102,7 @@ class GenerateAuditTests(unittest.TestCase):
             root = Path(tmp)
             create_harness(root)
 
-            self.assertFalse((root / ".github/workflows/repo-harness.yml").exists())
+            self.assertFalse((root / ".github/workflows/harnessforge.yml").exists())
             self.assertFalse((root / ".github/workflows/harness-self-heal.yml").exists())
 
         with tempfile.TemporaryDirectory() as tmp:
@@ -113,7 +113,7 @@ class GenerateAuditTests(unittest.TestCase):
                 with_ci_workflow=True,
                 with_self_heal_workflow=True,
             )
-            ci = (root / ".github/workflows/repo-harness.yml").read_text(
+            ci = (root / ".github/workflows/harnessforge.yml").read_text(
                 encoding="utf-8"
             )
             self_heal = (root / ".github/workflows/harness-self-heal.yml").read_text(
@@ -125,7 +125,7 @@ class GenerateAuditTests(unittest.TestCase):
                 if write.status == "written"
             }
 
-        self.assertIn(".github/workflows/repo-harness.yml", written)
+        self.assertIn(".github/workflows/harnessforge.yml", written)
         self.assertIn(".github/workflows/harness-self-heal.yml", written)
         self.assertIn("workflow_dispatch", ci)
         self.assertIn("cancel-in-progress: true", ci)

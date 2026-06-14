@@ -8,7 +8,7 @@ work restartable, scoped, verifiable, and portable across Python 3.13+, macOS
 
 ## Goal
 
-Make repo-harness-creator a practical default for adding agent-ready operating
+Make HarnessForge a practical default for adding agent-ready operating
 surfaces to any repository while staying honest about what the tool can prove.
 The CLI can score structure. Real effectiveness still requires representative
 agent sessions.
@@ -18,7 +18,7 @@ agent sessions.
 | Domain | Artifact | Purpose |
 | --- | --- | --- |
 | Instructions | `AGENTS.md` | Startup path, hard requirements, verification |
-| Tools | `repo-harness`, `action.yml`, `init.sh`, `init.ps1`, `scripts/check_pins.py` | Creation, audit, update, CI action, local checks, and pin enforcement |
+| Tools | `harnessforge`, `action.yml`, `init.sh`, `init.ps1`, `scripts/check_pins.py` | Creation, audit, update, CI action, local checks, and pin enforcement |
 | Environment | `pyproject.toml`, CI matrix, `component-inventory.md`, `dependency-change-policy.md` | Python, OS, package, component, and Action support contract |
 | State | `feature_list.json`, `progress.md`, `evidence-log.md` | Current objective, evidence, and restart state |
 | Feedback | tests, self-audit, CI, `evaluator-rubric.md`, research refresh | Deterministic quality checks and source drift signal |
@@ -43,8 +43,8 @@ agent sessions.
 Use:
 
 ```bash
-repo-harness audit --target .
-repo-harness update --target .
+harnessforge audit --target .
+harnessforge update --target .
 ```
 
 `update` reports recommended safe corrections unless `--apply` is passed.

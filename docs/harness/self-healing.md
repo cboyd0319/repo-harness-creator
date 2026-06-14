@@ -18,8 +18,8 @@ durable output and surfaced only as review signals.
 
 1. Fetch curated source metadata from `research-sources.json`.
 2. Update `research-inbox.md` and `research-sources.lock.json`.
-3. Run `repo-harness update --target . --apply` for missing safe artifacts only.
-4. Run pin checks, tests, and `repo-harness audit --target .`.
+3. Run `harnessforge update --target . --apply` for missing safe artifacts only.
+4. Run pin checks, tests, and `harnessforge audit --target .`.
 5. Open a pull request when files changed.
 6. Require human review before merge.
 

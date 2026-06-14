@@ -11,7 +11,7 @@ repository data, or proof-of-concept payloads.
 
 ## Local Execution Threat Model
 
-`repo-harness-creator` runs on personal machines and private repositories. The
+HarnessForge runs on personal machines and private repositories. The
 safe default is to preserve existing files, keep writes inside the requested
 target repository, redact common local home paths, and avoid network access
 during normal local harness generation.

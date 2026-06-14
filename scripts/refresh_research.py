@@ -142,7 +142,7 @@ def _fetch_source(source: dict[str, Any], *, timeout: int) -> dict[str, Any]:
         request = Request(
             url,
             headers={
-                "User-Agent": "repo-harness-creator research refresh",
+                "User-Agent": "harnessforge research refresh",
                 "Accept": (
                     "application/json,text/html,application/xhtml+xml,"
                     "text/plain;q=0.9,*/*;q=0.1"

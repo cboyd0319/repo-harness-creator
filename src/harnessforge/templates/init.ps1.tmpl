@@ -94,16 +94,16 @@ if (Test-Path 'scripts/check_pins.py') {
   Invoke-Native $PythonBin scripts/check_pins.py --root .
 }
 
-if (Get-Command repo-harness -ErrorAction SilentlyContinue) {
-  Write-Host '== repo-harness audit --target . --min-score 85 =='
-  Invoke-Native repo-harness audit --target . --min-score 85
+if (Get-Command harnessforge -ErrorAction SilentlyContinue) {
+  Write-Host '== harnessforge audit --target . --min-score 85 =='
+  Invoke-Native harnessforge audit --target . --min-score 85
 } else {
-  & $PythonBin -m repo_harness_creator --version *> $null
+  & $PythonBin -m harnessforge --version *> $null
   if ($LASTEXITCODE -eq 0) {
-    Write-Host '== python -m repo_harness_creator audit --target . --min-score 85 =='
-    Invoke-Native $PythonBin -m repo_harness_creator audit --target . --min-score 85
+    Write-Host '== python -m harnessforge audit --target . --min-score 85 =='
+    Invoke-Native $PythonBin -m harnessforge audit --target . --min-score 85
   } else {
-    Write-Host '== repo-harness audit skipped: repo-harness is not installed =='
+    Write-Host '== harnessforge audit skipped: harnessforge is not installed =='
   }
 }
 

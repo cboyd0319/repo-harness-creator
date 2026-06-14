@@ -48,7 +48,7 @@ if [ -z "$PYTHON_BIN" ]; then
 fi
 
 echo "== Doctor =="
-"$PYTHON_BIN" -m repo_harness_creator doctor
+"$PYTHON_BIN" -m harnessforge doctor
 
 echo "== Compile =="
 "$PYTHON_BIN" -m compileall src tests
@@ -60,4 +60,4 @@ echo "== Pin check =="
 "$PYTHON_BIN" scripts/check_pins.py --root .
 
 echo "== Self audit =="
-"$PYTHON_BIN" -m repo_harness_creator audit --target . --min-score 85
+"$PYTHON_BIN" -m harnessforge audit --target . --min-score 85

@@ -1,10 +1,10 @@
-# Repo Harness Creator
+# HarnessForge
 
 <p align="center">
-  <img src="docs/assets/logo.png" alt="repo-harness-creator logo" width="180">
+  <img src="docs/assets/logo.png" alt="HarnessForge logo" width="180">
 </p>
 
-[![CI](https://github.com/cboyd0319/repo-harness-creator/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/cboyd0319/repo-harness-creator/actions/workflows/ci.yml)
+[![CI](https://github.com/cboyd0319/harnessforge/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/cboyd0319/harnessforge/actions/workflows/ci.yml)
 [![Python 3.13+](https://img.shields.io/badge/python-3.13%2B-3776AB)](pyproject.toml)
 [![License: MIT](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
 
@@ -12,14 +12,14 @@ Create, audit, and maintain repo-owned harnesses for AI coding agents.
 
 A harness is the operating layer that helps an agent understand a repository:
 instructions, project state, verification commands, source evidence, security
-boundaries, and handoff rules. `repo-harness-creator` gives teams a practical
+boundaries, and handoff rules. HarnessForge gives teams a practical
 way to add that layer to any project without turning one instruction file into
 a long manual.
 
 This repository is both:
 
-- a Python CLI: `repo-harness`
-- a reusable composite GitHub Action: `cboyd0319/repo-harness-creator`
+- a Python CLI: `harnessforge`
+- a reusable composite GitHub Action: `cboyd0319/harnessforge`
 
 The goal is simple: make good agent behavior easier to get, easier to inspect,
 and easier to keep current across macOS, Windows, and Linux.
@@ -64,10 +64,10 @@ contract tests.
 ## Install From A Clone
 
 ```bash
-git clone https://github.com/cboyd0319/repo-harness-creator.git
-cd repo-harness-creator
+git clone https://github.com/cboyd0319/harnessforge.git
+cd harnessforge
 python -m pip install --editable .
-repo-harness --help
+harnessforge --help
 ```
 
 ## Create A Harness
@@ -75,20 +75,20 @@ repo-harness --help
 Preview the files first:
 
 ```bash
-repo-harness init --target /path/to/repo --dry-run
+harnessforge init --target /path/to/repo --dry-run
 ```
 
 Write missing files:
 
 ```bash
-repo-harness init --target /path/to/repo
+harnessforge init --target /path/to/repo
 ```
 
 Opt into reviewed workflow scaffolds only when wanted:
 
 ```bash
-repo-harness init --target /path/to/repo --with-ci-workflow
-repo-harness init --target /path/to/repo --with-self-heal-workflow
+harnessforge init --target /path/to/repo --with-ci-workflow
+harnessforge init --target /path/to/repo --with-self-heal-workflow
 ```
 
 By default, `init` only writes missing generated files. It does not overwrite
@@ -116,10 +116,10 @@ generated inventory and required-file contract.
 ## Audit A Harness
 
 ```bash
-repo-harness audit --target /path/to/repo
-repo-harness audit --target /path/to/repo --json
-repo-harness audit --target /path/to/repo --html harness-report.html
-repo-harness audit --target /path/to/repo --min-score 85
+harnessforge audit --target /path/to/repo
+harnessforge audit --target /path/to/repo --json
+harnessforge audit --target /path/to/repo --html harness-report.html
+harnessforge audit --target /path/to/repo --min-score 85
 ```
 
 The audit returns:
@@ -136,8 +136,8 @@ a readiness signal, not a substitute for code review or real task evaluation.
 ## Apply Safe Corrections
 
 ```bash
-repo-harness update --target /path/to/repo
-repo-harness update --target /path/to/repo --apply
+harnessforge update --target /path/to/repo
+harnessforge update --target /path/to/repo --apply
 ```
 
 `update` is conservative. Without `--apply`, it reports what it would change.
@@ -163,7 +163,7 @@ jobs:
       - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6
         with:
           persist-credentials: false
-      - uses: cboyd0319/repo-harness-creator@<reviewed-commit-sha>
+      - uses: cboyd0319/harnessforge@<reviewed-commit-sha>
         with:
           command: audit
           min-score: "85"
@@ -179,12 +179,12 @@ input, output, and update mode.
 
 | Command | Purpose |
 | --- | --- |
-| `repo-harness init` | Create missing harness artifacts |
-| `repo-harness audit` | Score an existing repo harness |
-| `repo-harness update` | Plan or apply safe missing-file corrections |
-| `repo-harness doctor` | Check local runtime support |
+| `harnessforge init` | Create missing harness artifacts |
+| `harnessforge audit` | Score an existing repo harness |
+| `harnessforge update` | Plan or apply safe missing-file corrections |
+| `harnessforge doctor` | Check local runtime support |
 
-Run `repo-harness <command> --help` for command-specific options.
+Run `harnessforge <command> --help` for command-specific options.
 
 ## Security Model
 
@@ -277,15 +277,15 @@ For focused checks:
 ```bash
 PYTHONPATH=src python -m unittest discover -s tests
 PYTHONPATH=src python scripts/check_pins.py --root .
-PYTHONPATH=src python -m repo_harness_creator audit --target . --min-score 85
+PYTHONPATH=src python -m harnessforge audit --target . --min-score 85
 ```
 
 ## Repository Layout
 
 | Path | Purpose |
 | --- | --- |
-| `src/repo_harness_creator/` | CLI, generator, auditor, updater, Action entry point |
-| `src/repo_harness_creator/templates/` | Files copied into target repositories |
+| `src/harnessforge/` | CLI, generator, auditor, updater, Action entry point |
+| `src/harnessforge/templates/` | Files copied into target repositories |
 | `docs/harness/` | This repo's own harness and research ledger |
 | `tests/` | Unit and regression tests |
 | `scripts/check_pins.py` | Hard-pin policy check |

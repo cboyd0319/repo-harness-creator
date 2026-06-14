@@ -4,7 +4,7 @@ Harness debt is product debt for this repository.
 
 ## Regular Checks
 
-- Run `repo-harness audit --target .` after template, scoring, or docs changes.
+- Run `harnessforge audit --target .` after template, scoring, or docs changes.
 - Run `./init.sh` before claiming local readiness.
 - Keep generated templates aligned with README examples.
 

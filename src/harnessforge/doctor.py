@@ -24,7 +24,7 @@ def doctor_report() -> dict[str, Any]:
 
 def format_doctor(report: dict[str, Any]) -> str:
     lines = [
-        "Repo harness creator doctor",
+        "HarnessForge doctor",
         f"Python: {report['python']['version']} ({'ok' if report['python']['ok'] else 'unsupported'})",
         f"Platform: {report['platform']['name']} ({'ok' if report['platform']['ok'] else 'unsupported'})",
     ]

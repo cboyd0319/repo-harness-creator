@@ -1,4 +1,4 @@
-name: Repo Harness
+name: HarnessForge
 
 on:
   workflow_dispatch:
@@ -7,7 +7,7 @@ permissions:
   contents: read
 
 concurrency:
-  group: repo-harness-${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  group: harnessforge-${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
   cancel-in-progress: true
 
 jobs:
@@ -18,7 +18,7 @@ jobs:
       - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6
         with:
           persist-credentials: false
-      - uses: cboyd0319/repo-harness-creator@<reviewed-commit-sha> # v1
+      - uses: cboyd0319/harnessforge@<reviewed-commit-sha> # v1
         with:
           command: audit
           min-score: "85"

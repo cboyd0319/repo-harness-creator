@@ -36,7 +36,7 @@ def main(argv: list[str] | None = None) -> int:
 
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(
-        prog="repo-harness",
+        prog="harnessforge",
         description="Create, assess, and maintain AI coding-agent repo harnesses.",
     )
     parser.add_argument("--version", action="version", version=f"%(prog)s {__version__}")
@@ -51,7 +51,7 @@ def build_parser() -> argparse.ArgumentParser:
     init.add_argument(
         "--with-ci-workflow",
         action="store_true",
-        help="also scaffold a manual repo-harness CI workflow",
+        help="also scaffold a manual HarnessForge CI workflow",
     )
     init.add_argument(
         "--with-self-heal-workflow",
@@ -80,7 +80,7 @@ def build_parser() -> argparse.ArgumentParser:
     update.add_argument(
         "--with-ci-workflow",
         action="store_true",
-        help="include the optional manual repo-harness CI workflow",
+        help="include the optional manual HarnessForge CI workflow",
     )
     update.add_argument(
         "--with-self-heal-workflow",

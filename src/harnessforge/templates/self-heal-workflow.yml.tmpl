@@ -23,7 +23,7 @@ jobs:
           fetch-depth: 0
 
       - name: Apply safe harness updates
-        uses: cboyd0319/repo-harness-creator@<reviewed-commit-sha> # v1
+        uses: cboyd0319/harnessforge@<reviewed-commit-sha> # v1
         with:
           command: update
           apply: "true"

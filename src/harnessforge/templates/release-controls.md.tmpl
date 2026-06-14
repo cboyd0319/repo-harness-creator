@@ -8,7 +8,7 @@ or other externally visible release steps.
 ## Release Gate
 
 - Run the full local verification path from `verification-matrix.md`.
-- Run `repo-harness audit --target . --min-score 85` when `repo-harness` is
+- Run `harnessforge audit --target . --min-score 85` when `harnessforge` is
   available.
 - Run `python scripts/check_pins.py --root . --strict` when the generated pin
   checker fits the repo's dependency policy.

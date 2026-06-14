@@ -1,4 +1,4 @@
-name: Repo Harness Creator
+name: HarnessForge
 description: Create, assess, and safely update AI coding-agent repo harnesses.
 author: Chad Boyd
 
@@ -40,7 +40,7 @@ inputs:
     required: false
     default: AGENTS.md
   with-ci-workflow:
-    description: Also scaffold the optional manual repo-harness CI workflow for init or update.
+    description: Also scaffold the optional manual HarnessForge CI workflow for init or update.
     required: false
     default: "false"
   with-self-heal-workflow:
@@ -59,19 +59,19 @@ inputs:
 outputs:
   overall-score:
     description: Harness audit score from 0 to 100.
-    value: ${{ steps.repo-harness.outputs.overall-score }}
+    value: ${{ steps.harnessforge.outputs.overall-score }}
   bottleneck:
     description: Lowest-scoring harness domain.
-    value: ${{ steps.repo-harness.outputs.bottleneck }}
+    value: ${{ steps.harnessforge.outputs.bottleneck }}
   report-json:
     description: JSON report path when requested.
-    value: ${{ steps.repo-harness.outputs.report-json }}
+    value: ${{ steps.harnessforge.outputs.report-json }}
   report-html:
     description: HTML report path when requested.
-    value: ${{ steps.repo-harness.outputs.report-html }}
+    value: ${{ steps.harnessforge.outputs.report-html }}
   changed-files:
     description: Number of files written by init or update.
-    value: ${{ steps.repo-harness.outputs.changed-files }}
+    value: ${{ steps.harnessforge.outputs.changed-files }}
 
 runs:
   using: composite
@@ -81,8 +81,8 @@ runs:
       with:
         python-version: ${{ inputs.python-version }}
 
-    - name: Run repo harness
-      id: repo-harness
+    - name: Run HarnessForge
+      id: harnessforge
       shell: bash
       env:
         PYTHONSAFEPATH: "1"
@@ -98,4 +98,4 @@ runs:
         INPUT_WITH_SELF_HEAL_WORKFLOW: ${{ inputs.with-self-heal-workflow }}
         INPUT_HTML_REPORT: ${{ inputs.html-report }}
         INPUT_JSON_REPORT: ${{ inputs.json-report }}
-      run: python -m repo_harness_creator.github_action
+      run: python -m harnessforge.github_action

@@ -4,7 +4,7 @@ This repository is also a composite GitHub Action. It sets up Python, sets
 `PYTHONSAFEPATH=1`, points `PYTHONPATH` at the action checkout, then runs the
 same library code as the CLI.
 
-## Audit A Repo Harness
+## Audit With HarnessForge
 
 ```yaml
 name: Harness Audit
@@ -23,7 +23,7 @@ jobs:
       - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6
         with:
           persist-credentials: false
-      - uses: cboyd0319/repo-harness-creator@<reviewed-commit-sha> # v1
+      - uses: cboyd0319/harnessforge@<reviewed-commit-sha> # v1
         with:
           command: audit
           min-score: "85"
@@ -34,7 +34,7 @@ jobs:
 ## Plan Safe Corrections
 
 ```yaml
-- uses: cboyd0319/repo-harness-creator@<reviewed-commit-sha> # v1
+- uses: cboyd0319/harnessforge@<reviewed-commit-sha> # v1
   with:
     command: update
 ```
@@ -44,7 +44,7 @@ jobs:
 ## Create Missing Harness Files
 
 ```yaml
-- uses: cboyd0319/repo-harness-creator@<reviewed-commit-sha> # v1
+- uses: cboyd0319/harnessforge@<reviewed-commit-sha> # v1
   with:
     command: init
 ```
@@ -55,7 +55,7 @@ generated harness files is intentional.
 Optional workflow scaffolds are off by default:
 
 ```yaml
-- uses: cboyd0319/repo-harness-creator@<reviewed-commit-sha> # v1
+- uses: cboyd0319/harnessforge@<reviewed-commit-sha> # v1
   with:
     command: init
     with-ci-workflow: "true"
@@ -77,7 +77,7 @@ workflows use manual triggers by default to avoid surprise CI cost.
 | `apply` | `false` | Apply safe corrections for `update` |
 | `force` | `false` | Allow overwrites for generated files |
 | `agent-file` | `AGENTS.md` | Root instruction file to generate |
-| `with-ci-workflow` | `false` | Include optional manual repo-harness CI workflow scaffolding during `init` or applied `update` |
+| `with-ci-workflow` | `false` | Include optional manual HarnessForge CI workflow scaffolding during `init` or applied `update` |
 | `with-self-heal-workflow` | `false` | Include optional manual self-heal pull-request workflow scaffolding during `init` or applied `update` |
 | `html-report` | empty | Optional target-relative HTML report path; POSIX and Windows absolute/rooted paths are rejected |
 | `json-report` | empty | Optional target-relative JSON report path; POSIX and Windows absolute/rooted paths are rejected |

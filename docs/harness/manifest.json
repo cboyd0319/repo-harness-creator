@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "generatedBy": "repo-harness-creator",
+  "generatedBy": "harnessforge",
   "requiredFiles": [
     "AGENTS.md",
     "README.md",
@@ -39,8 +39,8 @@
     "docs/harness/agent-operating-model.md",
     "docs/harness/multi-agent-orchestration.md",
     "docs/harness/feature-list.schema.json",
-    "src/repo_harness_creator/cli.py",
-    "src/repo_harness_creator/github_action.py",
+    "src/harnessforge/cli.py",
+    "src/harnessforge/github_action.py",
     "tests/test_cli.py",
     "tests/test_pins.py"
   ],
@@ -49,7 +49,7 @@
       "using: composite",
       "actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405",
       "PYTHONPATH",
-      "repo_harness_creator.github_action",
+      "harnessforge.github_action",
       "with-ci-workflow",
       "with-self-heal-workflow"
     ],
@@ -79,13 +79,13 @@
     "README.md": [
       "docs/assets/logo.png",
       "Python 3.13",
-      "repo-harness init",
-      "repo-harness audit",
-      "repo-harness update",
+      "harnessforge init",
+      "harnessforge audit",
+      "harnessforge update",
       "GitHub Action"
     ],
     "docs/action.md": [
-      "cboyd0319/repo-harness-creator@<reviewed-commit-sha>",
+      "cboyd0319/harnessforge@<reviewed-commit-sha>",
       "Inputs",
       "Outputs",
       "Version Pinning",
@@ -215,7 +215,7 @@
       "Stop Conditions"
     ],
     "docs/harness/feature-list.schema.json": [
-      "Repo Harness Feature List",
+      "HarnessForge Feature List",
       "user_visible_behavior",
       "verification"
     ],

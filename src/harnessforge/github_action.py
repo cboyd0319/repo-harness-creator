@@ -40,7 +40,7 @@ def run_from_env(env: Mapping[str, str]) -> int:
         report = doctor_report()
         text = format_doctor(report)
         print(text)
-        _summary(env, "Repo Harness Doctor", text)
+        _summary(env, "HarnessForge Doctor", text)
         _output(
             env,
             {
@@ -92,7 +92,7 @@ def run_from_env(env: Mapping[str, str]) -> int:
     html_path = _write_html_report(html_report, target, result)
     text_report = format_audit(result)
     print(text_report)
-    _summary(env, "Repo Harness Audit", _summary_markdown(result, changed_files))
+    _summary(env, "HarnessForge Audit", _summary_markdown(result, changed_files))
     _output(
         env,
         {

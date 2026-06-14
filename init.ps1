@@ -87,7 +87,7 @@ $PythonBin = if ($env:PYTHON) {
 }
 
 Write-Host "== Doctor =="
-Invoke-Native $PythonBin -m repo_harness_creator doctor
+Invoke-Native $PythonBin -m harnessforge doctor
 
 Write-Host "== Compile =="
 Invoke-Native $PythonBin -m compileall src tests
@@ -99,4 +99,4 @@ Write-Host "== Pin check =="
 Invoke-Native $PythonBin scripts/check_pins.py --root .
 
 Write-Host "== Self audit =="
-Invoke-Native $PythonBin -m repo_harness_creator audit --target . --min-score 85
+Invoke-Native $PythonBin -m harnessforge audit --target . --min-score 85

@@ -6,7 +6,7 @@ import tempfile
 import unittest
 from pathlib import Path
 
-from repo_harness_creator.cli import main
+from harnessforge.cli import main
 
 
 class CliTests(unittest.TestCase):
@@ -16,7 +16,7 @@ class CliTests(unittest.TestCase):
             code = main(["--help"])
 
         self.assertEqual(code, 0)
-        self.assertIn("repo-harness", stdout.getvalue())
+        self.assertIn("harnessforge", stdout.getvalue())
 
     def test_missing_subcommand_returns_usage_error(self) -> None:
         stdout = io.StringIO()
@@ -24,7 +24,7 @@ class CliTests(unittest.TestCase):
             code = main([])
 
         self.assertEqual(code, 2)
-        self.assertIn("repo-harness", stdout.getvalue())
+        self.assertIn("harnessforge", stdout.getvalue())
 
     def test_init_and_audit_commands(self) -> None:
         with tempfile.TemporaryDirectory() as tmp:
@@ -53,7 +53,7 @@ class CliTests(unittest.TestCase):
                     ]
                 )
 
-            ci = root / ".github/workflows/repo-harness.yml"
+            ci = root / ".github/workflows/harnessforge.yml"
             self_heal = root / ".github/workflows/harness-self-heal.yml"
             ci_exists = ci.exists()
             self_heal_exists = self_heal.exists()

@@ -4,14 +4,14 @@ Last Updated: 2026-06-14 UTC
 
 ## Current Objective
 
-Set up repo-harness-creator as a credible, cross-platform harness creation and
+Set up HarnessForge as a credible, cross-platform harness creation and
 assessment tool, including the deep local-source pass, secure pinning,
 self-healing, component-boundary improvements, a high-quality public README,
 and the required AGENTS instruction format.
 
 ## Files
 
-- `src/repo_harness_creator/`
+- `src/harnessforge/`
 - `tests/`
 - `docs/harness/`
 - `action.yml`
@@ -30,12 +30,12 @@ and the required AGENTS instruction format.
 - `.github/workflows/harness-self-heal.yml`
 - `scripts/check_pins.py`
 - `scripts/refresh_research.py`
-- `src/repo_harness_creator/audit.py`
-- `src/repo_harness_creator/detect.py`
-- `src/repo_harness_creator/generate.py`
-- `src/repo_harness_creator/models.py`
-- `src/repo_harness_creator/templates/component-inventory.md.tmpl`
-- `src/repo_harness_creator/templates/research-sources.json.tmpl`
+- `src/harnessforge/audit.py`
+- `src/harnessforge/detect.py`
+- `src/harnessforge/generate.py`
+- `src/harnessforge/models.py`
+- `src/harnessforge/templates/component-inventory.md.tmpl`
+- `src/harnessforge/templates/research-sources.json.tmpl`
 - `tests/test_detect.py`
 - `tests/test_generate_audit.py`
 - `tests/test_pins.py`
@@ -49,7 +49,7 @@ and the required AGENTS instruction format.
   diff hygiene, and self-audit `100/100`.
 - Generated harnesses now include an advisory `scripts/check_pins.py`, a
   `release-controls.md` artifact, and best-effort local self-audit from
-  generated POSIX/PowerShell entrypoints when `repo-harness` is available.
+  generated POSIX/PowerShell entrypoints when `harnessforge` is available.
 - Optional workflow scaffolds are explicit flags:
   `--with-ci-workflow` and `--with-self-heal-workflow`. They generate manual
   workflows and are also available through the composite Action inputs.
@@ -73,6 +73,13 @@ and the required AGENTS instruction format.
   pin check, JSON validation, diff hygiene, self-audit `100/100`, POSIX
   `--no-env` verification, PowerShell `-NoEnv` verification, and scratch-report
   ignore checks.
+- The project is now named HarnessForge in tracked repo surfaces. Runtime code
+  lives under `src/harnessforge/`, the primary CLI is `harnessforge`, generated
+  Action examples use `cboyd0319/harnessforge`, and live workflows call
+  `python -m harnessforge`. Current rename verification passes 84 tests, POSIX
+  and PowerShell entrypoints, compile, pin check, metadata validation,
+  stale-name and local-path scans, editable install smoke, diff hygiene, and
+  self-audit `100/100`.
 - Current OWASP/security and CI-cost-control batch passes focused tests, full
   unit discovery with 76 tests, compile, pin check, JSON validation, diff
   hygiene, self-audit `100/100`, and both POSIX and PowerShell entrypoints.
@@ -229,8 +236,8 @@ and the required AGENTS instruction format.
 ## Next Session
 
 Review the local OWASP/security, CI-cost-control, generated-harness alignment,
-and local sibling harness comparison commits. Push only at an explicit
-batch/release boundary or user request. Before a public Action release, run the
-manual macOS/Windows platform CI check if hosted platform confirmation is
-needed, then decide whether to cut a `v1` Action tag and which release-time
-SBOM/provenance controls should become blocking.
+local sibling harness comparison, and HarnessForge rename commits. Push only at
+an explicit batch/release boundary or user request. Before a public Action
+release, run the manual macOS/Windows platform CI check if hosted platform
+confirmation is needed, then decide whether to cut a `v1` Action tag and which
+release-time SBOM/provenance controls should become blocking.

@@ -70,7 +70,7 @@ packaging, CI, or platform support changes.
 | GitHub Actions workflow syntax docs | Monorepo workflow routing through path filters, reusable workflows, local actions, and `working-directory` |
 | Terraform standard module structure docs | Infrastructure roots and nested modules as component boundaries |
 | Atlassian monorepo tutorial, Medium monorepo guide, awesome-monorepo, General Reasoning vanilla monorepo, Harness IDP sandbox monorepo, and tomsoir Bazel monorepo | Field examples for large Git performance concerns, app/package/tool/config layouts, vanilla component-folder routing, IDP-generated app roots, and Bazel-plus-pnpm polyglot layouts |
-| Chris Mamon and Lukas Masuch repo-harness field reports | Repo-local harnesses as project-specific workflow, state, validation, automation, and agent-instruction layers |
+| Chris Mamon and Lukas Masuch repo-local harness field reports | Repo-local harnesses as project-specific workflow, state, validation, automation, and agent-instruction layers |
 
 ## Local References
 

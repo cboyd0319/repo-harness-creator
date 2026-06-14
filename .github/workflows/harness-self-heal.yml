@@ -37,7 +37,7 @@ jobs:
       - name: Apply safe harness updates
         env:
           PYTHONPATH: src
-        run: python -m repo_harness_creator update --target . --apply --agent-file AGENTS.md
+        run: python -m harnessforge update --target . --apply --agent-file AGENTS.md
 
       - name: Verify
         env:
@@ -47,7 +47,7 @@ jobs:
           python -m compileall src tests scripts
           python -m unittest discover -s tests
           python scripts/check_pins.py --root .
-          python -m repo_harness_creator audit --target . --min-score 85
+          python -m harnessforge audit --target . --min-score 85
           git diff --check
 
       - name: Create pull request
@@ -64,7 +64,7 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git switch -c "$branch"
-          git add docs/harness src/repo_harness_creator/templates AGENTS.md progress.md session-handoff.md feature_list.json init.sh init.ps1
+          git add docs/harness src/harnessforge/templates AGENTS.md progress.md session-handoff.md feature_list.json init.sh init.ps1
           git commit -m "docs(harness): refresh self-healing research"
           git push --set-upstream origin "$branch"
           gh pr create \

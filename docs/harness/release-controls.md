@@ -9,7 +9,7 @@ or other externally visible release steps.
 
 - Run `./init.sh` and `pwsh -NoProfile -File ./init.ps1`.
 - Run `python scripts/check_pins.py --root .`.
-- Run `python -m repo_harness_creator audit --target . --min-score 85`.
+- Run `python -m harnessforge audit --target . --min-score 85`.
 - Run the manual macOS and Windows `workflow_dispatch` platform CI check when
   release changes touch shell behavior, paths, packaging, or GitHub Action
   behavior.

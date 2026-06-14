@@ -13,7 +13,7 @@ from .models import ProjectProfile, WriteResult
 from .paths import is_inside_root
 from .redact import redact_local_paths
 
-TEMPLATE_ROOT = files("repo_harness_creator").joinpath("templates")
+TEMPLATE_ROOT = files("harnessforge").joinpath("templates")
 
 
 def create_harness(
@@ -106,7 +106,7 @@ def _template_specs(
         ("manifest.json.tmpl", "docs/harness/manifest.json", False),
     ]
     if with_ci_workflow:
-        specs.append(("ci-workflow.yml.tmpl", ".github/workflows/repo-harness.yml", False))
+        specs.append(("ci-workflow.yml.tmpl", ".github/workflows/harnessforge.yml", False))
     if with_self_heal_workflow:
         specs.append(
             (
@@ -447,12 +447,12 @@ def _manifest_content(
         ],
     }
     if with_ci_workflow:
-        required_files.append(".github/workflows/repo-harness.yml")
-        required_snippets[".github/workflows/repo-harness.yml"] = [
+        required_files.append(".github/workflows/harnessforge.yml")
+        required_snippets[".github/workflows/harnessforge.yml"] = [
             "workflow_dispatch",
             "cancel-in-progress: true",
             "persist-credentials: false",
-            "repo-harness-creator@<reviewed-commit-sha>",
+            "harnessforge@<reviewed-commit-sha>",
         ]
     if with_self_heal_workflow:
         required_files.append(".github/workflows/harness-self-heal.yml")
@@ -465,7 +465,7 @@ def _manifest_content(
         ]
     manifest = {
         "version": 1,
-        "generatedBy": "repo-harness-creator",
+        "generatedBy": "harnessforge",
         "generatedFor": profile.name,
         "detectedStack": profile.stack,
         "supportedPlatforms": {
@@ -505,7 +505,7 @@ def _routing_markers_markdown(markers: tuple[str, ...]) -> str:
 def _feature_list_schema() -> str:
     schema = {
         "$schema": "https://json-schema.org/draft/2020-12/schema",
-        "title": "Repo Harness Feature List",
+        "title": "HarnessForge Feature List",
         "type": "object",
         "required": ["features"],
         "properties": {

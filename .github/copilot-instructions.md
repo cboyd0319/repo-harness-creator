@@ -1,4 +1,4 @@
-# repo-harness-creator Copilot Instructions
+# HarnessForge Copilot Instructions
 
 Use [../AGENTS.md](../AGENTS.md) as the source of truth for repo guidance.
 
@@ -19,7 +19,7 @@ project manual.
 
 ## Core Rules
 
-- repo-harness-creator is a Python 3.13+ standard-library-only CLI and GitHub
+- HarnessForge is a Python 3.13+ standard-library-only CLI and GitHub
   Action for creating, auditing, and safely updating repo harnesses.
 - People run this code on personal machines. Choose the most secure and easiest
   behavior for edge cases. When those conflict, security wins and the error

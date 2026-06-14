@@ -3,7 +3,7 @@ requires = ["setuptools==82.0.1"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "repo-harness-creator"
+name = "harnessforge"
 version = "0.1.0"
 description = "Create, assess, and maintain AI coding-agent harnesses for repositories."
 readme = "README.md"
@@ -37,12 +37,11 @@ classifiers = [
 dependencies = []
 
 [project.urls]
-Homepage = "https://github.com/cboyd0319/repo-harness-creator"
-Issues = "https://github.com/cboyd0319/repo-harness-creator/issues"
+Homepage = "https://github.com/cboyd0319/harnessforge"
+Issues = "https://github.com/cboyd0319/harnessforge/issues"
 
 [project.scripts]
-repo-harness = "repo_harness_creator.cli:main"
-repo-harness-creator = "repo_harness_creator.cli:main"
+harnessforge = "harnessforge.cli:main"
 
 [project.optional-dependencies]
 dev = []
@@ -51,7 +50,7 @@ dev = []
 where = ["src"]
 
 [tool.setuptools.package-data]
-repo_harness_creator = ["templates/**/*.tmpl"]
+harnessforge = ["templates/**/*.tmpl"]
 
 [tool.ruff]
 line-length = 88

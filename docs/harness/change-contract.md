@@ -28,7 +28,7 @@ Non-goals:
 
 - `python -m compileall src tests`
 - `python -m unittest discover -s tests`
-- `python -m repo_harness_creator audit --target . --min-score 85`
+- `python -m harnessforge audit --target . --min-score 85`
 
 ## Rollback
 

@@ -4,7 +4,7 @@ Last Updated: 2026-06-14 UTC
 
 ## Current Objective
 
-Build the first package-quality implementation of repo-harness-creator as a
+Build the first package-quality implementation of HarnessForge as a
 Python 3.13+ cross-platform CLI, reusable GitHub Action, and self-harnessed
 maintenance loop.
 
@@ -105,7 +105,7 @@ maintenance loop.
   secret-scanning, SBOM, Scorecard, CodeQL, dependency-review, and release
   workflows as too much automation before the release and maintainer model
   require them.
-- Completed additional monorepo and repo-harness research against official
+- Completed additional monorepo and repo-local harness research against official
   package-manager, language, build-system, GitHub Actions, and Terraform docs,
   plus the supplied Bazel, vanilla GitHub Actions, Harness IDP, awesome-monorepo,
   Medium, Atlassian, LinkedIn, and Lukas Masuch examples. Detection now
@@ -135,7 +135,7 @@ maintenance loop.
 - Added an audit requirement that generated and live harnesses document
   prompt-injection and data-poisoning boundaries as untrusted-content risks.
 - Personally reviewed the requested OWASP CheatSheetSeries, SecurityShepherd,
-  SAMM, and pytm sources for repo-harness-creator fit. Accepted narrow controls:
+  SAMM, and pytm sources for HarnessForge fit. Accepted narrow controls:
   tool/retrieval output remains untrusted, invisible Unicode and Markdown/HTML
   exfiltration markers are withheld from research metadata, intentionally
   vulnerable training/demo fixtures are preserved unless remediation is in
@@ -166,6 +166,12 @@ maintenance loop.
   patterns. Deferred app telemetry headers, model routing rules, public wiki
   mapping, file-size budgets, pre-commit lockfile hooks, and credential-backup
   test wrappers as project-specific opt-ins.
+- Renamed the project to HarnessForge across the repo. Runtime code now lives
+  under `src/harnessforge/`, the primary
+  console script is now `harnessforge`, the composite Action and docs now point
+  at `cboyd0319/harnessforge`, generated optional CI scaffolding uses
+  `.github/workflows/harnessforge.yml`, and live workflows invoke
+  `python -m harnessforge`.
 
 ## Recommended Next Step
 
@@ -194,7 +200,7 @@ and which release-time SBOM/provenance controls should become blocking.
   passed.
 - `python3 -m compileall src tests`, `PYTHONPATH=src:. python3
   scripts/check_pins.py --root .`, `git diff --check`, and
-  `PYTHONPATH=src:. python3 -m repo_harness_creator audit --target .
+  `PYTHONPATH=src:. python3 -m harnessforge audit --target .
   --min-score 85` passed; self-audit stayed `100/100`.
 - `./init.sh` passed on macOS 26.5.1 with Python 3.14.5 after the
   OWASP/security and CI-cost-control batch: doctor, compile, 76 unit tests, pin
@@ -214,7 +220,7 @@ and which release-time SBOM/provenance controls should become blocking.
 - `PYTHONPATH=src:. python3 -m unittest discover -s tests` passed with 81 tests.
 - `python3 -m compileall src tests`, `PYTHONPATH=src:. python3
   scripts/check_pins.py --root .`, `git diff --check`, and
-  `PYTHONPATH=src:. python3 -m repo_harness_creator audit --target .
+  `PYTHONPATH=src:. python3 -m harnessforge audit --target .
   --min-score 85` passed; self-audit stayed `100/100`.
 - Local sibling harness comparison completed with a read-only AGY supplement and
   direct file review. Imported controls are root-agnostic init execution,
@@ -232,12 +238,18 @@ and which release-time SBOM/provenance controls should become blocking.
 - `PYTHONPATH=src:. python3 -m unittest discover -s tests` passed with 84
   tests after the local-harness comparison changes. Compile, pin check,
   self-audit `100/100`, JSON validation, and `git diff --check` passed.
-- `repo-harness-creator/init.sh --no-env` and `repo-harness-creator/init.ps1
+- `harnessforge/init.sh --no-env` and `harnessforge/init.ps1
   -NoEnv` passed from the parent directory with seeded AI API-key environment
   variables, proving root-agnostic execution and credential-clearing paths for
   POSIX and PowerShell.
 - `git check-ignore -v TEST_REPORT.md TEST_PLAN.md TEST_SUMMARY.md` confirmed
   root scratch-report ignore patterns are active.
+- HarnessForge rename checks passed: focused CLI/Action/generator/pin tests
+  passed with 48 tests, full unit discovery passed with 84 tests, compile
+  passed, POSIX and PowerShell entrypoints passed, pin check passed,
+  metadata/JSON validation passed, stale-name and local-path scans passed,
+  editable install smoke passed, diff hygiene passed, and self-audit stayed
+  `100/100`.
 - Required read-only `agy` research pass completed against this repo plus the
   local AGT prompt-injection benchmark and OWASP Agentic Skills repo. Findings
   were personally checked against local files and public OWASP/user-provided
@@ -270,7 +282,7 @@ and which release-time SBOM/provenance controls should become blocking.
   tests.
 - `python3 -m compileall src tests scripts`, `PYTHONPATH=src:. python3
   scripts/check_pins.py --root .`, `git diff --check`, and
-  `PYTHONPATH=src:. python3 -m repo_harness_creator audit --target .
+  `PYTHONPATH=src:. python3 -m harnessforge audit --target .
   --min-score 85` passed; self-audit stayed `100/100`.
 - `./init.sh` passed on macOS 26.5.1 with Python 3.14.5 after the self-heal
   automation and local-path policy slice: doctor, compile, 72 unit tests, pin
@@ -286,7 +298,7 @@ and which release-time SBOM/provenance controls should become blocking.
   `awesome-monorepo` references, cloned public examples from
   `harness-idp-sandbox/harness-monorepo` and
   `gamgi/github-actions-vanilla-monorepo-example`, and browser review of the
-  supplied monorepo and repo-harness articles.
+  supplied monorepo and repo-local harness articles.
 - `PYTHONPATH=src:. python3 scripts/refresh_research.py --root .` refreshed
   76 sources with the same single known Red Hat 403 failure recorded.
 - `PYTHONPATH=src:. python3 -m unittest tests.test_detect
@@ -306,7 +318,7 @@ and which release-time SBOM/provenance controls should become blocking.
   tests.test_pins` passed with 22 focused tests after workflow fail-fast,
   local Markdown anchor, fenced-code link, and build-hook checks.
 - `PYTHONPATH=src:. python3 scripts/check_pins.py --root .`, `git diff
-  --check`, and `PYTHONPATH=src:. python3 -m repo_harness_creator audit
+  --check`, and `PYTHONPATH=src:. python3 -m harnessforge audit
   --target . --min-score 85` passed; self-audit stayed `100/100`.
 - `./init.sh` passed on macOS 26.5.1 with Python 3.14.5 after the personal AGT
   current snapshot slice: doctor, compile, 60 unit tests, pin check, and
@@ -333,7 +345,7 @@ and which release-time SBOM/provenance controls should become blocking.
   46 unit tests, pin check, self-audit `100/100`.
 - `pwsh -NoProfile -File ./init.ps1` passed on macOS 26.5.1 with Python
   3.14.5: doctor, compile, 46 unit tests, pin check, self-audit `100/100`.
-- Isolated virtualenv package install passed; `repo-harness --version` returned
+- Isolated virtualenv package install passed; `harnessforge --version` returned
   `0.1.0`, generated target init included component and research starter files,
   generated 32 research source records, and installed CLI audit passed.
 - Isolated generated-harness smoke passed with 49 research source records.
@@ -342,7 +354,7 @@ and which release-time SBOM/provenance controls should become blocking.
 - `PYTHONPATH=src:. python3 -m unittest tests.test_github_action` passed with
   5 focused Action tests after report output normalization.
 - `PYTHONPATH=src:. python3 scripts/check_pins.py --root .` passed.
-- `PYTHONPATH=src:. python3 -m repo_harness_creator audit --target .
+- `PYTHONPATH=src:. python3 -m harnessforge audit --target .
   --min-score 85` passed with self-audit `100/100`.
 - `python3 scripts/refresh_research.py --root .` refreshed 49 sources with one
   recorded 403 fetch failure from Red Hat.
@@ -414,7 +426,7 @@ and which release-time SBOM/provenance controls should become blocking.
 - `git check-ignore -v ...` confirmed macOS artifacts, local credential
   patterns, and harness report outputs are ignored.
 - `git diff --check` passed after the `.gitignore` and `SECURITY.md` update.
-- `PYTHONPATH=src:. python3 -m repo_harness_creator audit --target .
+- `PYTHONPATH=src:. python3 -m harnessforge audit --target .
   --min-score 85` passed with self-audit `100/100`.
 - `PYTHONPATH=src:. python3 -m unittest discover -s tests` passed with 50
   tests after the current ease/security fix slice.

@@ -196,7 +196,7 @@ class PinCheckTests(unittest.TestCase):
 
         for path in (
             "docs/harness",
-            "src/repo_harness_creator/templates",
+            "src/harnessforge/templates",
             "AGENTS.md",
             "progress.md",
             "session-handoff.md",

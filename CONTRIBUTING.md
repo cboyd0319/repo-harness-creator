@@ -10,7 +10,7 @@ Linux distribution with Python 3.13+.
 ```bash
 PYTHONPATH=src:. python3 -m unittest discover -s tests
 PYTHONPATH=src:. python3 scripts/check_pins.py --root .
-PYTHONPATH=src:. python3 -m repo_harness_creator audit --target . --min-score 85
+PYTHONPATH=src:. python3 -m harnessforge audit --target . --min-score 85
 ```
 
 Run `./init.sh` or `.\init.ps1` before submitting larger changes.

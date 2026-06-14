@@ -9,7 +9,7 @@ Windows remote checks are manual `workflow_dispatch` platform checks.
 
 | Change Type | Required Checks |
 | --- | --- |
-| CLI parser or command output | Focused unit tests plus `python -m repo_harness_creator --help` |
+| CLI parser or command output | Focused unit tests plus `python -m harnessforge --help` |
 | Generator or templates | Generator tests, temporary repo integration test, self-audit |
 | Component detection or monorepo routing | Detector tests, generated manifest test, and self-audit |
 | Scoring rules | Positive and negative audit tests |

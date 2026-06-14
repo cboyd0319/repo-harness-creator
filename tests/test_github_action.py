@@ -6,8 +6,8 @@ import tempfile
 import unittest
 from pathlib import Path
 
-from repo_harness_creator.generate import create_harness
-from repo_harness_creator.github_action import _output, run_from_env
+from harnessforge.generate import create_harness
+from harnessforge.github_action import _output, run_from_env
 
 
 def _parse_github_output(text: str) -> dict[str, str]:
@@ -80,7 +80,7 @@ class GitHubActionTests(unittest.TestCase):
             self.assertEqual(outputs["report-html"], "report.html")
             self.assertTrue((root / "report.html").exists())
             self.assertTrue((root / "reports" / "report.json").exists())
-            self.assertIn("Repo Harness Audit", summary.read_text(encoding="utf-8"))
+            self.assertIn("HarnessForge Audit", summary.read_text(encoding="utf-8"))
 
     def test_action_init_can_scaffold_optional_workflows(self) -> None:
         with tempfile.TemporaryDirectory() as tmp:
@@ -95,7 +95,7 @@ class GitHubActionTests(unittest.TestCase):
             with contextlib.redirect_stdout(io.StringIO()):
                 code = run_from_env(env)
 
-            ci_exists = (root / ".github/workflows/repo-harness.yml").exists()
+            ci_exists = (root / ".github/workflows/harnessforge.yml").exists()
             self_heal_exists = (
                 root / ".github/workflows/harness-self-heal.yml"
             ).exists()

@@ -40,14 +40,14 @@ checks, and leave evidence for the next session.
 
 ## Assessment And Updates
 
-Use repo-harness-creator for regular structural checks:
+Use HarnessForge for regular structural checks:
 
 ```bash
-repo-harness audit --target .
-repo-harness update --target .
+harnessforge audit --target .
+harnessforge update --target .
 ```
 
-Run `repo-harness update --target . --apply` only when you want safe missing-file
+Run `harnessforge update --target . --apply` only when you want safe missing-file
 corrections. Existing files are preserved unless `--force` is passed.
 
 Run `./init.sh --no-env` or `.\init.ps1 -NoEnv` when checks should run without

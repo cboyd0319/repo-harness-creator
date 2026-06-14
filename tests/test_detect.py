@@ -5,7 +5,7 @@ import tempfile
 import unittest
 from pathlib import Path
 
-from repo_harness_creator.detect import detect_project
+from harnessforge.detect import detect_project
 
 
 def _supports_directory_symlink() -> bool:
