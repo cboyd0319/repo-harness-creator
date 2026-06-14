@@ -8,6 +8,7 @@ Use this for compact current evidence. Keep raw logs out of this file.
 | 2026-06-14 | POSIX polluted environment | `PYTHONPATH=/tmp ./init.sh` | pass | Doctor, compile, 47 tests, pin check, and self-audit `100/100` passed with a pre-existing `PYTHONPATH`. |
 | 2026-06-14 | POSIX verification | `./init.sh` | pass | Doctor, compile, 47 tests, pin check, and self-audit `100/100` after final state updates. |
 | 2026-06-14 | PowerShell verification | `pwsh -NoProfile -File ./init.ps1` | pass | Doctor, compile, 47 tests, pin check, and self-audit `100/100` after final state updates. |
+| 2026-06-14 | Hosted CI | `gh run view 27490215814 --json status,conclusion,headSha,url` | pass | Commit `fda509a` passed CI across Ubuntu 22.04, macOS 15, and Windows 2025 on Python 3.13.14 and 3.14.6. |
 | 2026-06-14 | Root hardening pass | Current-source review against Python Packaging User Guide, Python command-line docs, and GitHub Actions secure-use docs | pass | Added `license-files`, `PYTHONSAFEPATH=1`, root-manifest symlink escape protection, broader home-path redaction, public-HTTPS-only research refresh, and target-contained Action report paths. |
 | 2026-06-14 | GitHub Action outputs | `gh run view 27489182164 --log-failed` | diagnosed | Windows tests failed because report outputs used backslashes; local fix normalizes report outputs to slash-separated target-relative paths. |
 | 2026-06-14 | GitHub Action tests | `PYTHONPATH=src:. python3 -m unittest tests.test_github_action` | pass | 5 focused tests after report output normalization. |

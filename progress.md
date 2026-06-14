@@ -61,12 +61,12 @@ maintenance loop.
 - Fixed the root POSIX verification entrypoint so it prepends `src` even when a
   user already has `PYTHONPATH` set. The PowerShell entrypoint already had the
   equivalent path-prepend behavior.
+- Hosted CI run `27490215814` passed on `main` for commit `fda509a` across
+  Ubuntu 22.04, macOS 15, and Windows 2025 on Python 3.13.14 and 3.14.6.
 
 ## Recommended Next Step
 
-Commit and push the current POSIX entrypoint fix, then watch hosted CI. After
-hosted CI is green, decide whether to cut a `v1` Action tag before broader
-public use.
+Decide whether to cut a `v1` Action tag before broader public use.
 
 ## Verification Evidence
 
@@ -107,3 +107,5 @@ public use.
 - `pwsh -NoProfile -File ./init.ps1` passed on macOS 26.5.1 with Python
   3.14.5 after the final state updates: doctor, compile, 47 unit tests, pin
   check, self-audit `100/100`.
+- Hosted CI run `27490215814` passed on `main` for commit `fda509a` across
+  Ubuntu 22.04, macOS 15, and Windows 2025 on Python 3.13.14 and 3.14.6.

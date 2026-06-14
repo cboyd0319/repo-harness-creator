@@ -63,9 +63,10 @@ and the required AGENTS instruction format.
   already-correct PowerShell entrypoint behavior.
 - Current focused entrypoint check passes: `PYTHONPATH=src:. python3 -m
   unittest tests.test_local_entrypoints`.
+- Hosted CI run `27490215814` passed on `main` for commit `fda509a` across
+  Ubuntu 22.04, macOS 15, and Windows 2025 on Python 3.13.14 and 3.14.6.
 
 ## Next Session
 
-Commit and push the current POSIX entrypoint fix, then watch hosted CI. If it
-passes, decide whether the first release should cut a `v1` Action tag before
-broader public use.
+Decide whether the first release should cut a `v1` Action tag before broader
+public use.

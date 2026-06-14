@@ -45,9 +45,10 @@
         "2026-06-14: Read-only CI checkout opts out of persisted credentials.",
         "2026-06-14: POSIX and PowerShell entrypoints pass with 46 tests and self-audit 100/100 after the current hardening pass.",
         "2026-06-14: Root POSIX entrypoint prepends src when PYTHONPATH is already set; polluted-environment verification passed with 47 tests and self-audit 100/100.",
-        "2026-06-14: POSIX and PowerShell entrypoints pass with 47 tests and self-audit 100/100 after the entrypoint fix."
+        "2026-06-14: POSIX and PowerShell entrypoints pass with 47 tests and self-audit 100/100 after the entrypoint fix.",
+        "2026-06-14: Hosted CI run 27490215814 passed on main for commit fda509a across Ubuntu 22.04, macOS 15, and Windows 2025 on Python 3.13.14 and 3.14.6."
       ],
-      "notes": "Latest pushed CI passed; current POSIX entrypoint fix passes focused and polluted-environment verification and needs push."
+      "notes": "Latest pushed CI passed; POSIX entrypoint fix passes focused, polluted-environment, local entrypoint, and hosted CI verification."
     }
   ]
 }
