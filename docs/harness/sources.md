@@ -184,6 +184,10 @@ project-owned docs instead of machine-specific absolute paths.
 - Compatibility instruction files are source-backed. `CLAUDE.md`,
   `GEMINI.md`, and `.github/copilot-instructions.md` route to `AGENTS.md`
   without duplicating the project manual.
+- Local agent-platform best-practice and memory notes reinforced the same
+  pattern: one canonical checked-in instruction file, short platform routers,
+  local override files ignored, and platform auto-memory treated as personal
+  state until stable facts are promoted into reviewed harness docs.
 - Research provenance is part of the product surface. Public source URLs live
   in `research-sources.json`, refresh metadata lives in
   `research-sources.lock.json`, and local sibling references are recorded in

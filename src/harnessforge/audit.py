@@ -196,6 +196,7 @@ def _load_known_files(root: Path) -> dict[str, str]:
     candidates = [
         "AGENTS.md",
         "CLAUDE.md",
+        "GEMINI.md",
         ".github/copilot-instructions.md",
         "README.md",
         "action.yml",
@@ -465,7 +466,12 @@ def _score(name: str, checks: list[CheckResult]) -> DomainScore:
 
 
 def _instruction_checks(files: dict[str, str]) -> list[CheckResult]:
-    instruction = files.get("AGENTS.md") or files.get("CLAUDE.md") or ""
+    instruction = (
+        files.get("AGENTS.md")
+        or files.get("CLAUDE.md")
+        or files.get("GEMINI.md")
+        or ""
+    )
     return [
         _check(bool(instruction), "Root agent instruction file exists"),
         _contains(instruction, ("Startup", "Before writing code"), "Startup path is documented"),
@@ -516,6 +522,8 @@ def _environment_checks(files: dict[str, str]) -> list[CheckResult]:
         for name in (
             "AGENTS.md",
             "CLAUDE.md",
+            "GEMINI.md",
+            ".github/copilot-instructions.md",
             "README.md",
             "action.yml",
             "docs/action.md",
@@ -631,12 +639,19 @@ def _scope_checks(
 
 def _lifecycle_checks(files: dict[str, str]) -> list[CheckResult]:
     handoff = files.get("session-handoff.md", "")
-    instructions = files.get("AGENTS.md") or files.get("CLAUDE.md") or ""
+    instructions = (
+        files.get("AGENTS.md")
+        or files.get("CLAUDE.md")
+        or files.get("GEMINI.md")
+        or ""
+    )
     lifecycle_text = "\n".join(
         files.get(name, "")
         for name in (
             "AGENTS.md",
             "CLAUDE.md",
+            "GEMINI.md",
+            ".github/copilot-instructions.md",
             "README.md",
             "progress.md",
             "session-handoff.md",

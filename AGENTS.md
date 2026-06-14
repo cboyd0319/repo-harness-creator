@@ -56,6 +56,8 @@ real cost.
 - Prefer the smallest correct change. Preserve user changes and dirty work.
 - Treat generated templates, audit scoring, docs, and workflows as product
   code.
+- Keep platform-specific instruction routers short. They should point to the
+  canonical repo instructions instead of duplicating durable rules.
 - Keep generated artifacts portable. Do not commit machine-specific or
   user-specific absolute local paths unless the user explicitly requests that
   exact path and durable evidence records why.

@@ -1,0 +1,25 @@
+# {{project_name}} Copilot Instructions
+
+Use [../{{agent_file}}](../{{agent_file}}) as the source of truth for repo
+guidance.
+
+This file exists because GitHub Copilot reads
+`.github/copilot-instructions.md`. Keep this router short and point to durable
+docs instead of duplicating the project manual.
+
+## Required Reading For Non-Trivial Work
+
+- [Harness operations](../docs/harness/README.md)
+- [Change contract](../docs/harness/change-contract.md)
+- [Verification matrix](../docs/harness/verification-matrix.md)
+- [Dependency change policy](../docs/harness/dependency-change-policy.md)
+- [Security boundary map](../docs/harness/security-boundary-map.md)
+- [Component inventory](../docs/harness/component-inventory.md)
+
+## Core Rules
+
+- Follow the canonical instructions in [../{{agent_file}}](../{{agent_file}}).
+- Prefer local checks before remote CI.
+- Do not overwrite target files unless the user explicitly requests it.
+- Do not commit secrets, credentials, private data, or machine-specific local
+  absolute paths.

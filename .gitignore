@@ -15,6 +15,20 @@ Thumbs.db
 .claude/
 .opencode/
 
+# Local agent platform overrides
+CLAUDE.local.md
+GEMINI.local.md
+CODEX.local.md
+Copilot.local.md
+.codex/*.local.toml
+.codex/**/*.local.toml
+.codex-log/
+.gemini/*.local.*
+.gemini/**/*.local.*
+.cursor/**/*.local.*
+.windsurf/**/*.local.*
+harness.local.*
+
 # Python caches and environments
 __pycache__/
 *.py[cod]

@@ -88,9 +88,10 @@
         "2026-06-14: Local sibling harness comparison accepted root-agnostic init execution, PowerShell native fail-fast handling, optional credential-free verification, broader advisory pin signals, entropy rules, completion bars, isolated release smoke guidance, and scratch-report ignores.",
         "2026-06-14: Focused generator and pin tests pass with 33 tests after local-harness comparison changes.",
         "2026-06-14: Full local verification passes with 84 tests, compile, pin check, self-audit 100/100, JSON validation, diff hygiene, no-env POSIX/PowerShell entrypoints, and scratch-report ignore checks.",
-        "2026-06-14: Project renamed to HarnessForge across the import package, CLI, Action metadata, docs, templates, tests, live workflows, and harness state; rename verification passes entrypoints, stale-name scan, install smoke, and self-audit 100/100."
+        "2026-06-14: Project renamed to HarnessForge across the import package, CLI, Action metadata, docs, templates, tests, live workflows, and harness state; rename verification passes entrypoints, stale-name scan, install smoke, and self-audit 100/100.",
+        "2026-06-14: Best-practices, memory, and MIT sibling HarnessForge review accepted compact Claude/Gemini/Copilot routers, local agent override ignores, verification-command trust controls, and personal-state treatment for platform auto-memory; focused tests, full tests, entrypoints, pin check, compile, JSON validation, local-path scan, diff hygiene, and self-audit 100/100 passed."
       ],
-      "notes": "Prior pushed CI passed. Current HarnessForge rename batch passes focused and full unit tests, POSIX and PowerShell entrypoints, compile, pin enforcement, metadata/JSON validation, stale-name scan, install smoke, diff hygiene, and self-audit. Remote macOS/Windows CI remains intentionally manual to control cost."
+      "notes": "Prior pushed CI passed. Current HarnessForge rename and platform-router batches pass focused and full unit tests, POSIX and PowerShell entrypoints, compile, pin enforcement, metadata/JSON validation, stale-name and local-path scans, install smoke, diff hygiene, and self-audit. Remote macOS/Windows CI remains intentionally manual to control cost."
     }
   ]
 }

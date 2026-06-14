@@ -17,7 +17,7 @@ agent sessions.
 
 | Domain | Artifact | Purpose |
 | --- | --- | --- |
-| Instructions | `AGENTS.md` | Startup path, hard requirements, verification |
+| Instructions | `AGENTS.md`, `CLAUDE.md`, `GEMINI.md`, `.github/copilot-instructions.md` | Startup path, hard requirements, verification, and platform routing |
 | Tools | `harnessforge`, `action.yml`, `init.sh`, `init.ps1`, `scripts/check_pins.py` | Creation, audit, update, CI action, local checks, and pin enforcement |
 | Environment | `pyproject.toml`, CI matrix, `component-inventory.md`, `dependency-change-policy.md` | Python, OS, package, component, and Action support contract |
 | State | `feature_list.json`, `progress.md`, `evidence-log.md` | Current objective, evidence, and restart state |

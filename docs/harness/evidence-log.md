@@ -4,6 +4,7 @@ Use this for compact current evidence. Keep raw logs out of this file.
 
 | Date | Scope | Command Or Review | Result | Notes |
 | --- | --- | --- | --- | --- |
+| 2026-06-14 | Best-practices, memory, and sibling HarnessForge review | Direct local review, read-only AGY supplement, focused/full tests, entrypoints, compile, pin, JSON, local-path scan, diff, self-audit | pass | Added generated Claude/Gemini/Copilot routers, local agent override ignores, command-trust and platform-memory guidance. Deferred dependency-heavy blueprint/MCP/settings machinery and global config writes. |
 | 2026-06-14 | HarnessForge rename | Focused tests, full tests, entrypoints, compile, pin check, metadata validation, stale-name scan, install smoke, self-audit, diff hygiene | pass | Renamed product, import package, CLI, Action metadata, docs, templates, tests, and workflows to HarnessForge. |
 | 2026-06-14 | Local sibling harness comparison | Read-only AGY supplement plus direct file review | pass | Accepted root-agnostic init execution, PowerShell native fail-fast, optional credential-free verification, broader advisory pin signals, entropy rules, completion bars, isolated release smoke guidance, and scratch-report ignores. |
 | 2026-06-14 | Focused local-harness comparison checks | `PYTHONPATH=src:. python3 -m unittest tests.test_generate_audit tests.test_pins` | pass | 33 focused tests passed after generated/live init, pin checker, manifest, entropy, release, and ignore updates. |

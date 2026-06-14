@@ -34,16 +34,31 @@ and the required AGENTS instruction format.
 - `src/harnessforge/detect.py`
 - `src/harnessforge/generate.py`
 - `src/harnessforge/models.py`
+- `src/harnessforge/templates/claude.md.tmpl`
+- `src/harnessforge/templates/gemini.md.tmpl`
+- `src/harnessforge/templates/copilot-instructions.md.tmpl`
 - `src/harnessforge/templates/component-inventory.md.tmpl`
 - `src/harnessforge/templates/research-sources.json.tmpl`
 - `tests/test_detect.py`
 - `tests/test_generate_audit.py`
 - `tests/test_pins.py`
 - `docs/harness/evaluator-rubric.md`
+- `docs/harness/sources.md`
+- `.gitignore`
 
 ## Blockers
 
 - No known blockers.
+- Current best-practices, memory, and MIT sibling HarnessForge review imported
+  compact generated routers for Claude, Gemini, and Copilot; local agent
+  override ignore patterns; command-trust wording; and personal-state treatment
+  for platform auto-memory. Dependency-heavy blueprints, MCP/settings
+  scaffolding, global config writes, hooks, and auto-permission config remain
+  deferred.
+- Current platform-router batch passes focused generator/CLI tests with 31
+  tests, full unit discovery with 85 tests, compile, pin check, JSON
+  validation, diff hygiene, local-path scan, POSIX entrypoint, PowerShell
+  entrypoint, and self-audit `100/100`.
 - Current generated-harness alignment batch passes focused CLI/Action/generator
   tests with 45 tests, full unit discovery with 81 tests, compile, pin check,
   diff hygiene, and self-audit `100/100`.
@@ -236,8 +251,9 @@ and the required AGENTS instruction format.
 ## Next Session
 
 Review the local OWASP/security, CI-cost-control, generated-harness alignment,
-local sibling harness comparison, and HarnessForge rename commits. Push only at
-an explicit batch/release boundary or user request. Before a public Action
-release, run the manual macOS/Windows platform CI check if hosted platform
-confirmation is needed, then decide whether to cut a `v1` Action tag and which
-release-time SBOM/provenance controls should become blocking.
+local sibling harness comparison, HarnessForge rename, and platform-router
+commits. Push only at an explicit batch/release boundary or user request. Before
+a public Action release, run the manual macOS/Windows platform CI check if
+hosted platform confirmation is needed, then decide whether to cut a `v1`
+Action tag and which release-time SBOM/provenance controls should become
+blocking.

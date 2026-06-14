@@ -3,6 +3,9 @@
   "generatedBy": "harnessforge",
   "requiredFiles": [
     "AGENTS.md",
+    "CLAUDE.md",
+    "GEMINI.md",
+    ".github/copilot-instructions.md",
     "README.md",
     "action.yml",
     "docs/action.md",
@@ -76,6 +79,21 @@
       "personal machines",
       "remote CI"
     ],
+    "CLAUDE.md": [
+      "@AGENTS.md",
+      "Claude Code",
+      "Shared repo guidance"
+    ],
+    "GEMINI.md": [
+      "@AGENTS.md",
+      "Gemini",
+      "Shared repo guidance"
+    ],
+    ".github/copilot-instructions.md": [
+      "source of truth",
+      "AGENTS.md",
+      "Security boundary map"
+    ],
     "README.md": [
       "docs/assets/logo.png",
       "Python 3.13",
@@ -134,6 +152,7 @@
       "least privilege",
       "human approval",
       "cost-incurring",
+      "Verification commands",
       "intentionally vulnerable",
       "Threat model"
     ],
@@ -200,6 +219,7 @@
     "docs/harness/agent-operating-model.md": [
       "least privilege",
       "human approval",
+      "verification commands",
       "local commits",
       "push",
       "intentionally vulnerable"

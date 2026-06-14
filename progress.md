@@ -172,15 +172,22 @@ maintenance loop.
   at `cboyd0319/harnessforge`, generated optional CI scaffolding uses
   `.github/workflows/harnessforge.yml`, and live workflows invoke
   `python -m harnessforge`.
+- Completed a local best-practices, memory, and MIT sibling HarnessForge review.
+  Accepted compact Claude, Gemini, and Copilot instruction routers; local agent
+  override ignores; verification-command trust controls; and a rule that
+  platform auto-memory remains personal state until stable facts are promoted
+  into reviewed harness docs. Deferred the sibling project's dependency-heavy
+  blueprint, MCP, settings, and global-config machinery.
 
 ## Recommended Next Step
 
 Review the local commits for the OWASP/security, CI-cost-control,
-generated-harness alignment, and local-repo harness comparison batches. Push
-only at an explicit batch/release boundary or user request. Before a first
-public Action release, run the manual macOS/Windows platform CI check if hosted
-platform confirmation is needed, then decide whether to cut a `v1` Action tag
-and which release-time SBOM/provenance controls should become blocking.
+generated-harness alignment, local-repo harness comparison, rename, and
+platform-router batches. Push only at an explicit batch/release boundary or
+user request. Before a first public Action release, run the manual macOS/Windows
+platform CI check if hosted platform confirmation is needed, then decide
+whether to cut a `v1` Action tag and which release-time SBOM/provenance
+controls should become blocking.
 
 ## Verification Evidence
 
@@ -238,6 +245,22 @@ and which release-time SBOM/provenance controls should become blocking.
 - `PYTHONPATH=src:. python3 -m unittest discover -s tests` passed with 84
   tests after the local-harness comparison changes. Compile, pin check,
   self-audit `100/100`, JSON validation, and `git diff --check` passed.
+- Local best-practices and memory docs plus the MIT sibling HarnessForge project
+  were reviewed directly with a read-only AGY supplement. Imported controls are
+  short platform routers, local override ignores, verification-command trust
+  wording, and personal-state treatment for platform auto-memory.
+- `PYTHONPATH=src:. python3 -m unittest tests.test_generate_audit
+  tests.test_cli` passed with 31 focused tests after adding generated Claude,
+  Gemini, and Copilot routers.
+- `PYTHONPATH=src:. python3 -m unittest discover -s tests` passed with 85 tests.
+  `python3 -m compileall scripts src tests`, `PYTHONPATH=src:. python3
+  scripts/check_pins.py --root .`, `PYTHONPATH=src:. python3 -m harnessforge
+  audit --target . --min-score 85`, JSON validation, and `git diff --check`
+  passed. The local-path scan found only the intentional file-scheme refresh
+  rejection test fixture.
+- `./init.sh` and `pwsh -NoProfile -File ./init.ps1` passed on macOS 26.5.1
+  with Python 3.14.5 after the platform-router batch: doctor, compile, 85 unit
+  tests, pin check, and self-audit `100/100`.
 - `harnessforge/init.sh --no-env` and `harnessforge/init.ps1
   -NoEnv` passed from the parent directory with seeded AI API-key environment
   variables, proving root-agnostic execution and credential-clearing paths for

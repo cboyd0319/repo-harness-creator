@@ -77,11 +77,23 @@ class GenerateAuditTests(unittest.TestCase):
             result = audit_target(root)
             init_sh = (root / "init.sh").read_text(encoding="utf-8")
             init_ps1 = (root / "init.ps1").read_text(encoding="utf-8")
+            claude = (root / "CLAUDE.md").read_text(encoding="utf-8")
+            gemini = (root / "GEMINI.md").read_text(encoding="utf-8")
+            copilot = (root / ".github/copilot-instructions.md").read_text(
+                encoding="utf-8"
+            )
 
         written = {write.path.name for write in writes if write.status == "written"}
         self.assertEqual(profile.stack, "python")
         self.assertIn("AGENTS.md", written)
+        self.assertIn("CLAUDE.md", written)
+        self.assertIn("GEMINI.md", written)
+        self.assertIn("copilot-instructions.md", written)
         self.assertIn("check_pins.py", written)
+        self.assertIn("@AGENTS.md", claude)
+        self.assertIn("@AGENTS.md", gemini)
+        self.assertIn("../AGENTS.md", copilot)
+        self.assertIn("Security boundary map", copilot)
         self.assertIn('cd "$SCRIPT_DIR"', init_sh)
         self.assertIn("--no-env", init_sh)
         self.assertIn("OPENAI_API_KEY", init_sh)
@@ -96,6 +108,30 @@ class GenerateAuditTests(unittest.TestCase):
         self.assertIn("scripts/check_pins.py --root .", init_ps1)
         self.assertNotIn("Invoke-Expression", init_ps1)
         self.assertEqual(result.overall, 100)
+
+    def test_platform_routers_follow_custom_agent_file(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            create_harness(root, agent_file="PROJECT_AGENTS.md")
+            claude = (root / "CLAUDE.md").read_text(encoding="utf-8")
+            gemini = (root / "GEMINI.md").read_text(encoding="utf-8")
+            copilot = (root / ".github/copilot-instructions.md").read_text(
+                encoding="utf-8"
+            )
+            manifest = json.loads(
+                (root / "docs/harness/manifest.json").read_text(encoding="utf-8")
+            )
+
+        self.assertIn("@PROJECT_AGENTS.md", claude)
+        self.assertIn("@PROJECT_AGENTS.md", gemini)
+        self.assertIn("../PROJECT_AGENTS.md", copilot)
+        self.assertIn("PROJECT_AGENTS.md", manifest["requiredFiles"])
+        self.assertIn("CLAUDE.md", manifest["requiredFiles"])
+        self.assertIn("GEMINI.md", manifest["requiredFiles"])
+        self.assertIn(
+            ".github/copilot-instructions.md",
+            manifest["requiredFiles"],
+        )
 
     def test_optional_workflow_scaffolds_are_explicit(self) -> None:
         with tempfile.TemporaryDirectory() as tmp:
@@ -211,6 +247,9 @@ class GenerateAuditTests(unittest.TestCase):
             )
 
         self.assertEqual(manifest["version"], 1)
+        self.assertIn("CLAUDE.md", manifest["requiredFiles"])
+        self.assertIn("GEMINI.md", manifest["requiredFiles"])
+        self.assertIn(".github/copilot-instructions.md", manifest["requiredFiles"])
         self.assertIn("init.ps1", manifest["requiredFiles"])
         self.assertIn("docs/harness/clean-state-checklist.md", manifest["requiredFiles"])
         self.assertIn("docs/harness/component-inventory.md", manifest["requiredFiles"])

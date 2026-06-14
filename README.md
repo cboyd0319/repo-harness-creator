@@ -101,7 +101,7 @@ The generated harness includes:
 
 | Area | Key files |
 | --- | --- |
-| Agent instructions | `AGENTS.md` |
+| Agent instructions | `AGENTS.md`, `CLAUDE.md`, `GEMINI.md`, `.github/copilot-instructions.md` |
 | Project state | `feature_list.json`, `progress.md`, `session-handoff.md` |
 | Local checks | `init.sh`, `init.ps1`, `scripts/check_pins.py` |
 | Harness docs | `docs/harness/README.md`, `verification-matrix.md`, `change-contract.md` |

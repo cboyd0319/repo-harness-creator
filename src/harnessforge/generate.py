@@ -77,34 +77,75 @@ def _template_specs(
 ) -> tuple[tuple[str, str, bool], ...]:
     specs = [
         ("agents.md.tmpl", agent_file, False),
-        ("feature-list.json.tmpl", "feature_list.json", False),
-        ("feature-list.schema.json.tmpl", "docs/harness/feature-list.schema.json", False),
-        ("progress.md.tmpl", "progress.md", False),
-        ("session-handoff.md.tmpl", "session-handoff.md", False),
-        ("check-pins.py.tmpl", "scripts/check_pins.py", True),
-        ("init.sh.tmpl", "init.sh", True),
-        ("init.ps1.tmpl", "init.ps1", False),
-        ("harness-readme.md.tmpl", "docs/harness/README.md", False),
-        ("change-contract.md.tmpl", "docs/harness/change-contract.md", False),
-        ("verification-matrix.md.tmpl", "docs/harness/verification-matrix.md", False),
-        ("component-inventory.md.tmpl", "docs/harness/component-inventory.md", False),
-        ("dependency-change-policy.md.tmpl", "docs/harness/dependency-change-policy.md", False),
-        ("security-boundary-map.md.tmpl", "docs/harness/security-boundary-map.md", False),
-        ("feature-privacy-labels.json.tmpl", "docs/harness/feature-privacy-labels.json", False),
-        ("evidence-log.md.tmpl", "docs/harness/evidence-log.md", False),
-        ("clean-state-checklist.md.tmpl", "docs/harness/clean-state-checklist.md", False),
-        ("evaluator-rubric.md.tmpl", "docs/harness/evaluator-rubric.md", False),
-        ("quality-document.md.tmpl", "docs/harness/quality-document.md", False),
-        ("release-controls.md.tmpl", "docs/harness/release-controls.md", False),
-        ("self-healing.md.tmpl", "docs/harness/self-healing.md", False),
-        ("research-sources.json.tmpl", "docs/harness/research-sources.json", False),
-        ("research-inbox.md.tmpl", "docs/harness/research-inbox.md", False),
-        ("agent-operating-model.md.tmpl", "docs/harness/agent-operating-model.md", False),
-        ("multi-agent-orchestration.md.tmpl", "docs/harness/multi-agent-orchestration.md", False),
-        ("entropy-control.md.tmpl", "docs/harness/entropy-control.md", False),
-        ("sources.md.tmpl", "docs/harness/sources.md", False),
-        ("manifest.json.tmpl", "docs/harness/manifest.json", False),
     ]
+    if agent_file != "CLAUDE.md":
+        specs.append(("claude.md.tmpl", "CLAUDE.md", False))
+    if agent_file != "GEMINI.md":
+        specs.append(("gemini.md.tmpl", "GEMINI.md", False))
+    specs.extend(
+        [
+            (
+                "copilot-instructions.md.tmpl",
+                ".github/copilot-instructions.md",
+                False,
+            ),
+            ("feature-list.json.tmpl", "feature_list.json", False),
+            (
+                "feature-list.schema.json.tmpl",
+                "docs/harness/feature-list.schema.json",
+                False,
+            ),
+            ("progress.md.tmpl", "progress.md", False),
+            ("session-handoff.md.tmpl", "session-handoff.md", False),
+            ("check-pins.py.tmpl", "scripts/check_pins.py", True),
+            ("init.sh.tmpl", "init.sh", True),
+            ("init.ps1.tmpl", "init.ps1", False),
+            ("harness-readme.md.tmpl", "docs/harness/README.md", False),
+            ("change-contract.md.tmpl", "docs/harness/change-contract.md", False),
+            ("verification-matrix.md.tmpl", "docs/harness/verification-matrix.md", False),
+            ("component-inventory.md.tmpl", "docs/harness/component-inventory.md", False),
+            (
+                "dependency-change-policy.md.tmpl",
+                "docs/harness/dependency-change-policy.md",
+                False,
+            ),
+            (
+                "security-boundary-map.md.tmpl",
+                "docs/harness/security-boundary-map.md",
+                False,
+            ),
+            (
+                "feature-privacy-labels.json.tmpl",
+                "docs/harness/feature-privacy-labels.json",
+                False,
+            ),
+            ("evidence-log.md.tmpl", "docs/harness/evidence-log.md", False),
+            (
+                "clean-state-checklist.md.tmpl",
+                "docs/harness/clean-state-checklist.md",
+                False,
+            ),
+            ("evaluator-rubric.md.tmpl", "docs/harness/evaluator-rubric.md", False),
+            ("quality-document.md.tmpl", "docs/harness/quality-document.md", False),
+            ("release-controls.md.tmpl", "docs/harness/release-controls.md", False),
+            ("self-healing.md.tmpl", "docs/harness/self-healing.md", False),
+            ("research-sources.json.tmpl", "docs/harness/research-sources.json", False),
+            ("research-inbox.md.tmpl", "docs/harness/research-inbox.md", False),
+            (
+                "agent-operating-model.md.tmpl",
+                "docs/harness/agent-operating-model.md",
+                False,
+            ),
+            (
+                "multi-agent-orchestration.md.tmpl",
+                "docs/harness/multi-agent-orchestration.md",
+                False,
+            ),
+            ("entropy-control.md.tmpl", "docs/harness/entropy-control.md", False),
+            ("sources.md.tmpl", "docs/harness/sources.md", False),
+            ("manifest.json.tmpl", "docs/harness/manifest.json", False),
+        ]
+    )
     if with_ci_workflow:
         specs.append(("ci-workflow.yml.tmpl", ".github/workflows/harnessforge.yml", False))
     if with_self_heal_workflow:
@@ -277,6 +318,9 @@ def _manifest_content(
 ) -> str:
     required_files = [
         agent_file,
+        *([] if agent_file == "CLAUDE.md" else ["CLAUDE.md"]),
+        *([] if agent_file == "GEMINI.md" else ["GEMINI.md"]),
+        ".github/copilot-instructions.md",
         "feature_list.json",
         "progress.md",
         "session-handoff.md",
@@ -313,6 +357,11 @@ def _manifest_content(
             "feature_list.json",
             "progress.md",
             "remote CI",
+        ],
+        ".github/copilot-instructions.md": [
+            "source of truth",
+            agent_file,
+            "Security boundary map",
         ],
         "docs/harness/README.md": [
             "Operating Loop",
@@ -357,6 +406,7 @@ def _manifest_content(
             "least privilege",
             "human approval",
             "cost-incurring",
+            "Verification commands",
             "intentionally vulnerable",
             "Threat model",
         ],
@@ -423,6 +473,7 @@ def _manifest_content(
         "docs/harness/agent-operating-model.md": [
             "least privilege",
             "human approval",
+            "verification commands",
             "local commits",
             "push",
             "intentionally vulnerable",
@@ -446,6 +497,18 @@ def _manifest_content(
             "package-lock entry",
         ],
     }
+    if agent_file != "CLAUDE.md":
+        required_snippets["CLAUDE.md"] = [
+            f"@{agent_file}",
+            "Claude Code",
+            "Shared repo guidance",
+        ]
+    if agent_file != "GEMINI.md":
+        required_snippets["GEMINI.md"] = [
+            f"@{agent_file}",
+            "Gemini",
+            "Shared repo guidance",
+        ]
     if with_ci_workflow:
         required_files.append(".github/workflows/harnessforge.yml")
         required_snippets[".github/workflows/harnessforge.yml"] = [

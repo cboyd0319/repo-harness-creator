@@ -21,6 +21,13 @@ task, explicit evidence, and a clean handoff.
 - Apply least privilege to tools and local automation. Require human approval
   before destructive, externally visible, credential-touching, or cost-incurring
   actions.
+- Treat verification commands as executable code. Review changed `init`,
+  package-script, workflow, Make, or harness-declared commands before running
+  them from untrusted branches or generated updates.
+- Treat checked-in harness files as shared project memory. Treat platform
+  auto-memory and local instruction files as personal state; promote only
+  stable, reviewed facts into `progress.md`, `session-handoff.md`, or harness
+  docs.
 - Do not auto-fix intentionally vulnerable training, demo, or fixture code
   unless the user explicitly requests remediation for that scope.
 - Use local verification and local commits for normal checkpoints. Do not push
