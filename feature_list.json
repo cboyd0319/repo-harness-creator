@@ -73,9 +73,13 @@
         "2026-06-14: POSIX and PowerShell entrypoints pass with 69 tests, pin check, and self-audit 100/100 after the monorepo detection slice.",
         "2026-06-14: Self-heal workflow now runs at 12:00 UTC and fixed-allowlist research refresh is documented in live docs and templates.",
         "2026-06-14: Audit flags durable local absolute path text by default with an explicit local override; focused CLI and audit tests passed.",
-        "2026-06-14: POSIX and PowerShell entrypoints pass with 72 tests, pin check, and self-audit 100/100 after self-heal automation and local-path policy hardening."
+        "2026-06-14: POSIX and PowerShell entrypoints pass with 72 tests, pin check, and self-audit 100/100 after self-heal automation and local-path policy hardening.",
+        "2026-06-14: Agentic-security allowlist expanded to 88 sources after AGT, OWASP Agentic Skills, OWASP GenAI, Endor, Lakera, Practical DevSecOps, and Rogue Security review.",
+        "2026-06-14: Research refresh withholds adversarial title/heading metadata as review signals; focused refresh and audit tests passed.",
+        "2026-06-14: Audit now checks for prompt-injection and data-poisoning boundary documentation; self-audit remains 100/100.",
+        "2026-06-14: POSIX and PowerShell entrypoints pass with 73 tests, pin check, and self-audit 100/100 after agentic-security source and metadata hardening."
       ],
-      "notes": "Prior pushed CI passed; current self-heal automation and local-path policy slice passes focused tests, compile, pin enforcement, diff hygiene, self-audit, POSIX verification, and PowerShell verification."
+      "notes": "Prior pushed CI passed; current agentic-security source and metadata hardening slice passes focused tests, JSON validation, compile, pin enforcement, diff hygiene, self-audit, POSIX verification, and PowerShell verification."
     }
   ]
 }

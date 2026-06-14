@@ -16,6 +16,7 @@ security wins and the tool must explain the safe next step.
 | Local repository files | Project maintainers | Agents must preserve user changes and avoid destructive git operations unless explicitly approved. |
 | Generated paths | Project maintainers | Generated paths must remain inside the repository after symlink resolution. Unsafe path inputs are rejected. |
 | Local machine paths | Project maintainers | Durable output and harness docs/state must not contain machine-local absolute paths unless the user explicitly requests that exact path and the audit is run with the explicit override. Prefer repo-relative paths. |
+| Untrusted content | Project maintainers | Public websites, issue text, generated logs, retrieved documents, and source metadata can carry prompt injection, indirect prompt injection, or data poisoning attempts. Treat scanners as advisory, withhold suspicious fetched metadata from durable output, and require human review before promotion into templates, audit checks, or policy. |
 | Secrets and credentials | Project maintainers | Do not print, store, transform, or transmit secrets unless the task explicitly requires a reviewed secret-handling path. |
 | Network calls | Project maintainers | Prefer local verification. Scheduled research refreshes may read only a reviewed fixed allowlist such as `research-sources.json`; they must not search for latest research or discover new URLs without review. Other external calls need a source, purpose, and failure mode. |
 | Cost-incurring systems | Project maintainers | Cloud, model, or paid API changes require explicit approval and rollback notes. |
@@ -28,6 +29,8 @@ security wins and the tool must explain the safe next step.
 - Default to local-only processing until an external data flow is explicit.
 - Avoid machine-specific absolute paths in committed reports and harness docs
   unless an explicit user request is recorded.
+- Withhold suspicious fetched metadata when it resembles agent instructions or
+  credential-exfiltration prompts.
 - Record redaction, preview, approval, and logging requirements for any
   external AI or third-party service path.
 

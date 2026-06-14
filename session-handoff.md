@@ -44,6 +44,16 @@ and the required AGENTS instruction format.
 ## Blockers
 
 - No known blockers.
+- Current agentic-security source and metadata hardening slice passes focused
+  refresh/audit tests, full unit discovery with 73 tests, compile, pin check,
+  JSON validation, diff hygiene, self-audit `100/100`, and both POSIX and
+  PowerShell entrypoints. The source ledger now tracks 88 fixed allowlist
+  sources with the same known Red Hat 403 failure.
+- Research refresh now withholds fetched title/heading metadata that resembles
+  prompt injection, indirect prompt injection, credential exfiltration, or
+  sensitive-file access, and records signal IDs instead of durable raw text.
+- Audit now requires the harness to document prompt-injection and
+  data-poisoning boundaries as untrusted-content risks.
 - Current self-heal automation and local-path policy slice passes focused tests,
   full unit discovery with 72 tests, compile, pin check, diff hygiene,
   self-audit `100/100`, and both POSIX and PowerShell entrypoints.
@@ -174,8 +184,8 @@ and the required AGENTS instruction format.
 
 ## Next Session
 
-After this push, watch hosted CI for the self-heal automation and local-path
-policy slice. Then decide whether the first release should cut a `v1` Action
+After this push, watch hosted CI for the agentic-security source and metadata
+hardening slice. Then decide whether the first release should cut a `v1` Action
 tag before broader public use, whether to keep both Python minors in CI or trim
 to Python 3.13 only, and whether deeper workspace graph parsing or release-time
 SBOM/provenance should come next.

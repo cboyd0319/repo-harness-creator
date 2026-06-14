@@ -138,6 +138,12 @@ project-owned docs instead of machine-specific absolute paths.
   refresh script now rejects non-HTTPS URLs, embedded credentials, non-default
   HTTPS ports, localhost, literal non-public IP targets, hostnames that resolve
   to non-public addresses, and redirects to unsafe targets before fetching.
+- Agentic-security sources now include OWASP LLM, OWASP Agentic Applications,
+  OWASP Agentic Skills, the Microsoft AGT prompt-injection benchmark, and
+  user-supplied agentic Top 10 commentary. The control imported from those
+  sources is conservative: public/retrieved content is untrusted, prompt
+  injection and data poisoning metadata is withheld, scanners are advisory, and
+  human review remains the promotion gate.
 - Read-only CI jobs should not keep checkout credentials available to later
   steps. The main CI checkout now opts out of persisted credentials; the
   self-heal workflow keeps credentials because it intentionally pushes a

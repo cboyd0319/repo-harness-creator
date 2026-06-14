@@ -586,6 +586,11 @@ def _scope_checks(
         _check("docs/harness/security-boundary-map.md" in files, "Security boundary map exists"),
         _check("docs/harness/dependency-change-policy.md" in files, "Dependency change policy exists"),
         _contains(all_text, ("personal machines", "security wins"), "Personal-machine trust boundary is documented"),
+        _contains_all(
+            all_text,
+            ("prompt injection", "data poisoning", "untrusted"),
+            "Prompt-injection and data-poisoning boundary is documented",
+        ),
         _check(
             allow_local_absolute_paths or not local_path_failures,
             "Durable harness text avoids local absolute paths",

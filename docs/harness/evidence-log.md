@@ -4,6 +4,10 @@ Use this for compact current evidence. Keep raw logs out of this file.
 
 | Date | Scope | Command Or Review | Result | Notes |
 | --- | --- | --- | --- | --- |
+| 2026-06-14 | Agentic-security research and metadata hardening | `agy` read-only research, local source review, browser verification, focused refresh/audit tests, self-audit | pass | Fixed allowlist expanded to 88 sources; refresh now withholds adversarial title/heading metadata as review signals; self-audit stayed `100/100`. |
+| 2026-06-14 | Research refresh | `PYTHONPATH=src:. python3 scripts/refresh_research.py --root .` | pass | 88 sources checked; one known Red Hat 403 remains recorded; no adversarial metadata signals were present in current source headings/titles. |
+| 2026-06-14 | Focused security tests | `PYTHONPATH=src:. python3 -m unittest tests.test_refresh_research tests.test_generate_audit`, JSON validation, `git diff --check` | pass | 36 tests passed after adversarial metadata withholding, fixed-allowlist expansion, and prompt-injection/data-poisoning audit boundary updates. |
+| 2026-06-14 | Full local verification | `PYTHONPATH=src:. python3 -m unittest discover -s tests`, compile, pin, self-audit, `./init.sh`, `pwsh -NoProfile -File ./init.ps1` | pass | 73 tests passed directly and through both entrypoints; pin check passed; self-audit stayed `100/100`. |
 | 2026-06-14 | Self-heal automation and local-path policy checks | `PYTHONPATH=src:. python3 -m unittest tests.test_cli tests.test_generate_audit tests.test_pins`, self-audit, pin, compile, diff | pass | 31 focused tests plus full unit discovery with 72 tests passed after setting self-heal to 12:00 UTC, documenting fixed-allowlist research, and adding default audit enforcement for durable local absolute paths. |
 | 2026-06-14 | POSIX verification | `./init.sh` | pass | Doctor, compile, 72 tests, pin check, and self-audit `100/100` after self-heal automation and local-path policy hardening. |
 | 2026-06-14 | PowerShell verification | `pwsh -NoProfile -File ./init.ps1` | pass | Doctor, compile, 72 tests, pin check, and self-audit `100/100` after self-heal automation and local-path policy hardening. |

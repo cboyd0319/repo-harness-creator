@@ -220,7 +220,10 @@ This repo includes a scheduled self-healing workflow in
 It refreshes research metadata, applies only safe harness updates, runs
 verification, and opens a pull request when changes are detected. It does not
 silently mutate `main`. Fetched titles, headings, and hashes are treated as
-untrusted metadata for human review, not executable instructions.
+untrusted metadata for human review, not executable instructions. Metadata that
+resembles prompt injection, indirect prompt injection, data poisoning, or
+credential-exfiltration instructions is withheld from durable output and
+recorded as review signals.
 
 Research sources are tracked in:
 

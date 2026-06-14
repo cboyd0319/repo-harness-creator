@@ -1,7 +1,7 @@
 {
-  "checkedAt": "2026-06-14T18:34:19+00:00",
+  "checkedAt": "2026-06-14T18:56:37+00:00",
   "failureCount": 1,
-  "sourceCount": 76,
+  "sourceCount": 88,
   "sources": [
     {
       "category": "field-report",
@@ -18,7 +18,7 @@
       ],
       "httpStatus": 200,
       "id": "openai-harness-engineering",
-      "sha256": "5ba22164fcf3feefe471544e70da82c608777a29b9bd44f51559880ec0fa8699",
+      "sha256": "2f40a57726aba6b0246bd8144302dc1eaf5c14494e0804de15c32f8c497da3eb",
       "status": "ok",
       "title": "Harness engineering: leveraging Codex in an agent-first world | OpenAI",
       "url": "https://openai.com/index/harness-engineering/"
@@ -36,7 +36,7 @@
       ],
       "httpStatus": 200,
       "id": "anthropic-effective-harnesses",
-      "sha256": "b2f1447f23867daf9bafb79bf136f0ef7eea30ad96a9dae7fb8a57dab9daf5dd",
+      "sha256": "ced17874a261ddf13a9d0e32fd283dcd2db2773101e53465aec75cc60f3ce8c1",
       "status": "ok",
       "title": "Effective harnesses for long-running agents \\ Anthropic",
       "url": "https://www.anthropic.com/engineering/effective-harnesses-for-long-running-agents"
@@ -56,7 +56,7 @@
       ],
       "httpStatus": 200,
       "id": "anthropic-long-running-apps",
-      "sha256": "e5f911abab4e71b9e6c1983d56009aeb8d1acbfc216a15ef145365b877902fac",
+      "sha256": "afa5fcc57b981ff5fd23aa5a114891c562e58937f83fd5eed50860042a0b45bb",
       "status": "ok",
       "title": "Harness design for long-running application development \\ Anthropic",
       "url": "https://www.anthropic.com/engineering/harness-design-long-running-apps"
@@ -241,7 +241,7 @@
       ],
       "httpStatus": 200,
       "id": "google-antigravity-agent",
-      "sha256": "aca04660769a72391c1e9fa13950fa0c54c4e660005a7fd7abf8006dff102d5b",
+      "sha256": "d14fc04fec6a1cf7266ef955caefb0f4019dceecdc35a8c92dd98d40bea6b360",
       "status": "ok",
       "title": "Antigravity Agent | Gemini API | Google AI for Developers",
       "url": "https://ai.google.dev/gemini-api/docs/antigravity-agent"
@@ -319,7 +319,7 @@
       ],
       "httpStatus": 200,
       "id": "walkinglabs-github",
-      "sha256": "350305e18f5693a63ce608e2dca6899dde1efcba11bd391ecb40301ab7e81a13",
+      "sha256": "fee758dd6ead53f26bbcd8336641b84858de8d2c935002fc4f1633a21ad3e5f4",
       "status": "ok",
       "title": "GitHub - walkinglabs/learn-harness-engineering: Harness engineering beginner tutorial, from 0 to 1 \u00b7 GitHub",
       "url": "https://github.com/walkinglabs/learn-harness-engineering"
@@ -359,7 +359,7 @@
       ],
       "httpStatus": 200,
       "id": "walkinglabs-harness-creator-skill",
-      "sha256": "05c53160654bca8235b6128d41161e5da44f263e714403cd5fb67ac3de46da23",
+      "sha256": "39e578d4d4fd9c9bf0636f84f1e1fdf28e1d4d160334fd9b75763c10965376e1",
       "status": "ok",
       "title": "learn-harness-engineering/skills/harness-creator at main \u00b7 walkinglabs/learn-harness-engineering \u00b7 GitHub",
       "url": "https://github.com/walkinglabs/learn-harness-engineering/tree/main/skills/harness-creator"
@@ -379,7 +379,7 @@
       ],
       "httpStatus": 200,
       "id": "agentpatterns-copilot-harness",
-      "sha256": "06b7a7d14ae9fc9337856f42bb9fb3a8a4d4d09e8636fed0a112381f9b3612ad",
+      "sha256": "4a251c1e87a9ae7dfd2e78fc185e27ccc4a98d26673d42e91e74190a01138913",
       "status": "ok",
       "title": "GitHub Copilot: Harness Engineering for Agent-Ready Code - AgentPatterns.ai",
       "url": "https://agentpatterns.ai/training/copilot/harness-engineering/"
@@ -427,7 +427,7 @@
       ],
       "httpStatus": 200,
       "id": "charlesanim-harness-engineering",
-      "sha256": "bc9517080a641c75f2c13016f5a4ea705c99d1679dc9a25de4fc60219371d2c0",
+      "sha256": "a38d728c527ea065dbe47ebbf58298c5b426788a8ce01583f685c57b7cf0fdf6",
       "status": "ok",
       "title": "GitHub - charlesanim/harness-engineering: Agent skill: set up OpenAI's harness engineering methodology in any repo. Works with Copilot, Codex, Claude, Cursor. \u00b7 GitHub",
       "url": "https://github.com/charlesanim/harness-engineering"
@@ -843,7 +843,7 @@
       ],
       "httpStatus": 200,
       "id": "github-actions-checkout",
-      "sha256": "90a0cb1dc7e3be5480c1f58c953b3f8ab89d4d801d81903b7f25c2192b2c82a4",
+      "sha256": "87db4576b688423943785f2f706f06ef08ef9269b7ac69ca3ab09aa69794e5a0",
       "status": "ok",
       "title": "GitHub - actions/checkout: Action for checking out a repo \u00b7 GitHub",
       "url": "https://github.com/actions/checkout"
@@ -887,6 +887,234 @@
       "status": "ok",
       "title": "Server Side Request Forgery Prevention - OWASP Cheat Sheet Series",
       "url": "https://cheatsheetseries.owasp.org/cheatsheets/Server_Side_Request_Forgery_Prevention_Cheat_Sheet.html"
+    },
+    {
+      "category": "agent-security",
+      "contentType": "text/html",
+      "headings": [
+        "OWASP Top 10 for Large Language Model Applications",
+        "About This Repository",
+        "OWASP GenAI Security Project",
+        "Latest Top 10 for LLM Applications",
+        "Project Background and Growth",
+        "Get Involved",
+        "Project Support",
+        "Educational Resources"
+      ],
+      "httpStatus": 200,
+      "id": "owasp-llm-top-10",
+      "sha256": "a9d13708c8c51619d48f32936e7139c63107e577792fce4dccd43ba03e1b80c9",
+      "status": "ok",
+      "title": "OWASP Top 10 for Large Language Model Applications | OWASP Foundation",
+      "url": "https://owasp.org/www-project-top-10-for-large-language-model-applications/"
+    },
+    {
+      "category": "agent-security",
+      "contentType": "text/html",
+      "headings": [
+        "Join us in London, 6/2 \u2013 6/4 InfoSecurity Europe \u2013 OWASP GenAI and Agentic Security Summit",
+        "|",
+        "OWASP Top 10 for Agentic Applications for 2026",
+        "About",
+        "Additional Resources",
+        "State of Agentic AI Security and Governance 2.01",
+        "AIUC-1: Crosswalks OWASP Top 10 For Agentic Applications",
+        "AI Security Solutions Landscape For AI and Agentic Red Teaming Q2 2026"
+      ],
+      "httpStatus": 200,
+      "id": "owasp-agentic-applications-top-10",
+      "sha256": "306428594640d264d178aa7b8ffbf0704a9ae89425bf71250fcb7b96fe21409e",
+      "status": "ok",
+      "title": "OWASP Top 10 for Agentic Applications for 2026 - OWASP Gen AI Security Project",
+      "url": "https://genai.owasp.org/resource/owasp-top-10-for-agentic-applications-for-2026/"
+    },
+    {
+      "category": "agent-security",
+      "contentType": "text/html",
+      "headings": [],
+      "httpStatus": 200,
+      "id": "owasp-agentic-security-initiative",
+      "sha256": "60450145f6ff1252fe74e46abf9fe67b6580a10e3332c94267b755e25d328a94",
+      "status": "ok",
+      "title": "",
+      "url": "https://genai.owasp.org/initiatives/agentic-security-initiative/"
+    },
+    {
+      "category": "agent-security",
+      "contentType": "text/html",
+      "headings": [
+        "Join us in London, 6/2 \u2013 6/4 InfoSecurity Europe \u2013 OWASP GenAI and Agentic Security Summit",
+        "|",
+        "AIUC-1: Crosswalks OWASP Top 10 For Agentic Applications",
+        "About",
+        "Additional Resources",
+        "State of Agentic AI Security and Governance 2.01",
+        "AIUC-1: Crosswalks OWASP Top 10 For Agentic Applications",
+        "AI Security Solutions Landscape For AI and Agentic Red Teaming Q2 2026"
+      ],
+      "httpStatus": 200,
+      "id": "owasp-agentic-applications-crosswalk",
+      "sha256": "8e7c1f29be4a583ffe68b6ee83a00dec951c080071f23ec370d4f379b3f34321",
+      "status": "ok",
+      "title": "AIUC-1: Crosswalks OWASP Top 10 For Agentic Applications - OWASP Gen AI Security Project",
+      "url": "https://genai.owasp.org/resource/aiuc-1-crosswalks-owasp-top-10-for-agentic-applications/"
+    },
+    {
+      "category": "agent-security",
+      "contentType": "text/html",
+      "headings": [
+        "Join us in London, 6/2 \u2013 6/4 InfoSecurity Europe \u2013 OWASP GenAI and Agentic Security Summit",
+        "|",
+        "AI Security Solutions Landscape For AI and Agentic Red Teaming Q2 2026",
+        "About",
+        "Additional Resources",
+        "State of Agentic AI Security and Governance 2.01",
+        "AIUC-1: Crosswalks OWASP Top 10 For Agentic Applications",
+        "AI Security Solutions Landscape For AI and Agentic Red Teaming Q2 2026"
+      ],
+      "httpStatus": 200,
+      "id": "owasp-agentic-red-teaming-landscape",
+      "sha256": "cdeb869b98ea3514f231329bb65a4b831167ec433366d0e80ea42855efd0c72e",
+      "status": "ok",
+      "title": "AI Security Solutions Landscape For AI and Agentic Red Teaming Q2 2026 - OWASP Gen AI Security Project",
+      "url": "https://genai.owasp.org/resource/ai-security-solutions-landscape-for-ai-and-agentic-red-teaming-q2-2026/"
+    },
+    {
+      "category": "agent-security",
+      "contentType": "text/html",
+      "headings": [
+        "OWASP Agentic Skills Top 10",
+        "Table of Contents",
+        "Overview",
+        "Quick Security Checklist",
+        "The Problem: A Crisis Already in Progress",
+        "What Are Agentic Skills?",
+        "Incident Timeline (2026)",
+        "Summary Table"
+      ],
+      "httpStatus": 200,
+      "id": "owasp-agentic-skills-top-10",
+      "sha256": "18222c8b0e31c2b24cfde9b84401a493095b2da92e57e8ce2eb1cbbc550ff4fd",
+      "status": "ok",
+      "title": "OWASP Agentic Skills Top 10 | OWASP Foundation",
+      "url": "https://owasp.org/www-project-agentic-skills-top-10/"
+    },
+    {
+      "category": "agent-security",
+      "contentType": "text/html",
+      "headings": [
+        "Navigation Menu",
+        "Search code, repositories, users, issues, pull requests...",
+        "Provide feedback",
+        "Saved searches",
+        "Use saved searches to filter your results more quickly",
+        "OWASP/www-project-agentic-skills-top-10",
+        "Folders and files",
+        "Latest commit"
+      ],
+      "httpStatus": 200,
+      "id": "owasp-agentic-skills-github",
+      "sha256": "a0066d98c8a4c9776d966119a1b06d1865bf1659ec115db0b9ab1a9ef94b402d",
+      "status": "ok",
+      "title": "GitHub - OWASP/www-project-agentic-skills-top-10: OWASP Foundation web repository \u00b7 GitHub",
+      "url": "https://github.com/OWASP/www-project-agentic-skills-top-10"
+    },
+    {
+      "category": "agent-security",
+      "contentType": "text/html",
+      "headings": [
+        "Navigation Menu",
+        "Search code, repositories, users, issues, pull requests...",
+        "Provide feedback",
+        "Saved searches",
+        "Use saved searches to filter your results more quickly",
+        "Files Expand file tree",
+        "Breadcrumbs",
+        "prompt-injection"
+      ],
+      "httpStatus": 200,
+      "id": "microsoft-agt-prompt-injection-benchmark",
+      "sha256": "5dab024bb40c9f6581f74b9e119b392e706783da37e103dbe71ab3690216da98",
+      "status": "ok",
+      "title": "agent-governance-toolkit/benchmarks/prompt-injection at main \u00b7 microsoft/agent-governance-toolkit \u00b7 GitHub",
+      "url": "https://github.com/microsoft/agent-governance-toolkit/tree/main/benchmarks/prompt-injection"
+    },
+    {
+      "category": "agent-security",
+      "contentType": "text/html",
+      "headings": [
+        "DevSecOps Courses",
+        "Emerging Tech Security Courses",
+        "Application Security Courses",
+        "OWASP Top 10 for Agentic Applications for 2026",
+        "Certified AI Security Professional",
+        "What are Agentic AI Applications?",
+        "Why Securing Agentic AI is Critical",
+        "Unveiling the OWASP Top 10 for Agentic Applications 2026"
+      ],
+      "httpStatus": 200,
+      "id": "practical-devsecops-agentic-top-10",
+      "sha256": "410011b71832221f87e6c831a8575fbc3843290c67c7ea5f8c73017b4c55896e",
+      "status": "ok",
+      "title": "OWASP Top 10 for Agentic Applications for 2026",
+      "url": "https://www.practical-devsecops.com/owasp-top-10-agentic-applications/"
+    },
+    {
+      "category": "agent-security",
+      "contentType": "text/html",
+      "headings": [
+        "OWASP Top 10 for Agentic AI (2026): The Complete Security Guide",
+        "Why Does Agentic AI Need Its Own Security Framework?",
+        "ASI01: Agent Goal Hijack",
+        "ASI02: Tool Misuse & Exploitation",
+        "ASI03: Identity & Privilege Abuse",
+        "ASI04: Agentic Supply Chain Vulnerabilities",
+        "ASI05: Unexpected Code Execution (RCE)",
+        "ASI06: Memory & Context Poisoning"
+      ],
+      "httpStatus": 200,
+      "id": "rogue-security-agentic-ai-guide",
+      "sha256": "b8131bc2c0175ba45049dc207e09d2eeffa14ce652df633354845945d3203e4e",
+      "status": "ok",
+      "title": "OWASP Top 10 for Agentic AI (2026): The Complete Security Guide | Rogue Security",
+      "url": "https://www.rogue.security/blog/owasp-top-10-agentic-ai-2026-guide"
+    },
+    {
+      "category": "agent-security",
+      "contentType": "text/html",
+      "headings": [
+        "AI Coding Agent Security Benchmark",
+        "Agent Security League",
+        "Methodology",
+        "Resources",
+        "Security in every line, so you can code without compromise."
+      ],
+      "httpStatus": 200,
+      "id": "endor-ai-code-security-benchmark",
+      "sha256": "1942f79a251f1798832a3bd153bcce4d6a7f3f75e483870aaa4027cab8d49bc4",
+      "status": "ok",
+      "title": "AI Coding Agent Security Benchmark | Endor Labs",
+      "url": "https://www.endorlabs.com/research/ai-code-security-benchmark"
+    },
+    {
+      "category": "agent-security",
+      "contentType": "text/html",
+      "headings": [
+        "Introduction to Data Poisoning: A 2026 Perspective",
+        "What Is Data Poisoning?",
+        "Data Poisoning in 2026: What We\u2019re Seeing",
+        "Research Deepening Our Understanding",
+        "How to Defend Against Data Poisoning in 2026",
+        "Key Takeaways",
+        "Sources & Further Reading",
+        "Frequently Asked Questions"
+      ],
+      "httpStatus": 200,
+      "id": "lakera-training-data-poisoning",
+      "sha256": "29b7e408f49edc629a1740adbfdf0c6a309b378c540c2694efd002b7f6acd7c7",
+      "status": "ok",
+      "title": "Introduction to Data Poisoning: A 2026 Perspective | Lakera \u2013 Protecting AI teams that disrupt the world.",
+      "url": "https://www.lakera.ai/blog/training-data-poisoning"
     },
     {
       "category": "packaging",
@@ -1142,7 +1370,7 @@
       ],
       "httpStatus": 200,
       "id": "bazel-modules",
-      "sha256": "371b594af1ff6548dc0184147cfb501c01d38875d7885e7f4f3fdf0e81357fa5",
+      "sha256": "2ba9dd09b98fe30cb37396b1cf8494fed39106d1d68f94b6f5bf390bc0d1fd2f",
       "status": "ok",
       "title": "Bazel modules",
       "url": "https://bazel.build/external/module"
@@ -1246,7 +1474,7 @@
       ],
       "httpStatus": 200,
       "id": "medium-monorepos-guide",
-      "sha256": "ce2afd4c40ec321248fca3737b911cac8e889c9f2facb286ab4eb8560a365c48",
+      "sha256": "47aa07b3aa2e0eb3b425870f21ada87bf5dadf31ad755d2689865a54f678f73e",
       "status": "ok",
       "title": "Monorepos: A Comprehensive Guide with Examples | by Md Julakadar | Medium",
       "url": "https://medium.com/@julakadaredrishi/monorepos-a-comprehensive-guide-with-examples-63202cfab711"
@@ -1286,7 +1514,7 @@
       ],
       "httpStatus": 200,
       "id": "github-actions-vanilla-monorepo-example",
-      "sha256": "7731fe17028347f266bbc1014c76c50e110bd0a78b5c0ba20d2842d5717c4755",
+      "sha256": "ddbe6c5a0cd970dc38dac1af1e6c4414841741d74f602d440e0a2459931c6209",
       "status": "ok",
       "title": "GitHub - gamgi/github-actions-vanilla-monorepo-example: An example on how to use GitHub actions in a monorepo. \u00b7 GitHub",
       "url": "https://github.com/gamgi/github-actions-vanilla-monorepo-example"
@@ -1303,7 +1531,7 @@
       ],
       "httpStatus": 200,
       "id": "repo-local-harnesses-linkedin",
-      "sha256": "42ca6a6a80f509a7c7894da8483be496f731ca2bcdf3fc6393dd5568d00891d4",
+      "sha256": "54b04f67df0523d4e18723b470db7c6113edac06dd3878d31b1dbce5c6f6e7bc",
       "status": "ok",
       "title": "Repo-Local Harnesses for Coding Agents, Part 1: Why the Harness Belongs in the Repo",
       "url": "https://www.linkedin.com/pulse/repo-local-harnesses-coding-agents-part-1-why-harness-chris-mamon-c71nf/"
@@ -1343,7 +1571,7 @@
       ],
       "httpStatus": 200,
       "id": "harness-idp-sandbox-monorepo",
-      "sha256": "9f0584282b6f7a79d16d080d310f20f5c2fd09468949d681fb8a95bd67864f10",
+      "sha256": "79db4b0929807555e07f97bf4f309b8e25c37f016b66c74a7b63fddce44aad73",
       "status": "ok",
       "title": "GitHub - harness-idp-sandbox/harness-monorepo \u00b7 GitHub",
       "url": "https://github.com/harness-idp-sandbox/harness-monorepo"
@@ -1363,7 +1591,7 @@
       ],
       "httpStatus": 200,
       "id": "awesome-monorepo",
-      "sha256": "3c3232594565d7c2cc5c16157b73762209725c34f82107b468feae5439ae65a1",
+      "sha256": "6bc06b9b16ba86c377b6f3b0adb12f218458e549f0c9633b29c109f79a49274e",
       "status": "ok",
       "title": "GitHub - korfuri/awesome-monorepo: A curated list of awesome Monorepo tools, software and architectures. \u00b7 GitHub",
       "url": "https://github.com/korfuri/awesome-monorepo"
@@ -1383,7 +1611,7 @@
       ],
       "httpStatus": 200,
       "id": "tomsoir-bazel-monorepo",
-      "sha256": "5f31b5525c51b42a2d53eb691cd17bd15c0b8829decf89f9b2323cf9626589ca",
+      "sha256": "975e6fadab3b7d0ecc5446311cda6f96c75e9cd5574a6b6955bd2a275ccc5652",
       "status": "ok",
       "title": "GitHub - tomsoir/bazel-monorepo: Bazel monorepo example \u00b7 GitHub",
       "url": "https://github.com/tomsoir/bazel-monorepo"

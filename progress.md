@@ -123,17 +123,52 @@ maintenance loop.
   harness docs and state fail audit when they contain machine-local absolute
   paths unless the caller uses an explicit local audit override. The generated
   harness templates carry the same repo-relative-path policy.
+- Completed a deeper agentic-security research pass against OWASP GenAI,
+  OWASP Agentic Applications, OWASP Agentic Skills, Microsoft AGT prompt
+  injection fixtures, Endor's AI coding-agent benchmark, Lakera data-poisoning
+  guidance, and the supplied Practical DevSecOps and Rogue Security summaries.
+  The fixed research allowlist now tracks 88 sources.
+- Hardened research refresh against poisoned source metadata. Titles/headings
+  that resemble prompt injection, indirect prompt injection, credential
+  exfiltration, or sensitive-file access are withheld from durable output and
+  recorded as review signals instead.
+- Added an audit requirement that generated and live harnesses document
+  prompt-injection and data-poisoning boundaries as untrusted-content risks.
 
 ## Recommended Next Step
 
-After push, watch hosted CI for the self-heal automation and local-path policy
-slice. Then decide whether to cut a `v1` Action tag before broader public use,
-whether to keep both Python minors in CI or trim to Python 3.13 only, and
-whether deeper workspace graph parsing or release-time SBOM/provenance should
-come next.
+After push, watch hosted CI for the agentic-security source and metadata
+hardening slice. Then decide whether to cut a `v1` Action tag before broader
+public use, whether to keep both Python minors in CI or trim to Python 3.13
+only, and whether deeper workspace graph parsing or release-time
+SBOM/provenance should come next.
 
 ## Verification Evidence
 
+- Required read-only `agy` research pass completed against this repo plus the
+  local AGT prompt-injection benchmark and OWASP Agentic Skills repo. Findings
+  were personally checked against local files and public OWASP/user-provided
+  sources before implementation.
+- `PYTHONPATH=src:. python3 scripts/refresh_research.py --root .` refreshed
+  88 sources with the same single known Red Hat 403 failure recorded. No
+  current source metadata triggered adversarial review signals.
+- `PYTHONPATH=src:. python3 -m unittest tests.test_refresh_research
+  tests.test_generate_audit` passed with 36 focused tests after adding
+  adversarial-metadata withholding and the prompt-injection/data-poisoning
+  audit boundary.
+- JSON validation for research sources, source template, manifest, and lock
+  files passed. `git diff --check` and self-audit passed; self-audit stayed
+  `100/100`.
+- `PYTHONPATH=src:. python3 -m unittest discover -s tests` passed with 73
+  tests after the agentic-security source and metadata hardening slice.
+- `python3 -m compileall src tests scripts` and `PYTHONPATH=src:. python3
+  scripts/check_pins.py --root .` passed.
+- `./init.sh` passed on macOS 26.5.1 with Python 3.14.5 after the
+  agentic-security source and metadata hardening slice: doctor, compile, 73
+  unit tests, pin check, and self-audit `100/100`.
+- `pwsh -NoProfile -File ./init.ps1` passed on macOS 26.5.1 with Python
+  3.14.5 after the agentic-security source and metadata hardening slice:
+  doctor, compile, 73 unit tests, pin check, and self-audit `100/100`.
 - `PYTHONPATH=src:. python3 -m unittest tests.test_cli
   tests.test_generate_audit tests.test_pins` passed with 31 focused tests after
   self-heal schedule, fixed-allowlist research, and local absolute path audit

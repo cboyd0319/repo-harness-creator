@@ -24,6 +24,39 @@ TITLE_RE = re.compile(r"<title[^>]*>(.*?)</title>", re.IGNORECASE | re.DOTALL)
 H_RE = re.compile(r"<h([12])[^>]*>(.*?)</h\1>", re.IGNORECASE | re.DOTALL)
 TAG_RE = re.compile(r"<[^>]+>")
 MD_HEADING_RE = re.compile(r"^(#{1,2})\s+(.+?)\s*$")
+WITHHELD_ADVERSARIAL_METADATA = "[withheld: adversarial instruction pattern]"
+ADVERSARIAL_METADATA_PATTERNS = (
+    (
+        "ignore-instructions",
+        re.compile(
+            r"\b(?:ignore|disregard)\s+(?:all\s+)?(?:previous|prior|above)\s+instructions\b",
+            re.IGNORECASE,
+        ),
+    ),
+    (
+        "role-header",
+        re.compile(r"\b(?:system|developer|assistant)\s*:", re.IGNORECASE),
+    ),
+    (
+        "prompt-exfiltration",
+        re.compile(
+            r"\b(?:reveal|print|show|dump)\s+(?:your\s+)?(?:system|developer)\s+prompt\b",
+            re.IGNORECASE,
+        ),
+    ),
+    (
+        "secret-exfiltration",
+        re.compile(
+            r"\b(?:exfiltrate|send|upload|post|leak)\b.{0,80}"
+            r"\b(?:secret|token|credential|api\s*key|private\s*key)\b",
+            re.IGNORECASE,
+        ),
+    ),
+    (
+        "sensitive-file-read",
+        re.compile(r"(?:~/.ssh|/etc/passwd|\.env\b)", re.IGNORECASE),
+    ),
+)
 
 
 def main(argv: list[str] | None = None) -> int:
@@ -101,7 +134,11 @@ def _fetch_source(source: dict[str, Any], *, timeout: int) -> dict[str, Any]:
 
     text = raw.decode("utf-8", errors="replace")
     title, headings = _extract_metadata(content_type, text)
-    return {
+    adversarial_signals = _adversarial_metadata_signals(title, headings)
+    if adversarial_signals:
+        title = WITHHELD_ADVERSARIAL_METADATA
+        headings = []
+    record = {
         **base,
         "status": "ok" if 200 <= status < 400 else "error",
         "httpStatus": status,
@@ -110,6 +147,9 @@ def _fetch_source(source: dict[str, Any], *, timeout: int) -> dict[str, Any]:
         "title": title,
         "headings": headings,
     }
+    if adversarial_signals:
+        record["adversarialSignals"] = adversarial_signals
+    return record
 
 
 @dataclass(frozen=True)
@@ -362,6 +402,15 @@ def _extract_partial_json_metadata(text: str) -> tuple[str, list[str]]:
     return title, headings[:8]
 
 
+def _adversarial_metadata_signals(title: str, headings: list[str]) -> list[str]:
+    metadata = "\n".join([title, *headings])
+    return [
+        signal
+        for signal, pattern in ADVERSARIAL_METADATA_PATTERNS
+        if pattern.search(metadata)
+    ]
+
+
 def _json_string_field(text: str, field: str) -> str:
     match = re.search(rf'"{re.escape(field)}"\s*:\s*"((?:[^"\\]|\\.)*)"', text)
     if not match:
@@ -403,18 +452,21 @@ def _render_inbox(lock: dict[str, Any]) -> str:
         "The refresh uses the fixed allowlist in `research-sources.json` only.",
         "It does not search the web, discover latest research, or treat fetched",
         "text as trusted instructions.",
+        "Suspicious metadata is withheld and recorded as review signals.",
         "",
-        "| Source | Status | Title | Headings |",
-        "| --- | --- | --- | --- |",
+        "| Source | Status | Signals | Title | Headings |",
+        "| --- | --- | --- | --- | --- |",
     ]
     for record in lock["sources"]:
         title = _escape_pipe(record.get("title") or record.get("error") or "")
         headings = "; ".join(record.get("headings", [])[:4])
+        signals = ", ".join(record.get("adversarialSignals", []))
         lines.append(
-            "| [{id}]({url}) | {status} | {title} | {headings} |".format(
+            "| [{id}]({url}) | {status} | {signals} | {title} | {headings} |".format(
                 id=_escape_pipe(record["id"]),
                 url=record["url"],
                 status=record["status"],
+                signals=_escape_pipe(signals),
                 title=title,
                 headings=_escape_pipe(headings),
             )

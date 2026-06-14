@@ -117,7 +117,9 @@
       "Required Checks",
       "security wins",
       "machine-local absolute paths",
-      "fixed allowlist"
+      "fixed allowlist",
+      "prompt injection",
+      "data poisoning"
     ],
     "docs/harness/feature-privacy-labels.json": [
       "External AI optional",
@@ -147,12 +149,17 @@
     "docs/harness/self-healing.md": [
       "Self-healing must be reviewable",
       "fixed allowlist",
+      "prompt injection",
       "Safe Loop",
       "Promotion Rule"
     ],
     "docs/harness/research-sources.json": [
       "openai-harness-engineering",
       "github-actions-secure-use",
+      "owasp-llm-top-10",
+      "owasp-agentic-applications-top-10",
+      "owasp-agentic-skills-top-10",
+      "microsoft-agt-prompt-injection-benchmark",
       "setuptools-pypi",
       "pnpm-workspaces",
       "github-actions-workflow-syntax",
@@ -160,6 +167,7 @@
     ],
     "docs/harness/research-inbox.md": [
       "Research Inbox",
+      "review signals",
       "Promotion checklist"
     ],
     "docs/harness/feature-list.schema.json": [
