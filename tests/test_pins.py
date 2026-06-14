@@ -71,6 +71,30 @@ class PinCheckTests(unittest.TestCase):
             any("persist-credentials: false" in line for line in checkout_block)
         )
 
+    def test_self_heal_stages_generated_root_and_template_files(self) -> None:
+        root = Path(__file__).resolve().parents[1]
+        workflow = (root / ".github/workflows/harness-self-heal.yml").read_text(
+            encoding="utf-8"
+        )
+        git_add_line = next(
+            line.strip()
+            for line in workflow.splitlines()
+            if line.strip().startswith("git add ")
+        )
+
+        for path in (
+            "docs/harness",
+            "src/repo_harness_creator/templates",
+            "AGENTS.md",
+            "progress.md",
+            "session-handoff.md",
+            "feature_list.json",
+            "init.sh",
+            "init.ps1",
+        ):
+            with self.subTest(path=path):
+                self.assertIn(path, git_add_line)
+
 
 if __name__ == "__main__":
     unittest.main()

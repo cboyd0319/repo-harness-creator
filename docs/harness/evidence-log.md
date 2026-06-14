@@ -4,6 +4,11 @@ Use this for compact current evidence. Keep raw logs out of this file.
 
 | Date | Scope | Command Or Review | Result | Notes |
 | --- | --- | --- | --- | --- |
+| 2026-06-14 | POSIX verification | `./init.sh` | pass | Doctor, compile, 55 tests, pin check, and self-audit `100/100` after self-heal staging hardening. |
+| 2026-06-14 | PowerShell verification | `pwsh -NoProfile -File ./init.ps1` | pass | Doctor, compile, 55 tests, pin check, and self-audit `100/100` after self-heal staging hardening. |
+| 2026-06-14 | Pin enforcement | `PYTHONPATH=src:. python3 scripts/check_pins.py --root .` | pass | Package build pins and external Action SHAs validated after self-heal workflow change. |
+| 2026-06-14 | Local unit tests | `PYTHONPATH=src:. python3 -m unittest discover -s tests` | pass | 55 tests after self-heal staging hardening. |
+| 2026-06-14 | Self-heal staging review | `PYTHONPATH=src:. python3 -m unittest tests.test_pins` | pass | 4 focused tests after scheduled self-heal PR creation began staging generated root harness files, `docs/harness`, and source templates. |
 | 2026-06-14 | POSIX verification | `./init.sh` | pass | Doctor, compile, 54 tests, pin check, and self-audit `100/100` after cross-platform path-containment hardening. |
 | 2026-06-14 | PowerShell verification | `pwsh -NoProfile -File ./init.ps1` | pass | Doctor, compile, 54 tests, pin check, and self-audit `100/100` after cross-platform path-containment hardening. |
 | 2026-06-14 | Pin enforcement | `PYTHONPATH=src:. python3 scripts/check_pins.py --root .` | pass | Package build pins and external Action SHAs validated after Action metadata wording changed. |

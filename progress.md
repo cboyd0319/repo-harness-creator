@@ -84,12 +84,13 @@ maintenance loop.
   manifest-required files, and local Markdown link checks now recognize POSIX
   and Windows absolute/rooted path syntax consistently; Windows-style relative
   report separators are normalized to target-relative paths.
+- Updated the scheduled self-healing workflow so it stages generated root
+  harness files along with `docs/harness` and source templates, preventing
+  unstaged root updates from causing empty commits or incomplete pull requests.
 
 ## Recommended Next Step
 
-Finish the ease/security re-review against any remaining low-confidence
-findings, then decide whether to cut a `v1` Action tag before broader public
-use.
+Decide whether to cut a `v1` Action tag before broader public use.
 
 ## Verification Evidence
 
@@ -161,6 +162,18 @@ use.
 - `pwsh -NoProfile -File ./init.ps1` passed on macOS 26.5.1 with Python
   3.14.5 after cross-platform path-containment hardening: doctor, compile, 54
   unit tests, pin check, self-audit `100/100`.
+- `PYTHONPATH=src:. python3 -m unittest tests.test_pins` passed with 4 focused
+  tests after self-heal staging hardening.
+- `PYTHONPATH=src:. python3 -m unittest discover -s tests` passed with 55
+  tests after self-heal staging hardening.
+- `PYTHONPATH=src:. python3 scripts/check_pins.py --root .` passed after the
+  self-heal workflow change.
+- `./init.sh` passed on macOS 26.5.1 with Python 3.14.5 after self-heal
+  staging hardening: doctor, compile, 55 unit tests, pin check, self-audit
+  `100/100`.
+- `pwsh -NoProfile -File ./init.ps1` passed on macOS 26.5.1 with Python
+  3.14.5 after self-heal staging hardening: doctor, compile, 55 unit tests, pin
+  check, self-audit `100/100`.
 - `PYTHONPATH=src:. python3 -m unittest discover -s tests` passed with 50
   tests after the current ease/security fix slice.
 - `./init.sh` passed on macOS 26.5.1 with Python 3.14.5 after the current

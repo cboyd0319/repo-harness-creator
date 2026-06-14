@@ -100,9 +100,17 @@ and the required AGENTS instruction format.
 - Current full local POSIX and PowerShell verification passes with 54 tests,
   pin check, and self-audit `100/100` after cross-platform path-containment
   hardening.
+- Resolved a staging gap in `.github/workflows/harness-self-heal.yml`. The
+  self-heal PR step now stages generated root harness files along with
+  `docs/harness` and source templates, preventing empty commits or incomplete
+  pull requests when safe updates touch root files.
+- Current focused self-heal staging check passes: `PYTHONPATH=src:. python3 -m
+  unittest tests.test_pins`.
+- Current full local POSIX and PowerShell verification passes with 55 tests,
+  pin check, and self-audit `100/100` after the final ease/security review
+  fixes.
 
 ## Next Session
 
-Finish the ease/security re-review against any remaining low-confidence
-findings, then decide whether the first release should cut a `v1` Action tag
-before broader public use.
+Decide whether the first release should cut a `v1` Action tag before broader
+public use.
