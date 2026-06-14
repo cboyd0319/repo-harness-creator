@@ -46,9 +46,12 @@
         "2026-06-14: POSIX and PowerShell entrypoints pass with 46 tests and self-audit 100/100 after the current hardening pass.",
         "2026-06-14: Root POSIX entrypoint prepends src when PYTHONPATH is already set; polluted-environment verification passed with 47 tests and self-audit 100/100.",
         "2026-06-14: POSIX and PowerShell entrypoints pass with 47 tests and self-audit 100/100 after the entrypoint fix.",
-        "2026-06-14: Hosted CI run 27490215814 passed on main for commit fda509a across Ubuntu 22.04, macOS 15, and Windows 2025 on Python 3.13.14 and 3.14.6."
+        "2026-06-14: Hosted CI run 27490215814 passed on main for commit fda509a across Ubuntu 22.04, macOS 15, and Windows 2025 on Python 3.13.14 and 3.14.6.",
+        "2026-06-14: CLI bare invocation returns usage error, generated scripts normalize python3 commands, and research refresh accepts validated relative redirects; focused tests passed.",
+        "2026-06-14: Current unit suite passes with 50 tests after the latest ease/security fix slice.",
+        "2026-06-14: POSIX and PowerShell entrypoints pass with 50 tests, pin check, and self-audit 100/100 after the current ease/security fix slice."
       ],
-      "notes": "Latest pushed CI passed; POSIX entrypoint fix passes focused, polluted-environment, local entrypoint, and hosted CI verification."
+      "notes": "Prior pushed CI passed; current local ease/security fixes pass focused, full unit, POSIX, and PowerShell verification."
     }
   ]
 }

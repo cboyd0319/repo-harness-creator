@@ -151,6 +151,18 @@ class GenerateAuditTests(unittest.TestCase):
         self.assertIn("gradlew.bat", init_ps1)
         self.assertIn("Gradle wrapper not found", init_ps1)
 
+    def test_python3_commands_use_selected_interpreter_in_generated_scripts(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            create_harness(root, commands=("python3 -m unittest",))
+            init_sh = (root / "init.sh").read_text(encoding="utf-8")
+            init_ps1 = (root / "init.ps1").read_text(encoding="utf-8")
+
+        self.assertIn('"${PYTHON_BIN}" -m unittest', init_sh)
+        self.assertIn("& $PythonBin -m unittest", init_ps1)
+        self.assertNotIn("\npython3 -m unittest", init_sh)
+        self.assertNotIn("\npython3 -m unittest", init_ps1)
+
     def test_rejects_agent_file_path_traversal(self) -> None:
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp)

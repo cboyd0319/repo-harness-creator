@@ -21,7 +21,7 @@ def main(argv: list[str] | None = None) -> int:
         return int(exc.code) if isinstance(exc.code, int) else 2
     if not hasattr(args, "func"):
         parser.print_help()
-        return 0
+        return 2
     try:
         return int(args.func(args))
     except BrokenPipeError:

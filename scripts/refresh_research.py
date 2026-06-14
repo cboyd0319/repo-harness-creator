@@ -13,7 +13,7 @@ from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
 from urllib.error import HTTPError, URLError
-from urllib.parse import urlparse
+from urllib.parse import urljoin, urlparse
 from urllib.request import HTTPRedirectHandler, Request, build_opener
 
 TITLE_RE = re.compile(r"<title[^>]*>(.*?)</title>", re.IGNORECASE | re.DOTALL)
@@ -157,10 +157,11 @@ class _ValidatedRedirectHandler(HTTPRedirectHandler):
     def redirect_request(  # type: ignore[override]
         self, req, fp, code, msg, headers, newurl
     ):
-        url_error = _source_url_error(newurl)
+        redirect_url = urljoin(getattr(req, "full_url", ""), newurl)
+        url_error = _source_url_error(redirect_url)
         if url_error:
             raise URLError(f"redirect target rejected: {url_error}")
-        return super().redirect_request(req, fp, code, msg, headers, newurl)
+        return super().redirect_request(req, fp, code, msg, headers, redirect_url)
 
 
 def _open_url(request: Request, *, timeout: int):

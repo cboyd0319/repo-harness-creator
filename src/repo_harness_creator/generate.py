@@ -186,14 +186,16 @@ def _powershell_command_block(command: str) -> str:
 
 
 def _portable_shell_command(command: str) -> str:
-    if command == "python" or command.startswith("python "):
-        return f'"${{PYTHON_BIN}}" {command.removeprefix("python").strip()}'.rstrip()
+    python_args = _python_command_args(command)
+    if python_args is not None:
+        return f'"${{PYTHON_BIN}}" {python_args}'.rstrip()
     return command
 
 
 def _portable_powershell_command(command: str) -> str:
-    if command == "python" or command.startswith("python "):
-        return f'& $PythonBin {command.removeprefix("python").strip()}'.rstrip()
+    python_args = _python_command_args(command)
+    if python_args is not None:
+        return f"& $PythonBin {python_args}".rstrip()
     if command == "./gradlew" or command.startswith("./gradlew "):
         args = command.removeprefix("./gradlew").strip()
         suffix = f" {args}" if args else ""
@@ -205,6 +207,16 @@ def _portable_powershell_command(command: str) -> str:
             "} else { throw 'Gradle wrapper not found' }"
         )
     return command
+
+
+def _python_command_args(command: str) -> str | None:
+    for executable in ("python", "python3"):
+        if command == executable:
+            return ""
+        prefix = f"{executable} "
+        if command.startswith(prefix):
+            return command.removeprefix(prefix).strip()
+    return None
 
 
 def _manifest_content(profile: ProjectProfile, agent_file: str) -> str:

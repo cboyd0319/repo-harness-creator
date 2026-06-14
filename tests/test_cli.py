@@ -18,6 +18,14 @@ class CliTests(unittest.TestCase):
         self.assertEqual(code, 0)
         self.assertIn("repo-harness", stdout.getvalue())
 
+    def test_missing_subcommand_returns_usage_error(self) -> None:
+        stdout = io.StringIO()
+        with contextlib.redirect_stdout(stdout):
+            code = main([])
+
+        self.assertEqual(code, 2)
+        self.assertIn("repo-harness", stdout.getvalue())
+
     def test_init_and_audit_commands(self) -> None:
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp)

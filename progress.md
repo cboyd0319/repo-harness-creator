@@ -63,10 +63,17 @@ maintenance loop.
   equivalent path-prepend behavior.
 - Hosted CI run `27490215814` passed on `main` for commit `fda509a` across
   Ubuntu 22.04, macOS 15, and Windows 2025 on Python 3.13.14 and 3.14.6.
+- Continued the ease/security review with an AGY-assisted current-source pass.
+  Fixed three concrete usability and refresh issues: bare CLI invocation now
+  returns a usage error, generated scripts normalize `python3` commands through
+  the selected interpreter, and research refresh validates relative redirects
+  after resolving them against the source URL.
 
 ## Recommended Next Step
 
-Decide whether to cut a `v1` Action tag before broader public use.
+Continue the ease/security re-review against the remaining lower-priority
+findings, then decide whether to cut a `v1` Action tag before broader public
+use.
 
 ## Verification Evidence
 
@@ -109,3 +116,14 @@ Decide whether to cut a `v1` Action tag before broader public use.
   check, self-audit `100/100`.
 - Hosted CI run `27490215814` passed on `main` for commit `fda509a` across
   Ubuntu 22.04, macOS 15, and Windows 2025 on Python 3.13.14 and 3.14.6.
+- `PYTHONPATH=src:. python3 -m unittest tests.test_cli
+  tests.test_generate_audit tests.test_refresh_research` passed with 32 focused
+  tests after the CLI, generated command, and relative redirect fixes.
+- `PYTHONPATH=src:. python3 -m unittest discover -s tests` passed with 50
+  tests after the current ease/security fix slice.
+- `./init.sh` passed on macOS 26.5.1 with Python 3.14.5 after the current
+  state updates: doctor, compile, 50 unit tests, pin check, self-audit
+  `100/100`.
+- `pwsh -NoProfile -File ./init.ps1` passed on macOS 26.5.1 with Python 3.14.5
+  after the current state updates: doctor, compile, 50 unit tests, pin check,
+  self-audit `100/100`.

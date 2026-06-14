@@ -146,6 +146,27 @@ class RefreshResearchTests(unittest.TestCase):
 
         self.assertIn("redirect target rejected", str(raised.exception))
 
+    def test_refresh_accepts_relative_redirect_after_resolving_base_url(self) -> None:
+        handler = refresh_research._ValidatedRedirectHandler()
+        request = refresh_research.Request("https://example.test/source")
+
+        with mock.patch.object(
+            refresh_research,
+            "_resolve_host_addresses",
+            return_value=[refresh_research.ipaddress.ip_address("93.184.216.34")],
+        ):
+            redirected = handler.redirect_request(
+                request,
+                None,
+                302,
+                "Found",
+                {},
+                "/docs",
+            )
+
+        self.assertIsNotNone(redirected)
+        self.assertEqual(redirected.full_url, "https://example.test/docs")
+
     def test_partial_json_metadata_extracts_package_title(self) -> None:
         title, headings = refresh_research._extract_json_metadata(
             '{"info":{"name":"setuptools","version":"82.0.1",'
