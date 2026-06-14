@@ -72,6 +72,10 @@ maintenance loop.
   workflow-command docs. Action outputs now use `$GITHUB_OUTPUT` delimiter
   blocks instead of flattening line breaks, so multiline output values remain a
   single declared output instead of becoming ambiguous environment-file lines.
+- Responded to the hosted CI notice that `windows-2025` requests are being
+  redirected to `windows-2025-vs2026` by June 15, 2026. The CI matrix now uses
+  the explicit `windows-2025-vs2026` runner label, matching current GitHub
+  runner docs and removing ambiguity about the Windows image under test.
 
 ## Recommended Next Step
 
@@ -142,3 +146,7 @@ broader public use.
 - `pwsh -NoProfile -File ./init.ps1` passed on macOS 26.5.1 with Python
   3.14.5 after delimiter-output hardening: doctor, compile, 50 unit tests, pin
   check, self-audit `100/100`.
+- `PYTHONPATH=src:. python3 scripts/check_pins.py --root .` passed after
+  switching the CI matrix to `windows-2025-vs2026`.
+- `git diff --check` passed after switching the CI matrix to
+  `windows-2025-vs2026`.

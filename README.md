@@ -55,7 +55,7 @@ specific project task correctly without real task runs and review.
 | Linux | Ubuntu 22.04 or newer as the explicit floor |
 | Runtime dependencies | Python standard library only |
 | Build backend | `setuptools==82.0.1`, hard pinned |
-| CI coverage | Ubuntu 22.04, macOS 15, Windows 2025 on Python 3.13.14 and 3.14.6 |
+| CI coverage | Ubuntu 22.04, macOS 15, `windows-2025-vs2026` on Python 3.13.14 and 3.14.6 |
 
 Other modern Linux distributions should work when Python 3.13+ is available.
 They are not the stated support floor until they are covered by CI or equivalent

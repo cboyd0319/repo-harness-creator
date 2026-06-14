@@ -51,9 +51,10 @@
         "2026-06-14: Current unit suite passes with 50 tests after the latest ease/security fix slice.",
         "2026-06-14: POSIX and PowerShell entrypoints pass with 50 tests, pin check, and self-audit 100/100 after the current ease/security fix slice.",
         "2026-06-14: GitHub Action outputs use delimiter blocks for GITHUB_OUTPUT; focused Action tests passed.",
-        "2026-06-14: POSIX and PowerShell entrypoints pass with 50 tests, pin check, and self-audit 100/100 after delimiter-output hardening."
+        "2026-06-14: POSIX and PowerShell entrypoints pass with 50 tests, pin check, and self-audit 100/100 after delimiter-output hardening.",
+        "2026-06-14: CI matrix now uses the explicit windows-2025-vs2026 runner label ahead of the June 15, 2026 windows-2025 redirect."
       ],
-      "notes": "Prior pushed CI passed; current local Action-output hardening passes focused, full unit, POSIX, and PowerShell verification."
+      "notes": "Prior pushed CI passed; current local Action-output and runner-label hardening passes focused, full unit, POSIX, and PowerShell verification."
     }
   ]
 }

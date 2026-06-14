@@ -28,7 +28,7 @@ packaging, CI, or platform support changes.
 | Python command-line and environment docs | `PYTHONSAFEPATH` import-path hardening for the composite Action runtime |
 | Python PEP 11 and Python downloads | Python 3.13+ and supported-platform framing |
 | GitHub Actions metadata syntax and composite action docs | Root `action.yml` inputs, outputs, and composite action shape |
-| GitHub Actions hosted runner docs | Ubuntu 22.04, macOS 15, and Windows 2025 runner labels |
+| GitHub Actions hosted runner docs | Ubuntu 22.04, macOS 15, and `windows-2025-vs2026` runner labels |
 | `actions/setup-python` docs | Explicit Python 3.13 setup in the reusable action |
 | `actions/checkout` and `actions/setup-python` tag refs | Verified full-length SHA pins for v6 on 2026-06-14 |
 | PyPI setuptools JSON API | Verified `setuptools==82.0.1` as latest stable on 2026-06-14 |

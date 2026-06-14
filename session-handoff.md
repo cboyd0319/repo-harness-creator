@@ -77,6 +77,9 @@ and the required AGENTS instruction format.
   tests.test_github_action`.
 - Current full unit suite and POSIX/PowerShell entrypoints pass with 50 tests,
   pin check, and self-audit `100/100` after delimiter-output hardening.
+- CI now uses the explicit `windows-2025-vs2026` label after hosted CI warned
+  that `windows-2025` requests are being redirected to that image by June 15,
+  2026.
 
 ## Next Session
 

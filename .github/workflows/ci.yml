@@ -17,7 +17,7 @@ jobs:
         os:
           - ubuntu-22.04
           - macos-15
-          - windows-2025
+          - windows-2025-vs2026
         python-version:
           - "3.13.14"
           - "3.14.6"
