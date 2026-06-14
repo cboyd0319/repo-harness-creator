@@ -10,11 +10,11 @@ the repo over time.
 
 | Domain | Grade | Verification Status | Agent Legibility | Key Gaps |
 | --- | --- | --- | --- | --- |
-| CLI package | A | 22 local tests pass | Clear module boundaries | Hosted CI still pending |
-| GitHub Action | B | Local adapter tests and pin checks pass | Action docs present | Needs live `uses: ./` verification on hosted runners |
-| Harness templates | A | Self-audit passes | Templates include state, security, privacy, component, and lifecycle docs | Needs real repo dogfooding beyond this bootstrap |
-| Supply chain | A | Pin checker passes | Exact package pins and SHA-pinned Actions are documented | Hosted CI enforcement pending |
-| Self-healing | B | Research refresh script and workflow exist | Reviewed PR loop, no silent merge | Scheduled run pending until pushed |
+| CLI package | A | 92 local tests pass | Clear module boundaries | No current cleanup gap |
+| GitHub Action | A | Local adapter tests, pin checks, and prior hosted Action smoke pass | Action docs present | Manual platform workflow remains a release checkpoint |
+| Harness templates | A | Self-audit is 100/100 and generated update dry run is clean | Templates include state, security, privacy, component, and lifecycle docs | Real agent effectiveness still needs representative task runs |
+| Supply chain | A | Pin checker passes | Exact package pins and SHA-pinned Actions are documented and enforced | Release-time SBOM/provenance remains a decision |
+| Self-healing | B | Research refresh script and workflow exist | Reviewed PR loop, no silent merge | Review recurring PR output before merging |
 
 Grades: A is strong, B is usable with known gaps, C needs targeted cleanup, D is
 unsafe to rely on without repair.

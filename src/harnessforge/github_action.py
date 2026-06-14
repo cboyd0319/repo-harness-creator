@@ -196,7 +196,7 @@ def _output(env: Mapping[str, str], values: dict[str, str]) -> None:
 def _output_delimiter(value: str) -> str:
     value_lines = set(value.splitlines())
     while True:
-        delimiter = f"repo_harness_output_{uuid.uuid4().hex}"
+        delimiter = f"harnessforge_output_{uuid.uuid4().hex}"
         if delimiter not in value_lines:
             return delimiter
 

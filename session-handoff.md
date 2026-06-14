@@ -70,6 +70,11 @@ and the required AGENTS instruction format.
   with 92 tests, compile, syntax checks, metadata parse, pin check, diff
   hygiene, self-audit `100/100`, RunHaven audit `100/100`, POSIX entrypoint,
   and PowerShell entrypoint.
+- Current cleanup batch refreshed stale bootstrap entries in
+  `docs/harness/quality-document.md` and renamed the internal GitHub Action
+  output delimiter prefix from the old project wording to `harnessforge`.
+  Focused verification passed Action tests, targeted compile, pin check,
+  self-audit `100/100`, stale-string scan, and diff hygiene.
 - Current OpenAI Codex AI-native engineering guide review imported
   Delegate/Review/Own SDLC boundaries, agent-generated test integrity guidance,
   high-signal review criteria, and the official source URL into the fixed
@@ -279,10 +284,8 @@ and the required AGENTS instruction format.
 
 ## Next Session
 
-Review the local OWASP/security, CI-cost-control, generated-harness alignment,
-local sibling harness comparison, HarnessForge rename, platform-router,
-pins-ledger, and script/boundary commits. Push only at an explicit batch/release
-boundary or user request. Before a public Action release, run the manual
-macOS/Windows platform CI check if hosted platform confirmation is needed, then
-decide whether to cut a `v1` Action tag and which release-time SBOM/provenance
-controls should become blocking.
+Review and commit the current cleanup edits when ready. Push only at an
+explicit batch/release boundary or user request. Before a public Action release,
+run the manual macOS/Windows platform CI check if hosted platform confirmation
+is needed, then decide whether to cut a `v1` Action tag and which release-time
+SBOM/provenance controls should become blocking.
