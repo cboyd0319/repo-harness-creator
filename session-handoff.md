@@ -20,6 +20,7 @@ and the required AGENTS instruction format.
 - `AGENTS.md`
 - `init.sh`
 - `init.ps1`
+- `tests/test_local_entrypoints.py`
 - `feature_list.json`
 - `.github/workflows/ci.yml`
 - `.github/workflows/harness-self-heal.yml`
@@ -28,11 +29,10 @@ and the required AGENTS instruction format.
 
 ## Blockers
 
-- Live Ubuntu 22.04, macOS 15, and Windows 2025 CI execution depends on pushing
-  the current unpushed hardening commit. Local macOS POSIX and PowerShell checks
-  pass with 46 tests, pin check, and self-audit `100/100`.
-- Current full local suite passes with 46 tests, pin check, and self-audit
-  `100/100`.
+- No known blockers.
+- Current full local POSIX and PowerShell verification passes with 47 tests, pin
+  check, and self-audit `100/100`; POSIX also passes when launched with
+  `PYTHONPATH=/tmp`.
 - Research metadata refresh currently tracks 49 sources with one recorded Red
   Hat 403 fetch failure.
 - Root Action manifest regression coverage now checks quoted description values
@@ -59,9 +59,13 @@ and the required AGENTS instruction format.
   and one Red Hat 403.
 - Isolated generated-harness smoke confirms generated research source files now
   contain 49 sources.
+- Root `init.sh` now prepends `src` to an existing `PYTHONPATH`, matching the
+  already-correct PowerShell entrypoint behavior.
+- Current focused entrypoint check passes: `PYTHONPATH=src:. python3 -m
+  unittest tests.test_local_entrypoints`.
 
 ## Next Session
 
-Commit and push the current hardening changes, then watch hosted CI. If it
+Commit and push the current POSIX entrypoint fix, then watch hosted CI. If it
 passes, decide whether the first release should cut a `v1` Action tag before
 broader public use.

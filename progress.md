@@ -58,12 +58,15 @@ maintenance loop.
   Python Packaging, and OWASP guidance. The current pass tightens research
   refresh URL validation for DNS resolutions and redirects, and disables
   persisted checkout credentials in the read-only CI workflow and examples.
+- Fixed the root POSIX verification entrypoint so it prepends `src` even when a
+  user already has `PYTHONPATH` set. The PowerShell entrypoint already had the
+  equivalent path-prepend behavior.
 
 ## Recommended Next Step
 
-Verify and push the current DNS/redirect and checkout-credential hardening
-changes. After hosted CI is green, decide whether to cut a `v1` Action tag
-before broader public use.
+Commit and push the current POSIX entrypoint fix, then watch hosted CI. After
+hosted CI is green, decide whether to cut a `v1` Action tag before broader
+public use.
 
 ## Verification Evidence
 
@@ -95,3 +98,12 @@ before broader public use.
   DNS and redirect validation.
 - Isolated generated-harness smoke passed with 49 research source records after
   adding the new security guidance sources.
+- `PYTHONPATH=src:. python3 -m unittest tests.test_local_entrypoints` failed
+  before the POSIX entrypoint fix and passed after it.
+- `PYTHONPATH=/tmp ./init.sh` passed on macOS 26.5.1 with Python 3.14.5:
+  doctor, compile, 47 unit tests, pin check, self-audit `100/100`.
+- `./init.sh` passed on macOS 26.5.1 with Python 3.14.5 after the final state
+  updates: doctor, compile, 47 unit tests, pin check, self-audit `100/100`.
+- `pwsh -NoProfile -File ./init.ps1` passed on macOS 26.5.1 with Python
+  3.14.5 after the final state updates: doctor, compile, 47 unit tests, pin
+  check, self-audit `100/100`.

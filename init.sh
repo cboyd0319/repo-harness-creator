@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-export PYTHONPATH="${PYTHONPATH:-src}"
+export PYTHONPATH="src${PYTHONPATH:+:${PYTHONPATH}}"
 PYTHON_BIN="${PYTHON:-}"
 if [ -z "$PYTHON_BIN" ]; then
   if command -v python3 >/dev/null 2>&1; then
