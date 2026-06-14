@@ -68,12 +68,17 @@ maintenance loop.
   returns a usage error, generated scripts normalize `python3` commands through
   the selected interpreter, and research refresh validates relative redirects
   after resolving them against the source URL.
+- Continued the GitHub Action output hardening pass against current GitHub
+  workflow-command docs. Action outputs now use `$GITHUB_OUTPUT` delimiter
+  blocks instead of flattening line breaks, so multiline output values remain a
+  single declared output instead of becoming ambiguous environment-file lines.
 
 ## Recommended Next Step
 
-Continue the ease/security re-review against the remaining lower-priority
-findings, then decide whether to cut a `v1` Action tag before broader public
-use.
+Continue the ease/security re-review against the remaining findings, especially
+the research-refresh DNS-rebinding transport question and cross-platform path
+containment helpers, then decide whether to cut a `v1` Action tag before
+broader public use.
 
 ## Verification Evidence
 
@@ -127,3 +132,13 @@ use.
 - `pwsh -NoProfile -File ./init.ps1` passed on macOS 26.5.1 with Python 3.14.5
   after the current state updates: doctor, compile, 50 unit tests, pin check,
   self-audit `100/100`.
+- `PYTHONPATH=src:. python3 -m unittest tests.test_github_action` passed with
+  5 focused Action tests after delimiter-output hardening.
+- `PYTHONPATH=src:. python3 -m unittest discover -s tests` passed with 50
+  tests after delimiter-output hardening.
+- `./init.sh` passed on macOS 26.5.1 with Python 3.14.5 after
+  delimiter-output hardening: doctor, compile, 50 unit tests, pin check,
+  self-audit `100/100`.
+- `pwsh -NoProfile -File ./init.ps1` passed on macOS 26.5.1 with Python
+  3.14.5 after delimiter-output hardening: doctor, compile, 50 unit tests, pin
+  check, self-audit `100/100`.

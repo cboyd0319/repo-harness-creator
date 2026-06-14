@@ -10,6 +10,24 @@ from repo_harness_creator.generate import create_harness
 from repo_harness_creator.github_action import _output, run_from_env
 
 
+def _parse_github_output(text: str) -> dict[str, str]:
+    values = {}
+    lines = iter(text.splitlines())
+    for line in lines:
+        if "<<" in line:
+            key, delimiter = line.split("<<", 1)
+            value_lines = []
+            for value_line in lines:
+                if value_line == delimiter:
+                    break
+                value_lines.append(value_line)
+            values[key] = "\n".join(value_lines)
+        else:
+            key, value = line.split("=", 1)
+            values[key] = value
+    return values
+
+
 class GitHubActionTests(unittest.TestCase):
     def test_action_manifest_quotes_description_values_with_colons(self) -> None:
         action = Path(__file__).resolve().parents[1] / "action.yml"
@@ -56,9 +74,10 @@ class GitHubActionTests(unittest.TestCase):
 
             self.assertEqual(code, 0)
             output_text = output.read_text(encoding="utf-8")
-            self.assertIn("overall-score=", output_text)
-            self.assertIn("report-json=reports/report.json", output_text)
-            self.assertIn("report-html=report.html", output_text)
+            outputs = _parse_github_output(output_text)
+            self.assertTrue(outputs["overall-score"].isdigit())
+            self.assertEqual(outputs["report-json"], "reports/report.json")
+            self.assertEqual(outputs["report-html"], "report.html")
             self.assertTrue((root / "report.html").exists())
             self.assertTrue((root / "reports" / "report.json").exists())
             self.assertIn("Repo Harness Audit", summary.read_text(encoding="utf-8"))
@@ -87,9 +106,18 @@ class GitHubActionTests(unittest.TestCase):
             root = Path(tmp)
             output = root / "outputs.txt"
 
-            _output({"GITHUB_OUTPUT": str(output)}, {"report-json": "report.json\ninjected=true"})
+            _output(
+                {"GITHUB_OUTPUT": str(output)},
+                {"report-json": "report.json\ninjected=true"},
+            )
 
-            self.assertNotIn("\ninjected=true\n", output.read_text(encoding="utf-8"))
+            output_text = output.read_text(encoding="utf-8")
+            outputs = _parse_github_output(output_text)
+            self.assertEqual(set(outputs), {"report-json"})
+            self.assertEqual(
+                outputs["report-json"],
+                "report.json\ninjected=true",
+            )
 
 
 if __name__ == "__main__":

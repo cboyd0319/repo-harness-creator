@@ -3,6 +3,7 @@ from __future__ import annotations
 import json
 import os
 import sys
+import uuid
 from pathlib import Path
 from collections.abc import Mapping
 from typing import Any
@@ -187,8 +188,16 @@ def _output(env: Mapping[str, str], values: dict[str, str]) -> None:
     path = Path(path_text)
     with path.open("a", encoding="utf-8") as handle:
         for key, value in values.items():
-            safe_value = value.replace("\r", " ").replace("\n", " ")
-            handle.write(f"{key}={safe_value}\n")
+            delimiter = _output_delimiter(value)
+            handle.write(f"{key}<<{delimiter}\n{value}\n{delimiter}\n")
+
+
+def _output_delimiter(value: str) -> str:
+    value_lines = set(value.splitlines())
+    while True:
+        delimiter = f"repo_harness_output_{uuid.uuid4().hex}"
+        if delimiter not in value_lines:
+            return delimiter
 
 
 def _bool_input(value: str | None) -> bool:

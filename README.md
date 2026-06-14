@@ -193,8 +193,8 @@ default posture is intentionally restrictive.
   during project detection.
 - Audit reads known files only when they resolve inside the target repository.
 - Local home paths are redacted from durable output.
-- GitHub Action outputs sanitize line breaks before writing to
-  `$GITHUB_OUTPUT`.
+- GitHub Action outputs use GitHub environment-file delimiter blocks instead
+  of flattening line breaks before writing to `$GITHUB_OUTPUT`.
 - GitHub Action report paths must be relative and stay inside the target
   repository.
 - GitHub Action report outputs use target-relative forward-slash paths on every

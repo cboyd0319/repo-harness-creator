@@ -71,9 +71,16 @@ and the required AGENTS instruction format.
 - Current unit suite passes with 50 tests.
 - Current POSIX and PowerShell entrypoints pass with 50 tests, pin check, and
   self-audit `100/100`.
+- Current GitHub Action output hardening writes `$GITHUB_OUTPUT` values with
+  delimiter blocks instead of flattening line breaks.
+- Current focused Action check passes: `PYTHONPATH=src:. python3 -m unittest
+  tests.test_github_action`.
+- Current full unit suite and POSIX/PowerShell entrypoints pass with 50 tests,
+  pin check, and self-audit `100/100` after delimiter-output hardening.
 
 ## Next Session
 
-Continue the ease/security re-review against the remaining lower-priority
-findings, then decide whether the first release should cut a `v1` Action tag
-before broader public use.
+Continue the ease/security re-review against the remaining findings, especially
+the research-refresh DNS-rebinding transport question and cross-platform path
+containment helpers, then decide whether the first release should cut a `v1`
+Action tag before broader public use.

@@ -4,6 +4,11 @@ Use this for compact current evidence. Keep raw logs out of this file.
 
 | Date | Scope | Command Or Review | Result | Notes |
 | --- | --- | --- | --- | --- |
+| 2026-06-14 | GitHub Action output hardening | Current GitHub workflow-command docs plus local code review | pass | Replaced newline flattening with `$GITHUB_OUTPUT` delimiter blocks so multiline values remain one declared output. |
+| 2026-06-14 | GitHub Action tests | `PYTHONPATH=src:. python3 -m unittest tests.test_github_action` | pass | 5 focused tests after delimiter-output hardening. |
+| 2026-06-14 | Local unit tests | `PYTHONPATH=src:. python3 -m unittest discover -s tests` | pass | 50 tests after delimiter-output hardening. |
+| 2026-06-14 | POSIX verification | `./init.sh` | pass | Doctor, compile, 50 tests, pin check, and self-audit `100/100` after delimiter-output hardening. |
+| 2026-06-14 | PowerShell verification | `pwsh -NoProfile -File ./init.ps1` | pass | Doctor, compile, 50 tests, pin check, and self-audit `100/100` after delimiter-output hardening. |
 | 2026-06-14 | Current ease/security review | AGY-assisted current-source pass plus local verification against Python argparse and GitHub Actions docs | pass | Accepted CLI missing-subcommand, generated `python3` normalization, and relative redirect findings; deferred broader/low-confidence findings for separate review. |
 | 2026-06-14 | Focused behavior tests | `PYTHONPATH=src:. python3 -m unittest tests.test_cli tests.test_generate_audit tests.test_refresh_research` | pass | 32 tests covering bare CLI usage errors, generated `python3` interpreter normalization, and validated relative redirects. |
 | 2026-06-14 | Local unit tests | `PYTHONPATH=src:. python3 -m unittest discover -s tests` | pass | 50 tests after the current ease/security fix slice. |
