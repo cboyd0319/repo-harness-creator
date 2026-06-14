@@ -13,6 +13,9 @@ or other externally visible release steps.
 - Run the manual macOS and Windows `workflow_dispatch` platform CI check when
   release changes touch shell behavior, paths, packaging, or GitHub Action
   behavior.
+- Before publishing a package or Action release, build the release artifact and
+  smoke test it from an isolated directory outside this repository so local
+  source files cannot hide missing package data or broken entry points.
 - Record SBOM, provenance, artifact, package, and tag evidence when release
   artifacts are published.
 - Confirm rollback: tag deletion policy, package yanking policy, feature flag,

@@ -14,6 +14,9 @@ or other externally visible release steps.
   checker fits the repo's dependency policy.
 - Use manual platform checks for macOS and Windows when the release changes
   shell behavior, paths, packaging, or GitHub Action behavior.
+- For published packages, build the release artifact and smoke test it from an
+  isolated directory outside the repository so local source files cannot hide
+  missing package data or broken entry points.
 - Record SBOM, provenance, artifact, package, and tag evidence when the project
   publishes release artifacts.
 - Confirm rollback: tag deletion policy, package yanking policy, feature flag,

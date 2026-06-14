@@ -82,9 +82,16 @@ class GenerateAuditTests(unittest.TestCase):
         self.assertEqual(profile.stack, "python")
         self.assertIn("AGENTS.md", written)
         self.assertIn("check_pins.py", written)
+        self.assertIn('cd "$SCRIPT_DIR"', init_sh)
+        self.assertIn("--no-env", init_sh)
+        self.assertIn("OPENAI_API_KEY", init_sh)
         self.assertIn("PYTHON_BIN", init_sh)
         self.assertIn("scripts/check_pins.py --root .", init_sh)
         self.assertIn("repo-harness audit --target . --min-score 85", init_sh)
+        self.assertIn("Set-Location -LiteralPath $ScriptRoot", init_ps1)
+        self.assertIn("function Invoke-Native", init_ps1)
+        self.assertIn("[switch] $NoEnv", init_ps1)
+        self.assertIn("OPENAI_API_KEY", init_ps1)
         self.assertIn("Get-Command python3", init_ps1)
         self.assertIn("scripts/check_pins.py --root .", init_ps1)
         self.assertNotIn("Invoke-Expression", init_ps1)
@@ -136,6 +143,31 @@ class GenerateAuditTests(unittest.TestCase):
                 "steps:\n  - uses: actions/checkout@v6\n",
                 encoding="utf-8",
             )
+            (root / "Dockerfile").write_text(
+                "FROM python:3.13\n",
+                encoding="utf-8",
+            )
+            (root / "requirements.txt").write_text(
+                "requests>=2\n",
+                encoding="utf-8",
+            )
+            (root / "package.json").write_text(
+                json.dumps({"dependencies": {"left-pad": "^1.3.0"}}),
+                encoding="utf-8",
+            )
+            (root / "package-lock.json").write_text(
+                json.dumps(
+                    {
+                        "packages": {
+                            "node_modules/left-pad": {
+                                "version": "1.3.0",
+                                "resolved": "https://example.invalid/left-pad.tgz",
+                            }
+                        }
+                    }
+                ),
+                encoding="utf-8",
+            )
             script = root / "scripts" / "check_pins.py"
 
             advisory = subprocess.run(
@@ -155,6 +187,10 @@ class GenerateAuditTests(unittest.TestCase):
         self.assertIn("Advisory mode", advisory.stdout)
         self.assertEqual(strict.returncode, 1)
         self.assertIn("40-char SHA", strict.stdout)
+        self.assertIn("container base image", strict.stdout)
+        self.assertIn("Python requirement", strict.stdout)
+        self.assertIn("exact npm version", strict.stdout)
+        self.assertIn("package-lock entry", strict.stdout)
 
     def test_existing_files_are_skipped_without_force(self) -> None:
         with tempfile.TemporaryDirectory() as tmp:
@@ -201,6 +237,7 @@ class GenerateAuditTests(unittest.TestCase):
             "docs/harness/release-controls.md",
             "docs/harness/self-healing.md",
             "docs/harness/agent-operating-model.md",
+            "docs/harness/entropy-control.md",
         }
         live_snippets = live["requiredHarnessSnippets"]
         for file_name in sorted(shared_controls):
@@ -338,9 +375,18 @@ class GenerateAuditTests(unittest.TestCase):
             init_ps1 = (root / "init.ps1").read_text(encoding="utf-8")
 
         self.assertIn('"${PYTHON_BIN}" -m unittest', init_sh)
-        self.assertIn("& $PythonBin -m unittest", init_ps1)
+        self.assertIn("Invoke-Native $PythonBin -m unittest", init_ps1)
         self.assertNotIn("\npython3 -m unittest", init_sh)
         self.assertNotIn("\npython3 -m unittest", init_ps1)
+
+    def test_simple_native_powershell_commands_fail_fast(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            create_harness(root, commands=("npm test",))
+            init_ps1 = (root / "init.ps1").read_text(encoding="utf-8")
+
+        self.assertIn("Invoke-Native 'npm' 'test'", init_ps1)
+        self.assertNotIn("\nnpm test", init_ps1)
 
     def test_rejects_agent_file_path_traversal(self) -> None:
         with tempfile.TemporaryDirectory() as tmp:

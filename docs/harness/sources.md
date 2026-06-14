@@ -205,3 +205,13 @@ project-owned docs instead of machine-specific absolute paths.
   memory topic cleanup, and agent-specific tool-permission config validation.
   These need repo ownership and false-positive review before becoming generic
   harness output.
+- Local sibling harness comparison covered macos-container-agents,
+  Bluepeak-AI, persona, pi-harness, WormsWMD-macOS-Fix, unifi-configs,
+  JobSentinel, and cboyd0319. Imported controls are deliberately generic:
+  root-agnostic init execution, PowerShell native exit-code enforcement,
+  optional credential-free local verification, broader advisory pin signals,
+  entropy promotion/evidence/stop rules, explicit completion bars, isolated
+  release-artifact smoke-test guidance, and root scratch-report ignore patterns.
+  App telemetry headers, model routing rules, public wiki mapping, file-size
+  budgets, pre-commit lockfile hooks, and credential-backup test wrappers remain
+  project-specific opt-ins.

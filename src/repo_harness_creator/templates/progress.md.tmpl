@@ -20,6 +20,17 @@ Run the verification entrypoint, then replace placeholder feature state with
 the real current project objective. Create a clean baseline commit after the
 generated harness is reviewed.
 
+## Completion Bar
+
+Do not mark the current objective complete until the evidence proves:
+
+- Acceptance criteria are met from the current checkout.
+- Required local checks passed, or every skipped check has owner, reason, and
+  risk recorded here.
+- No known local absolute path, secret, generated report, or disposable artifact
+  is staged for commit.
+- `session-handoff.md` gives the next agent a restartable path.
+
 ## Verification Evidence
 
 - Pending.

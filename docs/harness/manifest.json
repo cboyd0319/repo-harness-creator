@@ -167,6 +167,7 @@
       "Manual platform",
       "SBOM",
       "provenance",
+      "isolated directory",
       "Rollback"
     ],
     "docs/harness/self-healing.md": [
@@ -208,6 +209,11 @@
       "review signals",
       "Promotion checklist"
     ],
+    "docs/harness/entropy-control.md": [
+      "Promotion Rules",
+      "Evidence Rules",
+      "Stop Conditions"
+    ],
     "docs/harness/feature-list.schema.json": [
       "Repo Harness Feature List",
       "user_visible_behavior",
@@ -215,7 +221,10 @@
     ],
     "scripts/check_pins.py": [
       "40-char SHA",
-      "exact pin"
+      "exact pin",
+      "container base image",
+      "Python requirement",
+      "package-lock entry"
     ],
     "scripts/refresh_research.py": [
       "research-sources.json",

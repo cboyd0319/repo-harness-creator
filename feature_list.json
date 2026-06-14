@@ -84,9 +84,12 @@
         "2026-06-14: POSIX and PowerShell entrypoints pass with 76 tests, pin check, and self-audit 100/100 after the OWASP/security and CI-cost-control batch.",
         "2026-06-14: Deeper Walking Labs resources/projects/harness-creator review accepted generated pin checker, optional workflow scaffolds, release controls, manifest drift coverage, and generated-harness 100/100 quality gate.",
         "2026-06-14: Focused CLI, Action, generator, and pin tests pass with 45 tests after adding optional workflow scaffolds and generated release controls.",
-        "2026-06-14: Full unit discovery passes with 81 tests after generated pin checker, optional workflow scaffolds, release controls, manifest drift control, and audit scoring fix."
+        "2026-06-14: Full unit discovery passes with 81 tests after generated pin checker, optional workflow scaffolds, release controls, manifest drift control, and audit scoring fix.",
+        "2026-06-14: Local sibling harness comparison accepted root-agnostic init execution, PowerShell native fail-fast handling, optional credential-free verification, broader advisory pin signals, entropy rules, completion bars, isolated release smoke guidance, and scratch-report ignores.",
+        "2026-06-14: Focused generator and pin tests pass with 33 tests after local-harness comparison changes.",
+        "2026-06-14: Full local verification passes with 84 tests, compile, pin check, self-audit 100/100, JSON validation, diff hygiene, no-env POSIX/PowerShell entrypoints, and scratch-report ignore checks."
       ],
-      "notes": "Prior pushed CI passed. Current generated-harness alignment batch passes focused tests, full unit discovery, compile, pin enforcement, diff hygiene, and self-audit. Remote macOS/Windows CI remains intentionally manual to control cost."
+      "notes": "Prior pushed CI passed. Current local-harness comparison batch passes full unit discovery, compile, pin enforcement, self-audit, JSON validation, diff hygiene, no-env POSIX/PowerShell entrypoints, and scratch-report ignore checks. Remote macOS/Windows CI remains intentionally manual to control cost."
     }
   ]
 }

@@ -60,6 +60,19 @@ and the required AGENTS instruction format.
   release evidence, and rollback controls. Architecture scanners, memory index
   checks, memory topic cleanup, and agent-specific permission config validation
   remain deferred project-specific opt-ins.
+- Local sibling harness comparison imported root-agnostic init execution,
+  PowerShell native fail-fast handling, optional `--no-env`/`-NoEnv`
+  credential-free verification, broader advisory pin signals for containers,
+  Python requirements, package manifests, and npm lockfiles, entropy
+  promotion/evidence/stop rules, completion bars, isolated release-artifact
+  smoke-test guidance, and root scratch-report ignore patterns. App telemetry
+  headers, model routing rules, public wiki mapping, file-size budgets,
+  pre-commit lockfile hooks, and credential-backup test wrappers remain
+  deferred project-specific opt-ins.
+- Current local-harness comparison batch passes 84 tests, compile, strict live
+  pin check, JSON validation, diff hygiene, self-audit `100/100`, POSIX
+  `--no-env` verification, PowerShell `-NoEnv` verification, and scratch-report
+  ignore checks.
 - Current OWASP/security and CI-cost-control batch passes focused tests, full
   unit discovery with 76 tests, compile, pin check, JSON validation, diff
   hygiene, self-audit `100/100`, and both POSIX and PowerShell entrypoints.
@@ -215,9 +228,9 @@ and the required AGENTS instruction format.
 
 ## Next Session
 
-Review the local OWASP/security, CI-cost-control, and generated-harness
-alignment commits. Push only at an explicit batch/release boundary or user
-request. Before a public Action release, run the manual macOS/Windows platform
-CI check if hosted platform confirmation is needed, then decide whether to cut
-a `v1` Action tag and which release-time SBOM/provenance controls should become
-blocking.
+Review the local OWASP/security, CI-cost-control, generated-harness alignment,
+and local sibling harness comparison commits. Push only at an explicit
+batch/release boundary or user request. Before a public Action release, run the
+manual macOS/Windows platform CI check if hosted platform confirmation is
+needed, then decide whether to cut a `v1` Action tag and which release-time
+SBOM/provenance controls should become blocking.

@@ -50,6 +50,9 @@ repo-harness update --target .
 Run `repo-harness update --target . --apply` only when you want safe missing-file
 corrections. Existing files are preserved unless `--force` is passed.
 
+Run `./init.sh --no-env` or `.\init.ps1 -NoEnv` when checks should run without
+common AI, cloud, or GitHub credentials in the process environment.
+
 ## When To Add Harness
 
 Add a doc, script, test, or manifest rule when:

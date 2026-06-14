@@ -155,15 +155,26 @@ maintenance loop.
 - Fixed audit scoring so a domain only receives `5/5` when every check in that
   domain passes. This prevents a single failed security or scope check from
   rounding to a perfect score.
+- Rechecked harnesses from macos-container-agents, Bluepeak-AI, persona,
+  pi-harness, WormsWMD-macOS-Fix, unifi-configs, JobSentinel, and cboyd0319.
+  Accepted generic controls that fit this project and generated harnesses now:
+  root-agnostic local entrypoints, PowerShell native exit-code enforcement,
+  optional `--no-env`/`-NoEnv` credential-free verification, broader advisory
+  pin checks for containers, Python requirements, package manifests, and npm
+  lockfiles, entropy promotion/evidence/stop rules, explicit completion bars,
+  isolated release-artifact smoke-test guidance, and root scratch-report ignore
+  patterns. Deferred app telemetry headers, model routing rules, public wiki
+  mapping, file-size budgets, pre-commit lockfile hooks, and credential-backup
+  test wrappers as project-specific opt-ins.
 
 ## Recommended Next Step
 
-Review the local commits for the OWASP/security, CI-cost-control, and
-generated-harness alignment batches. Push only at an explicit batch/release
-boundary or user request. Before a first public Action release, run the manual
-macOS/Windows platform CI check if hosted platform confirmation is needed, then
-decide whether to cut a `v1` Action tag and which release-time SBOM/provenance
-controls should become blocking.
+Review the local commits for the OWASP/security, CI-cost-control,
+generated-harness alignment, and local-repo harness comparison batches. Push
+only at an explicit batch/release boundary or user request. Before a first
+public Action release, run the manual macOS/Windows platform CI check if hosted
+platform confirmation is needed, then decide whether to cut a `v1` Action tag
+and which release-time SBOM/provenance controls should become blocking.
 
 ## Verification Evidence
 
@@ -205,6 +216,28 @@ controls should become blocking.
   scripts/check_pins.py --root .`, `git diff --check`, and
   `PYTHONPATH=src:. python3 -m repo_harness_creator audit --target .
   --min-score 85` passed; self-audit stayed `100/100`.
+- Local sibling harness comparison completed with a read-only AGY supplement and
+  direct file review. Imported controls are root-agnostic init execution,
+  PowerShell native fail-fast handling, optional credential-free verification,
+  broader advisory pin signals, entropy promotion/evidence/stop rules,
+  completion bars, isolated release-artifact smoke-test guidance, and root
+  scratch-report ignore patterns.
+- `PYTHONPATH=src:. python3 -m unittest tests.test_generate_audit
+  tests.test_pins` passed with 33 focused tests after the local-harness
+  comparison changes.
+- `python3 -m compileall scripts src tests`, `PYTHONPATH=src:. python3
+  scripts/check_pins.py --root .`, and JSON validation for
+  `feature_list.json` and `docs/harness/manifest.json` passed after the
+  local-harness comparison changes.
+- `PYTHONPATH=src:. python3 -m unittest discover -s tests` passed with 84
+  tests after the local-harness comparison changes. Compile, pin check,
+  self-audit `100/100`, JSON validation, and `git diff --check` passed.
+- `repo-harness-creator/init.sh --no-env` and `repo-harness-creator/init.ps1
+  -NoEnv` passed from the parent directory with seeded AI API-key environment
+  variables, proving root-agnostic execution and credential-clearing paths for
+  POSIX and PowerShell.
+- `git check-ignore -v TEST_REPORT.md TEST_PLAN.md TEST_SUMMARY.md` confirmed
+  root scratch-report ignore patterns are active.
 - Required read-only `agy` research pass completed against this repo plus the
   local AGT prompt-injection benchmark and OWASP Agentic Skills repo. Findings
   were personally checked against local files and public OWASP/user-provided

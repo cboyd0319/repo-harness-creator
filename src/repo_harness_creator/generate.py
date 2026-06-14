@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import json
 import os
+import shlex
 import stat
 from datetime import UTC, datetime
 from importlib.resources import files
@@ -223,17 +224,20 @@ def _portable_shell_command(command: str) -> str:
 def _portable_powershell_command(command: str) -> str:
     python_args = _python_command_args(command)
     if python_args is not None:
-        return f"& $PythonBin {python_args}".rstrip()
+        return f"Invoke-Native $PythonBin {python_args}".rstrip()
     if command == "./gradlew" or command.startswith("./gradlew "):
         args = command.removeprefix("./gradlew").strip()
         suffix = f" {args}" if args else ""
         return (
             "if (Test-Path '.\\gradlew.bat') { "
-            f"& '.\\gradlew.bat'{suffix} "
+            f"Invoke-Native '.\\gradlew.bat'{suffix} "
             "} elseif (Test-Path '.\\gradlew') { "
-            f"& '.\\gradlew'{suffix} "
+            f"Invoke-Native '.\\gradlew'{suffix} "
             "} else { throw 'Gradle wrapper not found' }"
         )
+    simple = _simple_powershell_command(command)
+    if simple is not None:
+        return simple
     return command
 
 
@@ -245,6 +249,23 @@ def _python_command_args(command: str) -> str | None:
         if command.startswith(prefix):
             return command.removeprefix(prefix).strip()
     return None
+
+
+def _simple_powershell_command(command: str) -> str | None:
+    if any(character in command for character in "\n\r|&;<>(){}[]`$"):
+        return None
+    try:
+        parts = shlex.split(command)
+    except ValueError:
+        return None
+    if not parts:
+        return None
+    quoted = " ".join(_powershell_single_quote(part) for part in parts)
+    return f"Invoke-Native {quoted}"
+
+
+def _powershell_single_quote(value: str) -> str:
+    return "'" + value.replace("'", "''") + "'"
 
 
 def _manifest_content(
@@ -369,6 +390,7 @@ def _manifest_content(
             "Manual platform",
             "SBOM",
             "provenance",
+            "isolated directory",
             "Rollback",
         ],
         "docs/harness/self-healing.md": [
@@ -410,10 +432,18 @@ def _manifest_content(
             "review signals",
             "Promotion checklist",
         ],
+        "docs/harness/entropy-control.md": [
+            "Promotion Rules",
+            "Evidence Rules",
+            "Stop Conditions",
+        ],
         "scripts/check_pins.py": [
             "40-char SHA",
             "--strict",
             "unexpected build hook",
+            "container base image",
+            "Python requirement",
+            "package-lock entry",
         ],
     }
     if with_ci_workflow:

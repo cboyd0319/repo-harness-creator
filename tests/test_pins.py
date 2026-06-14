@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import tempfile
 import unittest
+import json
 from pathlib import Path
 
 from scripts.check_pins import check_root
@@ -72,6 +73,67 @@ class PinCheckTests(unittest.TestCase):
             failures = check_root(root)
 
         self.assertTrue(any("build hook file" in failure for failure in failures))
+
+    def test_rejects_mutable_container_and_requirement_pins(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            (root / "pyproject.toml").write_text(
+                "[build-system]\n"
+                'requires = ["setuptools==82.0.1"]\n'
+                'build-backend = "setuptools.build_meta"\n',
+                encoding="utf-8",
+            )
+            (root / "Dockerfile").write_text(
+                "FROM python:3.13\n",
+                encoding="utf-8",
+            )
+            (root / "requirements-dev.txt").write_text(
+                "pytest>=8\n",
+                encoding="utf-8",
+            )
+
+            failures = check_root(root)
+
+        self.assertTrue(any("container base image" in failure for failure in failures))
+        self.assertTrue(any("Python requirement" in failure for failure in failures))
+
+    def test_rejects_mutable_package_json_and_lockfile_entries(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            (root / "pyproject.toml").write_text(
+                "[build-system]\n"
+                'requires = ["setuptools==82.0.1"]\n'
+                'build-backend = "setuptools.build_meta"\n',
+                encoding="utf-8",
+            )
+            (root / "package.json").write_text(
+                json.dumps(
+                    {
+                        "dependencies": {"left-pad": "^1.3.0"},
+                        "devDependencies": {"workspace-lib": "workspace:*"},
+                    }
+                ),
+                encoding="utf-8",
+            )
+            (root / "package-lock.json").write_text(
+                json.dumps(
+                    {
+                        "packages": {
+                            "node_modules/left-pad": {
+                                "version": "1.3.0",
+                                "resolved": "https://example.invalid/left-pad.tgz",
+                            }
+                        }
+                    }
+                ),
+                encoding="utf-8",
+            )
+
+            failures = check_root(root)
+
+        self.assertTrue(any("exact npm version" in failure for failure in failures))
+        self.assertTrue(any("npm registry tarball" in failure for failure in failures))
+        self.assertTrue(any("sha512 integrity" in failure for failure in failures))
 
     def test_multiline_workflow_shell_blocks_fail_fast(self) -> None:
         root = Path(__file__).resolve().parents[1]

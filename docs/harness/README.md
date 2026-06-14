@@ -54,6 +54,9 @@ The GitHub Action in `action.yml` exposes the same behavior to other
 repositories. Keep it wired to the Python library instead of duplicating logic
 in shell.
 
+Run `./init.sh --no-env` or `.\init.ps1 -NoEnv` when checks should run without
+common AI, cloud, or GitHub credentials in the process environment.
+
 The scheduled self-healing workflow refreshes `research-inbox.md`, applies safe
 missing-file harness updates, verifies the repo, and opens a pull request when
 there is a reviewable change.
