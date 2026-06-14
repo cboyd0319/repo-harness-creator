@@ -178,6 +178,11 @@ maintenance loop.
   platform auto-memory remains personal state until stable facts are promoted
   into reviewed harness docs. Deferred the sibling project's dependency-heavy
   blueprint, MCP, settings, and global-config machinery.
+- Completed a deep pass on OpenAI's Codex guide, "Building an AI-Native
+  Engineering Team." Accepted the durable controls that fit this repo and
+  generated harnesses: Delegate/Review/Own ownership boundaries across the
+  SDLC, test-integrity review for agent-written tests, high-signal review
+  criteria, and official source provenance in the fixed research allowlist.
 
 ## Recommended Next Step
 
@@ -261,6 +266,24 @@ controls should become blocking.
 - `./init.sh` and `pwsh -NoProfile -File ./init.ps1` passed on macOS 26.5.1
   with Python 3.14.5 after the platform-router batch: doctor, compile, 85 unit
   tests, pin check, and self-audit `100/100`.
+- The official OpenAI Codex AI-native engineering guide was reviewed from the
+  provided local copy and official source URL. Imported controls are
+  Delegate/Review/Own SDLC boundaries, agent-generated test integrity, and
+  high-signal review guidance.
+- `PYTHONPATH=src:. python3 scripts/refresh_research.py --root .` refreshed
+  107 fixed-allowlist sources with the same known Red Hat 403 failure.
+- `PYTHONPATH=src:. python3 -m unittest tests.test_generate_audit
+  tests.test_refresh_research` passed with 42 focused tests after adding the
+  Codex SDLC controls and source entry.
+- `PYTHONPATH=src:. python3 -m unittest discover -s tests` passed with 85 tests.
+  `python3 -m compileall scripts src tests`, `PYTHONPATH=src:. python3
+  scripts/check_pins.py --root .`, `PYTHONPATH=src:. python3 -m harnessforge
+  audit --target . --min-score 85`, JSON validation, and `git diff --check`
+  passed. The local-path scan found only the intentional file-scheme refresh
+  rejection test fixture.
+- `./init.sh` and `pwsh -NoProfile -File ./init.ps1` passed on macOS 26.5.1
+  with Python 3.14.5 after the Codex SDLC controls batch: doctor, compile, 85
+  unit tests, pin check, and self-audit `100/100`.
 - `harnessforge/init.sh --no-env` and `harnessforge/init.ps1
   -NoEnv` passed from the parent directory with seeded AI API-key environment
   variables, proving root-agnostic execution and credential-clearing paths for

@@ -9,6 +9,7 @@ practice change over time.
 ## Portable Source Set
 
 - OpenAI, "Harness engineering: leveraging Codex in an agent-first world"
+- OpenAI Codex guide, "Building an AI-Native Engineering Team"
 - Anthropic, "Effective harnesses for long-running agents"
 - Anthropic, "Harness design for long-running application development"
 - Martin Fowler, "Harness engineering for coding agent users"
@@ -77,3 +78,10 @@ practice change over time.
   canonical checked-in instruction file. Ignore local override files and treat
   platform auto-memory as personal state until stable facts are promoted into
   reviewed harness docs.
+- Spell out Delegate/Review/Own boundaries across planning, design/build,
+  testing, review/docs, and deploy/maintain work.
+- Review agent-written tests for intent and integrity. Reject stubbed or
+  assertion-free tests, and confirm new tests fail before implementation when
+  practical.
+- Keep agent-assisted review high-signal by prioritizing correctness, security,
+  data integrity, migration risk, scalability, test integrity, and architecture.

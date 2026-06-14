@@ -8,6 +8,11 @@
       "category": "field-report"
     },
     {
+      "id": "openai-ai-native-engineering",
+      "url": "https://developers.openai.com/codex/guides/build-ai-native-engineering-team",
+      "category": "codex-sdlc"
+    },
+    {
       "id": "anthropic-effective-harnesses",
       "url": "https://www.anthropic.com/engineering/effective-harnesses-for-long-running-agents",
       "category": "field-report"

@@ -32,6 +32,18 @@ Agents in this repo should work as maintainers of a CLI product.
   every local commit; push only at an explicit batch boundary, release point, or
   user request.
 
+## Delegate Review Own
+
+Use agents for first passes, but keep ownership explicit.
+
+| Phase | Delegate | Review | Own |
+| --- | --- | --- | --- |
+| Plan | Map a request to code paths, dependencies, affected components, and unknowns. | Check assumptions, estimates, missing edge cases, and non-obvious risks. | Prioritization, sequencing, non-goals, and product tradeoffs. |
+| Design and build | Draft scoped implementations, refactors, tests, docs, and generated-file changes for well-specified work. | Architecture, security, performance, migration risk, accessibility, and project fit. | New abstractions, cross-cutting changes, ambiguous product behavior, and long-term maintainability. |
+| Test | Propose test cases and first-pass tests, preferably in a separate step for risky behavior changes. | Reject stubbed, assertion-free, or shortcut tests; confirm tests are runnable and, when practical, fail before the fix. | Test intent, coverage expectations, edge cases, and user-experience alignment. |
+| Review and document | Draft review findings, module summaries, diagrams, release notes, and internal docs. | Keep feedback high-signal, bug-focused, and concise; verify important, public, or safety-critical docs. | Final merge decisions, documentation structure, and public, legal, security-sensitive, or brand-sensitive content. |
+| Deploy and maintain | Correlate logs, git history, and candidate root causes; propose diagnostics or hotfixes. | Validate root cause, reliability, security, compliance, rollback, and least privilege. | Production changes, incident judgment, sensitive operations, and final sign-off. |
+
 ## Finish
 
 - Run focused tests and the self-audit.

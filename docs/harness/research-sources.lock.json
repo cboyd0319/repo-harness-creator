@@ -1,7 +1,7 @@
 {
-  "checkedAt": "2026-06-14T19:22:44+00:00",
+  "checkedAt": "2026-06-14T20:56:44+00:00",
   "failureCount": 1,
-  "sourceCount": 106,
+  "sourceCount": 107,
   "sources": [
     {
       "category": "field-report",
@@ -18,10 +18,30 @@
       ],
       "httpStatus": 200,
       "id": "openai-harness-engineering",
-      "sha256": "1d545a8acd160c12a269356cbe3f6ec89a2cbb2e1a98bc0495c4668b12cc755b",
+      "sha256": "9f31badcb1c49a62b4b6677cbcb29edaa0f4e29f5b245a650a34a060ebdb3b92",
       "status": "ok",
       "title": "Harness engineering: leveraging Codex in an agent-first world | OpenAI",
       "url": "https://openai.com/index/harness-engineering/"
+    },
+    {
+      "category": "codex-sdlc",
+      "contentType": "text/html",
+      "headings": [
+        "Search the Codex docs",
+        "Building an AI-Native Engineering Team",
+        "Introduction",
+        "AI Coding: From Autocomplete to Agents",
+        "1. Plan",
+        "2. Design",
+        "3. Build",
+        "4. Test"
+      ],
+      "httpStatus": 200,
+      "id": "openai-ai-native-engineering",
+      "sha256": "6122333e857b7a9d21585e215ab44d01144b1c1d96ae8e5e8bc146b86c60f64b",
+      "status": "ok",
+      "title": "Building an AI-Native Engineering Team \u2013 Codex | OpenAI Developers",
+      "url": "https://developers.openai.com/codex/guides/build-ai-native-engineering-team"
     },
     {
       "category": "field-report",
@@ -36,7 +56,7 @@
       ],
       "httpStatus": 200,
       "id": "anthropic-effective-harnesses",
-      "sha256": "71d165a77f3407f562ef0e867466094b8c1e4f565faa545bbef1b96beab05c14",
+      "sha256": "646b3649917541529f7f1c7dfb5450fd5335f9da15038e66fc46a2661b6ccf94",
       "status": "ok",
       "title": "Effective harnesses for long-running agents \\ Anthropic",
       "url": "https://www.anthropic.com/engineering/effective-harnesses-for-long-running-agents"
@@ -56,7 +76,7 @@
       ],
       "httpStatus": 200,
       "id": "anthropic-long-running-apps",
-      "sha256": "c86a8193c6a9f2ba18de7eb5b30375c9acce218130fc9449c2a1ea49bbbcb14f",
+      "sha256": "e9bc3349aa3e12e73116fdbcfab1302e6c221ae445939a18bccba04520cf783b",
       "status": "ok",
       "title": "Harness design for long-running application development \\ Anthropic",
       "url": "https://www.anthropic.com/engineering/harness-design-long-running-apps"
@@ -163,7 +183,7 @@
       ],
       "httpStatus": 200,
       "id": "langchain-deepagents-harness",
-      "sha256": "fa6953c4d160f61c18534e64f390afd3133e391c2c699206a7a725cfa7d9b5d3",
+      "sha256": "96023b8c73540db984cfa9ba8cd52087b69d6341c18655c2018537250b7bd696",
       "status": "ok",
       "title": "Harness capabilities - Docs by LangChain",
       "url": "https://docs.langchain.com/oss/python/deepagents/harness"
@@ -241,7 +261,7 @@
       ],
       "httpStatus": 200,
       "id": "google-antigravity-agent",
-      "sha256": "0b09030fbd46bd799d96a607f38233bf175dca4aa7ff0ebd4472063bb9e1bf3b",
+      "sha256": "1a616375e43ff03bddebf0fae871f4ceb0de5f83cd0a9217e04fe8a380ba7044",
       "status": "ok",
       "title": "Antigravity Agent | Gemini API | Google AI for Developers",
       "url": "https://ai.google.dev/gemini-api/docs/antigravity-agent"
@@ -319,7 +339,7 @@
       ],
       "httpStatus": 200,
       "id": "walkinglabs-github",
-      "sha256": "c6fc522f86e71c72320d495a523796f67c1fef7d57ab5bf4b877da24f77e238d",
+      "sha256": "e612c4701b89b5356602e2a7968f5b7cdf5b06112af20298374a6e22211a0b11",
       "status": "ok",
       "title": "GitHub - walkinglabs/learn-harness-engineering: Harness engineering beginner tutorial, from 0 to 1 \u00b7 GitHub",
       "url": "https://github.com/walkinglabs/learn-harness-engineering"
@@ -359,7 +379,7 @@
       ],
       "httpStatus": 200,
       "id": "walkinglabs-harness-creator-skill",
-      "sha256": "6beb428c6b92103387266532f0b05519d1e61a3dd453eaec636afecfcdf9aae6",
+      "sha256": "efd8a89b7e115eb321909bc1fea801c6c112c8c6b2384d1ee6d865942fd11ac1",
       "status": "ok",
       "title": "learn-harness-engineering/skills/harness-creator at main \u00b7 walkinglabs/learn-harness-engineering \u00b7 GitHub",
       "url": "https://github.com/walkinglabs/learn-harness-engineering/tree/main/skills/harness-creator"
@@ -379,7 +399,7 @@
       ],
       "httpStatus": 200,
       "id": "agentpatterns-copilot-harness",
-      "sha256": "4e1e2f3bb68a3ff211826c8d3a05d46cad66a4291094a82f3436d6bf197fb322",
+      "sha256": "4cbaee77235f5567a90f824399e09f2f405af81f190cbea0e26fda0252c9a6f0",
       "status": "ok",
       "title": "GitHub Copilot: Harness Engineering for Agent-Ready Code - AgentPatterns.ai",
       "url": "https://agentpatterns.ai/training/copilot/harness-engineering/"
@@ -427,7 +447,7 @@
       ],
       "httpStatus": 200,
       "id": "charlesanim-harness-engineering",
-      "sha256": "d20c785fbba3378203732ae5f4b737047cbec16c099a1e6bbdad08c3b8e8f62a",
+      "sha256": "faed4ca40d903288bee674aed0701612ece1347409eb49b752546f0effa89033",
       "status": "ok",
       "title": "GitHub - charlesanim/harness-engineering: Agent skill: set up OpenAI's harness engineering methodology in any repo. Works with Copilot, Codex, Claude, Cursor. \u00b7 GitHub",
       "url": "https://github.com/charlesanim/harness-engineering"
@@ -843,7 +863,7 @@
       ],
       "httpStatus": 200,
       "id": "github-actions-checkout",
-      "sha256": "97cb7b0b5101a59e491404637ed3e843565d841f2e5318233380b75b4f73f712",
+      "sha256": "9adee40504b6b39ddfaf5152a6e2e65cf1d5495d47899848b5e9b6f31419921d",
       "status": "ok",
       "title": "GitHub - actions/checkout: Action for checking out a repo \u00b7 GitHub",
       "url": "https://github.com/actions/checkout"
@@ -897,7 +917,7 @@
       ],
       "httpStatus": 200,
       "id": "owasp-cheat-sheet-series",
-      "sha256": "bb0065e02a4405c37385c88b4267010b3715c0bfee3b15d810d99a2674432a5e",
+      "sha256": "a3b57c8548253c4d1bb304842eecc980cd150481bbd13c44ab6c6bebb9236b65",
       "status": "ok",
       "title": "OWASP Foundation - The Open Source Foundation for Application Security",
       "url": "https://www.owasp.community/projects/cheat-sheet-series"
@@ -917,7 +937,7 @@
       ],
       "httpStatus": 200,
       "id": "owasp-security-shepherd",
-      "sha256": "3476209b0543d7d2e036d6fc15f0c74e3533ec5b84b8ce52d975cba0dc53749d",
+      "sha256": "9d795633c962d0691b2fa5888e076be28130c0a154c3ec2defc5dfa08976037a",
       "status": "ok",
       "title": "GitHub - OWASP/SecurityShepherd: Web and mobile application security training platform \u00b7 GitHub",
       "url": "https://github.com/OWASP/SecurityShepherd"
@@ -937,7 +957,7 @@
       ],
       "httpStatus": 200,
       "id": "owasp-pytm",
-      "sha256": "dd221327bad3cf62dea3240ad8f8d97cad68429f82b69397e2da30d3e76814ba",
+      "sha256": "27dc3c4614b82bddfab148fcaa4dbf56b029ca4d11064472802fdf424a4ce945",
       "status": "ok",
       "title": "GitHub - OWASP/pytm: A Pythonic framework for threat modeling \u00b7 GitHub",
       "url": "https://github.com/OWASP/pytm"
@@ -1242,7 +1262,7 @@
       ],
       "httpStatus": 200,
       "id": "owasp-llm-top-10",
-      "sha256": "fd06d7746d37a7b1f3f13778feff0165fd85e1ee1c0b765e3636fafc8e2c4e63",
+      "sha256": "ae2a95d5709a71e231028545c48bd543da608c1df3ff425a29210e0cff8619a3",
       "status": "ok",
       "title": "OWASP Top 10 for Large Language Model Applications | OWASP Foundation",
       "url": "https://owasp.org/www-project-top-10-for-large-language-model-applications/"
@@ -1293,7 +1313,7 @@
       ],
       "httpStatus": 200,
       "id": "owasp-agentic-applications-crosswalk",
-      "sha256": "9c7c9b1fa6eb20c5b4e4efce9bcf0e4946139074bf1c75beda2b4169c2c17720",
+      "sha256": "8e7c1f29be4a583ffe68b6ee83a00dec951c080071f23ec370d4f379b3f34321",
       "status": "ok",
       "title": "AIUC-1: Crosswalks OWASP Top 10 For Agentic Applications - OWASP Gen AI Security Project",
       "url": "https://genai.owasp.org/resource/aiuc-1-crosswalks-owasp-top-10-for-agentic-applications/"
@@ -1313,7 +1333,7 @@
       ],
       "httpStatus": 200,
       "id": "owasp-agentic-red-teaming-landscape",
-      "sha256": "cdeb869b98ea3514f231329bb65a4b831167ec433366d0e80ea42855efd0c72e",
+      "sha256": "7033cf102b3d3acdbcba5d15c996c58b49bef8c01bed06f5396788c732a19a55",
       "status": "ok",
       "title": "AI Security Solutions Landscape For AI and Agentic Red Teaming Q2 2026 - OWASP Gen AI Security Project",
       "url": "https://genai.owasp.org/resource/ai-security-solutions-landscape-for-ai-and-agentic-red-teaming-q2-2026/"
@@ -1333,7 +1353,7 @@
       ],
       "httpStatus": 200,
       "id": "owasp-agentic-skills-top-10",
-      "sha256": "cd1ec8ca4a30e9afb96f43cf4f1ab4a02658f20d1023f2bb5ecbeb6acbd5f46e",
+      "sha256": "ad155984a6737abe1367a4dd46fccb40bfc3a4fd2fd1d9e0a1d65b2451bcee41",
       "status": "ok",
       "title": "OWASP Agentic Skills Top 10 | OWASP Foundation",
       "url": "https://owasp.org/www-project-agentic-skills-top-10/"
@@ -1353,7 +1373,7 @@
       ],
       "httpStatus": 200,
       "id": "owasp-agentic-skills-github",
-      "sha256": "febb3baa7718d08c34ab306c48b0a920c2b76389dc0605ef70edf0e8deae6781",
+      "sha256": "f8abfd501c98612551de03372766dc51ca0aaa92a71f57eb3aad7b6aa9ddbca1",
       "status": "ok",
       "title": "GitHub - OWASP/www-project-agentic-skills-top-10: OWASP Foundation web repository \u00b7 GitHub",
       "url": "https://github.com/OWASP/www-project-agentic-skills-top-10"
@@ -1373,7 +1393,7 @@
       ],
       "httpStatus": 200,
       "id": "microsoft-agt-prompt-injection-benchmark",
-      "sha256": "c74bd35a0bd1a0a87c87e7b7d905969311f23bcb929220be241ad38d80bc6d74",
+      "sha256": "59b10e7a44d2116d8b505a1025531bdb4f7ad17b29534bd2173ca575b50d2b97",
       "status": "ok",
       "title": "agent-governance-toolkit/benchmarks/prompt-injection at main \u00b7 microsoft/agent-governance-toolkit \u00b7 GitHub",
       "url": "https://github.com/microsoft/agent-governance-toolkit/tree/main/benchmarks/prompt-injection"
@@ -1393,7 +1413,7 @@
       ],
       "httpStatus": 200,
       "id": "practical-devsecops-agentic-top-10",
-      "sha256": "2496fceedf136f236a4c6bf8c5f0f736c873ecb24cfbc11fc1d6577cdaf648f8",
+      "sha256": "e4bbaa5ea5cab37336d4362af6fb4a000f07072ed894e169500b4ed973411d49",
       "status": "ok",
       "title": "OWASP Top 10 for Agentic Applications for 2026",
       "url": "https://www.practical-devsecops.com/owasp-top-10-agentic-applications/"
@@ -1709,7 +1729,7 @@
       ],
       "httpStatus": 200,
       "id": "bazel-modules",
-      "sha256": "dfe496e9ec6ae4477e8c40e7e048b3e346a57c4e4237d291ab09f23b37919287",
+      "sha256": "8a5369711841139d19fc4d25574ce77f7b8863eee3c545eb11e2a209ed4966b1",
       "status": "ok",
       "title": "Bazel modules",
       "url": "https://bazel.build/external/module"
@@ -1813,7 +1833,7 @@
       ],
       "httpStatus": 200,
       "id": "medium-monorepos-guide",
-      "sha256": "0e02e8164044a9d22c825bde32b3bac5a1a62f0316a9149359930c2cc6219a35",
+      "sha256": "6580c0b9c33b3e3dc89d28e03bf28f3154a49a32fa77ad720c3483724d96b4da",
       "status": "ok",
       "title": "Monorepos: A Comprehensive Guide with Examples | by Md Julakadar | Medium",
       "url": "https://medium.com/@julakadaredrishi/monorepos-a-comprehensive-guide-with-examples-63202cfab711"
@@ -1853,7 +1873,7 @@
       ],
       "httpStatus": 200,
       "id": "github-actions-vanilla-monorepo-example",
-      "sha256": "574137c02f7d4c863574f23ac4a841a82f1a18322e7d9d2bd1cb2ab044c24c5d",
+      "sha256": "cfe397b4a27e6c6acf95c4243629364d275bada4fb435a204978a2c9dd0a8b20",
       "status": "ok",
       "title": "GitHub - gamgi/github-actions-vanilla-monorepo-example: An example on how to use GitHub actions in a monorepo. \u00b7 GitHub",
       "url": "https://github.com/gamgi/github-actions-vanilla-monorepo-example"
@@ -1870,7 +1890,7 @@
       ],
       "httpStatus": 200,
       "id": "repo-local-harnesses-linkedin",
-      "sha256": "2aac28076c438c6929d8ea060bc7a783fba0b4c57aef8b289111885e01c88a14",
+      "sha256": "b32521b0fc1e5366c56ecfaa39de1bec6214cfb30ed667abdbe7f9be561e1912",
       "status": "ok",
       "title": "Repo-Local Harnesses for Coding Agents, Part 1: Why the Harness Belongs in the Repo",
       "url": "https://www.linkedin.com/pulse/repo-local-harnesses-coding-agents-part-1-why-harness-chris-mamon-c71nf/"
@@ -1910,7 +1930,7 @@
       ],
       "httpStatus": 200,
       "id": "harness-idp-sandbox-monorepo",
-      "sha256": "9dc3e51806350c002f1b0b2036b69c571d5a16b759566bec10ec9b773b4228ae",
+      "sha256": "605917d2c3140b5c846c70f9de73eb5f443d2896a7df3ed2c8c4eebe68eb7e49",
       "status": "ok",
       "title": "GitHub - harness-idp-sandbox/harness-monorepo \u00b7 GitHub",
       "url": "https://github.com/harness-idp-sandbox/harness-monorepo"
@@ -1930,7 +1950,7 @@
       ],
       "httpStatus": 200,
       "id": "awesome-monorepo",
-      "sha256": "8ad2d367051231726eb5c067807ea4dfcfc2e62557606a2f5a83c7f55c2ace2b",
+      "sha256": "b0578b13cfc913c7e4bbca3b2a734000f6af9b74fd2ad6021dcdc549151d0463",
       "status": "ok",
       "title": "GitHub - korfuri/awesome-monorepo: A curated list of awesome Monorepo tools, software and architectures. \u00b7 GitHub",
       "url": "https://github.com/korfuri/awesome-monorepo"
@@ -1950,7 +1970,7 @@
       ],
       "httpStatus": 200,
       "id": "tomsoir-bazel-monorepo",
-      "sha256": "def45de2ea2b30ba5bcdbb706827b1125957acbb18dd640a7a13847e810f4314",
+      "sha256": "1d33fe493838130d6a24e37ce8ee990c521511acd91727d11e5d031f876cee62",
       "status": "ok",
       "title": "GitHub - tomsoir/bazel-monorepo: Bazel monorepo example \u00b7 GitHub",
       "url": "https://github.com/tomsoir/bazel-monorepo"

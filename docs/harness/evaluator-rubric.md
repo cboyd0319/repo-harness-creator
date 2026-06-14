@@ -24,6 +24,13 @@ Score each category from 0 to 2.
 Record any rubric weakness here when human judgment and the rubric disagree.
 Update this file before using the same evaluation again.
 
+## Agent Review Signal
+
+Agent-assisted review should prioritize high-signal defects: correctness,
+security, race or data integrity, migration risk, scalability, test integrity,
+and architectural fit. Avoid promoting style noise or speculative cleanup into
+blocking feedback unless it changes maintainability or user-visible behavior.
+
 ## Benchmark And Effectiveness Claims
 
 Do not present structural audit scores, smoke tests, or synthetic benchmarks as

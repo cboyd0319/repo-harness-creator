@@ -68,6 +68,9 @@ real cost.
 - Do not claim done without verification evidence.
 - Prefer local linting, tests, pin checks, and audit before remote CI.
 - Add or update focused tests for changed behavior when practical.
+- For behavior changes, prefer a separate test-design step when practical.
+  Reject stubbed, assertion-free, or shortcut tests, and confirm new tests fail
+  before implementation when that failure is reliable and cheap to reproduce.
 - Record skipped checks with reason and risk in durable state.
 - Definition Of Done: target behavior or documentation change is complete,
   acceptance criteria are satisfied, relevant checks ran, and the next session

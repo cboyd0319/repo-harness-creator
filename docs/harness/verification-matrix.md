@@ -15,6 +15,7 @@ Windows remote checks are manual `workflow_dispatch` platform checks.
 | Scoring rules | Positive and negative audit tests |
 | Platform handling | Doctor tests or CI on the affected OS |
 | Docs only | Self-audit and link/source review when URLs changed |
+| Agent-generated tests | Review test intent before implementation, reject stubbed or assertion-free tests, and confirm new tests fail before the fix when practical |
 | Packaging metadata | Editable install or entrypoint smoke test |
 | Dependencies, tool versions, or workflow Actions | `python scripts/check_pins.py --root .`, primary-source version evidence, install smoke, and affected tests |
 | AI/RAG/agent tools, external data flow, auth, secrets, or deployment boundary | Update security boundary/threat model evidence, run focused abuse-case tests, self-audit, and affected local tests |

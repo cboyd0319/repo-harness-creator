@@ -74,6 +74,9 @@ real cost.
 - Prefer local linting, tests, pin checks, and audit before remote CI.
 - Add focused tests for CLI behavior, filesystem writes, scoring, Action
   behavior, research refresh logic, and cross-platform path handling.
+- For behavior changes, prefer a separate test-design step when practical.
+  Reject stubbed, assertion-free, or shortcut tests, and confirm new tests fail
+  before implementation when that failure is reliable and cheap to reproduce.
 - Verify generated files work for POSIX and Windows paths.
 - Do not claim authoritative product quality from structural checks alone. Real
   agent effectiveness still needs representative task runs.

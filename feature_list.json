@@ -89,9 +89,10 @@
         "2026-06-14: Focused generator and pin tests pass with 33 tests after local-harness comparison changes.",
         "2026-06-14: Full local verification passes with 84 tests, compile, pin check, self-audit 100/100, JSON validation, diff hygiene, no-env POSIX/PowerShell entrypoints, and scratch-report ignore checks.",
         "2026-06-14: Project renamed to HarnessForge across the import package, CLI, Action metadata, docs, templates, tests, live workflows, and harness state; rename verification passes entrypoints, stale-name scan, install smoke, and self-audit 100/100.",
-        "2026-06-14: Best-practices, memory, and MIT sibling HarnessForge review accepted compact Claude/Gemini/Copilot routers, local agent override ignores, verification-command trust controls, and personal-state treatment for platform auto-memory; focused tests, full tests, entrypoints, pin check, compile, JSON validation, local-path scan, diff hygiene, and self-audit 100/100 passed."
+        "2026-06-14: Best-practices, memory, and MIT sibling HarnessForge review accepted compact Claude/Gemini/Copilot routers, local agent override ignores, verification-command trust controls, and personal-state treatment for platform auto-memory; focused tests, full tests, entrypoints, pin check, compile, JSON validation, local-path scan, diff hygiene, and self-audit 100/100 passed.",
+        "2026-06-14: OpenAI Codex AI-native engineering guide review accepted Delegate/Review/Own SDLC boundaries, agent-generated test integrity guidance, high-signal review criteria, and official source provenance; research refresh checked 107 sources with one known Red Hat 403, focused tests passed with 42 tests, full tests passed with 85 tests, entrypoints passed, and self-audit stayed 100/100."
       ],
-      "notes": "Prior pushed CI passed. Current HarnessForge rename and platform-router batches pass focused and full unit tests, POSIX and PowerShell entrypoints, compile, pin enforcement, metadata/JSON validation, stale-name and local-path scans, install smoke, diff hygiene, and self-audit. Remote macOS/Windows CI remains intentionally manual to control cost."
+      "notes": "Prior pushed CI passed. Current HarnessForge rename, platform-router, and Codex SDLC controls batches pass focused and full unit tests, POSIX and PowerShell entrypoints, compile, pin enforcement, metadata/JSON validation, stale-name and local-path scans, install smoke, diff hygiene, research refresh, and self-audit. Remote macOS/Windows CI remains intentionally manual to control cost."
     }
   ]
 }

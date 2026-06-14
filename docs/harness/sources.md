@@ -10,6 +10,7 @@ packaging, CI, or platform support changes.
 | Source | Current use |
 | --- | --- |
 | OpenAI, "Harness engineering: leveraging Codex in an agent-first world" | Repo-as-spec framing, environment design, intent, feedback loops |
+| OpenAI Codex guide, "Building an AI-Native Engineering Team" | Delegate/Review/Own boundaries across planning, design, build, test, review, documentation, and operations |
 | Anthropic, "Effective harnesses for long-running agents" | Long-running work needs more than compaction and a high-level prompt |
 | Anthropic, "Harness design for long-running application development" | One-feature-at-a-time execution and handoff artifacts |
 | Martin Fowler, "Harness engineering for coding agent users" | Guides and sensors model, feedback loops, reducing review toil |
@@ -188,6 +189,17 @@ project-owned docs instead of machine-specific absolute paths.
   pattern: one canonical checked-in instruction file, short platform routers,
   local override files ignored, and platform auto-memory treated as personal
   state until stable facts are promoted into reviewed harness docs.
+- The OpenAI Codex AI-native engineering guide reinforced SDLC-specific
+  ownership boundaries. Generated harnesses now spell out what agents may
+  draft, what humans must review, and what maintainers still own across
+  planning, design/build, testing, review/docs, and deploy/maintain work.
+- Agent-written tests need test-integrity review, not only successful execution.
+  Harness guidance now prefers a separate test-design step for behavior changes,
+  rejects stubbed or assertion-free tests, and asks maintainers to confirm new
+  tests fail before implementation when practical.
+- Agent-assisted code review should stay high-signal. The evaluator now points
+  reviews toward correctness, security, data integrity, migration risk,
+  scalability, test integrity, and architecture instead of style noise.
 - Research provenance is part of the product surface. Public source URLs live
   in `research-sources.json`, refresh metadata lives in
   `research-sources.lock.json`, and local sibling references are recorded in

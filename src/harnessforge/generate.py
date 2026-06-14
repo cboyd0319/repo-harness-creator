@@ -357,6 +357,7 @@ def _manifest_content(
             "feature_list.json",
             "progress.md",
             "remote CI",
+            "stubbed",
         ],
         ".github/copilot-instructions.md": [
             "source of truth",
@@ -380,6 +381,8 @@ def _manifest_content(
             "When Checks Cannot Run",
             "Remote CI",
             "AI/RAG/agent",
+            "Agent-generated tests",
+            "stubbed",
             "intentionally vulnerable",
         ],
         "docs/harness/component-inventory.md": [
@@ -429,6 +432,8 @@ def _manifest_content(
             "Correctness",
             "Verification",
             "Handoff Readiness",
+            "high-signal defects",
+            "test integrity",
         ],
         "docs/harness/quality-document.md": [
             "Quality Document",
@@ -465,12 +470,16 @@ def _manifest_content(
             "owasp-llm-top-10",
             "owasp-agentic-applications-top-10",
             "owasp-agentic-skills-top-10",
+            "openai-ai-native-engineering",
             "microsoft-agt-prompt-injection-benchmark",
             "pnpm-workspaces",
             "github-actions-workflow-syntax",
             "terraform-standard-module-structure",
         ],
         "docs/harness/agent-operating-model.md": [
+            "Delegate",
+            "Review",
+            "Own",
             "least privilege",
             "human approval",
             "verification commands",

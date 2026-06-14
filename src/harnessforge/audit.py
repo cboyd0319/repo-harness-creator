@@ -576,6 +576,11 @@ def _feedback_checks(files: dict[str, str], link_failures: list[str]) -> list[Ch
         _check("docs/harness/evaluator-rubric.md" in files, "Evaluator rubric exists for output review"),
         _contains(all_text, ("Verification Evidence", "Evidence", "command output"), "Evidence recording is requested"),
         _contains(all_text, ("audit", "assess", "score"), "Regular assessment loop is documented"),
+        _contains(
+            all_text,
+            ("stubbed", "assertion-free", "test intent"),
+            "Agent-generated test integrity is documented",
+        ),
         _contains_all(
             all_text,
             ("local checks", "push", "remote CI"),
@@ -614,6 +619,11 @@ def _scope_checks(
             all_text,
             ("least privilege", "human approval", "cost-incurring"),
             "Agent tool approval boundary is documented",
+        ),
+        _contains_all(
+            all_text,
+            ("Delegate", "Review", "Own"),
+            "Agent delegation and ownership boundary is documented",
         ),
         _contains_all(
             all_text,

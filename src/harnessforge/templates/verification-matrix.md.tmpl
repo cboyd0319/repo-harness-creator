@@ -18,6 +18,7 @@ requires every-push coverage.
 | Java code | `mvn test`, `./gradlew test`, or project equivalent |
 | .NET code | `dotnet test` |
 | Terraform or infrastructure | `terraform fmt -check -recursive` plus project-specific validation |
+| Agent-generated tests | Review test intent before implementation, reject stubbed or assertion-free tests, and confirm new tests fail before the fix when practical |
 | Security, auth, secrets, data loss, or billing | Focused tests, human review, rollback path, and least-privilege check |
 | Dependencies, tool versions, or workflow Actions | Pin check, primary-source version evidence, install smoke, and affected tests |
 | AI/RAG/agent tools, external data flow, auth, secrets, or deployment boundary | Update security boundary/threat model evidence, run focused abuse-case tests, self-audit, and affected local tests |

@@ -49,6 +49,14 @@ and the required AGENTS instruction format.
 ## Blockers
 
 - No known blockers.
+- Current OpenAI Codex AI-native engineering guide review imported
+  Delegate/Review/Own SDLC boundaries, agent-generated test integrity guidance,
+  high-signal review criteria, and the official source URL into the fixed
+  allowlist. Current Codex SDLC controls batch passes focused tests with 42
+  tests, full unit discovery with 85 tests, compile, pin check, JSON
+  validation, research refresh with 107 sources and one known Red Hat 403,
+  diff hygiene, local-path scan, POSIX entrypoint, PowerShell entrypoint, and
+  self-audit `100/100`.
 - Current best-practices, memory, and MIT sibling HarnessForge review imported
   compact generated routers for Claude, Gemini, and Copilot; local agent
   override ignore patterns; command-trust wording; and personal-state treatment
