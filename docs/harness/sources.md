@@ -54,6 +54,17 @@ packaging, CI, or platform support changes.
 | pre-commit README | Minimal README pattern that sends users to canonical docs when the README is not the full manual |
 | Requests README | Minimal mature-project README pattern with docs-first routing |
 | OpenSSF Scorecard | Security posture signal and supply-chain best-practice framing |
+| pnpm, Yarn, npm, and Bun workspace docs | JavaScript package-manager workspace root markers and workspace-member routing |
+| Turborepo, Nx, Lerna, and Rush docs | JavaScript monorepo orchestrator markers and root-vs-leaf task routing |
+| uv workspace docs | Python workspace root marker, shared lockfile model, and all-package run behavior |
+| Cargo and Go workspace docs | Rust `[workspace]` and Go `go.work` multi-module workspace detection |
+| Gradle multi-project and Maven POM docs | JVM multi-project root markers: `settings.gradle(.kts)` and `pom.xml <modules>` |
+| Microsoft .NET solution docs | `.sln` and `.slnx` solution files as multi-project roots |
+| Bazel, Pants, and Buck2 docs | Polyglot build-system root markers and root-scoped test commands |
+| GitHub Actions workflow syntax docs | Monorepo workflow routing through path filters, reusable workflows, local actions, and `working-directory` |
+| Terraform standard module structure docs | Infrastructure roots and nested modules as component boundaries |
+| Atlassian monorepo tutorial, Medium monorepo guide, awesome-monorepo, General Reasoning vanilla monorepo, Harness IDP sandbox monorepo, and tomsoir Bazel monorepo | Field examples for large Git performance concerns, app/package/tool/config layouts, vanilla component-folder routing, IDP-generated app roots, and Bazel-plus-pnpm polyglot layouts |
+| Chris Mamon and Lukas Masuch repo-harness field reports | Repo-local harnesses as project-specific workflow, state, validation, automation, and agent-instruction layers |
 
 ## Local References
 
@@ -93,6 +104,17 @@ project-owned docs instead of machine-specific absolute paths.
 - Monorepos and multi-component repos need explicit routing boundaries.
   Generated harnesses now include `component-inventory.md` and record detected
   package/runtime component manifests.
+- Workspace roots and leaf components are different boundaries. Detection now
+  records workspace/orchestrator markers separately from nested package
+  manifests, including JavaScript workspaces, uv/Cargo/Go workspaces,
+  Gradle/Maven/.NET multi-project roots, and Bazel/Pants/Buck roots.
+- Some monorepos have no root workspace tool. Detection now records inferred
+  multi-component layouts, repo routing markers such as GitHub workflow path
+  filters and `working-directory`, local Actions, devcontainers, Harness IDP
+  folders, and existing agent-instruction files.
+- Infrastructure monorepos often use Terraform roots and nested modules as the
+  practical ownership boundary. Detection now treats standard Terraform root
+  files as component markers without adding Terraform-specific dependencies.
 - Personal-machine trust requires fail-closed filesystem behavior. `init`
   rejects unsafe instruction filenames, preflights generated destinations, and
   refuses writes that resolve outside the target repo.

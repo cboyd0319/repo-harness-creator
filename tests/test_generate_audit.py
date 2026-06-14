@@ -109,6 +109,49 @@ class GenerateAuditTests(unittest.TestCase):
         self.assertIn("docs/harness/research-sources.json", manifest["requiredFiles"])
         self.assertIn("detectedComponents", manifest)
 
+    def test_generated_component_inventory_records_workspace_markers(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            (root / "package.json").write_text(
+                json.dumps(
+                    {
+                        "packageManager": "pnpm@10.0.0",
+                        "workspaces": ["packages/*"],
+                    }
+                ),
+                encoding="utf-8",
+            )
+            (root / "pnpm-workspace.yaml").write_text(
+                "packages:\n  - packages/*\n",
+                encoding="utf-8",
+            )
+            (root / ".github" / "workflows").mkdir(parents=True)
+            (root / ".github" / "workflows" / "component.yml").write_text(
+                "on:\n"
+                "  pull_request:\n"
+                "    paths:\n"
+                "      - 'packages/**'\n",
+                encoding="utf-8",
+            )
+            create_harness(root)
+            inventory = (root / "docs/harness/component-inventory.md").read_text(
+                encoding="utf-8"
+            )
+            manifest = json.loads(
+                (root / "docs/harness/manifest.json").read_text(encoding="utf-8")
+            )
+
+        self.assertIn("## Detected Workspace Markers", inventory)
+        self.assertIn("## Detected Routing Markers", inventory)
+        self.assertIn("package.json workspaces", inventory)
+        self.assertIn("pnpm-workspace.yaml", inventory)
+        self.assertIn(".github/workflows path filters", inventory)
+        self.assertIn("package.json workspaces", manifest["detectedWorkspaceMarkers"])
+        self.assertIn(
+            ".github/workflows path filters",
+            manifest["detectedRoutingMarkers"],
+        )
+
     def test_audit_catches_missing_local_markdown_links(self) -> None:
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp)

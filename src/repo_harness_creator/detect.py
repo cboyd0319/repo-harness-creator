@@ -5,6 +5,7 @@ import re
 import tomllib
 from pathlib import Path
 from typing import Any
+from xml.etree import ElementTree
 
 from .models import ProjectProfile
 from .paths import is_inside_root
@@ -18,7 +19,12 @@ IGNORED_DIRS = {
     ".ruff_cache",
     ".tox",
     ".venv",
+    ".pants.d",
+    ".rush",
     "__pycache__",
+    "bazel-bin",
+    "bazel-out",
+    "bazel-testlogs",
     "build",
     "dist",
     "node_modules",
@@ -27,17 +33,46 @@ IGNORED_DIRS = {
 }
 
 COMPONENT_MARKERS = {
+    ".buckconfig",
+    ".terraform.lock.hcl",
+    "BUILD",
+    "BUILD.bazel",
     "Cargo.toml",
     "Gemfile",
     "Makefile",
+    "MODULE.bazel",
+    "Pipfile",
+    "REPO.bazel",
+    "WORKSPACE",
+    "WORKSPACE.bazel",
+    "composer.json",
     "build.gradle",
     "build.gradle.kts",
-    "composer.json",
     "global.json",
     "go.mod",
+    "go.work",
+    "lerna.json",
+    "nx.json",
+    "pants.toml",
     "package.json",
+    "pnpm-workspace.yaml",
     "pom.xml",
     "pyproject.toml",
+    "requirements.txt",
+    "rush.json",
+    "settings.gradle",
+    "settings.gradle.kts",
+    "setup.py",
+    "turbo.json",
+    "turbo.jsonc",
+    "uv.toml",
+    "project.json",
+    "backend.tf",
+    "main.tf",
+    "providers.tf",
+    "terraform.tf",
+    "terragrunt.hcl",
+    "versions.tf",
 }
 
 
@@ -52,27 +87,52 @@ def detect_project(
     file_set = set(files)
     package_json = _read_json(root / "package.json", root)
     pyproject = _read_toml(root / "pyproject.toml", root)
+    cargo_toml = _read_toml(root / "Cargo.toml", root)
+    composer_json = _read_json(root / "composer.json", root)
 
     languages = _detect_languages(file_set, package_json)
     package_managers = _detect_package_managers(
-        file_set, explicit_package_manager=explicit_package_manager
+        file_set,
+        package_json,
+        explicit_package_manager=explicit_package_manager,
     )
     runtime_files = tuple(
         file
         for file in (
             ".python-version",
             ".tool-versions",
+            ".bazelignore",
+            ".bazelrc",
+            ".bazelversion",
             ".nvmrc",
+            ".buckconfig",
             "pyproject.toml",
+            "uv.toml",
             "package.json",
+            "pnpm-workspace.yaml",
+            "turbo.json",
+            "turbo.jsonc",
+            "nx.json",
+            "lerna.json",
+            "rush.json",
             "go.mod",
+            "go.work",
             "Cargo.toml",
             "pom.xml",
+            "settings.gradle",
+            "settings.gradle.kts",
             "build.gradle",
             "build.gradle.kts",
             "global.json",
             "composer.json",
             "Gemfile",
+            "MODULE.bazel",
+            "MODULE.bazel.lock",
+            "REPO.bazel",
+            "WORKSPACE",
+            "WORKSPACE.bazel",
+            "pants.toml",
+            "terragrunt.hcl",
             "Dockerfile",
             ".devcontainer/devcontainer.json",
         )
@@ -80,9 +140,18 @@ def detect_project(
     )
     stack = _primary_stack(file_set, package_json, languages)
     commands = explicit_commands or _verification_commands(
-        file_set, package_json, pyproject, package_managers, stack
+        file_set,
+        package_json,
+        pyproject,
+        cargo_toml,
+        package_managers,
+        stack,
     )
     components = _detect_components(file_set)
+    workspace_markers = _detect_workspace_markers(
+        root, file_set, package_json, pyproject, cargo_toml, composer_json
+    )
+    routing_markers = _detect_routing_markers(root, file_set)
     return ProjectProfile(
         root=root,
         name=root.name,
@@ -93,6 +162,8 @@ def detect_project(
         verification_commands=tuple(commands),
         components=components,
         files=files,
+        workspace_markers=workspace_markers,
+        routing_markers=routing_markers,
     )
 
 
@@ -136,32 +207,61 @@ def _detect_languages(
         languages.add("python")
     if "go.mod" in file_set or ".go" in suffixes:
         languages.add("go")
+    if "go.work" in file_set:
+        languages.add("go")
     if "Cargo.toml" in file_set or ".rs" in suffixes:
         languages.add("rust")
-    if {"pom.xml", "build.gradle", "build.gradle.kts"} & file_set or ".java" in suffixes:
+    if (
+        {
+            "pom.xml",
+            "build.gradle",
+            "build.gradle.kts",
+            "settings.gradle",
+            "settings.gradle.kts",
+        }
+        & file_set
+        or ".java" in suffixes
+    ):
         languages.add("java")
-    if any(file.endswith(".csproj") or file.endswith(".sln") for file in file_set):
+    if any(
+        file.endswith((".csproj", ".fsproj", ".vbproj", ".sln", ".slnx"))
+        for file in file_set
+    ):
         languages.add("dotnet")
     if "composer.json" in file_set or ".php" in suffixes:
         languages.add("php")
     if "Gemfile" in file_set or ".rb" in suffixes:
         languages.add("ruby")
-    if ".tf" in suffixes:
+    if ".tf" in suffixes or "terragrunt.hcl" in file_set:
         languages.add("terraform")
+    if {"MODULE.bazel", "REPO.bazel", "WORKSPACE", "WORKSPACE.bazel"} & file_set:
+        languages.add("bazel")
+    if "pants.toml" in file_set:
+        languages.add("pants")
+    if ".buckconfig" in file_set:
+        languages.add("buck")
     if suffixes and suffixes <= {".md", ".txt", ".rst"}:
         languages.add("docs")
     return languages or {"generic"}
 
 
 def _detect_package_managers(
-    file_set: set[str], *, explicit_package_manager: str | None
+    file_set: set[str],
+    package_json: dict[str, Any] | None,
+    *,
+    explicit_package_manager: str | None,
 ) -> tuple[str, ...]:
     if explicit_package_manager:
         return (explicit_package_manager,)
     managers: list[str] = []
+    package_manager = package_json.get("packageManager") if package_json else None
+    if isinstance(package_manager, str):
+        manager_name = package_manager.split("@", 1)[0].strip()
+        if manager_name in {"bun", "npm", "pnpm", "yarn"}:
+            managers.append(manager_name)
     if "bun.lock" in file_set or "bun.lockb" in file_set:
         managers.append("bun")
-    if "pnpm-lock.yaml" in file_set:
+    if "pnpm-lock.yaml" in file_set or "pnpm-workspace.yaml" in file_set:
         managers.append("pnpm")
     if "yarn.lock" in file_set:
         managers.append("yarn")
@@ -182,7 +282,9 @@ def _detect_components(file_set: set[str]) -> tuple[str, ...]:
     directories: dict[str, list[str]] = {}
     for file_name in sorted(file_set):
         path = Path(file_name)
-        is_dotnet_project = path.name.endswith((".csproj", ".sln"))
+        is_dotnet_project = path.name.endswith(
+            (".csproj", ".fsproj", ".sln", ".slnx", ".vbproj")
+        )
         if path.name not in COMPONENT_MARKERS and not is_dotnet_project:
             continue
         directory = "." if len(path.parts) == 1 else "/".join(path.parts[:-1])
@@ -195,9 +297,172 @@ def _detect_components(file_set: set[str]) -> tuple[str, ...]:
     return tuple(components[:80])
 
 
+def _detect_workspace_markers(
+    root: Path,
+    file_set: set[str],
+    package_json: dict[str, Any] | None,
+    pyproject: dict[str, Any] | None,
+    cargo_toml: dict[str, Any] | None,
+    composer_json: dict[str, Any] | None,
+) -> tuple[str, ...]:
+    markers: list[str] = []
+    if package_json and "workspaces" in package_json:
+        markers.append("package.json workspaces")
+    for marker in (
+        "pnpm-workspace.yaml",
+        "turbo.json",
+        "turbo.jsonc",
+        "nx.json",
+        "lerna.json",
+        "rush.json",
+        "go.work",
+        "settings.gradle",
+        "settings.gradle.kts",
+        "MODULE.bazel",
+        "REPO.bazel",
+        "WORKSPACE",
+        "WORKSPACE.bazel",
+        "pants.toml",
+        ".buckconfig",
+    ):
+        if marker in file_set:
+            markers.append(marker)
+    if _has_multiple_nested_components(file_set):
+        markers.append("multiple nested component manifests")
+    if _has_uv_workspace(pyproject):
+        markers.append("pyproject.toml [tool.uv.workspace]")
+    if cargo_toml and "workspace" in cargo_toml:
+        markers.append("Cargo.toml [workspace]")
+    if _pom_has_modules(root / "pom.xml", root):
+        markers.append("pom.xml <modules>")
+    if _composer_has_path_repositories(composer_json):
+        markers.append("composer.json path repositories")
+    return tuple(_dedupe(markers))
+
+
+def _has_multiple_nested_components(file_set: set[str]) -> bool:
+    component_directories: set[str] = set()
+    for file_name in file_set:
+        path = Path(file_name)
+        is_dotnet_project = path.name.endswith(
+            (".csproj", ".fsproj", ".sln", ".slnx", ".vbproj")
+        )
+        if path.name not in COMPONENT_MARKERS and not is_dotnet_project:
+            continue
+        if len(path.parts) > 1:
+            component_directories.add("/".join(path.parts[:-1]))
+    return len(component_directories) >= 2
+
+
+def _detect_routing_markers(root: Path, file_set: set[str]) -> tuple[str, ...]:
+    markers: list[str] = []
+    workflow_files = tuple(
+        file
+        for file in sorted(file_set)
+        if file.startswith(".github/workflows/")
+        and Path(file).suffix.lower() in {".yml", ".yaml"}
+    )
+    if workflow_files:
+        markers.append(".github/workflows")
+    if any(
+        _text_matches(root / file, root, r"(?m)^\s*paths(?:-ignore)?\s*:")
+        for file in workflow_files
+    ):
+        markers.append(".github/workflows path filters")
+    if any(
+        _text_matches(root / file, root, r"(?m)^\s*working-directory\s*:")
+        for file in workflow_files
+    ):
+        markers.append(".github/workflows working-directory")
+    if any(
+        file.startswith(".github/actions/")
+        and Path(file).name in {"action.yml", "action.yaml"}
+        for file in file_set
+    ):
+        markers.append(".github/actions")
+    if any(
+        file.startswith(".devcontainer/") and Path(file).name == "devcontainer.json"
+        for file in file_set
+    ):
+        markers.append(".devcontainer")
+    if any(file.startswith(".harness/") for file in file_set):
+        markers.append(".harness")
+    if any(file.startswith(".windsurf/") for file in file_set):
+        markers.append(".windsurf")
+    for marker in (
+        "AGENTS.md",
+        "CLAUDE.md",
+        "GEMINI.md",
+        "action.yml",
+        "action.yaml",
+        ".github/copilot-instructions.md",
+        ".bazelrc",
+        ".bazelignore",
+        ".bazelversion",
+    ):
+        if marker in file_set:
+            markers.append(marker)
+    return tuple(_dedupe(markers))
+
+
+def _text_matches(path: Path, root: Path, pattern: str) -> bool:
+    if not is_inside_root(path, root):
+        return False
+    try:
+        text = path.read_text(encoding="utf-8")
+    except OSError:
+        return False
+    return re.search(pattern, text) is not None
+
+
+def _has_uv_workspace(pyproject: dict[str, Any] | None) -> bool:
+    if not pyproject:
+        return False
+    tool = pyproject.get("tool")
+    if not isinstance(tool, dict):
+        return False
+    uv = tool.get("uv")
+    return isinstance(uv, dict) and isinstance(uv.get("workspace"), dict)
+
+
+def _pom_has_modules(path: Path, root: Path) -> bool:
+    if not is_inside_root(path, root) or not path.exists():
+        return False
+    try:
+        tree = ElementTree.parse(path)
+    except (ElementTree.ParseError, OSError):
+        return False
+    root_element = tree.getroot()
+    for element in root_element.iter():
+        name = element.tag.rsplit("}", 1)[-1]
+        if name == "module" and element.text and element.text.strip():
+            return True
+    return False
+
+
+def _composer_has_path_repositories(composer_json: dict[str, Any] | None) -> bool:
+    if not composer_json:
+        return False
+    repositories = composer_json.get("repositories")
+    if isinstance(repositories, dict):
+        repositories = repositories.values()
+    if not isinstance(repositories, list):
+        return False
+    for repository in repositories:
+        if isinstance(repository, dict) and repository.get("type") == "path":
+            return True
+    return False
+
+
 def _primary_stack(
     file_set: set[str], package_json: dict[str, Any] | None, languages: set[str]
 ) -> str:
+    if {"MODULE.bazel", "REPO.bazel", "WORKSPACE", "WORKSPACE.bazel"} & file_set:
+        return "bazel"
+    if "pants.toml" in file_set:
+        return "pants"
+    if ".buckconfig" in file_set:
+        return "buck"
     deps = _package_deps(package_json)
     if package_json:
         if {"react", "next", "@vitejs/plugin-react"} & deps or any(
@@ -228,6 +493,7 @@ def _verification_commands(
     file_set: set[str],
     package_json: dict[str, Any] | None,
     pyproject: dict[str, Any] | None,
+    cargo_toml: dict[str, Any] | None,
     package_managers: tuple[str, ...],
     stack: str,
 ) -> tuple[str, ...]:
@@ -240,7 +506,12 @@ def _verification_commands(
     if stack == "go":
         commands.append("go test ./...")
     if stack == "rust":
-        commands.append("cargo test")
+        rust_command = (
+            "cargo test --workspace"
+            if cargo_toml and "workspace" in cargo_toml
+            else "cargo test"
+        )
+        commands.append(rust_command)
     if stack == "java":
         if "pom.xml" in file_set:
             commands.append("mvn test")
@@ -256,6 +527,12 @@ def _verification_commands(
         commands.append("bundle exec rake test")
     if stack == "terraform":
         commands.append("terraform fmt -check -recursive")
+    if stack == "bazel":
+        commands.append("bazel test //...")
+    if stack == "pants":
+        commands.append("pants test ::")
+    if stack == "buck":
+        commands.append("buck2 test //...")
     commands = _dedupe(commands)
     if not commands:
         commands = (
@@ -305,7 +582,12 @@ def _python_commands(
     prefix = "uv run " if "uv" in package_managers else ""
     commands = [f"{prefix}python -m compileall ."]
     if _uses_pytest(file_set, pyproject):
-        commands.append(f"{prefix}python -m pytest")
+        pytest_prefix = (
+            "uv run --all-packages "
+            if "uv" in package_managers and _has_uv_workspace(pyproject)
+            else prefix
+        )
+        commands.append(f"{pytest_prefix}python -m pytest")
     elif "tests" in {Path(file).parts[0] for file in file_set if Path(file).parts}:
         commands.append(f"{prefix}python -m unittest discover")
     return commands

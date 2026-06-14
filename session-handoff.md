@@ -31,6 +31,12 @@ and the required AGENTS instruction format.
 - `scripts/check_pins.py`
 - `scripts/refresh_research.py`
 - `src/repo_harness_creator/audit.py`
+- `src/repo_harness_creator/detect.py`
+- `src/repo_harness_creator/generate.py`
+- `src/repo_harness_creator/models.py`
+- `src/repo_harness_creator/templates/component-inventory.md.tmpl`
+- `src/repo_harness_creator/templates/research-sources.json.tmpl`
+- `tests/test_detect.py`
 - `tests/test_generate_audit.py`
 - `tests/test_pins.py`
 - `docs/harness/evaluator-rubric.md`
@@ -42,7 +48,7 @@ and the required AGENTS instruction format.
   check, and self-audit `100/100` after the personal AGT current snapshot
   slice; POSIX also passes when launched with `PYTHONPATH=/tmp` in prior
   verification.
-- Research metadata refresh currently tracks 49 sources with one recorded Red
+- Research metadata refresh currently tracks 76 sources with one recorded Red
   Hat 403 fetch failure.
 - Root Action manifest regression coverage now checks quoted description values
   containing colons.
@@ -139,10 +145,28 @@ and the required AGENTS instruction format.
 - Current full AGT-derived checks pass: `./init.sh` and `pwsh -NoProfile -File
   ./init.ps1`, each with doctor, compile, 60 tests, pin check, and self-audit
   `100/100`.
+- Additional monorepo research covered official package-manager, language,
+  build-system, GitHub Actions, and Terraform docs; supplied local
+  `bazel-monorepo` and `awesome-monorepo` examples; cloned public Harness IDP
+  and vanilla GitHub Actions monorepo examples; and the supplied Medium,
+  Atlassian, LinkedIn, and Lukas Masuch articles.
+- Detection now separates workspace/layout markers, component manifests, and
+  repo routing markers. It covers explicit workspace tools, inferred
+  multi-component layouts, GitHub workflow path filters and
+  `working-directory`, local Actions, devcontainers, Harness IDP folders,
+  existing agent-instruction files, and Terraform roots/modules.
+- Current focused monorepo checks pass: `PYTHONPATH=src:. python3 -m unittest
+  tests.test_detect tests.test_generate_audit tests.test_refresh_research` with
+  46 tests, compile, pin check, JSON validation, and research refresh.
+- Current full monorepo checks pass: `./init.sh` and `pwsh -NoProfile -File
+  ./init.ps1`, each with doctor, compile, 69 tests, pin check, and self-audit
+  `100/100`.
+- Research metadata refresh currently tracks 76 sources with one recorded Red
+  Hat 403 fetch failure.
 
 ## Next Session
 
-After this push, watch hosted CI for the personal AGT-derived hardening slice.
-Then decide whether the first release should cut a `v1` Action tag before
-broader public use, and whether release-time SBOM/provenance or Scorecard
-should be the next AGT-derived workflow gate.
+After this push, watch hosted CI for the monorepo detection slice. Then decide
+whether the first release should cut a `v1` Action tag before broader public
+use, and whether deeper workspace graph parsing or release-time
+SBOM/provenance should come next.

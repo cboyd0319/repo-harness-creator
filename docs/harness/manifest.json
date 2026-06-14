@@ -100,6 +100,8 @@
     ],
     "docs/harness/component-inventory.md": [
       "Component Inventory",
+      "Detected Workspace Markers",
+      "Detected Routing Markers",
       "Detected Components",
       "Routing Rules"
     ],
@@ -147,7 +149,10 @@
     "docs/harness/research-sources.json": [
       "openai-harness-engineering",
       "github-actions-secure-use",
-      "setuptools-pypi"
+      "setuptools-pypi",
+      "pnpm-workspaces",
+      "github-actions-workflow-syntax",
+      "terraform-standard-module-structure"
     ],
     "docs/harness/research-inbox.md": [
       "Research Inbox",

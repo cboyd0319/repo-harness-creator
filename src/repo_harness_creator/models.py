@@ -15,6 +15,8 @@ class ProjectProfile:
     verification_commands: tuple[str, ...]
     components: tuple[str, ...]
     files: tuple[str, ...] = field(repr=False)
+    workspace_markers: tuple[str, ...] = ()
+    routing_markers: tuple[str, ...] = ()
 
 
 @dataclass(frozen=True)

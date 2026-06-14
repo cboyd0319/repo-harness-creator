@@ -1,7 +1,7 @@
 {
-  "checkedAt": "2026-06-14T06:42:56+00:00",
+  "checkedAt": "2026-06-14T18:34:19+00:00",
   "failureCount": 1,
-  "sourceCount": 49,
+  "sourceCount": 76,
   "sources": [
     {
       "category": "field-report",
@@ -18,7 +18,7 @@
       ],
       "httpStatus": 200,
       "id": "openai-harness-engineering",
-      "sha256": "b51066d8ef9120f8592b5a1acfd111db6482bd18a5767621f9a39baef933c711",
+      "sha256": "5ba22164fcf3feefe471544e70da82c608777a29b9bd44f51559880ec0fa8699",
       "status": "ok",
       "title": "Harness engineering: leveraging Codex in an agent-first world | OpenAI",
       "url": "https://openai.com/index/harness-engineering/"
@@ -36,7 +36,7 @@
       ],
       "httpStatus": 200,
       "id": "anthropic-effective-harnesses",
-      "sha256": "9f96b97d2e32d2066d18168cc33286301cc483e2690135213c33b226ea6afb0b",
+      "sha256": "b2f1447f23867daf9bafb79bf136f0ef7eea30ad96a9dae7fb8a57dab9daf5dd",
       "status": "ok",
       "title": "Effective harnesses for long-running agents \\ Anthropic",
       "url": "https://www.anthropic.com/engineering/effective-harnesses-for-long-running-agents"
@@ -56,7 +56,7 @@
       ],
       "httpStatus": 200,
       "id": "anthropic-long-running-apps",
-      "sha256": "1784f384e1ddaa2b114b8b8d44f95ebaab96ec5755df465c92b5f5c56b82b096",
+      "sha256": "e5f911abab4e71b9e6c1983d56009aeb8d1acbfc216a15ef145365b877902fac",
       "status": "ok",
       "title": "Harness design for long-running application development \\ Anthropic",
       "url": "https://www.anthropic.com/engineering/harness-design-long-running-apps"
@@ -163,7 +163,7 @@
       ],
       "httpStatus": 200,
       "id": "langchain-deepagents-harness",
-      "sha256": "299a368f8ff24846f689c7e1b6c6dd8291b4942b07f7357611e32062b9569ef1",
+      "sha256": "fa6953c4d160f61c18534e64f390afd3133e391c2c699206a7a725cfa7d9b5d3",
       "status": "ok",
       "title": "Harness capabilities - Docs by LangChain",
       "url": "https://docs.langchain.com/oss/python/deepagents/harness"
@@ -202,7 +202,7 @@
       ],
       "httpStatus": 200,
       "id": "claude-code-memory",
-      "sha256": "7e88e1db4fdd3247186ac106dd1d72e30e8ea779e4803f099eaec437da973dab",
+      "sha256": "e376546f7f1f450305adc02b00c55a6bc58da0ac4eb5bf7b9be146e4fa52ff95",
       "status": "ok",
       "title": "How Claude remembers your project - Claude Code Docs",
       "url": "https://code.claude.com/docs/en/memory"
@@ -241,7 +241,7 @@
       ],
       "httpStatus": 200,
       "id": "google-antigravity-agent",
-      "sha256": "10a7e64541ce8db7e8782a14866f986cf8a1658254f9719b6971b15a4362040d",
+      "sha256": "aca04660769a72391c1e9fa13950fa0c54c4e660005a7fd7abf8006dff102d5b",
       "status": "ok",
       "title": "Antigravity Agent | Gemini API | Google AI for Developers",
       "url": "https://ai.google.dev/gemini-api/docs/antigravity-agent"
@@ -319,7 +319,7 @@
       ],
       "httpStatus": 200,
       "id": "walkinglabs-github",
-      "sha256": "43649716c84469f0d3e2ba9e4740fa93dbfb675cd5ca863ea8a4c31736d87105",
+      "sha256": "350305e18f5693a63ce608e2dca6899dde1efcba11bd391ecb40301ab7e81a13",
       "status": "ok",
       "title": "GitHub - walkinglabs/learn-harness-engineering: Harness engineering beginner tutorial, from 0 to 1 \u00b7 GitHub",
       "url": "https://github.com/walkinglabs/learn-harness-engineering"
@@ -359,7 +359,7 @@
       ],
       "httpStatus": 200,
       "id": "walkinglabs-harness-creator-skill",
-      "sha256": "8cd523dedbb52c0ae57b7a1a00d6b323e5bf3804355f7642a4f172a34ba986ca",
+      "sha256": "05c53160654bca8235b6128d41161e5da44f263e714403cd5fb67ac3de46da23",
       "status": "ok",
       "title": "learn-harness-engineering/skills/harness-creator at main \u00b7 walkinglabs/learn-harness-engineering \u00b7 GitHub",
       "url": "https://github.com/walkinglabs/learn-harness-engineering/tree/main/skills/harness-creator"
@@ -379,7 +379,7 @@
       ],
       "httpStatus": 200,
       "id": "agentpatterns-copilot-harness",
-      "sha256": "3f96b242d877d9635a8f0beff47599296d834b1e3fd70f4f288e7cb7776bc3fd",
+      "sha256": "06b7a7d14ae9fc9337856f42bb9fb3a8a4d4d09e8636fed0a112381f9b3612ad",
       "status": "ok",
       "title": "GitHub Copilot: Harness Engineering for Agent-Ready Code - AgentPatterns.ai",
       "url": "https://agentpatterns.ai/training/copilot/harness-engineering/"
@@ -427,7 +427,7 @@
       ],
       "httpStatus": 200,
       "id": "charlesanim-harness-engineering",
-      "sha256": "808604e515cf3c68c61a1fb6a9f522b4f7b7c20564d30bfc65e05b8fd267c956",
+      "sha256": "bc9517080a641c75f2c13016f5a4ea705c99d1679dc9a25de4fc60219371d2c0",
       "status": "ok",
       "title": "GitHub - charlesanim/harness-engineering: Agent skill: set up OpenAI's harness engineering methodology in any repo. Works with Copilot, Codex, Claude, Cursor. \u00b7 GitHub",
       "url": "https://github.com/charlesanim/harness-engineering"
@@ -783,7 +783,7 @@
       ],
       "httpStatus": 200,
       "id": "python-cmdline-env",
-      "sha256": "d032608b5b28bb46107e96da1879f99ad4c2694a89c040b3111eeb95216e5d4b",
+      "sha256": "159926fb9c3c69cff9d4c7ce10ac2aa5d520afdf6e6b21ba4f94d02a42bf7ab1",
       "status": "ok",
       "title": "1. Command line and environment \u2014 Python 3.14.6 documentation",
       "url": "https://docs.python.org/3/using/cmdline.html"
@@ -803,7 +803,7 @@
       ],
       "httpStatus": 200,
       "id": "python-urllib-request",
-      "sha256": "03c1064e683f3c8fb1892aed14946e5f218c0f1918272a7b73940f090b912830",
+      "sha256": "6410bc47ae80c7290baaae12e472caba154afe11fc8fa793e2c81c2d376dd005",
       "status": "ok",
       "title": "urllib.request \u2014 Extensible library for opening URLs \u2014 Python 3.14.6 documentation",
       "url": "https://docs.python.org/3/library/urllib.request.html"
@@ -843,7 +843,7 @@
       ],
       "httpStatus": 200,
       "id": "github-actions-checkout",
-      "sha256": "1bfe988180cc520a3c25eb909d43677edf69995f6759917b7b0d238694727d48",
+      "sha256": "90a0cb1dc7e3be5480c1f58c953b3f8ab89d4d801d81903b7f25c2192b2c82a4",
       "status": "ok",
       "title": "GitHub - actions/checkout: Action for checking out a repo \u00b7 GitHub",
       "url": "https://github.com/actions/checkout"
@@ -900,6 +900,493 @@
       "status": "ok",
       "title": "setuptools 82.0.1",
       "url": "https://pypi.org/pypi/setuptools/json"
+    },
+    {
+      "category": "monorepo",
+      "contentType": "text/html",
+      "headings": [
+        "Workspace",
+        "Workspace protocol (workspace:) \u200b",
+        "Release workflow \u200b",
+        "Troubleshooting \u200b",
+        "Usage examples \u200b",
+        "Configuration \u200b"
+      ],
+      "httpStatus": 200,
+      "id": "pnpm-workspaces",
+      "sha256": "d86329a368117ffcbb7c3238a708ad5804ebf3ee1529e92c519b9830d72d60d6",
+      "status": "ok",
+      "title": "Workspace | pnpm",
+      "url": "https://pnpm.io/workspaces"
+    },
+    {
+      "category": "monorepo",
+      "contentType": "text/html",
+      "headings": [
+        "Workspaces",
+        "What are workspaces? \u200b",
+        "When should I use workspaces? \u200b",
+        "How are workspaces declared? \u200b",
+        "Workspace-related features \u200b"
+      ],
+      "httpStatus": 200,
+      "id": "yarn-workspaces",
+      "sha256": "0c5cfaff237d0760319af8ef2939528395eb953c30dc37072a5e01e1952ca205",
+      "status": "ok",
+      "title": "Workspaces | Yarn",
+      "url": "https://yarnpkg.com/features/workspaces"
+    },
+    {
+      "category": "monorepo",
+      "contentType": "text/html",
+      "headings": [
+        "workspaces",
+        "Description",
+        "Defining workspaces",
+        "Getting started with workspaces",
+        "Adding dependencies to a workspace",
+        "Using workspaces",
+        "Running commands in the context of workspaces",
+        "Ignoring missing scripts"
+      ],
+      "httpStatus": 200,
+      "id": "npm-workspaces",
+      "sha256": "9687fbb5d18d068cb53aea9ece7f289e75922f4b55512d948831293bdd0e7e68",
+      "status": "ok",
+      "title": "workspaces | npm Docs",
+      "url": "https://docs.npmjs.com/cli/v8/using-npm/workspaces"
+    },
+    {
+      "category": "monorepo",
+      "contentType": "text/html",
+      "headings": [
+        "Documentation Index",
+        "On this page",
+        "Workspaces",
+        "\u200b Share versions with Catalogs"
+      ],
+      "httpStatus": 200,
+      "id": "bun-workspaces",
+      "sha256": "07d9c3a81139d18f39959b79df819cab8511a1cb62f10d3396d0f7d8720e622b",
+      "status": "ok",
+      "title": "Workspaces - Bun",
+      "url": "https://bun.sh/docs/pm/workspaces"
+    },
+    {
+      "category": "monorepo",
+      "contentType": "text/markdown",
+      "headings": [
+        "Configuring turbo.json"
+      ],
+      "httpStatus": 200,
+      "id": "turborepo-configuration",
+      "sha256": "e203e700d0fa5f3386f4586aa8a3d15ea395b7f73246284fd78a6c9e338616e1",
+      "status": "ok",
+      "title": "Configuring turbo.json",
+      "url": "https://turbo.build/repo/docs/reference/configuration"
+    },
+    {
+      "category": "monorepo",
+      "contentType": "text/html",
+      "headings": [
+        "On this page",
+        "Project Configuration",
+        "demo",
+        "Targets",
+        "Project level configuration files",
+        "Task definitions (Targets)",
+        "Project metadata",
+        "Including package.json files as projects in the graph"
+      ],
+      "httpStatus": 200,
+      "id": "nx-project-configuration",
+      "sha256": "bc010fcaaf6f781efbc564cd1e5e92efbe2bc09681a466ddb6669354eedc5d9c",
+      "status": "ok",
+      "title": "Project Configuration | Nx",
+      "url": "https://nx.dev/docs/reference/project-configuration"
+    },
+    {
+      "category": "monorepo",
+      "contentType": "text/html",
+      "headings": [
+        "rush.json"
+      ],
+      "httpStatus": 200,
+      "id": "rush-json",
+      "sha256": "e2f2d8abb274e6c6d3711dc232d56a297f6ccf2e80f5da283c3914be5efd744b",
+      "status": "ok",
+      "title": "rush.json | Rush",
+      "url": "https://rushjs.io/pages/configs/rush_json/"
+    },
+    {
+      "category": "monorepo",
+      "contentType": "text/html",
+      "headings": [
+        "Using workspaces",
+        "Getting started",
+        "Workspace sources",
+        "Workspace layouts",
+        "When (not) to use workspaces"
+      ],
+      "httpStatus": 200,
+      "id": "uv-workspaces",
+      "sha256": "0486a2f0b0e21af9da7e28d11e3ea10a2a826ee031565112cf65c5985a80983f",
+      "status": "ok",
+      "title": "Using workspaces | uv",
+      "url": "https://docs.astral.sh/uv/concepts/projects/workspaces/"
+    },
+    {
+      "category": "monorepo",
+      "contentType": "text/html",
+      "headings": [
+        "Keyboard shortcuts",
+        "The Cargo Book",
+        "Workspaces",
+        "The [workspace] section",
+        "The members and exclude fields",
+        "The default-members field",
+        "The package table",
+        "The dependencies table"
+      ],
+      "httpStatus": 200,
+      "id": "cargo-workspaces",
+      "sha256": "dcdcd37028d81b2b6d5e6a8c2d62f8760098b6d0c00232d5734cc2debc951c99",
+      "status": "ok",
+      "title": "Workspaces - The Cargo Book",
+      "url": "https://doc.rust-lang.org/cargo/reference/workspaces.html"
+    },
+    {
+      "category": "monorepo",
+      "contentType": "text/html",
+      "headings": [
+        "Tutorial: Getting started with multi-module workspaces",
+        "Prerequisites",
+        "Create a module for your code",
+        "Create the workspace",
+        "Download and modify the golang.org/x/example/hello module",
+        "Learn more about workspaces"
+      ],
+      "httpStatus": 200,
+      "id": "go-workspaces",
+      "sha256": "7c4a3fc6d202ac6b76dd9c23aa7d96a553f72823cd267572a6c5fbc14af9b751",
+      "status": "ok",
+      "title": "Tutorial: Getting started with multi-module workspaces - The Go Programming Language",
+      "url": "https://go.dev/doc/tutorial/workspaces"
+    },
+    {
+      "category": "monorepo",
+      "contentType": "text/html",
+      "headings": [
+        "Multi-Project Builds",
+        "Multi-Project Layout",
+        "Naming recommendations",
+        "Declaring dependencies between Subprojects"
+      ],
+      "httpStatus": 200,
+      "id": "gradle-multi-project-builds",
+      "sha256": "7fe9d6dc4e833507c953c9028f10d9467cbdc7e0e2afab0c13be8c95f63076ca",
+      "status": "ok",
+      "title": "Multi-Project Builds",
+      "url": "https://docs.gradle.org/current/userguide/multi_project_builds.html"
+    },
+    {
+      "category": "monorepo",
+      "contentType": "text/html",
+      "headings": [
+        "POM Reference",
+        "Introduction",
+        "What is the POM?",
+        "Quick Overview",
+        "The Basics",
+        "Properties",
+        "Build Settings",
+        "Build"
+      ],
+      "httpStatus": 200,
+      "id": "maven-pom-reference",
+      "sha256": "831194bb3988f734e4d42784d2393aa6a8a0c695057ceb342d26d39490f9c409",
+      "status": "ok",
+      "title": "POM Reference \u2013 Maven",
+      "url": "https://maven.apache.org/pom.html"
+    },
+    {
+      "category": "monorepo",
+      "contentType": "text/html",
+      "headings": [
+        "dotnet sln",
+        "In this article",
+        "Name",
+        "Synopsis",
+        "Description",
+        "Arguments",
+        "Options",
+        "Commands"
+      ],
+      "httpStatus": 200,
+      "id": "dotnet-sln",
+      "sha256": "4de46591d150e2094ff9e2975b8cc03b2df46f3753f283eb8007c7cb54550d9e",
+      "status": "ok",
+      "title": "dotnet sln command - .NET CLI | Microsoft Learn",
+      "url": "https://learn.microsoft.com/en-us/dotnet/core/tools/dotnet-sln"
+    },
+    {
+      "category": "monorepo",
+      "contentType": "text/html",
+      "headings": [
+        "Bazel modules Stay organized with collections Save and categorize content based on your preferences.",
+        "Version format",
+        "Version selection",
+        "Overrides",
+        "Define repos that don't represent Bazel modules",
+        "Repository names and strict deps"
+      ],
+      "httpStatus": 200,
+      "id": "bazel-modules",
+      "sha256": "371b594af1ff6548dc0184147cfb501c01d38875d7885e7f4f3fdf0e81357fa5",
+      "status": "ok",
+      "title": "Bazel modules",
+      "url": "https://bazel.build/external/module"
+    },
+    {
+      "category": "monorepo",
+      "contentType": "text/html",
+      "headings": [
+        "Initial configuration",
+        "1. Create pants.toml \u200b",
+        "2. Configure source roots \u200b",
+        "3. Enable backends \u200b",
+        "4. Update .gitignore \u200b",
+        "5. Generate BUILD files \u200b",
+        "6. Visit a language specific overview \u200b"
+      ],
+      "httpStatus": 200,
+      "id": "pants-initial-configuration",
+      "sha256": "494b947197711bb493ebdfc8399e4e089ce4e83b89f80c2cc304190fcc0cb7c5",
+      "status": "ok",
+      "title": "Initial configuration | Pantsbuild",
+      "url": "https://www.pantsbuild.org/dev/docs/getting-started/initial-configuration"
+    },
+    {
+      "category": "monorepo",
+      "contentType": "text/html",
+      "headings": [
+        ".buckconfig",
+        "Performance impact of Buck2 configuration changes \u200b",
+        "The .buckconfig file uses the INI file format \u200b",
+        "Character encoding \u200b",
+        "Key values as lists \u200b",
+        "Transclusion of values from one key to another \u200b",
+        "Comments \u200b",
+        ".buckconfig.local \u200b"
+      ],
+      "httpStatus": 200,
+      "id": "buck2-buckconfig",
+      "sha256": "14df24f8d8e6b6d961c3bbe66c0f72ef8dcd52fe83df315980b9802fa2b1520a",
+      "status": "ok",
+      "title": ".buckconfig | Buck2",
+      "url": "https://buck2.build/docs/concepts/buckconfig/"
+    },
+    {
+      "category": "github-actions",
+      "contentType": "text/html",
+      "headings": [
+        "GitHub Actions",
+        "Workflow syntax for GitHub Actions",
+        "In this article",
+        "About YAML syntax for workflows",
+        "name",
+        "run-name",
+        "on",
+        "on.<event_name>.types"
+      ],
+      "httpStatus": 200,
+      "id": "github-actions-workflow-syntax",
+      "sha256": "4ac7a9c460fc848de40f3512cf97f133f3b574b264752751b2c17e57a55c7d04",
+      "status": "ok",
+      "title": "Workflow syntax for GitHub Actions - GitHub Docs",
+      "url": "https://docs.github.com/actions/using-workflows/workflow-syntax-for-github-actions"
+    },
+    {
+      "category": "infrastructure",
+      "contentType": "text/html",
+      "headings": [
+        "Configuration Language",
+        "Standard Module Structure"
+      ],
+      "httpStatus": 200,
+      "id": "terraform-standard-module-structure",
+      "sha256": "ac7e46a091549fbda45aa3018d9a8dcb39bac8fcc73b577e78a20fbeae349ca3",
+      "status": "ok",
+      "title": "Standard Module Structure | Terraform | HashiCorp Developer",
+      "url": "https://developer.hashicorp.com/terraform/language/modules/develop/structure"
+    },
+    {
+      "category": "monorepo",
+      "contentType": "text/html",
+      "headings": [],
+      "httpStatus": 200,
+      "id": "atlassian-monorepos",
+      "sha256": "de44b5c70e9edd7c9b10cd6615a5a991a9264defd72c38ee9c5ff3765a66b345",
+      "status": "ok",
+      "title": "Monorepos in Git | Atlassian Git Tutorial",
+      "url": "https://www.atlassian.com/git/tutorials/monorepos"
+    },
+    {
+      "category": "monorepo",
+      "contentType": "text/html",
+      "headings": [
+        "Monorepos: A Comprehensive Guide with Examples",
+        "What is a Monorepo?",
+        "Monorepo vs. Monolith",
+        "Anatomy of a Monorepo",
+        "Example: Building a Simple Monorepo",
+        "How to run Monorepo Applications?",
+        "Step 1: Install Dependencies",
+        "Step 2: Configure the Node.js API Server"
+      ],
+      "httpStatus": 200,
+      "id": "medium-monorepos-guide",
+      "sha256": "ce2afd4c40ec321248fca3737b911cac8e889c9f2facb286ab4eb8560a365c48",
+      "status": "ok",
+      "title": "Monorepos: A Comprehensive Guide with Examples | by Md Julakadar | Medium",
+      "url": "https://medium.com/@julakadaredrishi/monorepos-a-comprehensive-guide-with-examples-63202cfab711"
+    },
+    {
+      "category": "monorepo",
+      "contentType": "text/html",
+      "headings": [
+        "An example CI/CD setup for a monorepo using vanilla GitHub Actions",
+        "Background",
+        "Solution - High level overview",
+        "Additional material",
+        "Solution - The actual implementation",
+        "Summary",
+        "FAQ",
+        "More posts about cicd"
+      ],
+      "httpStatus": 200,
+      "id": "generalreasoning-vanilla-monorepo",
+      "sha256": "85cc409897cc2d6624cdf5390ac8c70ada160d087e744998981883051d8bd7d4",
+      "status": "ok",
+      "title": "An example CI/CD setup for a monorepo using vanilla GitHub Actions | The General Reasoning Corp.",
+      "url": "https://generalreasoning.com/blog/2025/03/22/github-actions-vanilla-monorepo.html"
+    },
+    {
+      "category": "monorepo",
+      "contentType": "text/html",
+      "headings": [
+        "Navigation Menu",
+        "Search code, repositories, users, issues, pull requests...",
+        "Provide feedback",
+        "Saved searches",
+        "Use saved searches to filter your results more quickly",
+        "gamgi/github-actions-vanilla-monorepo-example",
+        "Folders and files",
+        "Latest commit"
+      ],
+      "httpStatus": 200,
+      "id": "github-actions-vanilla-monorepo-example",
+      "sha256": "7731fe17028347f266bbc1014c76c50e110bd0a78b5c0ba20d2842d5717c4755",
+      "status": "ok",
+      "title": "GitHub - gamgi/github-actions-vanilla-monorepo-example: An example on how to use GitHub actions in a monorepo. \u00b7 GitHub",
+      "url": "https://github.com/gamgi/github-actions-vanilla-monorepo-example"
+    },
+    {
+      "category": "field-report",
+      "contentType": "text/html",
+      "headings": [
+        "Sign in to view more content",
+        "Repo-Local Harnesses for Coding Agents, Part 1: Why the Harness Belongs in the Repo",
+        "Repo-Local Harnesses for Coding Agents, Part 1: The Harness Belongs in the Repo",
+        "More articles by Chris Mamon",
+        "Explore content categories"
+      ],
+      "httpStatus": 200,
+      "id": "repo-local-harnesses-linkedin",
+      "sha256": "42ca6a6a80f509a7c7894da8483be496f731ca2bcdf3fc6393dd5568d00891d4",
+      "status": "ok",
+      "title": "Repo-Local Harnesses for Coding Agents, Part 1: Why the Harness Belongs in the Repo",
+      "url": "https://www.linkedin.com/pulse/repo-local-harnesses-coding-agents-part-1-why-harness-chris-mamon-c71nf/"
+    },
+    {
+      "category": "field-report",
+      "contentType": "text/html",
+      "headings": [
+        "Swiss cheese, not silver bullets",
+        "1. Simplify until agents stop tripping",
+        "2. Install hard guardrails and make them fast",
+        "3. Move context into the repo",
+        "4. Turn recurring work into reusable skills",
+        "5. Let AI review AI",
+        "6. Automate everything",
+        "How our work changed"
+      ],
+      "httpStatus": 200,
+      "id": "lukasmasuch-repo-is-harness",
+      "sha256": "377e6dd64b3fe5c2d6c8a73763d0909b6c43a9e9483e3e507e93d6ba5401313e",
+      "status": "ok",
+      "title": "The Repo Is the Harness - How we made an 8-year-old codebase agent-native | Lukas Masuch",
+      "url": "https://lukasmasuch.com/blog/the-repo-is-the-harness/"
+    },
+    {
+      "category": "monorepo",
+      "contentType": "text/html",
+      "headings": [
+        "Navigation Menu",
+        "Search code, repositories, users, issues, pull requests...",
+        "Provide feedback",
+        "Saved searches",
+        "Use saved searches to filter your results more quickly",
+        "harness-idp-sandbox/harness-monorepo",
+        "Folders and files",
+        "Latest commit"
+      ],
+      "httpStatus": 200,
+      "id": "harness-idp-sandbox-monorepo",
+      "sha256": "9f0584282b6f7a79d16d080d310f20f5c2fd09468949d681fb8a95bd67864f10",
+      "status": "ok",
+      "title": "GitHub - harness-idp-sandbox/harness-monorepo \u00b7 GitHub",
+      "url": "https://github.com/harness-idp-sandbox/harness-monorepo"
+    },
+    {
+      "category": "monorepo",
+      "contentType": "text/html",
+      "headings": [
+        "Navigation Menu",
+        "Search code, repositories, users, issues, pull requests...",
+        "Provide feedback",
+        "Saved searches",
+        "Use saved searches to filter your results more quickly",
+        "korfuri/awesome-monorepo",
+        "Folders and files",
+        "Latest commit"
+      ],
+      "httpStatus": 200,
+      "id": "awesome-monorepo",
+      "sha256": "3c3232594565d7c2cc5c16157b73762209725c34f82107b468feae5439ae65a1",
+      "status": "ok",
+      "title": "GitHub - korfuri/awesome-monorepo: A curated list of awesome Monorepo tools, software and architectures. \u00b7 GitHub",
+      "url": "https://github.com/korfuri/awesome-monorepo"
+    },
+    {
+      "category": "monorepo",
+      "contentType": "text/html",
+      "headings": [
+        "Navigation Menu",
+        "Search code, repositories, users, issues, pull requests...",
+        "Provide feedback",
+        "Saved searches",
+        "Use saved searches to filter your results more quickly",
+        "tomsoir/bazel-monorepo",
+        "Folders and files",
+        "Latest commit"
+      ],
+      "httpStatus": 200,
+      "id": "tomsoir-bazel-monorepo",
+      "sha256": "5f31b5525c51b42a2d53eb691cd17bd15c0b8829decf89f9b2323cf9626589ca",
+      "status": "ok",
+      "title": "GitHub - tomsoir/bazel-monorepo: Bazel monorepo example \u00b7 GitHub",
+      "url": "https://github.com/tomsoir/bazel-monorepo"
     }
   ],
   "version": 1

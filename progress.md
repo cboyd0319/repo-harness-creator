@@ -105,19 +105,49 @@ maintenance loop.
   secret-scanning, SBOM, Scorecard, CodeQL, dependency-review, and release
   workflows as too much automation before the release and maintainer model
   require them.
+- Completed additional monorepo and repo-harness research against official
+  package-manager, language, build-system, GitHub Actions, and Terraform docs,
+  plus the supplied Bazel, vanilla GitHub Actions, Harness IDP, awesome-monorepo,
+  Medium, Atlassian, LinkedIn, and Lukas Masuch examples. Detection now
+  separates workspace/layout markers, component manifests, and repo routing
+  markers. It covers JavaScript workspaces and orchestrators, uv/Cargo/Go,
+  Gradle/Maven/.NET, Bazel/Pants/Buck, inferred multi-component layouts,
+  workflow path filters and `working-directory`, local Actions, devcontainers,
+  Harness IDP folders, existing agent-instruction files, and Terraform roots
+  and modules.
 
 ## Recommended Next Step
 
-After push, watch hosted CI for this AGT-derived hardening slice. Then decide
-whether to cut a `v1` Action tag before broader public use, and whether
-release-time SBOM/provenance or Scorecard should be the next AGT-derived
-workflow gate.
+After push, watch hosted CI for the monorepo detection slice. Then decide
+whether to cut a `v1` Action tag before broader public use, and whether deeper
+workspace graph parsing or release-time SBOM/provenance should come next.
 
 ## Verification Evidence
 
 - Personal review of the current `microsoft/agent-governance-toolkit`
   `origin/main` snapshot completed without Antigravity delegation; local clone
   lag was handled by reviewing a temporary archive of `origin/main`.
+- Additional monorepo research completed with the earlier read-only `agy` pass,
+  direct inspection of the supplied local `bazel-monorepo` and
+  `awesome-monorepo` references, cloned public examples from
+  `harness-idp-sandbox/harness-monorepo` and
+  `gamgi/github-actions-vanilla-monorepo-example`, and browser review of the
+  supplied monorepo and repo-harness articles.
+- `PYTHONPATH=src:. python3 scripts/refresh_research.py --root .` refreshed
+  76 sources with the same single known Red Hat 403 failure recorded.
+- `PYTHONPATH=src:. python3 -m unittest tests.test_detect
+  tests.test_generate_audit tests.test_refresh_research` passed with 46
+  focused tests after workspace/layout, routing-marker, Terraform component,
+  generated inventory, and source-ledger updates.
+- `python3 -m compileall src tests`, `PYTHONPATH=src:. python3
+  scripts/check_pins.py --root .`, and JSON validation for feature, manifest,
+  source, lock, and template files passed after the monorepo slice.
+- `./init.sh` passed on macOS 26.5.1 with Python 3.14.5 after the monorepo
+  detection slice: doctor, compile, 69 unit tests, pin check, and self-audit
+  `100/100`.
+- `pwsh -NoProfile -File ./init.ps1` passed on macOS 26.5.1 with Python
+  3.14.5 after the monorepo detection slice: doctor, compile, 69 unit tests,
+  pin check, and self-audit `100/100`.
 - `PYTHONPATH=src:. python3 -m unittest tests.test_generate_audit
   tests.test_pins` passed with 22 focused tests after workflow fail-fast,
   local Markdown anchor, fenced-code link, and build-hook checks.

@@ -65,9 +65,14 @@
         "2026-06-14: Personal current AGT origin/main snapshot review accepted workflow fail-fast enforcement, Markdown anchor validation, build-hook detection, example/security-sensitive contribution guidance, and benchmark claim limits.",
         "2026-06-14: Focused AGT-derived tests pass with 22 tests; pin check, diff hygiene, and self-audit 100/100 passed.",
         "2026-06-14: POSIX entrypoint passes with 60 tests, pin check, and self-audit 100/100 after the personal AGT current snapshot slice.",
-        "2026-06-14: PowerShell entrypoint passes with 60 tests, pin check, and self-audit 100/100 after the personal AGT current snapshot slice."
+        "2026-06-14: PowerShell entrypoint passes with 60 tests, pin check, and self-audit 100/100 after the personal AGT current snapshot slice.",
+        "2026-06-14: Additional monorepo research covered official workspace/build/CI/Terraform docs plus supplied Bazel, vanilla GitHub Actions, Harness IDP, awesome-monorepo, Medium, Atlassian, LinkedIn, and repo-is-the-harness examples.",
+        "2026-06-14: Detection now records workspace/layout markers, repo routing markers, and Terraform component roots separately from component manifests.",
+        "2026-06-14: Research source ledger refreshed with 76 sources and one recorded Red Hat 403 failure.",
+        "2026-06-14: Focused monorepo tests pass with 46 tests; compile, pin check, and JSON validation passed.",
+        "2026-06-14: POSIX and PowerShell entrypoints pass with 69 tests, pin check, and self-audit 100/100 after the monorepo detection slice."
       ],
-      "notes": "Prior pushed CI passed; current personal AGT-derived workflow, audit, pin, contribution, and rubric updates pass focused tests, pin enforcement, POSIX verification, and PowerShell verification."
+      "notes": "Prior pushed CI passed; current monorepo detection slice passes focused tests, compile, pin enforcement, JSON validation, research refresh, POSIX verification, and PowerShell verification."
     }
   ]
 }

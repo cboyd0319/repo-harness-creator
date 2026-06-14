@@ -246,6 +246,141 @@
       "id": "setuptools-pypi",
       "url": "https://pypi.org/pypi/setuptools/json",
       "category": "packaging"
+    },
+    {
+      "id": "pnpm-workspaces",
+      "url": "https://pnpm.io/workspaces",
+      "category": "monorepo"
+    },
+    {
+      "id": "yarn-workspaces",
+      "url": "https://yarnpkg.com/features/workspaces",
+      "category": "monorepo"
+    },
+    {
+      "id": "npm-workspaces",
+      "url": "https://docs.npmjs.com/cli/v8/using-npm/workspaces",
+      "category": "monorepo"
+    },
+    {
+      "id": "bun-workspaces",
+      "url": "https://bun.sh/docs/pm/workspaces",
+      "category": "monorepo"
+    },
+    {
+      "id": "turborepo-configuration",
+      "url": "https://turbo.build/repo/docs/reference/configuration",
+      "category": "monorepo"
+    },
+    {
+      "id": "nx-project-configuration",
+      "url": "https://nx.dev/docs/reference/project-configuration",
+      "category": "monorepo"
+    },
+    {
+      "id": "rush-json",
+      "url": "https://rushjs.io/pages/configs/rush_json/",
+      "category": "monorepo"
+    },
+    {
+      "id": "uv-workspaces",
+      "url": "https://docs.astral.sh/uv/concepts/projects/workspaces/",
+      "category": "monorepo"
+    },
+    {
+      "id": "cargo-workspaces",
+      "url": "https://doc.rust-lang.org/cargo/reference/workspaces.html",
+      "category": "monorepo"
+    },
+    {
+      "id": "go-workspaces",
+      "url": "https://go.dev/doc/tutorial/workspaces",
+      "category": "monorepo"
+    },
+    {
+      "id": "gradle-multi-project-builds",
+      "url": "https://docs.gradle.org/current/userguide/multi_project_builds.html",
+      "category": "monorepo"
+    },
+    {
+      "id": "maven-pom-reference",
+      "url": "https://maven.apache.org/pom.html",
+      "category": "monorepo"
+    },
+    {
+      "id": "dotnet-sln",
+      "url": "https://learn.microsoft.com/en-us/dotnet/core/tools/dotnet-sln",
+      "category": "monorepo"
+    },
+    {
+      "id": "bazel-modules",
+      "url": "https://bazel.build/external/module",
+      "category": "monorepo"
+    },
+    {
+      "id": "pants-initial-configuration",
+      "url": "https://www.pantsbuild.org/dev/docs/getting-started/initial-configuration",
+      "category": "monorepo"
+    },
+    {
+      "id": "buck2-buckconfig",
+      "url": "https://buck2.build/docs/concepts/buckconfig/",
+      "category": "monorepo"
+    },
+    {
+      "id": "github-actions-workflow-syntax",
+      "url": "https://docs.github.com/actions/using-workflows/workflow-syntax-for-github-actions",
+      "category": "github-actions"
+    },
+    {
+      "id": "terraform-standard-module-structure",
+      "url": "https://developer.hashicorp.com/terraform/language/modules/develop/structure",
+      "category": "infrastructure"
+    },
+    {
+      "id": "atlassian-monorepos",
+      "url": "https://www.atlassian.com/git/tutorials/monorepos",
+      "category": "monorepo"
+    },
+    {
+      "id": "medium-monorepos-guide",
+      "url": "https://medium.com/@julakadaredrishi/monorepos-a-comprehensive-guide-with-examples-63202cfab711",
+      "category": "monorepo"
+    },
+    {
+      "id": "generalreasoning-vanilla-monorepo",
+      "url": "https://generalreasoning.com/blog/2025/03/22/github-actions-vanilla-monorepo.html",
+      "category": "monorepo"
+    },
+    {
+      "id": "github-actions-vanilla-monorepo-example",
+      "url": "https://github.com/gamgi/github-actions-vanilla-monorepo-example",
+      "category": "monorepo"
+    },
+    {
+      "id": "repo-local-harnesses-linkedin",
+      "url": "https://www.linkedin.com/pulse/repo-local-harnesses-coding-agents-part-1-why-harness-chris-mamon-c71nf/",
+      "category": "field-report"
+    },
+    {
+      "id": "lukasmasuch-repo-is-harness",
+      "url": "https://lukasmasuch.com/blog/the-repo-is-the-harness/",
+      "category": "field-report"
+    },
+    {
+      "id": "harness-idp-sandbox-monorepo",
+      "url": "https://github.com/harness-idp-sandbox/harness-monorepo",
+      "category": "monorepo"
+    },
+    {
+      "id": "awesome-monorepo",
+      "url": "https://github.com/korfuri/awesome-monorepo",
+      "category": "monorepo"
+    },
+    {
+      "id": "tomsoir-bazel-monorepo",
+      "url": "https://github.com/tomsoir/bazel-monorepo",
+      "category": "monorepo"
     }
   ]
 }

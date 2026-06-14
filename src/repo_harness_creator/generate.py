@@ -119,6 +119,12 @@ def _template_context(
         "package_managers": ", ".join(profile.package_managers) or "none detected",
         "runtime_files": ", ".join(profile.runtime_files) or "none detected",
         "components_markdown": _components_markdown(profile.components),
+        "workspace_markers_markdown": _workspace_markers_markdown(
+            profile.workspace_markers
+        ),
+        "routing_markers_markdown": _routing_markers_markdown(
+            profile.routing_markers
+        ),
         "generated_date": now,
         "commands_markdown": "\n".join(f"- `{command}`" for command in commands),
         "commands_shell": "\n\n".join(_shell_command_block(command) for command in commands),
@@ -278,6 +284,8 @@ def _manifest_content(profile: ProjectProfile, agent_file: str) -> str:
             ],
             "docs/harness/component-inventory.md": [
                 "Component Inventory",
+                "Detected Workspace Markers",
+                "Detected Routing Markers",
                 "Detected Components",
                 "Routing Rules",
             ],
@@ -326,6 +334,9 @@ def _manifest_content(profile: ProjectProfile, agent_file: str) -> str:
                 "openai-harness-engineering",
                 "walkinglabs-course",
                 "github-actions-secure-use",
+                "pnpm-workspaces",
+                "github-actions-workflow-syntax",
+                "terraform-standard-module-structure",
             ],
             "docs/harness/research-inbox.md": [
                 "Research Inbox",
@@ -334,6 +345,8 @@ def _manifest_content(profile: ProjectProfile, agent_file: str) -> str:
         },
         "verificationCommands": list(profile.verification_commands),
         "detectedComponents": list(profile.components),
+        "detectedWorkspaceMarkers": list(profile.workspace_markers),
+        "detectedRoutingMarkers": list(profile.routing_markers),
     }
     return f"{json.dumps(manifest, indent=2)}\n"
 
@@ -342,6 +355,18 @@ def _components_markdown(components: tuple[str, ...]) -> str:
     if not components:
         return "- No package or runtime component manifests detected."
     return "\n".join(f"- `{component}`" for component in components)
+
+
+def _workspace_markers_markdown(markers: tuple[str, ...]) -> str:
+    if not markers:
+        return "- No workspace or monorepo orchestration markers detected."
+    return "\n".join(f"- `{marker}`" for marker in markers)
+
+
+def _routing_markers_markdown(markers: tuple[str, ...]) -> str:
+    if not markers:
+        return "- No CI, devcontainer, harness, or agent routing markers detected."
+    return "\n".join(f"- `{marker}`" for marker in markers)
 
 
 def _feature_list_schema() -> str:

@@ -4,6 +4,11 @@ Use this for compact current evidence. Keep raw logs out of this file.
 
 | Date | Scope | Command Or Review | Result | Notes |
 | --- | --- | --- | --- | --- |
+| 2026-06-14 | Monorepo and repo-harness research | Read-only `agy` pass, official source review, supplied local examples, cloned public example repos, and browser review | pass | Accepted source-backed workspace/layout markers, workflow routing markers, Terraform component boundaries, and repo-local harness routing evidence. |
+| 2026-06-14 | Research refresh | `PYTHONPATH=src:. python3 scripts/refresh_research.py --root .` | pass | 76 sources checked; one known Red Hat 403 remains recorded. |
+| 2026-06-14 | Monorepo detection and generated inventory checks | `PYTHONPATH=src:. python3 -m unittest tests.test_detect tests.test_generate_audit tests.test_refresh_research`, compile, pin, JSON validation | pass | 46 focused tests plus compile, pin, and JSON checks passed after workspace/layout, routing-marker, Terraform component, and source-ledger updates. |
+| 2026-06-14 | POSIX verification | `./init.sh` | pass | Doctor, compile, 69 tests, pin check, and self-audit `100/100` after monorepo detection and routing-marker updates. |
+| 2026-06-14 | PowerShell verification | `pwsh -NoProfile -File ./init.ps1` | pass | Doctor, compile, 69 tests, pin check, and self-audit `100/100` after monorepo detection and routing-marker updates. |
 | 2026-06-14 | Personal AGT current snapshot review | Local `origin/main` archive review, no delegation | pass | Reviewed requested AGT `.github`, `scripts`, `examples`, security, compliance, policy, package, operation, benchmark, and action paths; local clone was stale, so the current remote snapshot was used. |
 | 2026-06-14 | AGT-derived workflow, audit, and pin checks | `PYTHONPATH=src:. python3 -m unittest tests.test_generate_audit tests.test_pins`, `PYTHONPATH=src:. python3 scripts/check_pins.py --root .`, `git diff --check`, self-audit | pass | 22 focused tests passed after multiline workflow fail-fast enforcement, local Markdown anchor validation, fenced-code link skipping, and forbidden build-hook detection. |
 | 2026-06-14 | POSIX verification | `./init.sh` | pass | Doctor, compile, 60 tests, pin check, and self-audit `100/100` after the personal AGT current snapshot slice. |
