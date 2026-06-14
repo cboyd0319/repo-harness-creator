@@ -70,6 +70,29 @@ class RefreshResearchTests(unittest.TestCase):
         self.assertEqual(lock["sources"][0]["title"], "Harness Source")
         self.assertIn("Main Finding", inbox)
 
+    def test_refresh_rejects_non_public_urls_before_fetching(self) -> None:
+        sources = [
+            {"id": "file", "url": "file:///etc/passwd", "category": "test"},
+            {"id": "http", "url": "http://example.com/source", "category": "test"},
+            {"id": "local", "url": "https://localhost/source", "category": "test"},
+            {"id": "loopback", "url": "https://127.0.0.1/source", "category": "test"},
+            {"id": "private", "url": "https://10.0.0.1/source", "category": "test"},
+            {
+                "id": "credentials",
+                "url": "https://user:pass@example.com/source",
+                "category": "test",
+            },
+        ]
+
+        with mock.patch.object(refresh_research, "urlopen") as urlopen:
+            records = [
+                refresh_research._fetch_source(source, timeout=1)
+                for source in sources
+            ]
+
+        self.assertTrue(all(record["status"] == "error" for record in records))
+        urlopen.assert_not_called()
+
     def test_partial_json_metadata_extracts_package_title(self) -> None:
         title, headings = refresh_research._extract_json_metadata(
             '{"info":{"name":"setuptools","version":"82.0.1",'

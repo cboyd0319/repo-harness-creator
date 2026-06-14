@@ -4,6 +4,7 @@ from __future__ import annotations
 import argparse
 import hashlib
 import html
+import ipaddress
 import json
 import re
 import sys
@@ -11,6 +12,7 @@ from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
 from urllib.error import HTTPError, URLError
+from urllib.parse import urlparse
 from urllib.request import Request, urlopen
 
 TITLE_RE = re.compile(r"<title[^>]*>(.*?)</title>", re.IGNORECASE | re.DOTALL)
@@ -64,6 +66,9 @@ def _fetch_source(source: dict[str, Any], *, timeout: int) -> dict[str, Any]:
     url = str(source.get("url", ""))
     category = str(source.get("category", "uncategorized"))
     base = {"id": source_id, "url": url, "category": category}
+    url_error = _source_url_error(url)
+    if url_error:
+        return {**base, "status": "error", "error": url_error}
     try:
         request = Request(
             url,
@@ -90,6 +95,31 @@ def _fetch_source(source: dict[str, Any], *, timeout: int) -> dict[str, Any]:
         "title": title,
         "headings": headings,
     }
+
+
+def _source_url_error(url: str) -> str:
+    try:
+        parsed = urlparse(url)
+        hostname = parsed.hostname
+    except ValueError:
+        return "source URL is invalid"
+    if parsed.scheme.lower() != "https":
+        return "source URL must use https"
+    if not hostname:
+        return "source URL must include a host"
+    if parsed.username or parsed.password:
+        return "source URL must not include credentials"
+
+    host = hostname.lower().rstrip(".")
+    if host == "localhost" or host.endswith(".localhost"):
+        return "source URL must not target localhost"
+    try:
+        address = ipaddress.ip_address(host)
+    except ValueError:
+        return ""
+    if not address.is_global:
+        return "source URL must target a public address"
+    return ""
 
 
 def _extract_metadata(content_type: str, text: str) -> tuple[str, list[str]]:

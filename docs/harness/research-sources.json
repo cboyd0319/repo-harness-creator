@@ -208,6 +208,16 @@
       "category": "platform"
     },
     {
+      "id": "python-packaging-pyproject",
+      "url": "https://packaging.python.org/en/latest/guides/writing-pyproject-toml/",
+      "category": "packaging"
+    },
+    {
+      "id": "python-cmdline-env",
+      "url": "https://docs.python.org/3/using/cmdline.html",
+      "category": "security"
+    },
+    {
       "id": "github-actions-secure-use",
       "url": "https://docs.github.com/en/actions/reference/security/secure-use",
       "category": "supply-chain"

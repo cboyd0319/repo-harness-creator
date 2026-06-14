@@ -21,6 +21,19 @@ def _supports_directory_symlink() -> bool:
         return link.is_symlink()
 
 
+def _supports_file_symlink() -> bool:
+    with tempfile.TemporaryDirectory() as tmp:
+        root = Path(tmp)
+        target = root / "target.json"
+        link = root / "link.json"
+        target.write_text("{}", encoding="utf-8")
+        try:
+            link.symlink_to(target)
+        except OSError:
+            return False
+        return link.is_symlink()
+
+
 class DetectProjectTests(unittest.TestCase):
     def test_detects_python_project_and_stdlib_checks(self) -> None:
         with tempfile.TemporaryDirectory() as tmp:
@@ -91,6 +104,32 @@ class DetectProjectTests(unittest.TestCase):
             profile = detect_project(root)
 
         self.assertNotIn("external (pyproject.toml)", profile.components)
+
+    @unittest.skipUnless(_supports_file_symlink(), "symlinks unavailable")
+    def test_does_not_read_root_manifest_symlinks_outside_repo(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp) / "repo"
+            outside = Path(tmp) / "outside"
+            root.mkdir()
+            outside.mkdir()
+            (outside / "package.json").write_text(
+                json.dumps({"dependencies": {"react": "^19.0.0"}}),
+                encoding="utf-8",
+            )
+            (outside / "pyproject.toml").write_text(
+                "[project]\nname='outside'\n",
+                encoding="utf-8",
+            )
+            (root / "package.json").symlink_to(outside / "package.json")
+            (root / "pyproject.toml").symlink_to(outside / "pyproject.toml")
+
+            profile = detect_project(root)
+
+        self.assertEqual(profile.stack, "generic")
+        self.assertNotIn("javascript", profile.languages)
+        self.assertNotIn("python", profile.languages)
+        self.assertEqual(profile.runtime_files, ())
+        self.assertEqual(profile.components, ())
 
 
 if __name__ == "__main__":

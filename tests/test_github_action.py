@@ -26,6 +26,14 @@ class GitHubActionTests(unittest.TestCase):
                     f"action.yml:{line_number} description with colon must be quoted",
                 )
 
+    def test_action_sets_python_safe_path(self) -> None:
+        action = Path(__file__).resolve().parents[1] / "action.yml"
+
+        self.assertIn(
+            'PYTHONSAFEPATH: "1"',
+            action.read_text(encoding="utf-8"),
+        )
+
     def test_action_audit_writes_outputs_and_reports(self) -> None:
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp)

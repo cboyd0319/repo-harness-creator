@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import unittest
+from pathlib import Path
 from unittest.mock import patch
 
 from repo_harness_creator.doctor import doctor_report
@@ -9,13 +10,30 @@ from repo_harness_creator.redact import redact_local_paths
 
 class DoctorRedactTests(unittest.TestCase):
     def test_redacts_common_home_paths(self) -> None:
-        text = "/Users/alice/project C:\\Users\\Bob\\repo /home/casey/src"
+        text = (
+            "/Users/alice/project "
+            "/Users/Chad Boyd/project "
+            "C:\\Users\\Bob\\repo "
+            "C:\\Users\\Chad Boyd\\repo "
+            "/home/casey/src"
+        )
         redacted = redact_local_paths(text)
 
         self.assertNotIn("alice", redacted)
+        self.assertNotIn("Chad Boyd", redacted)
         self.assertNotIn("Bob", redacted)
         self.assertNotIn("casey", redacted)
-        self.assertEqual(redacted.count("<home>"), 3)
+        self.assertEqual(redacted.count("<home>"), 5)
+
+    def test_redacts_current_home_path(self) -> None:
+        home = str(Path.home())
+        if not home or home == ".":
+            self.skipTest("home path unavailable")
+
+        redacted = redact_local_paths(f"{home}/repo")
+
+        self.assertNotIn(home, redacted)
+        self.assertIn("<home>", redacted)
 
     def test_doctor_report_shape(self) -> None:
         report = doctor_report()

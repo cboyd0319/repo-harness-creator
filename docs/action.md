@@ -1,7 +1,8 @@
 # GitHub Action
 
-This repository is also a composite GitHub Action. It sets up Python, points
-`PYTHONPATH` at the action checkout, then runs the same library code as the CLI.
+This repository is also a composite GitHub Action. It sets up Python, sets
+`PYTHONSAFEPATH=1`, points `PYTHONPATH` at the action checkout, then runs the
+same library code as the CLI.
 
 ## Audit A Repo Harness
 

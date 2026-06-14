@@ -187,13 +187,19 @@ default posture is intentionally restrictive.
 - Absolute instruction paths, traversal, and unsafe instruction filenames are
   rejected.
 - Symlinked directories are skipped during discovery.
+- Root manifest symlinks that resolve outside the target repository are ignored
+  during project detection.
 - Audit reads known files only when they resolve inside the target repository.
 - Local home paths are redacted from durable output.
 - GitHub Action outputs sanitize line breaks before writing to
   `$GITHUB_OUTPUT`.
+- The composite Action sets `PYTHONSAFEPATH=1` so the caller repository's
+  working directory cannot shadow the Action library at Python startup.
 
 Network access is limited to explicit research-refresh workflows and normal
-GitHub Actions setup behavior, not routine local harness generation.
+GitHub Actions setup behavior, not routine local harness generation. Research
+refresh accepts HTTPS public-source URLs only; local files, credentials, and
+localhost or private-address targets are rejected.
 
 ## Self-Healing
 

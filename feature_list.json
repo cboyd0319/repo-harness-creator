@@ -32,11 +32,13 @@
       "evidence": [
         "2026-06-14: Local POSIX and PowerShell entrypoints passed with 38 unit tests, pin check, and self-audit 100/100.",
         "2026-06-14: Isolated package install smoke passed; installed init included component and research starter files.",
-        "2026-06-14: Current unit suite passes with 38 tests; pin check passes; self-audit is 100/100.",
-        "2026-06-14: Research source ledger refreshed with 44 sources and one recorded 403 fetch failure.",
+        "2026-06-14: Current unit suite passes with 42 tests; pin check passes; self-audit is 100/100.",
+        "2026-06-14: Research source ledger refreshed with 46 sources and two recorded 403 fetch failures.",
         "2026-06-14: README research pass completed against GitHub Docs, The Turing Way, OpenSSF Scorecard, and widely used project READMEs.",
         "2026-06-14: Root Action manifest colon-description regression test added after hosted CI rejected the unquoted manifest value.",
-        "2026-06-14: Root, template, and generated AGENTS.md files verified against the required five-section format."
+        "2026-06-14: Root, template, and generated AGENTS.md files verified against the required five-section format.",
+        "2026-06-14: Detection ignores root manifest symlinks outside the target repo; Action runtime sets PYTHONSAFEPATH; redaction covers home paths with spaces and the current home path.",
+        "2026-06-14: Research refresh rejects non-HTTPS URLs, credentials, localhost, and literal non-public IP targets before fetching."
       ],
       "notes": "Live hosted CI remains pending until the repo is pushed."
     }

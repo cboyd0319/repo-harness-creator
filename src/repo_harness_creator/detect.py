@@ -49,8 +49,8 @@ def detect_project(
     root = root.resolve()
     files = tuple(list_project_files(root))
     file_set = set(files)
-    package_json = _read_json(root / "package.json")
-    pyproject = _read_toml(root / "pyproject.toml")
+    package_json = _read_json(root / "package.json", root)
+    pyproject = _read_toml(root / "pyproject.toml", root)
 
     languages = _detect_languages(file_set, package_json)
     package_managers = _detect_package_managers(
@@ -329,18 +329,30 @@ def _package_deps(package_json: dict[str, Any] | None) -> set[str]:
     return deps
 
 
-def _read_json(path: Path) -> dict[str, Any] | None:
+def _read_json(path: Path, root: Path) -> dict[str, Any] | None:
+    if not _is_inside_root(path, root):
+        return None
     try:
         return json.loads(path.read_text(encoding="utf-8"))
     except (OSError, json.JSONDecodeError):
         return None
 
 
-def _read_toml(path: Path) -> dict[str, Any] | None:
+def _read_toml(path: Path, root: Path) -> dict[str, Any] | None:
+    if not _is_inside_root(path, root):
+        return None
     try:
         return tomllib.loads(path.read_text(encoding="utf-8"))
     except (OSError, tomllib.TOMLDecodeError):
         return None
+
+
+def _is_inside_root(path: Path, root: Path) -> bool:
+    try:
+        path.resolve(strict=False).relative_to(root.resolve(strict=False))
+    except ValueError:
+        return False
+    return True
 
 
 def _dedupe(values: list[str] | tuple[str, ...]) -> list[str]:

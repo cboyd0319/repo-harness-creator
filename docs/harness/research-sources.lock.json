@@ -1,26 +1,13 @@
 {
-  "checkedAt": "2026-06-14T03:30:52+00:00",
-  "failureCount": 1,
-  "sourceCount": 44,
+  "checkedAt": "2026-06-14T04:59:12+00:00",
+  "failureCount": 2,
+  "sourceCount": 46,
   "sources": [
     {
       "category": "field-report",
-      "contentType": "text/html",
-      "headings": [
-        "Harness engineering: leveraging Codex in an agent-first world",
-        "We started with an empty git repository",
-        "Redefining the role of the engineer",
-        "Increasing application legibility",
-        "We made repository knowledge the system of record",
-        "Agent legibility is the goal",
-        "Enforcing architecture and taste",
-        "Throughput changes the merge philosophy"
-      ],
-      "httpStatus": 200,
+      "error": "HTTP Error 403: Forbidden",
       "id": "openai-harness-engineering",
-      "sha256": "5575f073d50a80d2b043d4a0bd4e259e5f4f055f3a575f4dc7f7521942fba261",
-      "status": "ok",
-      "title": "Harness engineering: leveraging Codex in an agent-first world | OpenAI",
+      "status": "error",
       "url": "https://openai.com/index/harness-engineering/"
     },
     {
@@ -36,7 +23,7 @@
       ],
       "httpStatus": 200,
       "id": "anthropic-effective-harnesses",
-      "sha256": "cba751dfd825b5d01635e156629c35de64036e6e3e1c1820162ede7185d1a4f5",
+      "sha256": "3fc68b8037f15f7114789b026bc994a6d81e9fbbb9983ef6e61356e711dc4d06",
       "status": "ok",
       "title": "Effective harnesses for long-running agents \\ Anthropic",
       "url": "https://www.anthropic.com/engineering/effective-harnesses-for-long-running-agents"
@@ -56,7 +43,7 @@
       ],
       "httpStatus": 200,
       "id": "anthropic-long-running-apps",
-      "sha256": "fff1da1fe1cd37199cce41757bcf033dfa57c8513123d7c045939f394e017d62",
+      "sha256": "cf590c9ee92a3fc3575740b25ceadb4999887370a678d39c30e8ae5bc4990d81",
       "status": "ok",
       "title": "Harness design for long-running application development \\ Anthropic",
       "url": "https://www.anthropic.com/engineering/harness-design-long-running-apps"
@@ -241,7 +228,7 @@
       ],
       "httpStatus": 200,
       "id": "google-antigravity-agent",
-      "sha256": "7afda478bd6ec9668792cc5d94093b3de7ec7faba00d13b711184d9d12042754",
+      "sha256": "d533cceba10bc5909ebc02eb7b13fb41019cc0a4d40627a12a2a2e95812133c7",
       "status": "ok",
       "title": "Antigravity Agent | Gemini API | Google AI for Developers",
       "url": "https://ai.google.dev/gemini-api/docs/antigravity-agent"
@@ -319,7 +306,7 @@
       ],
       "httpStatus": 200,
       "id": "walkinglabs-github",
-      "sha256": "6d1dc40d2fa677aa0cabe6e72232e2ca24d0806fa4fb9ac8047361d9f03ceead",
+      "sha256": "18d82e612e413e498fd9872d4357fc8ed4b47dd237e85c15955c34be44dabd3f",
       "status": "ok",
       "title": "GitHub - walkinglabs/learn-harness-engineering: Harness engineering beginner tutorial, from 0 to 1 \u00b7 GitHub",
       "url": "https://github.com/walkinglabs/learn-harness-engineering"
@@ -359,7 +346,7 @@
       ],
       "httpStatus": 200,
       "id": "walkinglabs-harness-creator-skill",
-      "sha256": "c0d14248da680d05d88ca89b57570e25d797b82e640900af0d17f5096ff2779b",
+      "sha256": "66cfb94fd6ca42403b31bca41d7615d9d4cf171305c182b642312c0e42f7fc6d",
       "status": "ok",
       "title": "learn-harness-engineering/skills/harness-creator at main \u00b7 walkinglabs/learn-harness-engineering \u00b7 GitHub",
       "url": "https://github.com/walkinglabs/learn-harness-engineering/tree/main/skills/harness-creator"
@@ -379,7 +366,7 @@
       ],
       "httpStatus": 200,
       "id": "agentpatterns-copilot-harness",
-      "sha256": "df7b0f95a5e26e02015d36d3199b3026bbd461f7efeab1048c93549883f23c27",
+      "sha256": "32915f781a4ee8deeaa16adb74875e2956f69171901102e0656bdbd18630a2d7",
       "status": "ok",
       "title": "GitHub Copilot: Harness Engineering for Agent-Ready Code - AgentPatterns.ai",
       "url": "https://agentpatterns.ai/training/copilot/harness-engineering/"
@@ -427,7 +414,7 @@
       ],
       "httpStatus": 200,
       "id": "charlesanim-harness-engineering",
-      "sha256": "a49dac4b4d852fd4d2dc8f0c3f51c56986c08514827e966526e9496c1c633db6",
+      "sha256": "d6e6e9cf2af3fa50e66a839c3a77bb9bf6b52ea52c989c07c961408862ae09b1",
       "status": "ok",
       "title": "GitHub - charlesanim/harness-engineering: Agent skill: set up OpenAI's harness engineering methodology in any repo. Works with Copilot, Codex, Claude, Cursor. \u00b7 GitHub",
       "url": "https://github.com/charlesanim/harness-engineering"
@@ -752,6 +739,41 @@
       "status": "ok",
       "title": "",
       "url": "https://www.python.org/downloads/"
+    },
+    {
+      "category": "packaging",
+      "contentType": "text/html",
+      "headings": [
+        "Writing your pyproject.toml \u00b6",
+        "Declaring the build backend \u00b6",
+        "Static vs. dynamic metadata \u00b6",
+        "Basic information \u00b6",
+        "Dependencies and requirements \u00b6",
+        "Creating executable scripts \u00b6",
+        "About your project \u00b6",
+        "Advanced plugins \u00b6"
+      ],
+      "httpStatus": 200,
+      "id": "python-packaging-pyproject",
+      "sha256": "4ecafb8455c89bbea2c20fa623746faf67b4eefa81798bf2c2a229084fba543b",
+      "status": "ok",
+      "title": "Writing your pyproject.toml - Python Packaging User Guide",
+      "url": "https://packaging.python.org/en/latest/guides/writing-pyproject-toml/"
+    },
+    {
+      "category": "security",
+      "contentType": "text/html",
+      "headings": [
+        "1. Command line and environment \u00b6",
+        "1.1. Command line \u00b6",
+        "1.2. Environment variables \u00b6"
+      ],
+      "httpStatus": 200,
+      "id": "python-cmdline-env",
+      "sha256": "d032608b5b28bb46107e96da1879f99ad4c2694a89c040b3111eeb95216e5d4b",
+      "status": "ok",
+      "title": "1. Command line and environment \u2014 Python 3.14.6 documentation",
+      "url": "https://docs.python.org/3/using/cmdline.html"
     },
     {
       "category": "supply-chain",

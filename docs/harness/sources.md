@@ -25,6 +25,7 @@ packaging, CI, or platform support changes.
 | GitHub Copilot custom instructions docs | Repository-wide `.github/copilot-instructions.md` path |
 | GitHub Copilot CLI custom instructions docs | Copilot use of root `AGENTS.md` and `.github/copilot-instructions.md` |
 | Python Packaging User Guide | `pyproject.toml`, console scripts, and package metadata |
+| Python command-line and environment docs | `PYTHONSAFEPATH` import-path hardening for the composite Action runtime |
 | Python PEP 11 and Python downloads | Python 3.13+ and supported-platform framing |
 | GitHub Actions metadata syntax and composite action docs | Root `action.yml` inputs, outputs, and composite action shape |
 | GitHub Actions hosted runner docs | Ubuntu 22.04, macOS 15, and Windows 2025 runner labels |
@@ -96,8 +97,19 @@ project-owned docs instead of machine-specific absolute paths.
   rejects unsafe instruction filenames, preflights generated destinations, and
   refuses writes that resolve outside the target repo.
 - Audit and detection reads must respect the same trust boundary. Discovery now
-  skips symlinked directories, and audit reads only known files that resolve
-  inside the target repo.
+  skips symlinked directories, ignores root manifest symlinks that resolve
+  outside the target repo, and audit reads only known files that resolve inside
+  the target repo.
+- Action startup should not let caller-controlled files shadow the Action
+  library. The reusable Action now sets `PYTHONSAFEPATH=1` and `PYTHONPATH` to
+  the action checkout.
+- Package metadata should make legal files explicit. `pyproject.toml` now uses
+  PEP 639 `license-files` metadata for `LICENSE`.
+- Durable output should hide home paths across common personal-machine shapes.
+  Redaction now covers home paths with spaces and the current user's home path.
+- Research refresh is a metadata check for public sources, not a general URL
+  fetcher. The refresh script now rejects non-HTTPS URLs, embedded
+  credentials, localhost, and literal non-public IP targets before fetching.
 - Compatibility instruction files are source-backed. `CLAUDE.md`,
   `GEMINI.md`, and `.github/copilot-instructions.md` route to `AGENTS.md`
   without duplicating the project manual.
