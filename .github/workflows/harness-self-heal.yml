@@ -1,0 +1,72 @@
+name: Harness Self Heal
+
+on:
+  schedule:
+    - cron: "17 9 * * 1"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pull-requests: write
+
+concurrency:
+  group: harness-self-heal
+  cancel-in-progress: false
+
+jobs:
+  refresh:
+    name: Refresh research and safe harness updates
+    runs-on: ubuntu-22.04
+    timeout-minutes: 20
+    steps:
+      - name: Checkout
+        uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6
+        with:
+          fetch-depth: 0
+
+      - name: Set up Python
+        uses: actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405 # v6
+        with:
+          python-version: "3.13.14"
+
+      - name: Refresh research metadata
+        env:
+          PYTHONPATH: src
+        run: python scripts/refresh_research.py --root .
+
+      - name: Apply safe harness updates
+        env:
+          PYTHONPATH: src
+        run: python -m repo_harness_creator update --target . --apply --agent-file AGENTS.md
+
+      - name: Verify
+        env:
+          PYTHONPATH: src
+        run: |
+          python -m compileall src tests scripts
+          python -m unittest discover -s tests
+          python scripts/check_pins.py --root .
+          python -m repo_harness_creator audit --target . --min-score 85
+          git diff --check
+
+      - name: Create pull request
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          if [ -z "$(git status --porcelain)" ]; then
+            echo "No harness changes detected."
+            exit 0
+          fi
+
+          branch="harness/self-heal-${GITHUB_RUN_ID}"
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git switch -c "$branch"
+          git add docs/harness src/repo_harness_creator/templates
+          git commit -m "docs(harness): refresh self-healing research"
+          git push --set-upstream origin "$branch"
+          gh pr create \
+            --title "Refresh harness research and safe updates" \
+            --body "Scheduled self-healing run. Review source changes, generated research metadata, and harness updates before merging." \
+            --base main \
+            --head "$branch"

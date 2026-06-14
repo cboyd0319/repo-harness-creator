@@ -1,0 +1,47 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    name: Python ${{ matrix.python-version }} on ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os:
+          - ubuntu-22.04
+          - macos-15
+          - windows-2025
+        python-version:
+          - "3.13.14"
+          - "3.14.6"
+    steps:
+      - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6
+      - uses: actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405 # v6
+        with:
+          python-version: ${{ matrix.python-version }}
+      - name: Install package
+        run: python -m pip install --editable .
+      - name: Doctor
+        run: python -m repo_harness_creator doctor --strict
+      - name: Compile
+        run: python -m compileall src tests
+      - name: Tests
+        run: python -m unittest discover -s tests
+      - name: Pin check
+        run: python scripts/check_pins.py --root .
+      - name: Self audit
+        run: python -m repo_harness_creator audit --target . --min-score 85
+      - name: GitHub Action smoke
+        uses: ./
+        with:
+          command: audit
+          min-score: "85"
+          html-report: harness-action-report.html
+          json-report: harness-action-report.json

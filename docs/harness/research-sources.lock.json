@@ -1,0 +1,600 @@
+{
+  "checkedAt": "2026-06-14T03:17:01+00:00",
+  "failureCount": 1,
+  "sourceCount": 32,
+  "sources": [
+    {
+      "category": "field-report",
+      "contentType": "text/html",
+      "headings": [
+        "Harness engineering: leveraging Codex in an agent-first world",
+        "We started with an empty git repository",
+        "Redefining the role of the engineer",
+        "Increasing application legibility",
+        "We made repository knowledge the system of record",
+        "Agent legibility is the goal",
+        "Enforcing architecture and taste",
+        "Throughput changes the merge philosophy"
+      ],
+      "httpStatus": 200,
+      "id": "openai-harness-engineering",
+      "sha256": "796e12c5354a500a264b6efba861d300542c47a92bc431b2b47e83e7ed196da6",
+      "status": "ok",
+      "title": "Harness engineering: leveraging Codex in an agent-first world | OpenAI",
+      "url": "https://openai.com/index/harness-engineering/"
+    },
+    {
+      "category": "field-report",
+      "contentType": "text/html",
+      "headings": [
+        "Effective harnesses for long-running agents",
+        "The long-running agent problem",
+        "Environment management",
+        "Getting up to speed",
+        "Future work",
+        "Get the developer newsletter"
+      ],
+      "httpStatus": 200,
+      "id": "anthropic-effective-harnesses",
+      "sha256": "376501c594e4e7f84225055e2194706bc190e6fab3968a81e09000d318aaf479",
+      "status": "ok",
+      "title": "Effective harnesses for long-running agents \\ Anthropic",
+      "url": "https://www.anthropic.com/engineering/effective-harnesses-for-long-running-agents"
+    },
+    {
+      "category": "field-report",
+      "contentType": "text/html",
+      "headings": [
+        "Harness design for long-running application development",
+        "Why naive implementations fall short",
+        "Frontend design: making subjective quality gradable",
+        "Scaling to full-stack coding",
+        "What comes next",
+        "Acknowledgements",
+        "Appendix",
+        "Get the developer newsletter"
+      ],
+      "httpStatus": 200,
+      "id": "anthropic-long-running-apps",
+      "sha256": "872b1d7ee502cd95ee353c3ab7ef619102d9bbebdf5466ea7c7dafeef177df56",
+      "status": "ok",
+      "title": "Harness design for long-running application development \\ Anthropic",
+      "url": "https://www.anthropic.com/engineering/harness-design-long-running-apps"
+    },
+    {
+      "category": "analysis",
+      "contentType": "text/html",
+      "headings": [
+        "Topics",
+        "about me",
+        "content",
+        "Thoughtworks",
+        "follow",
+        "Table of Contents",
+        "Harness engineering for coding agent users",
+        "Contents"
+      ],
+      "httpStatus": 200,
+      "id": "martin-fowler-harness-engineering",
+      "sha256": "d56bf3e78f2987b12af13ddf2f98f96751ab9239276879201d48e6fc5ff1d759",
+      "status": "ok",
+      "title": "Harness engineering for coding agent users",
+      "url": "https://martinfowler.com/articles/harness-engineering.html"
+    },
+    {
+      "category": "sensors",
+      "contentType": "text/html",
+      "headings": [
+        "Topics",
+        "about me",
+        "content",
+        "Thoughtworks",
+        "follow",
+        "Table of Contents",
+        "Maintainability sensors for coding agents",
+        "Contents"
+      ],
+      "httpStatus": 200,
+      "id": "martin-fowler-maintainability-sensors",
+      "sha256": "5ef6beb8001788ae06870161498510de590c39b4c31ff33da8775d18c631a4b4",
+      "status": "ok",
+      "title": "Maintainability sensors for coding agents",
+      "url": "https://martinfowler.com/articles/sensors-for-coding-agents.html"
+    },
+    {
+      "category": "structured-context",
+      "error": "HTTP Error 403: Forbidden",
+      "id": "redhat-structured-workflows",
+      "status": "error",
+      "url": "https://developers.redhat.com/articles/2026/04/07/harness-engineering-structured-workflows-ai-assisted-development"
+    },
+    {
+      "category": "sensors",
+      "contentType": "text/html",
+      "headings": [
+        "Harness engineering and agent feedback: Exploring AI coding sensors",
+        "Feed-forward vs. feedback mechanisms",
+        "The power of computational feedback",
+        "Real-world experimentation: Sensors in action",
+        "How sensors help agentic engineering",
+        "Looking ahead: Harness templates",
+        "Explore a snapshot of today's tech landscape",
+        "Company"
+      ],
+      "httpStatus": 200,
+      "id": "thoughtworks-coding-sensors",
+      "sha256": "1a89d77e1a4f794741f59db2b43ddabca6ed3616b59c2cac1afb704309936b3d",
+      "status": "ok",
+      "title": "Harness engineering and agent feedback: Exploring AI coding sensors | Thoughtworks United States",
+      "url": "https://www.thoughtworks.com/en-us/insights/blog/generative-ai/harness-engineering-agent-feedback-exploring-ai-coding-sensors"
+    },
+    {
+      "category": "runtime",
+      "contentType": "text/html",
+      "headings": [
+        "The Anatomy of an Agent Harness",
+        "Key Takeaways",
+        "Can Someone Please Define a \"Harness\"?",
+        "Why Do We Need Harnesses. From a Model's Perspective",
+        "Working Backwards from Desired Agent Behavior to Harness Engineering",
+        "Filesystems for Durable Storage and Context Management",
+        "Bash + Code as a General Purpose Tool",
+        "Sandboxes and Tools to Execute & Verify Work"
+      ],
+      "httpStatus": 200,
+      "id": "langchain-agent-harness",
+      "sha256": "a2093bab96ef0db5843340758e530d0def6c8f9588ca05a8f044330e404df919",
+      "status": "ok",
+      "title": "The Anatomy of an Agent Harness",
+      "url": "https://www.langchain.com/blog/the-anatomy-of-an-agent-harness"
+    },
+    {
+      "category": "runtime",
+      "contentType": "text/html",
+      "headings": [
+        "Documentation Index",
+        "On this page",
+        "Harness capabilities",
+        "Execution environment",
+        "Context management",
+        "Delegation",
+        "Steering",
+        "\u200b Execution environment"
+      ],
+      "httpStatus": 200,
+      "id": "langchain-deepagents-harness",
+      "sha256": "299a368f8ff24846f689c7e1b6c6dd8291b4942b07f7357611e32062b9569ef1",
+      "status": "ok",
+      "title": "Harness capabilities - Docs by LangChain",
+      "url": "https://docs.langchain.com/oss/python/deepagents/harness"
+    },
+    {
+      "category": "instruction-format",
+      "contentType": "text/html",
+      "headings": [
+        "AGENTS.md",
+        "Why AGENTS.md?",
+        "One AGENTS.md works across many agents",
+        "Examples",
+        "How to use AGENTS.md?",
+        "About",
+        "FAQ"
+      ],
+      "httpStatus": 200,
+      "id": "agents-md",
+      "sha256": "c70fa7aaa423b4e4c04a279cb2ce7d080b8929d05e1e2ba246a53cbe5f6a2e5b",
+      "status": "ok",
+      "title": "AGENTS.md",
+      "url": "https://agents.md/"
+    },
+    {
+      "category": "instruction-loader",
+      "contentType": "text/html",
+      "headings": [
+        "Documentation Index",
+        "On this page",
+        "How Claude remembers your project",
+        "\u200b CLAUDE.md vs auto memory",
+        "\u200b CLAUDE.md files",
+        "\u200b Auto memory",
+        "\u200b View and edit with /memory",
+        "\u200b Troubleshoot memory issues"
+      ],
+      "httpStatus": 200,
+      "id": "claude-code-memory",
+      "sha256": "7e88e1db4fdd3247186ac106dd1d72e30e8ea779e4803f099eaec437da973dab",
+      "status": "ok",
+      "title": "How Claude remembers your project - Claude Code Docs",
+      "url": "https://code.claude.com/docs/en/memory"
+    },
+    {
+      "category": "instruction-loader",
+      "contentType": "text/html",
+      "headings": [
+        "On this page",
+        "Provide context with GEMINI.md files",
+        "Understand the context hierarchy",
+        "Manage context with the /memory command",
+        "Modularize context with imports",
+        "Customize the context file name",
+        "Next steps"
+      ],
+      "httpStatus": 200,
+      "id": "gemini-cli-gemini-md",
+      "sha256": "3010d9615cfe2ab18dfbd18f0836a2446f73ce57ca14ac921f0983a70e20359c",
+      "status": "ok",
+      "title": "Provide context with GEMINI.md files | Gemini CLI",
+      "url": "https://geminicli.com/docs/cli/gemini-md/"
+    },
+    {
+      "category": "instruction-loader",
+      "contentType": "text/html",
+      "headings": [
+        "Antigravity Agent",
+        "Capabilities",
+        "Supported tools",
+        "Multimodal Input",
+        "Customizing the agent",
+        "Environments",
+        "Availability and pricing",
+        "Limitations"
+      ],
+      "httpStatus": 200,
+      "id": "google-antigravity-agent",
+      "sha256": "dde6496be72b4c832776cdd2fed6ed67687dca34d29a593f985f9c558b42e7ab",
+      "status": "ok",
+      "title": "Antigravity Agent | Gemini API | Google AI for Developers",
+      "url": "https://ai.google.dev/gemini-api/docs/antigravity-agent"
+    },
+    {
+      "category": "instruction-loader",
+      "contentType": "text/html",
+      "headings": [
+        "GitHub Copilot",
+        "Adding repository custom instructions for GitHub Copilot",
+        "In this article",
+        "Introduction",
+        "Prerequisites for repository custom instructions",
+        "Creating custom instructions",
+        "Creating repository-wide custom instructions",
+        "Creating path-specific custom instructions"
+      ],
+      "httpStatus": 200,
+      "id": "github-copilot-custom-instructions",
+      "sha256": "3ded4260cec97c179cf7bb02c149ca3ce18f25e99d1231ad6f16efdc14357dd0",
+      "status": "ok",
+      "title": "Adding repository custom instructions for GitHub Copilot - GitHub Docs",
+      "url": "https://docs.github.com/copilot/customizing-copilot/adding-custom-instructions-for-github-copilot"
+    },
+    {
+      "category": "instruction-loader",
+      "contentType": "text/html",
+      "headings": [
+        "GitHub Copilot",
+        "Adding custom instructions for GitHub Copilot CLI",
+        "In this article",
+        "Types of custom instructions",
+        "Creating repository-wide custom instructions",
+        "Creating path-specific custom instructions",
+        "Custom instructions in use",
+        "Further reading"
+      ],
+      "httpStatus": 200,
+      "id": "github-copilot-cli-custom-instructions",
+      "sha256": "28c6704b1e21ba1b08afc710fb8efb844e70b7eca88280917644bb85e4270ab9",
+      "status": "ok",
+      "title": "Adding custom instructions for GitHub Copilot CLI - GitHub Docs",
+      "url": "https://docs.github.com/en/copilot/how-tos/copilot-cli/customize-copilot/add-custom-instructions"
+    },
+    {
+      "category": "course",
+      "contentType": "text/html",
+      "headings": [
+        "Lectures",
+        "Welcome to Learn Harness Engineering \u200b",
+        "Get started \u200b",
+        "The Core Mechanism of a Harness \u200b",
+        "What you will learn \u200b",
+        "Next steps \u200b"
+      ],
+      "httpStatus": 200,
+      "id": "walkinglabs-course",
+      "sha256": "e8049fffea829a693818c1ce3b3e96c58dd5f49e7fd240147644b7fd9cc18c8a",
+      "status": "ok",
+      "title": "Welcome to Learn Harness Engineering | Learn Harness Engineering",
+      "url": "https://walkinglabs.github.io/learn-harness-engineering/en/"
+    },
+    {
+      "category": "course",
+      "contentType": "text/html",
+      "headings": [
+        "Navigation Menu",
+        "Search code, repositories, users, issues, pull requests...",
+        "Provide feedback",
+        "Saved searches",
+        "Use saved searches to filter your results more quickly",
+        "walkinglabs/learn-harness-engineering",
+        "Folders and files",
+        "Latest commit"
+      ],
+      "httpStatus": 200,
+      "id": "walkinglabs-github",
+      "sha256": "eaca027e5f1ae0c9384ee0adde8dfec1c113a1124bf5fdc223d01a3734f38756",
+      "status": "ok",
+      "title": "GitHub - walkinglabs/learn-harness-engineering: Harness engineering beginner tutorial, from 0 to 1 \u00b7 GitHub",
+      "url": "https://github.com/walkinglabs/learn-harness-engineering"
+    },
+    {
+      "category": "course",
+      "contentType": "text/html",
+      "headings": [
+        "Lectures",
+        "Lecture 02. What a Harness Actually Is \u200b",
+        "Start with an Analogy \u200b",
+        "Core Concepts \u200b",
+        "The Five-Subsystem Harness Model \u200b",
+        "A Team's Real Story \u200b",
+        "Key Takeaways \u200b",
+        "Further Reading \u200b"
+      ],
+      "httpStatus": 200,
+      "id": "walkinglabs-lecture-02",
+      "sha256": "a9faa4a0334679a250952d91e2149e40da76b5ec06d7e6944797cdddfc863409",
+      "status": "ok",
+      "title": "Lecture 02. What a Harness Actually Is | Learn Harness Engineering",
+      "url": "https://walkinglabs.github.io/learn-harness-engineering/en/lectures/lecture-02-what-a-harness-actually-is/"
+    },
+    {
+      "category": "course",
+      "contentType": "text/html",
+      "headings": [
+        "Navigation Menu",
+        "Search code, repositories, users, issues, pull requests...",
+        "Provide feedback",
+        "Saved searches",
+        "Use saved searches to filter your results more quickly",
+        "Files Expand file tree",
+        "Breadcrumbs",
+        "harness-creator"
+      ],
+      "httpStatus": 200,
+      "id": "walkinglabs-harness-creator-skill",
+      "sha256": "e2abef000c3ab1a754c7e192821cd4f25af5e18aefeebeb543bd5627ef9329e7",
+      "status": "ok",
+      "title": "learn-harness-engineering/skills/harness-creator at main \u00b7 walkinglabs/learn-harness-engineering \u00b7 GitHub",
+      "url": "https://github.com/walkinglabs/learn-harness-engineering/tree/main/skills/harness-creator"
+    },
+    {
+      "category": "agent-ready-code",
+      "contentType": "text/html",
+      "headings": [
+        "GitHub Copilot: Harness Engineering \u00b6",
+        "Environment Over Prompts \u00b6",
+        "Backpressure \u00b6",
+        "Repo Legibility \u00b6",
+        "Mechanical Enforcement \u00b6",
+        "Multi-Session Work \u00b6",
+        "Safe Operations \u00b6",
+        "Convergence Detection \u00b6"
+      ],
+      "httpStatus": 200,
+      "id": "agentpatterns-copilot-harness",
+      "sha256": "a7654e3bebe419a795ebf748b6c8c5012aaa2da223c2fa37921e879c6b268f5b",
+      "status": "ok",
+      "title": "GitHub Copilot: Harness Engineering for Agent-Ready Code - AgentPatterns.ai",
+      "url": "https://agentpatterns.ai/training/copilot/harness-engineering/"
+    },
+    {
+      "category": "repo-as-os",
+      "contentType": "text/html",
+      "headings": [
+        "The Repository is the OS: Why Harness Engineering is the Future of Code Generation",
+        "Ready to Transform Your AI Strategy?"
+      ],
+      "httpStatus": 200,
+      "id": "epsilla-repository-os",
+      "sha256": "8bd64cfc32595283588c392aca577d8f2154344a5e5bd13c026d9a25bc2133e6",
+      "status": "ok",
+      "title": "The Repository is the OS: Why Harness Engineering is the Future of Code Generation | Epsilla Blog",
+      "url": "https://www.epsilla.com/blogs/repository-as-operating-system-agentic-harness-engineering"
+    },
+    {
+      "category": "agent-control-systems",
+      "contentType": "text/html",
+      "headings": [
+        "Harness Engineering: Why the Focus is Shifting from Models to Agent Control Systems",
+        "Ready to Transform Your AI Strategy?"
+      ],
+      "httpStatus": 200,
+      "id": "epsilla-harness-control-systems",
+      "sha256": "2418779784409983e9bb505dc6225b9c9465bd227cee59868cd2485e5528351f",
+      "status": "ok",
+      "title": "Harness Engineering: Why the Focus is Shifting from Models to Agent Control Systems | Epsilla Blog",
+      "url": "https://www.epsilla.com/blogs/2026-03-12-harness-engineering"
+    },
+    {
+      "category": "skill",
+      "contentType": "text/html",
+      "headings": [
+        "Navigation Menu",
+        "Search code, repositories, users, issues, pull requests...",
+        "Provide feedback",
+        "Saved searches",
+        "Use saved searches to filter your results more quickly",
+        "charlesanim/harness-engineering",
+        "Folders and files",
+        "Latest commit"
+      ],
+      "httpStatus": 200,
+      "id": "charlesanim-harness-engineering",
+      "sha256": "35153f64275d6eb6866cdf38226692a22b476e6118f34da57071ebab037e280b",
+      "status": "ok",
+      "title": "GitHub - charlesanim/harness-engineering: Agent skill: set up OpenAI's harness engineering methodology in any repo. Works with Copilot, Codex, Claude, Cursor. \u00b7 GitHub",
+      "url": "https://github.com/charlesanim/harness-engineering"
+    },
+    {
+      "category": "research",
+      "contentType": "text/html",
+      "headings": [
+        "quick links",
+        "Computer Science > Software Engineering",
+        "Title: AI Harness Engineering: A Runtime Substrate for Foundation-Model Software Agents",
+        "Submission history",
+        "Access Paper:",
+        "BibTeX formatted citation",
+        "Bibliographic and Citation Tools",
+        "Code, Data and Media Associated with this Article"
+      ],
+      "httpStatus": 200,
+      "id": "arxiv-runtime-substrate",
+      "sha256": "8a2d5bae76e3963d1e36855fc1ada853fc2b3178b69b522916ec03f52a7337ba",
+      "status": "ok",
+      "title": "[2605.13357] AI Harness Engineering: A Runtime Substrate for Foundation-Model Software Agents",
+      "url": "https://arxiv.org/abs/2605.13357"
+    },
+    {
+      "category": "research",
+      "contentType": "text/html",
+      "headings": [
+        "quick links",
+        "Computer Science > Computation and Language",
+        "Title: Agentic Harness Engineering: Observability-Driven Automatic Evolution of Coding-Agent Harnesses",
+        "Submission history",
+        "Access Paper:",
+        "BibTeX formatted citation",
+        "Bibliographic and Citation Tools",
+        "Code, Data and Media Associated with this Article"
+      ],
+      "httpStatus": 200,
+      "id": "arxiv-agentic-harness-evolution",
+      "sha256": "284f4f45bb920b3f48104d8a4338d42ac3e0e02d14f051d579f9872a7aa324cd",
+      "status": "ok",
+      "title": "[2604.25850] Agentic Harness Engineering: Observability-Driven Automatic Evolution of Coding-Agent Harnesses",
+      "url": "https://arxiv.org/abs/2604.25850"
+    },
+    {
+      "category": "research",
+      "contentType": "text/html",
+      "headings": [
+        "quick links",
+        "Computer Science > Computation and Language",
+        "Title: Code as Agent Harness",
+        "Submission history",
+        "Access Paper:",
+        "BibTeX formatted citation",
+        "Bibliographic and Citation Tools",
+        "Code, Data and Media Associated with this Article"
+      ],
+      "httpStatus": 200,
+      "id": "arxiv-code-as-agent-harness",
+      "sha256": "4a114c689dd1c85d4fe41fa12edcd2903dabb54828eec91960cc2cab6ae65816",
+      "status": "ok",
+      "title": "[2605.18747] Code as Agent Harness",
+      "url": "https://arxiv.org/abs/2605.18747"
+    },
+    {
+      "category": "editor-harness",
+      "contentType": "text/html",
+      "headings": [
+        "The Coding Harness Behind GitHub Copilot in VS Code",
+        "What is the coding harness?",
+        "The agent loop",
+        "The harness is the product",
+        "Evaluation keeps the harness honest",
+        "Building VSC-Bench",
+        "How we benchmark agent changes before they merge",
+        "The model is the engine. The harness is the car."
+      ],
+      "httpStatus": 200,
+      "id": "vscode-copilot-harness",
+      "sha256": "9846630d908b77a600ef9b0b7d12daa32c7d969fd82e4b5a85761756d6be8806",
+      "status": "ok",
+      "title": "The Coding Harness Behind GitHub Copilot in VS Code",
+      "url": "https://code.visualstudio.com/blogs/2026/05/15/agent-harnesses-github-copilot-vscode"
+    },
+    {
+      "category": "analysis",
+      "contentType": "text/html",
+      "headings": [
+        "# Skill Issue: Harness Engineering for Coding Agents",
+        "## Harness Engineering",
+        "## ... as a Subset of Context Engineering",
+        "## Engineering Your Harness",
+        "## Back-Pressure Increases Your Chances of Success",
+        "## Closing Notes",
+        "## More Posts"
+      ],
+      "httpStatus": 200,
+      "id": "humanlayer-harness-engineering",
+      "sha256": "51fca3f5e635645fdee09af70824776e8f6ec3d8eb5800f441bf08cfa9b5bbab",
+      "status": "ok",
+      "title": "Skill Issue: Harness Engineering for Coding Agents | HumanLayer Blog",
+      "url": "https://www.humanlayer.dev/blog/skill-issue-harness-engineering-for-coding-agents"
+    },
+    {
+      "category": "platform",
+      "contentType": "text/html",
+      "headings": [],
+      "httpStatus": 200,
+      "id": "python-downloads",
+      "sha256": "24501e4e46f37a8ef6db98f38d537c1cc9558f725dd1e2cd57966a45ff3b6a6a",
+      "status": "ok",
+      "title": "",
+      "url": "https://www.python.org/downloads/"
+    },
+    {
+      "category": "supply-chain",
+      "contentType": "text/html",
+      "headings": [
+        "GitHub Actions",
+        "Secure use reference",
+        "In this article",
+        "Writing workflows",
+        "Using third-party actions",
+        "GitHub's security features",
+        "Help and support",
+        "Legal"
+      ],
+      "httpStatus": 200,
+      "id": "github-actions-secure-use",
+      "sha256": "58034464ee5578fa3d3239c49cf2bb558d04cc9a28fb388ad63c6dea9d16de32",
+      "status": "ok",
+      "title": "Secure use reference - GitHub Docs",
+      "url": "https://docs.github.com/en/actions/reference/security/secure-use"
+    },
+    {
+      "category": "github-actions",
+      "contentType": "text/html",
+      "headings": [
+        "GitHub Actions",
+        "Creating a composite action",
+        "Platform navigation",
+        "In this article",
+        "Introduction",
+        "Prerequisites",
+        "Creating an action metadata file",
+        "Testing out your action in a workflow"
+      ],
+      "httpStatus": 200,
+      "id": "github-composite-actions",
+      "sha256": "d8cb1507d012b0a58483335d3ec6dda420fe3f54cd7943e52a5c444899a26e13",
+      "status": "ok",
+      "title": "Creating a composite action - GitHub Docs",
+      "url": "https://docs.github.com/en/actions/tutorials/create-actions/create-a-composite-action"
+    },
+    {
+      "category": "packaging",
+      "contentType": "application/json",
+      "headings": [
+        "Most extensible Python build backend with support for C/C++ extension modules"
+      ],
+      "httpStatus": 200,
+      "id": "setuptools-pypi",
+      "sha256": "a1730d4e6631c86084f7728796b15994dcf22f9711e92d840d40b5e898e92f56",
+      "status": "ok",
+      "title": "setuptools 82.0.1",
+      "url": "https://pypi.org/pypi/setuptools/json"
+    }
+  ],
+  "version": 1
+}

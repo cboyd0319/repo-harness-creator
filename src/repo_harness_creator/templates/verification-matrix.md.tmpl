@@ -1,0 +1,29 @@
+# Verification Matrix
+
+Use the smallest check set that can catch likely regressions for the change.
+
+| Change Type | Required Checks |
+| --- | --- |
+| Harness docs or templates | `repo-harness audit --target .` and inspect generated diff |
+| Python code | `python -m compileall .` plus project tests |
+| Node or web code | package manager `test`, `lint`, `typecheck`, or `build` scripts when present |
+| Go code | `go test ./...` |
+| Rust code | `cargo test` |
+| Java code | `mvn test`, `./gradlew test`, or project equivalent |
+| .NET code | `dotnet test` |
+| Terraform or infrastructure | `terraform fmt -check -recursive` plus project-specific validation |
+| Security, auth, secrets, data loss, or billing | Focused tests, human review, rollback path, and least-privilege check |
+| Dependencies, tool versions, or workflow Actions | Pin check, primary-source version evidence, install smoke, and affected tests |
+
+## Detected Commands
+
+{{commands_markdown}}
+
+## When Checks Cannot Run
+
+Record:
+
+- The command that could not run.
+- The exact reason.
+- The risk.
+- The next best check that did run.

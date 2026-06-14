@@ -1,0 +1,44 @@
+# Harness Sources
+
+Reviewed: {{generated_date}}
+
+This file records the source basis for the generated harness. Refresh it before
+major harness redesigns because agent tooling, platform support, and packaging
+practice change over time.
+
+## Portable Source Set
+
+- OpenAI, "Harness engineering: leveraging Codex in an agent-first world"
+- Anthropic, "Effective harnesses for long-running agents"
+- Anthropic, "Harness design for long-running application development"
+- Martin Fowler, "Harness engineering for coding agent users"
+- Martin Fowler, "Maintainability sensors for coding agents"
+- Red Hat, "Harness Engineering: Structured Workflows for AI-Assisted Development"
+- Thoughtworks, "Harness engineering and agent feedback: Exploring AI coding sensors"
+- LangChain, "The Anatomy of an Agent Harness"
+- LangChain Deep Agents harness docs
+- AGENTS.md open format and OpenAI AGENTS.md docs
+- Python Packaging User Guide, `pyproject.toml` and command-line tool guidance
+- Python PEP 11 platform support
+- GitHub Actions hosted runner documentation
+- Walking Labs learn-harness-engineering course and harness-creator skill
+- AI Harness Engineering runtime substrate and observability papers
+- Local production harness patterns for dependency pinning, security boundary
+  maps, privacy labels, evidence logs, and reviewed self-healing loops
+
+## Local Adaptation
+
+- Keep the root instruction file short.
+- Put durable detail in `docs/harness/`.
+- Generate both POSIX and PowerShell entrypoints.
+- Preserve existing files unless forced.
+- Track feature behavior, verification, status, and evidence in
+  `feature_list.json`.
+- Include clean-state, evaluator, and quality-review artifacts for lifecycle
+  control.
+- Check local Markdown links so harness docs remain navigable and portable.
+- Keep dependency and workflow changes on latest stable supported releases with
+  hard pins and verification evidence.
+- Use reviewed self-healing pull requests instead of silent default-branch
+  mutation.
+- Treat structural scores as guidance, not proof of real task success.

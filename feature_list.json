@@ -1,0 +1,41 @@
+{
+  "$schema": "docs/harness/feature-list.schema.json",
+  "project": "repo-harness-creator",
+  "last_updated": "2026-06-14",
+  "rules": {
+    "single_active_feature": true,
+    "passing_requires_evidence": true,
+    "do_not_skip_verification": true
+  },
+  "status_legend": {
+    "not_started": "Work has not begun.",
+    "active": "The one feature currently being worked.",
+    "blocked": "Progress is stopped by a documented blocker.",
+    "passing": "Verification passed and evidence is recorded."
+  },
+  "features": [
+    {
+      "id": "cli-core",
+      "priority": 1,
+      "area": "cli",
+      "title": "Cross-platform harness CLI and Action",
+      "user_visible_behavior": "Users can generate, audit, and safely update repo harness artifacts locally or through the GitHub Action.",
+      "status": "active",
+      "dependencies": [],
+      "verification": [
+        "init creates missing harness artifacts without overwriting existing files by default",
+        "audit scores the practical harness domains and returns actionable recommendations",
+        "update applies only safe missing-file corrections unless forced",
+        "doctor checks Python and host platform compatibility",
+        "the root GitHub Action runs the same library code as the CLI"
+      ],
+      "evidence": [
+        "2026-06-14: Local POSIX and PowerShell entrypoints passed with 29 unit tests, pin check, and self-audit 100/100.",
+        "2026-06-14: Isolated package install smoke passed; installed init included component and research starter files.",
+        "2026-06-14: Current unit suite passes with 29 tests; pin check passes; self-audit is 100/100.",
+        "2026-06-14: Research source ledger refreshed with 32 sources and one recorded 403 fetch failure."
+      ],
+      "notes": "Live hosted CI remains pending until the repo is pushed."
+    }
+  ]
+}

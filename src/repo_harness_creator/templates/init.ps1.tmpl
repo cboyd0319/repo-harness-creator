@@ -1,0 +1,19 @@
+$ErrorActionPreference = 'Stop'
+Set-StrictMode -Version Latest
+
+Write-Host '== Harness verification for {{project_name}} =='
+Write-Host 'Detected stack: {{detected_stack}}'
+
+$PythonBin = if ($env:PYTHON) {
+  $env:PYTHON
+} elseif (Get-Command python -ErrorAction SilentlyContinue) {
+  'python'
+} elseif (Get-Command python3 -ErrorAction SilentlyContinue) {
+  'python3'
+} else {
+  'python'
+}
+
+{{commands_powershell}}
+
+Write-Host '== Harness verification complete =='

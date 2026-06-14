@@ -1,0 +1,168 @@
+{
+  "version": 1,
+  "generatedBy": "repo-harness-creator",
+  "requiredFiles": [
+    "AGENTS.md",
+    "README.md",
+    "action.yml",
+    "docs/action.md",
+    "pyproject.toml",
+    "feature_list.json",
+    "progress.md",
+    "session-handoff.md",
+    "init.sh",
+    "init.ps1",
+    ".github/workflows/ci.yml",
+    ".github/workflows/harness-self-heal.yml",
+    "scripts/check_pins.py",
+    "scripts/refresh_research.py",
+    "docs/harness/README.md",
+    "docs/harness/change-contract.md",
+    "docs/harness/verification-matrix.md",
+    "docs/harness/component-inventory.md",
+    "docs/harness/dependency-change-policy.md",
+    "docs/harness/security-boundary-map.md",
+    "docs/harness/feature-privacy-labels.json",
+    "docs/harness/evidence-log.md",
+    "docs/harness/clean-state-checklist.md",
+    "docs/harness/evaluator-rubric.md",
+    "docs/harness/quality-document.md",
+    "docs/harness/self-healing.md",
+    "docs/harness/manifest.json",
+    "docs/harness/sources.md",
+    "docs/harness/research-sources.json",
+    "docs/harness/research-sources.lock.json",
+    "docs/harness/research-inbox.md",
+    "docs/harness/entropy-control.md",
+    "docs/harness/agent-operating-model.md",
+    "docs/harness/multi-agent-orchestration.md",
+    "docs/harness/feature-list.schema.json",
+    "src/repo_harness_creator/cli.py",
+    "src/repo_harness_creator/github_action.py",
+    "tests/test_cli.py",
+    "tests/test_pins.py"
+  ],
+  "requiredHarnessSnippets": {
+    "action.yml": [
+      "using: composite",
+      "actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405",
+      "PYTHONPATH",
+      "repo_harness_creator.github_action"
+    ],
+    ".github/workflows/ci.yml": [
+      "actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10",
+      "actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405",
+      "scripts/check_pins.py"
+    ],
+    ".github/workflows/harness-self-heal.yml": [
+      "schedule",
+      "scripts/refresh_research.py",
+      "gh pr create"
+    ],
+    "AGENTS.md": [
+      "Python 3.13+",
+      "macOS 15+",
+      "Windows 11+",
+      "Ubuntu 22.04+",
+      "Definition Of Done",
+      "full-length commit SHAs",
+      "personal machines"
+    ],
+    "README.md": [
+      "Python 3.13",
+      "repo-harness init",
+      "repo-harness audit",
+      "repo-harness update",
+      "GitHub Action"
+    ],
+    "docs/action.md": [
+      "cboyd0319/repo-harness-creator@<reviewed-commit-sha>",
+      "Inputs",
+      "Outputs",
+      "Version Pinning"
+    ],
+    "docs/harness/README.md": [
+      "Operating Loop",
+      "Assessment And Updates",
+      "self-healing workflow"
+    ],
+    "docs/harness/change-contract.md": [
+      "Acceptance Criteria",
+      "Verification",
+      "Rollback"
+    ],
+    "docs/harness/verification-matrix.md": [
+      "Change Type",
+      "Required Checks",
+      "When Checks Cannot Run"
+    ],
+    "docs/harness/component-inventory.md": [
+      "Component Inventory",
+      "Detected Components",
+      "Routing Rules"
+    ],
+    "docs/harness/dependency-change-policy.md": [
+      "latest stable",
+      "exact pins",
+      "GitHub Actions"
+    ],
+    "docs/harness/security-boundary-map.md": [
+      "Access Boundaries",
+      "Data Boundaries",
+      "Required Checks",
+      "security wins"
+    ],
+    "docs/harness/feature-privacy-labels.json": [
+      "External AI optional",
+      "Sensitive",
+      "Public-data only"
+    ],
+    "docs/harness/evidence-log.md": [
+      "Date",
+      "Scope",
+      "Command Or Review"
+    ],
+    "docs/harness/clean-state-checklist.md": [
+      "Startup path",
+      "Verification path",
+      "Next Session"
+    ],
+    "docs/harness/evaluator-rubric.md": [
+      "Correctness",
+      "Verification",
+      "Handoff Readiness"
+    ],
+    "docs/harness/quality-document.md": [
+      "Quality Document",
+      "Domain Grades",
+      "Harness Simplification"
+    ],
+    "docs/harness/self-healing.md": [
+      "Self-healing must be reviewable",
+      "Safe Loop",
+      "Promotion Rule"
+    ],
+    "docs/harness/research-sources.json": [
+      "openai-harness-engineering",
+      "github-actions-secure-use",
+      "setuptools-pypi"
+    ],
+    "docs/harness/research-inbox.md": [
+      "Research Inbox",
+      "Promotion checklist"
+    ],
+    "docs/harness/feature-list.schema.json": [
+      "Repo Harness Feature List",
+      "user_visible_behavior",
+      "verification"
+    ],
+    "scripts/check_pins.py": [
+      "40-char SHA",
+      "exact pin"
+    ],
+    "scripts/refresh_research.py": [
+      "research-sources.json",
+      "research-inbox.md"
+    ]
+  }
+}

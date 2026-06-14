@@ -1,0 +1,29 @@
+{
+  "version": 1,
+  "lastUpdated": "{{generated_date}}",
+  "labels": [
+    "Local only",
+    "External AI optional",
+    "External AI required",
+    "Sensitive",
+    "Public-data only"
+  ],
+  "dataCategories": [],
+  "features": [
+    {
+      "id": "initial-harness",
+      "name": "Initial repository harness",
+      "labels": [
+        "Local only"
+      ],
+      "dataCategories": [],
+      "defaultDataFlow": "Harness files are stored in the repository.",
+      "externalAi": {
+        "allowed": false,
+        "required": false,
+        "fallback": "Harness creation and audit run locally."
+      },
+      "sensitivityNote": "Replace this placeholder when the project handles sensitive, private, customer, credential, financial, medical, or paid-service data."
+    }
+  ]
+}

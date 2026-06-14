@@ -1,0 +1,35 @@
+{
+  "$schema": "docs/harness/feature-list.schema.json",
+  "project": "{{project_name}}",
+  "last_updated": "{{generated_date}}",
+  "rules": {
+    "single_active_feature": true,
+    "passing_requires_evidence": true,
+    "do_not_skip_verification": true
+  },
+  "status_legend": {
+    "not_started": "Work has not begun.",
+    "active": "The one feature currently being worked.",
+    "blocked": "Progress is stopped by a documented blocker.",
+    "passing": "Verification passed and evidence is recorded."
+  },
+  "features": [
+    {
+      "id": "initial-harness",
+      "priority": 1,
+      "area": "harness",
+      "title": "Initial repository harness",
+      "user_visible_behavior": "A new agent can start from repo files, choose one scoped objective, run verification, and leave a clean handoff.",
+      "status": "active",
+      "dependencies": [],
+      "verification": [
+        "Agent instructions route to state and verification files",
+        "Verification entrypoints are present for POSIX and PowerShell",
+        "Progress and handoff files record durable state",
+        "Harness audit has no critical missing artifact"
+      ],
+      "evidence": [],
+      "notes": "Replace this placeholder with the first real project feature after initialization."
+    }
+  ]
+}

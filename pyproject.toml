@@ -1,0 +1,65 @@
+[build-system]
+requires = ["setuptools==82.0.1"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "repo-harness-creator"
+version = "0.1.0"
+description = "Create, assess, and maintain AI coding-agent harnesses for repositories."
+readme = "README.md"
+requires-python = ">=3.13"
+license = "MIT"
+authors = [
+  { name = "Chad Boyd" }
+]
+keywords = [
+  "ai",
+  "agents",
+  "codex",
+  "harness",
+  "repository",
+  "verification"
+]
+classifiers = [
+  "Development Status :: 3 - Alpha",
+  "Environment :: Console",
+  "Intended Audience :: Developers",
+  "Operating System :: MacOS",
+  "Operating System :: Microsoft :: Windows :: Windows 11",
+  "Operating System :: POSIX :: Linux",
+  "Programming Language :: Python :: 3",
+  "Programming Language :: Python :: 3.13",
+  "Programming Language :: Python :: 3.14",
+  "Topic :: Software Development :: Quality Assurance",
+  "Topic :: Software Development :: Testing"
+]
+dependencies = []
+
+[project.urls]
+Homepage = "https://github.com/cboyd0319/repo-harness-creator"
+Issues = "https://github.com/cboyd0319/repo-harness-creator/issues"
+
+[project.scripts]
+repo-harness = "repo_harness_creator.cli:main"
+repo-harness-creator = "repo_harness_creator.cli:main"
+
+[project.optional-dependencies]
+dev = []
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.setuptools.package-data]
+repo_harness_creator = ["templates/**/*.tmpl"]
+
+[tool.ruff]
+line-length = 88
+target-version = "py313"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B", "SIM"]
+
+[tool.pyright]
+include = ["src", "tests"]
+pythonVersion = "3.13"
+typeCheckingMode = "standard"

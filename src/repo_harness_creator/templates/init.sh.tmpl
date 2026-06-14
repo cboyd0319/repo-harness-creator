@@ -1,0 +1,18 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+echo "== Harness verification for {{project_name}} =="
+echo "Detected stack: {{detected_stack}}"
+
+PYTHON_BIN="${PYTHON:-}"
+if [ -z "$PYTHON_BIN" ]; then
+  if command -v python3 >/dev/null 2>&1; then
+    PYTHON_BIN="python3"
+  else
+    PYTHON_BIN="python"
+  fi
+fi
+
+{{commands_shell}}
+
+echo "== Harness verification complete =="

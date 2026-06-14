@@ -1,0 +1,204 @@
+from __future__ import annotations
+
+import json
+import tempfile
+import unittest
+from pathlib import Path
+
+from repo_harness_creator.audit import audit_target
+from repo_harness_creator.generate import create_harness
+
+
+def _supports_directory_symlink() -> bool:
+    with tempfile.TemporaryDirectory() as tmp:
+        root = Path(tmp)
+        target = root / "target"
+        link = root / "link"
+        target.mkdir()
+        try:
+            link.symlink_to(target, target_is_directory=True)
+        except OSError:
+            return False
+        return link.is_symlink()
+
+
+def _supports_file_symlink() -> bool:
+    with tempfile.TemporaryDirectory() as tmp:
+        root = Path(tmp)
+        target = root / "target.md"
+        link = root / "link.md"
+        target.write_text("target", encoding="utf-8")
+        try:
+            link.symlink_to(target)
+        except OSError:
+            return False
+        return link.is_symlink()
+
+
+class GenerateAuditTests(unittest.TestCase):
+    def test_init_writes_cross_platform_harness_and_audits_high(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            (root / "pyproject.toml").write_text("[project]\nname='demo'\n", encoding="utf-8")
+            profile, writes = create_harness(root)
+            result = audit_target(root)
+            init_sh = (root / "init.sh").read_text(encoding="utf-8")
+            init_ps1 = (root / "init.ps1").read_text(encoding="utf-8")
+
+        written = {write.path.name for write in writes if write.status == "written"}
+        self.assertEqual(profile.stack, "python")
+        self.assertIn("AGENTS.md", written)
+        self.assertIn("PYTHON_BIN", init_sh)
+        self.assertIn("Get-Command python3", init_ps1)
+        self.assertNotIn("Invoke-Expression", init_ps1)
+        self.assertGreaterEqual(result.overall, 85)
+
+    def test_existing_files_are_skipped_without_force(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            (root / "AGENTS.md").write_text("custom", encoding="utf-8")
+            _, writes = create_harness(root)
+
+        agents = [write for write in writes if write.path.name == "AGENTS.md"]
+        self.assertEqual(agents[0].status, "skipped")
+        self.assertEqual(agents[0].reason, "exists")
+
+    def test_manifest_is_valid_json(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            create_harness(root)
+            manifest = json.loads(
+                (root / "docs/harness/manifest.json").read_text(encoding="utf-8")
+            )
+
+        self.assertEqual(manifest["version"], 1)
+        self.assertIn("init.ps1", manifest["requiredFiles"])
+        self.assertIn("docs/harness/clean-state-checklist.md", manifest["requiredFiles"])
+        self.assertIn("docs/harness/component-inventory.md", manifest["requiredFiles"])
+        self.assertIn("docs/harness/research-sources.json", manifest["requiredFiles"])
+        self.assertIn("detectedComponents", manifest)
+
+    def test_audit_catches_missing_local_markdown_links(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            create_harness(root)
+            (root / "README.md").write_text(
+                "See [missing](docs/harness/missing.md)\n",
+                encoding="utf-8",
+            )
+
+            result = audit_target(root)
+
+        feedback = next(domain for domain in result.domains if domain.name == "feedback")
+        link_check = next(
+            check for check in feedback.checks if check.message == "Local Markdown links resolve"
+        )
+        self.assertFalse(link_check.passed)
+        self.assertIn("missing.md", link_check.detail)
+
+    def test_bottleneck_domain_penalizes_overall_score(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            create_harness(root)
+            (root / "feature_list.json").unlink()
+            (root / "progress.md").unlink()
+            (root / "session-handoff.md").unlink()
+
+            result = audit_target(root)
+
+        self.assertEqual(result.bottleneck, "state")
+        self.assertLess(result.overall, 85)
+
+    def test_powershell_uses_windows_gradle_wrapper_when_available(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            (root / "build.gradle").write_text("plugins { id 'java' }\n", encoding="utf-8")
+            (root / "gradlew").write_text("#!/usr/bin/env sh\n", encoding="utf-8")
+            create_harness(root)
+            init_ps1 = (root / "init.ps1").read_text(encoding="utf-8")
+
+        self.assertIn("gradlew.bat", init_ps1)
+        self.assertIn("Gradle wrapper not found", init_ps1)
+
+    def test_rejects_agent_file_path_traversal(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+
+            with self.assertRaises(ValueError):
+                create_harness(root, agent_file="../AGENTS.md")
+
+    @unittest.skipUnless(_supports_file_symlink(), "symlinks unavailable")
+    def test_audit_does_not_read_instruction_symlink_outside_target(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp) / "repo"
+            outside = Path(tmp) / "outside.md"
+            root.mkdir()
+            outside.write_text(
+                "# External\n\nStartup\nDefinition Of Done\nVerification\n",
+                encoding="utf-8",
+            )
+            (root / "AGENTS.md").symlink_to(outside)
+
+            result = audit_target(root)
+
+        instructions = next(domain for domain in result.domains if domain.name == "instructions")
+        root_instruction = next(
+            check
+            for check in instructions.checks
+            if check.message == "Root agent instruction file exists"
+        )
+        self.assertFalse(root_instruction.passed)
+
+    def test_audit_flags_markdown_links_outside_target(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp) / "repo"
+            root.mkdir()
+            (root / "README.md").write_text(
+                "See [outside](../outside.md)\n",
+                encoding="utf-8",
+            )
+
+            result = audit_target(root)
+
+        feedback = next(domain for domain in result.domains if domain.name == "feedback")
+        link_check = next(
+            check for check in feedback.checks if check.message == "Local Markdown links resolve"
+        )
+        self.assertFalse(link_check.passed)
+        self.assertIn("outside", link_check.detail)
+
+    def test_manifest_required_files_cannot_point_outside_target(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp) / "repo"
+            (root / "docs" / "harness").mkdir(parents=True)
+            (Path(tmp) / "outside.md").write_text("outside", encoding="utf-8")
+            (root / "docs" / "harness" / "manifest.json").write_text(
+                json.dumps({"requiredFiles": ["../outside.md"]}),
+                encoding="utf-8",
+            )
+
+            result = audit_target(root)
+
+        self.assertTrue(
+            any("outside repo" in failure for failure in result.manifest_failures)
+        )
+
+    @unittest.skipUnless(_supports_directory_symlink(), "symlinks unavailable")
+    def test_refuses_to_write_through_directory_symlink_outside_target(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp) / "repo"
+            outside = Path(tmp) / "outside"
+            root.mkdir()
+            outside.mkdir()
+            (root / "docs").mkdir()
+            (root / "docs" / "harness").symlink_to(outside, target_is_directory=True)
+
+            with self.assertRaises(ValueError):
+                create_harness(root)
+
+        self.assertFalse((root / "AGENTS.md").exists())
+        self.assertFalse((outside / "README.md").exists())
+
+
+if __name__ == "__main__":
+    unittest.main()
