@@ -2,19 +2,23 @@
 from __future__ import annotations
 
 import argparse
+import errno
 import hashlib
 import html
+import http.client
 import ipaddress
 import json
 import re
 import socket
 import sys
+from dataclasses import dataclass
 from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
 from urllib.error import HTTPError, URLError
 from urllib.parse import urljoin, urlparse
-from urllib.request import HTTPRedirectHandler, Request, build_opener
+from urllib.request import HTTPRedirectHandler, HTTPSHandler, ProxyHandler, Request
+from urllib.request import build_opener
 
 TITLE_RE = re.compile(r"<title[^>]*>(.*?)</title>", re.IGNORECASE | re.DOTALL)
 H_RE = re.compile(r"<h([12])[^>]*>(.*?)</h\1>", re.IGNORECASE | re.DOTALL)
@@ -103,40 +107,52 @@ def _fetch_source(source: dict[str, Any], *, timeout: int) -> dict[str, Any]:
     }
 
 
+@dataclass(frozen=True)
+class _ResolvedSource:
+    host: str
+    port: int
+    addresses: tuple[ipaddress.IPv4Address | ipaddress.IPv6Address, ...]
+
+
 def _source_url_error(url: str) -> str:
+    _, error = _resolve_source_url(url)
+    return error
+
+
+def _resolve_source_url(url: str) -> tuple[_ResolvedSource | None, str]:
     try:
         parsed = urlparse(url)
         hostname = parsed.hostname
     except ValueError:
-        return "source URL is invalid"
+        return None, "source URL is invalid"
     if parsed.scheme.lower() != "https":
-        return "source URL must use https"
+        return None, "source URL must use https"
     if not hostname:
-        return "source URL must include a host"
+        return None, "source URL must include a host"
     if parsed.username or parsed.password:
-        return "source URL must not include credentials"
+        return None, "source URL must not include credentials"
     try:
         port = parsed.port or 443
     except ValueError:
-        return "source URL port is invalid"
+        return None, "source URL port is invalid"
     if port != 443:
-        return "source URL must use the default https port"
+        return None, "source URL must use the default https port"
 
     host = hostname.lower().rstrip(".")
     if host == "localhost" or host.endswith(".localhost"):
-        return "source URL must not target localhost"
+        return None, "source URL must not target localhost"
     try:
         address = ipaddress.ip_address(host)
     except ValueError:
         try:
             addresses = _resolve_host_addresses(host, port)
         except OSError as exc:
-            return f"source URL host could not be resolved: {exc}"
+            return None, f"source URL host could not be resolved: {exc}"
     else:
         addresses = [address]
     if any(not address.is_global for address in addresses):
-        return "source URL must target public addresses"
-    return ""
+        return None, "source URL must target public addresses"
+    return _ResolvedSource(host=host, port=port, addresses=tuple(addresses)), ""
 
 
 def _resolve_host_addresses(
@@ -164,8 +180,71 @@ class _ValidatedRedirectHandler(HTTPRedirectHandler):
         return super().redirect_request(req, fp, code, msg, headers, redirect_url)
 
 
+class _PinnedHTTPSConnection(http.client.HTTPSConnection):
+    def __init__(
+        self,
+        host: str,
+        *args: object,
+        resolved_source: _ResolvedSource,
+        **kwargs: object,
+    ) -> None:
+        super().__init__(host, *args, **kwargs)
+        self._resolved_addresses = resolved_source.addresses
+        self._server_hostname = resolved_source.host
+
+    def connect(self) -> None:
+        sys.audit("http.client.connect", self, self.host, self.port)
+        last_error = None
+        for address in self._resolved_addresses:
+            try:
+                self.sock = self._create_connection(
+                    (str(address), self.port), self.timeout, self.source_address
+                )
+                try:
+                    self.sock.setsockopt(socket.IPPROTO_TCP, socket.TCP_NODELAY, 1)
+                except OSError as exc:
+                    if exc.errno != errno.ENOPROTOOPT:
+                        raise
+                if self._tunnel_host:
+                    self._tunnel()
+                server_hostname = self._tunnel_host or self._server_hostname
+                self.sock = self._context.wrap_socket(
+                    self.sock, server_hostname=server_hostname
+                )
+                return
+            except OSError as exc:
+                last_error = exc
+                if self.sock:
+                    self.sock.close()
+                    self.sock = None
+        if last_error is not None:
+            raise last_error
+        raise OSError("no validated addresses available")
+
+
+class _PinnedHTTPSHandler(HTTPSHandler):
+    def https_open(self, req: Request):  # type: ignore[override]
+        source, error = _resolve_source_url(req.full_url)
+        if error or source is None:
+            raise URLError(error or "source URL is invalid")
+
+        def connection_factory(
+            host: str, timeout: object = None, **kwargs: object
+        ) -> _PinnedHTTPSConnection:
+            return _PinnedHTTPSConnection(
+                host,
+                timeout=timeout,
+                resolved_source=source,
+                **kwargs,
+            )
+
+        return self.do_open(connection_factory, req, context=self._context)
+
+
 def _open_url(request: Request, *, timeout: int):
-    opener = build_opener(_ValidatedRedirectHandler)
+    opener = build_opener(
+        ProxyHandler({}), _ValidatedRedirectHandler, _PinnedHTTPSHandler
+    )
     return opener.open(request, timeout=timeout)
 
 

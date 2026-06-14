@@ -76,13 +76,16 @@ maintenance loop.
   redirected to `windows-2025-vs2026` by June 15, 2026. The CI matrix now uses
   the explicit `windows-2025-vs2026` runner label, matching current GitHub
   runner docs and removing ambiguity about the Windows image under test.
+- Closed the research-refresh DNS-rebinding transport gap. Refresh now connects
+  HTTPS fetch sockets to the validated public DNS result while preserving the
+  original host for TLS verification, and still revalidates redirects before
+  following them.
 
 ## Recommended Next Step
 
 Continue the ease/security re-review against the remaining findings, especially
-the research-refresh DNS-rebinding transport question and cross-platform path
-containment helpers, then decide whether to cut a `v1` Action tag before
-broader public use.
+cross-platform path containment helpers, then decide whether to cut a `v1`
+Action tag before broader public use.
 
 ## Verification Evidence
 
@@ -128,6 +131,19 @@ broader public use.
 - `PYTHONPATH=src:. python3 -m unittest tests.test_cli
   tests.test_generate_audit tests.test_refresh_research` passed with 32 focused
   tests after the CLI, generated command, and relative redirect fixes.
+- `PYTHONPATH=src:. python3 -m unittest tests.test_refresh_research` passed
+  with 16 focused tests after research-refresh transport hardening.
+- `PYTHONPATH=src:. python3 -m unittest discover -s tests` passed with 52
+  tests after research-refresh transport hardening.
+- `PYTHONPATH=src:. python3 scripts/refresh_research.py --root .` refreshed 49
+  sources through pinned public-DNS transport with one recorded 403 fetch
+  failure from Red Hat.
+- `./init.sh` passed on macOS 26.5.1 with Python 3.14.5 after
+  research-refresh transport hardening: doctor, compile, 52 unit tests, pin
+  check, self-audit `100/100`.
+- `pwsh -NoProfile -File ./init.ps1` passed on macOS 26.5.1 with Python
+  3.14.5 after research-refresh transport hardening: doctor, compile, 52 unit
+  tests, pin check, self-audit `100/100`.
 - `PYTHONPATH=src:. python3 -m unittest discover -s tests` passed with 50
   tests after the current ease/security fix slice.
 - `./init.sh` passed on macOS 26.5.1 with Python 3.14.5 after the current

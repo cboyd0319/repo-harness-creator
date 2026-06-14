@@ -206,7 +206,8 @@ Network access is limited to explicit research-refresh workflows and normal
 GitHub Actions setup behavior, not routine local harness generation. Research
 refresh accepts default-port HTTPS public-source URLs only; local files,
 credentials, localhost, private-address targets, private DNS resolutions, and
-unsafe redirects are rejected.
+unsafe redirects are rejected. Connections are opened to validated public DNS
+results while preserving the original host for TLS verification.
 
 ## Self-Healing
 

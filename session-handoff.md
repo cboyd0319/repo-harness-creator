@@ -80,10 +80,19 @@ and the required AGENTS instruction format.
 - CI now uses the explicit `windows-2025-vs2026` label after hosted CI warned
   that `windows-2025` requests are being redirected to that image by June 15,
   2026.
+- Research refresh now connects HTTPS fetch sockets to the validated public DNS
+  result while preserving the original host for TLS verification, closing the
+  DNS-rebinding transport gap after URL and redirect validation.
+- Current focused refresh check passes: `PYTHONPATH=src:. python3 -m unittest
+  tests.test_refresh_research`.
+- Current full local POSIX and PowerShell verification passes with 52 tests,
+  pin check, and self-audit `100/100` after research-refresh transport
+  hardening.
+- Live research refresh checked 49 sources through pinned public-DNS transport;
+  the known Red Hat 403 remains recorded.
 
 ## Next Session
 
 Continue the ease/security re-review against the remaining findings, especially
-the research-refresh DNS-rebinding transport question and cross-platform path
-containment helpers, then decide whether the first release should cut a `v1`
-Action tag before broader public use.
+cross-platform path containment helpers, then decide whether the first release
+should cut a `v1` Action tag before broader public use.

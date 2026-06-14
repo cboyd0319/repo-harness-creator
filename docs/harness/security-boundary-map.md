@@ -17,7 +17,7 @@ security wins and the tool must explain the safe next step.
 | Generated paths | CLI user | Generated paths must remain inside the target repo after symlink resolution. Unsafe `--agent-file` paths are rejected. |
 | Project detection reads | CLI user | Root manifests are read only when they resolve inside the target repo. Symlink escapes are ignored. |
 | Local machine paths | CLI user | Durable output must redact common absolute home paths, including home paths with spaces and the current user's home path. |
-| Network calls | Maintainers | Runtime CLI commands must stay local. Scheduled research refresh may fetch default-port HTTPS public-source metadata only. Local files, credentials, localhost, private-address targets, private DNS resolutions, and unsafe redirects are rejected. |
+| Network calls | Maintainers | Runtime CLI commands must stay local. Scheduled research refresh may fetch default-port HTTPS public-source metadata only. Local files, credentials, localhost, private-address targets, private DNS resolutions, and unsafe redirects are rejected; fetch sockets connect to validated public DNS results while preserving the original host for TLS verification. |
 | GitHub workflows | Maintainers | Workflows use least privilege, external Actions pinned to commit SHAs, `PYTHONSAFEPATH=1` for the reusable Action runtime, no persisted checkout credentials in read-only CI, and target-contained Action report paths. |
 | Secrets and credentials | Maintainers | No command should print, store, transform, or transmit secrets. |
 | Cost-incurring systems | Maintainers | Self-healing must not call paid model or cloud APIs unless a future reviewed workflow explicitly opts in. |

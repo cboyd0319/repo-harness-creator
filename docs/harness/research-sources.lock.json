@@ -1,5 +1,5 @@
 {
-  "checkedAt": "2026-06-14T05:53:57+00:00",
+  "checkedAt": "2026-06-14T06:42:56+00:00",
   "failureCount": 1,
   "sourceCount": 49,
   "sources": [
@@ -18,7 +18,7 @@
       ],
       "httpStatus": 200,
       "id": "openai-harness-engineering",
-      "sha256": "14e768d684cce937df67d515cf6bd6436ff2ce494a7a91d91ad9480e51b5047d",
+      "sha256": "b51066d8ef9120f8592b5a1acfd111db6482bd18a5767621f9a39baef933c711",
       "status": "ok",
       "title": "Harness engineering: leveraging Codex in an agent-first world | OpenAI",
       "url": "https://openai.com/index/harness-engineering/"
@@ -36,7 +36,7 @@
       ],
       "httpStatus": 200,
       "id": "anthropic-effective-harnesses",
-      "sha256": "c93820c073896fa901379197740aca34163531e11f70c95e16327ca43206c106",
+      "sha256": "9f96b97d2e32d2066d18168cc33286301cc483e2690135213c33b226ea6afb0b",
       "status": "ok",
       "title": "Effective harnesses for long-running agents \\ Anthropic",
       "url": "https://www.anthropic.com/engineering/effective-harnesses-for-long-running-agents"
@@ -56,7 +56,7 @@
       ],
       "httpStatus": 200,
       "id": "anthropic-long-running-apps",
-      "sha256": "cece1d27d53f7e4e6825cb653631dec8864e7c0bc11f75adc70e17a0e8bffcaf",
+      "sha256": "1784f384e1ddaa2b114b8b8d44f95ebaab96ec5755df465c92b5f5c56b82b096",
       "status": "ok",
       "title": "Harness design for long-running application development \\ Anthropic",
       "url": "https://www.anthropic.com/engineering/harness-design-long-running-apps"
@@ -241,7 +241,7 @@
       ],
       "httpStatus": 200,
       "id": "google-antigravity-agent",
-      "sha256": "5b50db4a524dab3a478536af487a86053e57f03845c65b0b49bd98331d378f2d",
+      "sha256": "10a7e64541ce8db7e8782a14866f986cf8a1658254f9719b6971b15a4362040d",
       "status": "ok",
       "title": "Antigravity Agent | Gemini API | Google AI for Developers",
       "url": "https://ai.google.dev/gemini-api/docs/antigravity-agent"
@@ -319,7 +319,7 @@
       ],
       "httpStatus": 200,
       "id": "walkinglabs-github",
-      "sha256": "184d0abdcfb18ba6517970162f4abddbde58cd6dd19afa377a07cb74bfb526b6",
+      "sha256": "43649716c84469f0d3e2ba9e4740fa93dbfb675cd5ca863ea8a4c31736d87105",
       "status": "ok",
       "title": "GitHub - walkinglabs/learn-harness-engineering: Harness engineering beginner tutorial, from 0 to 1 \u00b7 GitHub",
       "url": "https://github.com/walkinglabs/learn-harness-engineering"
@@ -359,7 +359,7 @@
       ],
       "httpStatus": 200,
       "id": "walkinglabs-harness-creator-skill",
-      "sha256": "4ab723bd6a89e0e24bb4cd1aff2c4469c66b39cfb717b443c195b343d1cd8195",
+      "sha256": "8cd523dedbb52c0ae57b7a1a00d6b323e5bf3804355f7642a4f172a34ba986ca",
       "status": "ok",
       "title": "learn-harness-engineering/skills/harness-creator at main \u00b7 walkinglabs/learn-harness-engineering \u00b7 GitHub",
       "url": "https://github.com/walkinglabs/learn-harness-engineering/tree/main/skills/harness-creator"
@@ -379,7 +379,7 @@
       ],
       "httpStatus": 200,
       "id": "agentpatterns-copilot-harness",
-      "sha256": "3d8f827ae21fa1d755cf75cb518d03666dc5719502b11b240ff4e7321b537c28",
+      "sha256": "3f96b242d877d9635a8f0beff47599296d834b1e3fd70f4f288e7cb7776bc3fd",
       "status": "ok",
       "title": "GitHub Copilot: Harness Engineering for Agent-Ready Code - AgentPatterns.ai",
       "url": "https://agentpatterns.ai/training/copilot/harness-engineering/"
@@ -427,7 +427,7 @@
       ],
       "httpStatus": 200,
       "id": "charlesanim-harness-engineering",
-      "sha256": "dec20e3d9869256737b4121aadf15636ef62fecea7110c92a7671bec037a2f94",
+      "sha256": "808604e515cf3c68c61a1fb6a9f522b4f7b7c20564d30bfc65e05b8fd267c956",
       "status": "ok",
       "title": "GitHub - charlesanim/harness-engineering: Agent skill: set up OpenAI's harness engineering methodology in any repo. Works with Copilot, Codex, Claude, Cursor. \u00b7 GitHub",
       "url": "https://github.com/charlesanim/harness-engineering"
@@ -843,7 +843,7 @@
       ],
       "httpStatus": 200,
       "id": "github-actions-checkout",
-      "sha256": "9d19d7541f4f220a294bc83cd04ffd9504317df2e41192997c723a6f8a50c7d7",
+      "sha256": "1bfe988180cc520a3c25eb909d43677edf69995f6759917b7b0d238694727d48",
       "status": "ok",
       "title": "GitHub - actions/checkout: Action for checking out a repo \u00b7 GitHub",
       "url": "https://github.com/actions/checkout"

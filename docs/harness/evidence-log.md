@@ -4,6 +4,11 @@ Use this for compact current evidence. Keep raw logs out of this file.
 
 | Date | Scope | Command Or Review | Result | Notes |
 | --- | --- | --- | --- | --- |
+| 2026-06-14 | POSIX verification | `./init.sh` | pass | Doctor, compile, 52 tests, pin check, and self-audit `100/100` after research-refresh transport hardening. |
+| 2026-06-14 | PowerShell verification | `pwsh -NoProfile -File ./init.ps1` | pass | Doctor, compile, 52 tests, pin check, and self-audit `100/100` after research-refresh transport hardening. |
+| 2026-06-14 | Research refresh | `PYTHONPATH=src:. python3 scripts/refresh_research.py --root .` | pass | 49 sources checked through pinned public-DNS transport; one Red Hat 403 remains recorded. |
+| 2026-06-14 | Local unit tests | `PYTHONPATH=src:. python3 -m unittest discover -s tests` | pass | 52 tests after research-refresh transport hardening. |
+| 2026-06-14 | Research-refresh transport hardening | `PYTHONPATH=src:. python3 -m unittest tests.test_refresh_research` | pass | 16 tests after connecting HTTPS fetches to validated public DNS results while preserving the original TLS hostname. |
 | 2026-06-14 | Windows runner label review | Hosted CI notice plus current GitHub runner docs and May 14, 2026 GitHub Actions changelog | pass | CI matrix now uses explicit `windows-2025-vs2026` before the June 15, 2026 `windows-2025` redirect completes. |
 | 2026-06-14 | GitHub Action output hardening | Current GitHub workflow-command docs plus local code review | pass | Replaced newline flattening with `$GITHUB_OUTPUT` delimiter blocks so multiline values remain one declared output. |
 | 2026-06-14 | GitHub Action tests | `PYTHONPATH=src:. python3 -m unittest tests.test_github_action` | pass | 5 focused tests after delimiter-output hardening. |

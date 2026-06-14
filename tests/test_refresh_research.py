@@ -29,6 +29,27 @@ class _FakeResponse:
         ).read(size)
 
 
+class _FakeSocket:
+    def __init__(self) -> None:
+        self.closed = False
+        self.options: list[tuple[int, int, int]] = []
+
+    def setsockopt(self, level: int, option: int, value: int) -> None:
+        self.options.append((level, option, value))
+
+    def close(self) -> None:
+        self.closed = True
+
+
+class _FakeTLSContext:
+    def __init__(self) -> None:
+        self.server_hostname = ""
+
+    def wrap_socket(self, sock: _FakeSocket, *, server_hostname: str):
+        self.server_hostname = server_hostname
+        return ("wrapped", sock)
+
+
 class RefreshResearchTests(unittest.TestCase):
     def test_refresh_writes_lock_and_inbox(self) -> None:
         with tempfile.TemporaryDirectory() as tmp:
@@ -166,6 +187,65 @@ class RefreshResearchTests(unittest.TestCase):
 
         self.assertIsNotNone(redirected)
         self.assertEqual(redirected.full_url, "https://example.test/docs")
+
+    def test_pinned_https_connection_uses_validated_ip_and_tls_hostname(self) -> None:
+        source = refresh_research._ResolvedSource(
+            host="example.test",
+            port=443,
+            addresses=(refresh_research.ipaddress.ip_address("93.184.216.34"),),
+        )
+        context = _FakeTLSContext()
+        connection = refresh_research._PinnedHTTPSConnection(
+            "example.test",
+            timeout=5,
+            resolved_source=source,
+            context=context,
+        )
+        fake_socket = _FakeSocket()
+
+        with mock.patch.object(
+            connection, "_create_connection", return_value=fake_socket
+        ) as create_connection:
+            connection.connect()
+
+        create_connection.assert_called_once_with(("93.184.216.34", 443), 5, None)
+        self.assertEqual(context.server_hostname, "example.test")
+        self.assertEqual(connection.sock, ("wrapped", fake_socket))
+        self.assertFalse(fake_socket.closed)
+
+    def test_pinned_https_connection_tries_next_validated_ip(self) -> None:
+        source = refresh_research._ResolvedSource(
+            host="example.test",
+            port=443,
+            addresses=(
+                refresh_research.ipaddress.ip_address("93.184.216.34"),
+                refresh_research.ipaddress.ip_address("93.184.216.35"),
+            ),
+        )
+        context = _FakeTLSContext()
+        connection = refresh_research._PinnedHTTPSConnection(
+            "example.test",
+            timeout=5,
+            resolved_source=source,
+            context=context,
+        )
+        fake_socket = _FakeSocket()
+
+        with mock.patch.object(
+            connection,
+            "_create_connection",
+            side_effect=[OSError("first address failed"), fake_socket],
+        ) as create_connection:
+            connection.connect()
+
+        self.assertEqual(
+            create_connection.call_args_list,
+            [
+                mock.call(("93.184.216.34", 443), 5, None),
+                mock.call(("93.184.216.35", 443), 5, None),
+            ],
+        )
+        self.assertEqual(connection.sock, ("wrapped", fake_socket))
 
     def test_partial_json_metadata_extracts_package_title(self) -> None:
         title, headings = refresh_research._extract_json_metadata(
