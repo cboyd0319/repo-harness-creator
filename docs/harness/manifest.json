@@ -54,6 +54,7 @@
       "actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405",
       "PYTHONPATH",
       "harnessforge.github_action",
+      "platform-contract",
       "with-ci-workflow",
       "with-self-heal-workflow"
     ],
@@ -110,6 +111,7 @@
       "Inputs",
       "Outputs",
       "Version Pinning",
+      "platform-contract",
       "with-ci-workflow",
       "with-self-heal-workflow"
     ],

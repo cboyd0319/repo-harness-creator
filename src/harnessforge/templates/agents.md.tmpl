@@ -8,8 +8,7 @@ context, stay scoped, verify work, and leave a clean restart path.
 Detected stack: {{detected_stack}}
 Languages: {{languages}}
 Package managers: {{package_managers}}
-Harness platform contract: Python 3.13+, macOS 15+, Windows 11+, Ubuntu 22.04+
-or another modern Linux distribution with Python 3.13+.
+Harness platform contract: {{platform_contract_summary}}
 
 Startup path:
 
@@ -26,17 +25,7 @@ Use the smallest reliable command for the change. Current detected commands:
 
 {{commands_markdown}}
 
-Full local verification on macOS or Linux:
-
-```bash
-./init.sh
-```
-
-Full local verification on Windows:
-
-```powershell
-.\init.ps1
-```
+{{verification_entrypoints_markdown}}
 
 Prefer local verification during active work. Push or open remote CI only at an
 explicit project checkpoint, release point, or user request because remote CI

@@ -27,6 +27,15 @@ class WriteResult:
 
 
 @dataclass(frozen=True)
+class DriftResult:
+    path: str
+    ownership: str
+    file_status: str
+    template_status: str
+    reason: str = ""
+
+
+@dataclass(frozen=True)
 class CheckResult:
     passed: bool
     message: str

@@ -227,17 +227,44 @@ maintenance loop.
   router files, and preserve custom `--agent-file` values. Audit now follows
   the manifest-declared canonical instruction file, so custom-agent generated
   harnesses audit at `100/100`.
+- Added generated-file ownership metadata, drift reporting, and explicit
+  platform-contract generation options. Generated manifests now record generator
+  identity, platform contract, generated-file ownership, template SHA-256, and
+  content SHA-256 metadata. `harnessforge update --drift-report` reports
+  missing, modified, unchanged, and template-drift status without writing files.
+  CLI init/update and the composite Action now accept `--platform-contract` for
+  cross-platform, macOS-only, Windows-only, or Linux-only target contracts.
+  Platform-specific generation omits unsupported local entrypoint scripts, and
+  optional self-heal scaffolds verify through the generated entrypoint for that
+  contract. Optional workflow warnings are louder at generation time, Python
+  detection now adds Ruff and mypy defaults from config, and generated review
+  placeholders are marked `REVIEW REQUIRED`.
 
 ## Recommended Next Step
 
-Review and commit the generated-surface boundary fixes when ready. Push local
-commits only at an explicit batch/release boundary or user request. Before a
-first public Action release, run the manual macOS/Windows platform CI check,
-then decide whether to cut a `v1` Action tag and which release-time
-SBOM/provenance controls should become blocking.
+Review and commit the generator metadata, drift, and platform-contract slice
+when ready. Push local commits only at an explicit batch/release boundary or
+user request. Before a first public Action release, run the manual
+macOS/Windows platform CI check, then decide whether to cut a `v1` Action tag
+and which release-time SBOM/provenance controls should become blocking.
 
 ## Verification Evidence
 
+- `PYTHONPATH=src:. python3 -m unittest discover -s tests` passed with
+  103 tests after adding generated-file ownership metadata, drift reporting,
+  platform-contract options, louder optional-workflow warnings, Ruff/mypy
+  Python defaults, review-required placeholders, and platform-specific
+  self-heal verification.
+- `PYTHONPATH=src:. python3 -m compileall src tests scripts`,
+  `PYTHONPATH=src:. python3 scripts/check_pins.py --root .`, JSON parsing,
+  `PYTHONPATH=src:. python3 -m harnessforge audit --target . --min-score 85`,
+  `git diff --check`, and rendered target smokes passed; self-audit stayed
+  `100/100`.
+- Earlier targeted checks for the same slice passed with 12 focused tests, then
+  77 nearby generator, Action, CLI, pin, and detection tests. Rendered target
+  smokes confirmed default optional workflows and macOS-only generated targets
+  audit at `100/100`; drift smoke confirmed modified generated files are
+  reported without writing updates.
 - `PYTHONPATH=src:. python3 -m unittest tests.test_generate_audit
   tests.test_github_action tests.test_refresh_research tests.test_pins` passed
   with 70 focused tests after adding generated workflow/Action boundary

@@ -6,8 +6,7 @@ This directory is the operating layer for agent-assisted work in {{project_name}
 It keeps instructions, state, verification, scope, and lifecycle handoff visible
 in repo files instead of hidden in chat history.
 
-Platform contract: Python 3.13+, macOS 15+, Windows 11+, Ubuntu 22.04+, and
-best-effort support for other modern Linux distributions with Python 3.13+.
+Platform contract: {{platform_contract_summary}}
 
 ## Purpose
 
@@ -20,7 +19,7 @@ checks, and leave evidence for the next session.
 | Domain | Artifact | Purpose |
 | --- | --- | --- |
 | Instructions | `{{agent_file}}`, `CLAUDE.md`, `GEMINI.md`, `.github/copilot-instructions.md` | Startup path, invariants, definition of done, and platform routing |
-| Tools | `init.sh`, `init.ps1` | Local verification entrypoints for POSIX and Windows |
+| Tools | `init.sh`, `init.ps1` when generated | Local verification entrypoints for the declared platform contract |
 | Environment | package/runtime manifests, `component-inventory.md`, `dependency-change-policy.md` | Versions, dependency managers, setup facts, project boundaries, and pin policy |
 | State | `feature_list.json`, `progress.md`, `evidence-log.md` | Current objective, feature status, and evidence |
 | Feedback | `verification-matrix.md`, `evaluator-rubric.md`, local checks | Deterministic signals before claiming completion |

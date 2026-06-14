@@ -8,9 +8,10 @@ from pathlib import Path
 from . import __version__
 from .audit import audit_target, audit_to_dict, format_audit, render_html_report
 from .doctor import doctor_json, doctor_report, format_doctor
-from .generate import create_harness
+from .generate import PLATFORM_CONTRACTS, create_harness
+from .models import DriftResult
 from .redact import redact_local_paths
-from .update import plan_or_apply_update
+from .update import build_drift_report, plan_or_apply_update
 
 
 def main(argv: list[str] | None = None) -> int:
@@ -45,6 +46,11 @@ def build_parser() -> argparse.ArgumentParser:
     init = subparsers.add_parser("init", help="create missing harness artifacts")
     init.add_argument("--target", type=Path, default=Path.cwd())
     init.add_argument("--agent-file", default="AGENTS.md")
+    init.add_argument(
+        "--platform-contract",
+        choices=PLATFORM_CONTRACTS,
+        default="cross-platform",
+    )
     init.add_argument("--package-manager")
     init.add_argument("--command", dest="commands", action="append", default=[])
     init.add_argument("--project-name")
@@ -78,6 +84,11 @@ def build_parser() -> argparse.ArgumentParser:
     update.add_argument("--target", type=Path, default=Path.cwd())
     update.add_argument("--agent-file", default="AGENTS.md")
     update.add_argument(
+        "--platform-contract",
+        choices=PLATFORM_CONTRACTS,
+        default="cross-platform",
+    )
+    update.add_argument(
         "--with-ci-workflow",
         action="store_true",
         help="include the optional manual HarnessForge CI workflow",
@@ -89,6 +100,7 @@ def build_parser() -> argparse.ArgumentParser:
     )
     update.add_argument("--apply", action="store_true")
     update.add_argument("--force", action="store_true")
+    update.add_argument("--drift-report", action="store_true")
     update.add_argument("--json", action="store_true")
     update.set_defaults(func=_update)
 
@@ -111,6 +123,7 @@ def _init(args: argparse.Namespace) -> int:
         project_name=args.project_name,
         with_ci_workflow=args.with_ci_workflow,
         with_self_heal_workflow=args.with_self_heal_workflow,
+        platform_contract=args.platform_contract,
     )
     print(f"Target: {profile.name}")
     print(f"Detected stack: {profile.stack}")
@@ -122,6 +135,8 @@ def _init(args: argparse.Namespace) -> int:
         relative = _relative(result.path, profile.root)
         suffix = f" ({result.reason})" if result.reason else ""
         print(f"{result.status.upper()} {relative}{suffix}")
+    for warning in _workflow_warnings(args.with_ci_workflow, args.with_self_heal_workflow):
+        print(warning)
     return 0
 
 
@@ -142,6 +157,23 @@ def _audit(args: argparse.Namespace) -> int:
 
 
 def _update(args: argparse.Namespace) -> int:
+    if args.drift_report:
+        drift = build_drift_report(args.target)
+        if args.json:
+            print(json.dumps({"drift": [_drift_to_dict(item) for item in drift]}, indent=2))
+            return 0
+        print("Generated file drift report:")
+        if not drift:
+            print("  - No generated-file metadata found.")
+            return 0
+        for item in drift:
+            suffix = f" ({item.reason})" if item.reason else ""
+            print(
+                "  - "
+                f"{item.path}: file={item.file_status}, "
+                f"template={item.template_status}{suffix}"
+            )
+        return 0
     before, profile, writes = plan_or_apply_update(
         args.target,
         apply=args.apply,
@@ -149,6 +181,7 @@ def _update(args: argparse.Namespace) -> int:
         agent_file=args.agent_file,
         with_ci_workflow=args.with_ci_workflow,
         with_self_heal_workflow=args.with_self_heal_workflow,
+        platform_contract=args.platform_contract,
     )
     if args.json:
         payload = {
@@ -175,6 +208,8 @@ def _update(args: argparse.Namespace) -> int:
     for write in writes:
         suffix = f" ({write.reason})" if write.reason else ""
         print(f"  - {write.status.upper()} {_relative(write.path, profile.root)}{suffix}")
+    for warning in _workflow_warnings(args.with_ci_workflow, args.with_self_heal_workflow):
+        print(warning)
     return 0
 
 
@@ -192,3 +227,25 @@ def _relative(path: Path, root: Path) -> str:
         return str(path.resolve().relative_to(root.resolve()))
     except ValueError:
         return redact_local_paths(str(path))
+
+
+def _drift_to_dict(item: DriftResult) -> dict[str, str]:
+    return {
+        "path": item.path,
+        "ownership": item.ownership,
+        "fileStatus": item.file_status,
+        "templateStatus": item.template_status,
+        "reason": item.reason,
+    }
+
+
+def _workflow_warnings(
+    with_ci_workflow: bool, with_self_heal_workflow: bool
+) -> tuple[str, ...]:
+    if not (with_ci_workflow or with_self_heal_workflow):
+        return ()
+    return (
+        "Optional workflow scaffold review required:",
+        "  - replace cboyd0319/harnessforge@<reviewed-commit-sha> before relying on it",
+        "  - review workflow permissions, triggers, branch, and pull-request behavior",
+    )

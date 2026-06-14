@@ -105,6 +105,20 @@ and the required AGENTS instruction format.
   discovery passed with 97 tests, compile passed, pin check passed,
   JSON/template parsing passed, generated default/custom target audits passed
   at `100/100`, diff hygiene passed, and self-audit stayed `100/100`.
+- Current generator release-prep batch adds generated-file ownership metadata,
+  drift reporting, and platform-contract options. Generated manifests now
+  record generator identity, platform contract, generated-file ownership,
+  template SHA-256, and content SHA-256 metadata. `harnessforge update
+  --drift-report` reports generated-file drift without writing updates. CLI
+  init/update and the composite Action accept `--platform-contract` for
+  cross-platform, macOS-only, Windows-only, or Linux-only target contracts.
+  Platform-specific generation omits unsupported local entrypoints, and
+  optional self-heal scaffolds verify through the generated entrypoint for the
+  selected contract. Optional workflow scaffold warnings are louder, Python
+  detection adds Ruff and mypy commands from config, and generated placeholders
+  that require project decisions are marked `REVIEW REQUIRED`. Current
+  verification passes full unit discovery with 103 tests, compile, pin check,
+  JSON parsing, self-audit `100/100`, diff hygiene, and rendered target smokes.
 - Current OpenAI Codex AI-native engineering guide review imported
   Delegate/Review/Own SDLC boundaries, agent-generated test integrity guidance,
   high-signal review criteria, and the official source URL into the fixed
@@ -314,8 +328,8 @@ and the required AGENTS instruction format.
 
 ## Next Session
 
-Review and commit the generated-surface boundary fixes when ready. Push local
-commits only at an explicit batch/release boundary or user request. Before a
-public Action release, run the manual macOS/Windows platform CI check, then
-decide whether to cut a `v1` Action tag and which release-time SBOM/provenance
-controls should become blocking.
+Review and commit the generator metadata, drift, and platform-contract slice
+when ready. Push local commits only at an explicit batch/release boundary or
+user request. Before a public Action release, run the manual macOS/Windows
+platform CI check, then decide whether to cut a `v1` Action tag and which
+release-time SBOM/provenance controls should become blocking.

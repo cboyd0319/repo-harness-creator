@@ -297,6 +297,31 @@ class GenerateAuditTests(unittest.TestCase):
                 for path in absent_paths:
                     self.assertNotIn(path, staged_paths)
 
+    def test_self_heal_workflow_respects_platform_contract(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            create_harness(
+                root,
+                platform_contract="windows-only",
+                with_self_heal_workflow=True,
+            )
+            self_heal = (root / ".github/workflows/harness-self-heal.yml").read_text(
+                encoding="utf-8"
+            )
+
+        normalized = self_heal.replace(" \\\n            ", " ")
+        git_add_line = next(
+            line.strip()
+            for line in normalized.splitlines()
+            if line.strip().startswith("git add ")
+        )
+        staged_paths = shlex.split(git_add_line)[3:]
+
+        self.assertIn("pwsh -NoProfile -File ./init.ps1", self_heal)
+        self.assertNotIn("./init.sh", self_heal)
+        self.assertIn("init.ps1", staged_paths)
+        self.assertNotIn("init.sh", staged_paths)
+
     def test_generated_docs_separate_workflow_and_action_surfaces(self) -> None:
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp)
@@ -475,6 +500,44 @@ class GenerateAuditTests(unittest.TestCase):
         self.assertIn("docs/harness/release-controls.md", manifest["requiredFiles"])
         self.assertIn("docs/harness/research-sources.json", manifest["requiredFiles"])
         self.assertIn("detectedComponents", manifest)
+
+    def test_manifest_records_generated_file_ownership_metadata(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            create_harness(root)
+            manifest = json.loads(
+                (root / "docs/harness/manifest.json").read_text(encoding="utf-8")
+            )
+
+        self.assertEqual(manifest["generator"]["name"], "harnessforge")
+        self.assertEqual(manifest["generatedFiles"]["AGENTS.md"]["ownership"], "generated")
+        self.assertEqual(
+            manifest["generatedFiles"]["AGENTS.md"]["template"],
+            "agents.md.tmpl",
+        )
+        self.assertRegex(
+            manifest["generatedFiles"]["AGENTS.md"]["contentSha256"],
+            r"^[0-9a-f]{64}$",
+        )
+        self.assertRegex(
+            manifest["generatedFiles"]["AGENTS.md"]["templateSha256"],
+            r"^[0-9a-f]{64}$",
+        )
+        self.assertIn("docs/harness/feature-privacy-labels.json", manifest["reviewRequired"])
+
+    def test_generated_placeholders_mark_project_review_required(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            create_harness(root)
+            manifest = json.loads(
+                (root / "docs/harness/manifest.json").read_text(encoding="utf-8")
+            )
+            review_files = tuple(manifest["reviewRequired"])
+
+            for relative_path in review_files:
+                with self.subTest(relative_path=relative_path):
+                    content = (root / relative_path).read_text(encoding="utf-8")
+                    self.assertIn("REVIEW REQUIRED", content)
 
     def test_live_manifest_matches_generated_shared_snippets(self) -> None:
         repo_root = Path(__file__).resolve().parents[1]

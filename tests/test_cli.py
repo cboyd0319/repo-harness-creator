@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import contextlib
 import io
+import json
 import tempfile
 import unittest
 from pathlib import Path
@@ -42,7 +43,8 @@ class CliTests(unittest.TestCase):
     def test_init_can_scaffold_optional_workflows(self) -> None:
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp)
-            with contextlib.redirect_stdout(io.StringIO()):
+            stdout = io.StringIO()
+            with contextlib.redirect_stdout(stdout):
                 code = main(
                     [
                         "init",
@@ -61,6 +63,65 @@ class CliTests(unittest.TestCase):
         self.assertEqual(code, 0)
         self.assertTrue(ci_exists)
         self.assertTrue(self_heal_exists)
+        self.assertIn("Optional workflow scaffold review required", stdout.getvalue())
+        self.assertIn("<reviewed-commit-sha>", stdout.getvalue())
+        self.assertIn("permissions", stdout.getvalue())
+
+    def test_init_can_generate_macos_only_contract(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            with contextlib.redirect_stdout(io.StringIO()):
+                code = main(
+                    [
+                        "init",
+                        "--target",
+                        str(root),
+                        "--platform-contract",
+                        "macos-only",
+                    ]
+                )
+
+            manifest = json.loads(
+                (root / "docs/harness/manifest.json").read_text(encoding="utf-8")
+            )
+            init_sh_exists = (root / "init.sh").exists()
+            init_ps1_exists = (root / "init.ps1").exists()
+
+        self.assertEqual(code, 0)
+        self.assertTrue(init_sh_exists)
+        self.assertFalse(init_ps1_exists)
+        self.assertIn("macosOnly", manifest["supportedPlatforms"])
+        self.assertNotIn("init.ps1", manifest["requiredFiles"])
+
+    def test_update_drift_report_detects_modified_generated_file(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            with contextlib.redirect_stdout(io.StringIO()):
+                init_code = main(["init", "--target", str(root)])
+            (root / "AGENTS.md").write_text(
+                "# edited\n\nlocal change\n",
+                encoding="utf-8",
+            )
+            stdout = io.StringIO()
+            with contextlib.redirect_stdout(stdout):
+                report_code = main(
+                    [
+                        "update",
+                        "--target",
+                        str(root),
+                        "--drift-report",
+                        "--json",
+                    ]
+                )
+            payload = json.loads(stdout.getvalue())
+            claude_text = (root / "CLAUDE.md").read_text(encoding="utf-8")
+
+        self.assertEqual(init_code, 0)
+        self.assertEqual(report_code, 0)
+        drift = {item["path"]: item for item in payload["drift"]}
+        self.assertEqual(drift["AGENTS.md"]["fileStatus"], "modified")
+        self.assertEqual(drift["AGENTS.md"]["ownership"], "generated")
+        self.assertFalse(claude_text.startswith("# edited"))
 
     def test_audit_requires_explicit_override_for_local_absolute_paths(self) -> None:
         with tempfile.TemporaryDirectory() as tmp:

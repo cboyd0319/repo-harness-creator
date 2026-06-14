@@ -36,8 +36,7 @@ inventory, not permission to mutate nested projects.
   unless the root scripts, workspace config, or CI make that explicit.
 - Do not install dependencies, run package scripts, or write generated files in
   nested components unless the task needs it and the command is documented.
-- Preserve platform parity for macOS 15+, Windows 11+, Ubuntu 22.04+, and Python
-  3.13+ where the component uses Python.
+- Preserve the declared platform contract: {{platform_contract_summary}}
 
 ## Manual Additions
 

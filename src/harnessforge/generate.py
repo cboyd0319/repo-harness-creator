@@ -5,15 +5,25 @@ import os
 import shlex
 import stat
 from datetime import UTC, datetime
+from hashlib import sha256
 from importlib.resources import files
 from pathlib import Path
 
+from . import __version__
 from .detect import detect_project
 from .models import ProjectProfile, WriteResult
 from .paths import is_inside_root
 from .redact import redact_local_paths
 
 TEMPLATE_ROOT = files("harnessforge").joinpath("templates")
+PLATFORM_CONTRACTS = ("cross-platform", "macos-only", "windows-only", "linux-only")
+REVIEW_REQUIRED_FILES = (
+    "docs/harness/change-contract.md",
+    "docs/harness/feature-privacy-labels.json",
+    "docs/harness/evidence-log.md",
+    "docs/harness/quality-document.md",
+    "docs/harness/release-controls.md",
+)
 
 
 def create_harness(
@@ -27,20 +37,30 @@ def create_harness(
     project_name: str | None = None,
     with_ci_workflow: bool = False,
     with_self_heal_workflow: bool = False,
+    platform_contract: str = "cross-platform",
 ) -> tuple[ProjectProfile, tuple[WriteResult, ...]]:
     agent_file = _validate_agent_file(agent_file)
+    platform_contract = _validate_platform_contract(platform_contract)
     profile = detect_project(
         target,
         explicit_package_manager=package_manager,
         explicit_commands=commands,
     )
-    context = _template_context(profile, agent_file=agent_file, project_name=project_name)
+    context = _template_context(
+        profile,
+        agent_file=agent_file,
+        project_name=project_name,
+        platform_contract=platform_contract,
+    )
     specs = _template_specs(
         agent_file,
         with_ci_workflow=with_ci_workflow,
         with_self_heal_workflow=with_self_heal_workflow,
+        platform_contract=platform_contract,
     )
     _validate_destinations(profile.root, tuple(spec[1] for spec in specs))
+    rendered = _render_harness_files(specs, context)
+    generated_files = _generated_file_metadata(specs, rendered)
     results: list[WriteResult] = []
     for template_name, relative_path, executable in specs:
         destination = profile.root / relative_path
@@ -50,11 +70,11 @@ def create_harness(
                 agent_file,
                 with_ci_workflow=with_ci_workflow,
                 with_self_heal_workflow=with_self_heal_workflow,
+                platform_contract=platform_contract,
+                generated_files=generated_files,
             )
-        elif template_name == "feature-list.schema.json.tmpl":
-            content = _feature_list_schema()
         else:
-            content = _render_template(template_name, context)
+            content = rendered[relative_path]
         content = redact_local_paths(content)
         results.append(
             _write_file(
@@ -74,7 +94,9 @@ def _template_specs(
     *,
     with_ci_workflow: bool = False,
     with_self_heal_workflow: bool = False,
+    platform_contract: str = "cross-platform",
 ) -> tuple[tuple[str, str, bool], ...]:
+    platform = _platform_contract_data(platform_contract)
     specs = [
         ("agents.md.tmpl", agent_file, False),
     ]
@@ -98,8 +120,6 @@ def _template_specs(
             ("progress.md.tmpl", "progress.md", False),
             ("session-handoff.md.tmpl", "session-handoff.md", False),
             ("check-pins.py.tmpl", "scripts/check_pins.py", True),
-            ("init.sh.tmpl", "init.sh", True),
-            ("init.ps1.tmpl", "init.ps1", False),
             ("harness-readme.md.tmpl", "docs/harness/README.md", False),
             ("change-contract.md.tmpl", "docs/harness/change-contract.md", False),
             ("verification-matrix.md.tmpl", "docs/harness/verification-matrix.md", False),
@@ -146,6 +166,17 @@ def _template_specs(
             ("manifest.json.tmpl", "docs/harness/manifest.json", False),
         ]
     )
+    insert_at = next(
+        index
+        for index, spec in enumerate(specs)
+        if spec[1] == "docs/harness/README.md"
+    )
+    entrypoint_specs: list[tuple[str, str, bool]] = []
+    if platform["requires_posix"]:
+        entrypoint_specs.append(("init.sh.tmpl", "init.sh", True))
+    if platform["requires_powershell"]:
+        entrypoint_specs.append(("init.ps1.tmpl", "init.ps1", False))
+    specs[insert_at:insert_at] = entrypoint_specs
     if with_ci_workflow:
         specs.append(("ci-workflow.yml.tmpl", ".github/workflows/harnessforge.yml", False))
     if with_self_heal_workflow:
@@ -159,7 +190,8 @@ def _template_specs(
     return tuple(specs)
 
 
-def _self_heal_git_add_paths(agent_file: str) -> str:
+def _self_heal_git_add_paths(agent_file: str, platform_contract: str) -> str:
+    platform = _platform_contract_data(platform_contract)
     paths = [agent_file]
     if agent_file != "CLAUDE.md":
         paths.append("CLAUDE.md")
@@ -171,14 +203,81 @@ def _self_heal_git_add_paths(agent_file: str) -> str:
             "feature_list.json",
             "progress.md",
             "session-handoff.md",
-            "init.sh",
-            "init.ps1",
             "scripts/check_pins.py",
             "docs/harness",
             ".github/workflows/harness-self-heal.yml",
         ]
     )
+    if platform["requires_posix"]:
+        paths.insert(-3, "init.sh")
+    if platform["requires_powershell"]:
+        paths.insert(-3, "init.ps1")
     return " \\\n            ".join(shlex.quote(path) for path in paths)
+
+
+def _validate_platform_contract(platform_contract: str) -> str:
+    value = platform_contract.strip().lower()
+    if value not in PLATFORM_CONTRACTS:
+        allowed = ", ".join(PLATFORM_CONTRACTS)
+        raise ValueError(f"--platform-contract must be one of: {allowed}")
+    return value
+
+
+def _platform_contract_data(platform_contract: str) -> dict[str, object]:
+    if platform_contract == "macos-only":
+        return {
+            "requires_posix": True,
+            "requires_powershell": False,
+            "summary": "macOS 15+ only with Python 3.13+.",
+            "supported": {
+                "macosOnly": {
+                    "python": "3.13+",
+                    "macOS": "15+",
+                    "note": "Windows and Linux are not supported by this harness contract.",
+                }
+            },
+        }
+    if platform_contract == "windows-only":
+        return {
+            "requires_posix": False,
+            "requires_powershell": True,
+            "summary": "Windows 11+ only with Python 3.13+.",
+            "supported": {
+                "windowsOnly": {
+                    "python": "3.13+",
+                    "windows": "11+",
+                    "note": "macOS and Linux are not supported by this harness contract.",
+                }
+            },
+        }
+    if platform_contract == "linux-only":
+        return {
+            "requires_posix": True,
+            "requires_powershell": False,
+            "summary": "Ubuntu 22.04+ Linux floor with Python 3.13+.",
+            "supported": {
+                "linuxOnly": {
+                    "python": "3.13+",
+                    "linux": "Ubuntu 22.04+ floor",
+                    "note": "macOS and Windows are not supported by this harness contract.",
+                }
+            },
+        }
+    return {
+        "requires_posix": True,
+        "requires_powershell": True,
+        "summary": (
+            "Python 3.13+, macOS 15+, Windows 11+, Ubuntu 22.04+, and "
+            "best-effort support for other modern Linux distributions with "
+            "Python 3.13+."
+        ),
+        "supported": {
+            "python": "3.13+",
+            "macOS": "15+",
+            "windows": "11+",
+            "linux": "Ubuntu 22.04+ floor; other modern distributions are best effort",
+        },
+    }
 
 
 def _validate_agent_file(agent_file: str) -> str:
@@ -200,19 +299,29 @@ def _validate_agent_file(agent_file: str) -> str:
 
 
 def _template_context(
-    profile: ProjectProfile, *, agent_file: str, project_name: str | None
+    profile: ProjectProfile,
+    *,
+    agent_file: str,
+    project_name: str | None,
+    platform_contract: str,
 ) -> dict[str, str]:
     now = datetime.now(UTC).date().isoformat()
     commands = profile.verification_commands
+    platform = _platform_contract_data(platform_contract)
     return {
         "agent_file": agent_file,
         "agent_file_yaml": json.dumps(agent_file),
+        "platform_contract": platform_contract,
+        "platform_contract_summary": str(platform["summary"]),
         "project_name": project_name or profile.name,
         "detected_stack": profile.stack,
         "languages": ", ".join(profile.languages),
         "package_managers": ", ".join(profile.package_managers) or "none detected",
         "runtime_files": ", ".join(profile.runtime_files) or "none detected",
-        "self_heal_git_add_paths": _self_heal_git_add_paths(agent_file),
+        "self_heal_git_add_paths": _self_heal_git_add_paths(
+            agent_file, platform_contract
+        ),
+        "self_heal_verify_command": _self_heal_verify_command(platform_contract),
         "components_markdown": _components_markdown(profile.components),
         "workspace_markers_markdown": _workspace_markers_markdown(
             profile.workspace_markers
@@ -222,11 +331,88 @@ def _template_context(
         ),
         "generated_date": now,
         "commands_markdown": "\n".join(f"- `{command}`" for command in commands),
+        "verification_entrypoints_markdown": _verification_entrypoints_markdown(
+            platform_contract
+        ),
         "commands_shell": "\n\n".join(_shell_command_block(command) for command in commands),
         "commands_powershell": "\n\n".join(
             _powershell_command_block(command) for command in commands
         ),
     }
+
+
+def _verification_entrypoints_markdown(platform_contract: str) -> str:
+    platform = _platform_contract_data(platform_contract)
+    blocks: list[str] = []
+    if platform["requires_posix"]:
+        blocks.append(
+            "Full local verification on macOS or Linux:\n\n"
+            "```bash\n"
+            "./init.sh\n"
+            "```"
+        )
+    if platform["requires_powershell"]:
+        blocks.append(
+            "Full local verification on Windows:\n\n"
+            "```powershell\n"
+            ".\\init.ps1\n"
+            "```"
+        )
+    return "\n\n".join(blocks)
+
+
+def _self_heal_verify_command(platform_contract: str) -> str:
+    platform = _platform_contract_data(platform_contract)
+    if platform["requires_posix"]:
+        return "./init.sh"
+    return "pwsh -NoProfile -File ./init.ps1"
+
+
+def _render_harness_files(
+    specs: tuple[tuple[str, str, bool], ...], context: dict[str, str]
+) -> dict[str, str]:
+    rendered: dict[str, str] = {}
+    for template_name, relative_path, _ in specs:
+        if template_name == "manifest.json.tmpl":
+            continue
+        if template_name == "feature-list.schema.json.tmpl":
+            content = _feature_list_schema()
+        else:
+            content = _render_template(template_name, context)
+        rendered[relative_path] = redact_local_paths(content)
+    return rendered
+
+
+def _generated_file_metadata(
+    specs: tuple[tuple[str, str, bool], ...], rendered: dict[str, str]
+) -> dict[str, dict[str, object]]:
+    metadata: dict[str, dict[str, object]] = {}
+    for template_name, relative_path, executable in specs:
+        entry: dict[str, object] = {
+            "ownership": "generated",
+            "template": template_name,
+            "templateSha256": _template_sha256(template_name),
+            "executable": executable,
+            "reviewRequired": relative_path in REVIEW_REQUIRED_FILES,
+        }
+        if relative_path in rendered:
+            entry["contentSha256"] = _sha256_text(rendered[relative_path])
+        metadata[relative_path] = entry
+    return metadata
+
+
+def _sha256_text(text: str) -> str:
+    return sha256(text.encode("utf-8")).hexdigest()
+
+
+def _template_sha256(template_name: str) -> str:
+    if template_name == "feature-list.schema.json.tmpl":
+        return _sha256_text(_feature_list_schema())
+    if template_name == "manifest.json.tmpl":
+        return _sha256_text("harnessforge dynamic manifest v1")
+    return sha256(
+        TEMPLATE_ROOT.joinpath(template_name).read_bytes()
+    ).hexdigest()
 
 
 def _render_template(template_name: str, context: dict[str, str]) -> str:
@@ -339,7 +525,10 @@ def _manifest_content(
     *,
     with_ci_workflow: bool = False,
     with_self_heal_workflow: bool = False,
+    platform_contract: str = "cross-platform",
+    generated_files: dict[str, dict[str, object]] | None = None,
 ) -> str:
+    platform = _platform_contract_data(platform_contract)
     required_files = [
         agent_file,
         *([] if agent_file == "CLAUDE.md" else ["CLAUDE.md"]),
@@ -349,8 +538,6 @@ def _manifest_content(
         "progress.md",
         "session-handoff.md",
         "scripts/check_pins.py",
-        "init.sh",
-        "init.ps1",
         "docs/harness/README.md",
         "docs/harness/change-contract.md",
         "docs/harness/verification-matrix.md",
@@ -373,6 +560,10 @@ def _manifest_content(
         "docs/harness/multi-agent-orchestration.md",
         "docs/harness/feature-list.schema.json",
     ]
+    if platform["requires_posix"]:
+        required_files.insert(required_files.index("docs/harness/README.md"), "init.sh")
+    if platform["requires_powershell"]:
+        required_files.insert(required_files.index("docs/harness/README.md"), "init.ps1")
     required_snippets: dict[str, list[str]] = {
         agent_file: [
             "Startup",
@@ -577,16 +768,18 @@ def _manifest_content(
     manifest = {
         "version": 1,
         "generatedBy": "harnessforge",
+        "generator": {
+            "name": "harnessforge",
+            "version": __version__,
+        },
         "generatedFor": profile.name,
         "detectedStack": profile.stack,
-        "supportedPlatforms": {
-            "python": "3.13+",
-            "macOS": "15+",
-            "windows": "11+",
-            "linux": "Ubuntu 22.04+ floor; other modern distributions are best effort",
-        },
+        "platformContract": platform_contract,
+        "supportedPlatforms": platform["supported"],
         "requiredFiles": required_files,
         "requiredHarnessSnippets": required_snippets,
+        "generatedFiles": generated_files or {},
+        "reviewRequired": list(REVIEW_REQUIRED_FILES),
         "verificationCommands": list(profile.verification_commands),
         "detectedComponents": list(profile.components),
         "detectedWorkspaceMarkers": list(profile.workspace_markers),

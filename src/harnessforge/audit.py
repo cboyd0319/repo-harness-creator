@@ -801,7 +801,25 @@ def _feedback_checks(files: dict[str, str], link_failures: list[str]) -> list[Ch
     all_text = "\n".join(files.values())
     init_text = files.get("init.sh", "") + files.get("init.ps1", "")
     return [
-        _contains(init_text, ("test", "unittest", "pytest", "cargo test", "go test", "dotnet test", "build", "compileall"), "Runnable verification command is present"),
+        _contains(
+            init_text,
+            (
+                "test",
+                "unittest",
+                "pytest",
+                "cargo test",
+                "go test",
+                "dotnet test",
+                "build",
+                "compileall",
+                "ruff check",
+                "run check",
+                "yarn check",
+                "mypy",
+                "lint",
+            ),
+            "Runnable verification command is present",
+        ),
         _check("docs/harness/verification-matrix.md" in files, "Verification matrix exists"),
         _check("docs/harness/evidence-log.md" in files, "Evidence log exists"),
         _check("docs/harness/evaluator-rubric.md" in files, "Evaluator rubric exists for output review"),
@@ -818,7 +836,12 @@ def _feedback_checks(files: dict[str, str], link_failures: list[str]) -> list[Ch
             "Remote CI cost control is documented",
         ),
         _check(not link_failures, "Local Markdown links resolve", "; ".join(link_failures[:3])),
-        _check(".github/workflows/ci.yml" in files or "init.sh" in files, "At least one local or CI feedback entrypoint exists"),
+        _check(
+            ".github/workflows/ci.yml" in files
+            or "init.sh" in files
+            or "init.ps1" in files,
+            "At least one local or CI feedback entrypoint exists",
+        ),
     ]
 
 

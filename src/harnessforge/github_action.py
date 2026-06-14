@@ -62,6 +62,7 @@ def run_from_env(env: Mapping[str, str]) -> int:
             with_self_heal_workflow=_bool_input(
                 env.get("INPUT_WITH_SELF_HEAL_WORKFLOW", "false")
             ),
+            platform_contract=env.get("INPUT_PLATFORM_CONTRACT", "cross-platform"),
         )
         changed_files = sum(1 for write in writes if write.status == "written")
         result = audit_target(target)
@@ -76,6 +77,7 @@ def run_from_env(env: Mapping[str, str]) -> int:
             with_self_heal_workflow=_bool_input(
                 env.get("INPUT_WITH_SELF_HEAL_WORKFLOW", "false")
             ),
+            platform_contract=env.get("INPUT_PLATFORM_CONTRACT", "cross-platform"),
         )
         changed_files = sum(1 for write in writes if write.status == "written")
         result = audit_target(target)

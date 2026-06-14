@@ -34,7 +34,7 @@ jobs:
       - name: Verify
         run: |
           set -euo pipefail
-          ./init.sh
+          {{self_heal_verify_command}}
           git diff --check
 
       - name: Create pull request

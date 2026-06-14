@@ -536,7 +536,7 @@ def _verification_commands(
     commands = _dedupe(commands)
     if not commands:
         commands = (
-            'echo "No project verification command detected. Replace this line '
+            'echo "No project verification check detected. Replace this line '
             'with the smallest reliable project check."',
         )
     return tuple(commands)
@@ -581,6 +581,10 @@ def _python_commands(
 ) -> list[str]:
     prefix = "uv run " if "uv" in package_managers else ""
     commands = [f"{prefix}python -m compileall ."]
+    if _uses_ruff(file_set, pyproject):
+        commands.append(f"{prefix}python -m ruff check .")
+    if _uses_mypy(file_set, pyproject):
+        commands.append(f"{prefix}python -m mypy .")
     if _uses_pytest(file_set, pyproject):
         pytest_prefix = (
             "uv run --all-packages "
@@ -591,6 +595,26 @@ def _python_commands(
     elif "tests" in {Path(file).parts[0] for file in file_set if Path(file).parts}:
         commands.append(f"{prefix}python -m unittest discover")
     return commands
+
+
+def _uses_ruff(file_set: set[str], pyproject: dict[str, Any] | None) -> bool:
+    if {"ruff.toml", ".ruff.toml"} & file_set:
+        return True
+    return bool(
+        pyproject
+        and isinstance(pyproject.get("tool"), dict)
+        and "ruff" in pyproject["tool"]
+    )
+
+
+def _uses_mypy(file_set: set[str], pyproject: dict[str, Any] | None) -> bool:
+    if {"mypy.ini", ".mypy.ini"} & file_set:
+        return True
+    return bool(
+        pyproject
+        and isinstance(pyproject.get("tool"), dict)
+        and "mypy" in pyproject["tool"]
+    )
 
 
 def _uses_pytest(file_set: set[str], pyproject: dict[str, Any] | None) -> bool:

@@ -52,6 +52,18 @@ class DetectProjectTests(unittest.TestCase):
         self.assertIn("python -m compileall .", profile.verification_commands)
         self.assertIn("python -m unittest discover", profile.verification_commands)
 
+    def test_detects_python_tooling_defaults_from_config(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            (root / "pyproject.toml").write_text(
+                "[project]\nname='demo'\n\n[tool.ruff]\n\n[tool.mypy]\n",
+                encoding="utf-8",
+            )
+            profile = detect_project(root)
+
+        self.assertIn("python -m ruff check .", profile.verification_commands)
+        self.assertIn("python -m mypy .", profile.verification_commands)
+
     def test_detects_react_project_and_package_manager(self) -> None:
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp)
