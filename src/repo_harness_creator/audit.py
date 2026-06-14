@@ -8,6 +8,7 @@ from typing import Any
 from urllib.parse import unquote
 
 from .models import AuditResult, CheckResult, DomainScore
+from .paths import is_absolute_path_text, is_inside_root, path_from_relative_text
 from .redact import redact_local_paths
 
 DOMAIN_ORDER = (
@@ -253,8 +254,8 @@ def _manifest_failures(root: Path, manifest: dict[str, Any]) -> list[str]:
     for required in manifest.get("requiredFiles", []):
         if not isinstance(required, str):
             continue
-        path = root / required
-        if not _is_inside_root(path, root):
+        path = root / path_from_relative_text(required)
+        if is_absolute_path_text(required) or not is_inside_root(path, root):
             failures.append(f"Required file from manifest points outside repo: {required}")
         elif not path.exists():
             failures.append(f"Missing required file from manifest: {required}")
@@ -263,7 +264,12 @@ def _manifest_failures(root: Path, manifest: dict[str, Any]) -> list[str]:
         for file_name, required_snippets in snippets.items():
             if not isinstance(file_name, str) or not isinstance(required_snippets, list):
                 continue
-            path = root / file_name
+            path = root / path_from_relative_text(file_name)
+            if is_absolute_path_text(file_name) or not is_inside_root(path, root):
+                failures.append(
+                    f"Required snippet file from manifest points outside repo: {file_name}"
+                )
+                continue
             text = _read_text_inside_root(path, root)
             if text is None:
                 continue
@@ -294,12 +300,11 @@ def _local_markdown_link_failures(root: Path, files: dict[str, str]) -> list[str
             target = unquote(target.split("#", 1)[0].split("?", 1)[0])
             if not target:
                 continue
-            path = Path(target)
-            if path.is_absolute():
+            if is_absolute_path_text(target):
                 failures.append(f"{file_name} links to absolute local path: {target}")
                 continue
-            destination = source.parent / path
-            if not _is_inside_root(destination, root):
+            destination = source.parent / path_from_relative_text(target)
+            if not is_inside_root(destination, root):
                 failures.append(f"{file_name} links outside the repository: {target}")
                 continue
             if not destination.exists():
@@ -308,20 +313,12 @@ def _local_markdown_link_failures(root: Path, files: dict[str, str]) -> list[str
 
 
 def _read_text_inside_root(path: Path, root: Path) -> str | None:
-    if not _is_inside_root(path, root) or not path.exists() or not path.is_file():
+    if not is_inside_root(path, root) or not path.exists() or not path.is_file():
         return None
     try:
         return path.read_text(encoding="utf-8")
     except UnicodeDecodeError:
         return None
-
-
-def _is_inside_root(path: Path, root: Path) -> bool:
-    try:
-        path.resolve(strict=False).relative_to(root.resolve(strict=False))
-    except ValueError:
-        return False
-    return True
 
 
 def _score(name: str, checks: list[CheckResult]) -> DomainScore:

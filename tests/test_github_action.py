@@ -88,7 +88,15 @@ class GitHubActionTests(unittest.TestCase):
             root.mkdir()
             create_harness(root)
             outside = Path(tmp) / "outside.html"
-            for report_path in ("../outside.html", str(outside)):
+            for report_path in (
+                "../outside.html",
+                "..\\outside.html",
+                str(outside),
+                "C:\\temp\\outside.html",
+                "C:outside.html",
+                "\\outside.html",
+                "\\\\server\\share\\outside.html",
+            ):
                 with self.subTest(report_path=report_path):
                     env = {
                         "INPUT_COMMAND": "audit",
@@ -100,6 +108,29 @@ class GitHubActionTests(unittest.TestCase):
                         run_from_env(env)
 
             self.assertFalse(outside.exists())
+
+    def test_action_report_paths_normalize_windows_relative_separators(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            create_harness(root)
+            output = root / "outputs.txt"
+            env = {
+                "INPUT_COMMAND": "audit",
+                "INPUT_TARGET": str(root),
+                "INPUT_HTML_REPORT": "reports\\audit.html",
+                "INPUT_JSON_REPORT": "reports\\nested\\audit.json",
+                "GITHUB_OUTPUT": str(output),
+            }
+
+            with contextlib.redirect_stdout(io.StringIO()):
+                code = run_from_env(env)
+
+            outputs = _parse_github_output(output.read_text(encoding="utf-8"))
+            self.assertEqual(code, 0)
+            self.assertEqual(outputs["report-html"], "reports/audit.html")
+            self.assertEqual(outputs["report-json"], "reports/nested/audit.json")
+            self.assertTrue((root / "reports" / "audit.html").exists())
+            self.assertTrue((root / "reports" / "nested" / "audit.json").exists())
 
     def test_action_outputs_do_not_allow_newline_injection(self) -> None:
         with tempfile.TemporaryDirectory() as tmp:

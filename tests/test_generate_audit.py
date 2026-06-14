@@ -210,21 +210,41 @@ class GenerateAuditTests(unittest.TestCase):
         self.assertFalse(link_check.passed)
         self.assertIn("outside", link_check.detail)
 
-    def test_manifest_required_files_cannot_point_outside_target(self) -> None:
+    def test_audit_flags_windows_absolute_markdown_links(self) -> None:
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp) / "repo"
-            (root / "docs" / "harness").mkdir(parents=True)
-            (Path(tmp) / "outside.md").write_text("outside", encoding="utf-8")
-            (root / "docs" / "harness" / "manifest.json").write_text(
-                json.dumps({"requiredFiles": ["../outside.md"]}),
+            root.mkdir()
+            (root / "README.md").write_text(
+                "See [secret](C:\\Users\\person\\secret.md)\n",
                 encoding="utf-8",
             )
 
             result = audit_target(root)
 
-        self.assertTrue(
-            any("outside repo" in failure for failure in result.manifest_failures)
+        feedback = next(domain for domain in result.domains if domain.name == "feedback")
+        link_check = next(
+            check for check in feedback.checks if check.message == "Local Markdown links resolve"
         )
+        self.assertFalse(link_check.passed)
+        self.assertIn("absolute local path", link_check.detail)
+
+    def test_manifest_required_files_cannot_point_outside_target(self) -> None:
+        for required_file in ("../outside.md", "..\\outside.md"):
+            with self.subTest(required_file=required_file):
+                with tempfile.TemporaryDirectory() as tmp:
+                    root = Path(tmp) / "repo"
+                    (root / "docs" / "harness").mkdir(parents=True)
+                    (Path(tmp) / "outside.md").write_text("outside", encoding="utf-8")
+                    (root / "docs" / "harness" / "manifest.json").write_text(
+                        json.dumps({"requiredFiles": [required_file]}),
+                        encoding="utf-8",
+                    )
+
+                    result = audit_target(root)
+
+                self.assertTrue(
+                    any("outside repo" in failure for failure in result.manifest_failures)
+                )
 
     @unittest.skipUnless(_supports_directory_symlink(), "symlinks unavailable")
     def test_refuses_to_write_through_directory_symlink_outside_target(self) -> None:

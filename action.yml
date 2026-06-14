@@ -40,11 +40,11 @@ inputs:
     required: false
     default: AGENTS.md
   html-report:
-    description: Optional path for an HTML audit report.
+    description: Optional target-relative path for an HTML audit report.
     required: false
     default: ""
   json-report:
-    description: Optional path for a JSON audit report.
+    description: Optional target-relative path for a JSON audit report.
     required: false
     default: ""
 

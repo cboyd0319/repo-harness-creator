@@ -80,12 +80,16 @@ maintenance loop.
   HTTPS fetch sockets to the validated public DNS result while preserving the
   original host for TLS verification, and still revalidates redirects before
   following them.
+- Closed the cross-platform path-containment helper gap. Action report paths,
+  manifest-required files, and local Markdown link checks now recognize POSIX
+  and Windows absolute/rooted path syntax consistently; Windows-style relative
+  report separators are normalized to target-relative paths.
 
 ## Recommended Next Step
 
-Continue the ease/security re-review against the remaining findings, especially
-cross-platform path containment helpers, then decide whether to cut a `v1`
-Action tag before broader public use.
+Finish the ease/security re-review against any remaining low-confidence
+findings, then decide whether to cut a `v1` Action tag before broader public
+use.
 
 ## Verification Evidence
 
@@ -144,6 +148,19 @@ Action tag before broader public use.
 - `pwsh -NoProfile -File ./init.ps1` passed on macOS 26.5.1 with Python
   3.14.5 after research-refresh transport hardening: doctor, compile, 52 unit
   tests, pin check, self-audit `100/100`.
+- `PYTHONPATH=src:. python3 -m unittest tests.test_github_action
+  tests.test_generate_audit tests.test_detect` passed with 25 focused tests
+  after cross-platform path-containment hardening.
+- `PYTHONPATH=src:. python3 -m unittest discover -s tests` passed with 54
+  tests after cross-platform path-containment hardening.
+- `PYTHONPATH=src:. python3 scripts/check_pins.py --root .` passed after the
+  Action metadata wording update.
+- `./init.sh` passed on macOS 26.5.1 with Python 3.14.5 after
+  cross-platform path-containment hardening: doctor, compile, 54 unit tests,
+  pin check, self-audit `100/100`.
+- `pwsh -NoProfile -File ./init.ps1` passed on macOS 26.5.1 with Python
+  3.14.5 after cross-platform path-containment hardening: doctor, compile, 54
+  unit tests, pin check, self-audit `100/100`.
 - `PYTHONPATH=src:. python3 -m unittest discover -s tests` passed with 50
   tests after the current ease/security fix slice.
 - `./init.sh` passed on macOS 26.5.1 with Python 3.14.5 after the current

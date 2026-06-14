@@ -9,6 +9,7 @@ from pathlib import Path
 
 from .detect import detect_project
 from .models import ProjectProfile, WriteResult
+from .paths import is_inside_root
 from .redact import redact_local_paths
 
 TEMPLATE_ROOT = files("repo_harness_creator").joinpath("templates")
@@ -144,7 +145,7 @@ def _write_file(
     force: bool,
     dry_run: bool,
 ) -> WriteResult:
-    if not _is_inside_root(path, root):
+    if not is_inside_root(path, root):
         raise ValueError(f"refusing to write outside target repository: {path}")
     if path.exists() and not force:
         return WriteResult(path=path, status="skipped", reason="exists")
@@ -161,16 +162,8 @@ def _write_file(
 def _validate_destinations(root: Path, relative_paths: tuple[str, ...]) -> None:
     for relative_path in relative_paths:
         destination = root / relative_path
-        if not _is_inside_root(destination, root):
+        if not is_inside_root(destination, root):
             raise ValueError(f"refusing to write outside target repository: {destination}")
-
-
-def _is_inside_root(path: Path, root: Path) -> bool:
-    try:
-        path.resolve(strict=False).relative_to(root.resolve(strict=False))
-    except ValueError:
-        return False
-    return True
 
 
 def _shell_command_block(command: str) -> str:

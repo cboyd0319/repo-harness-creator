@@ -7,6 +7,7 @@ from pathlib import Path
 from typing import Any
 
 from .models import ProjectProfile
+from .paths import is_inside_root
 
 IGNORED_DIRS = {
     ".git",
@@ -330,7 +331,7 @@ def _package_deps(package_json: dict[str, Any] | None) -> set[str]:
 
 
 def _read_json(path: Path, root: Path) -> dict[str, Any] | None:
-    if not _is_inside_root(path, root):
+    if not is_inside_root(path, root):
         return None
     try:
         return json.loads(path.read_text(encoding="utf-8"))
@@ -339,20 +340,12 @@ def _read_json(path: Path, root: Path) -> dict[str, Any] | None:
 
 
 def _read_toml(path: Path, root: Path) -> dict[str, Any] | None:
-    if not _is_inside_root(path, root):
+    if not is_inside_root(path, root):
         return None
     try:
         return tomllib.loads(path.read_text(encoding="utf-8"))
     except (OSError, tomllib.TOMLDecodeError):
         return None
-
-
-def _is_inside_root(path: Path, root: Path) -> bool:
-    try:
-        path.resolve(strict=False).relative_to(root.resolve(strict=False))
-    except ValueError:
-        return False
-    return True
 
 
 def _dedupe(values: list[str] | tuple[str, ...]) -> list[str]:

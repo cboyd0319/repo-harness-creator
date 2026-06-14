@@ -11,6 +11,7 @@ from typing import Any
 from .audit import audit_target, audit_to_dict, format_audit, render_html_report
 from .doctor import doctor_report, format_doctor
 from .generate import create_harness
+from .paths import is_absolute_path_text, is_inside_root, path_from_relative_text
 from .redact import redact_local_paths
 from .update import plan_or_apply_update
 
@@ -120,21 +121,13 @@ def _write_html_report(path_text: str, target: Path, result: Any) -> str:
 def _report_path(path_text: str, target: Path) -> Path | None:
     if not path_text:
         return None
-    requested = Path(path_text)
-    if requested.is_absolute():
+    if is_absolute_path_text(path_text):
         raise ValueError("report paths must be relative to the target repository")
+    requested = path_from_relative_text(path_text)
     path = target / requested
-    if not _is_inside_target(path, target):
+    if not is_inside_root(path, target):
         raise ValueError("report paths must stay inside the target repository")
     return path
-
-
-def _is_inside_target(path: Path, target: Path) -> bool:
-    try:
-        path.resolve(strict=False).relative_to(target.resolve(strict=False))
-    except ValueError:
-        return False
-    return True
 
 
 def _relative_to_target(path: Path, target: Path) -> str:

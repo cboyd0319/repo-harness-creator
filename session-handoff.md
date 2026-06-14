@@ -90,9 +90,19 @@ and the required AGENTS instruction format.
   hardening.
 - Live research refresh checked 49 sources through pinned public-DNS transport;
   the known Red Hat 403 remains recorded.
+- Cross-platform path containment now uses shared path-text handling for POSIX
+  and Windows absolute/rooted syntax. Action report paths reject rooted inputs,
+  Windows-style relative report separators normalize to target-relative paths,
+  and audit catches Windows-style absolute Markdown links and backslash
+  traversal in manifest-required files.
+- Current focused path check passes: `PYTHONPATH=src:. python3 -m unittest
+  tests.test_github_action tests.test_generate_audit tests.test_detect`.
+- Current full local POSIX and PowerShell verification passes with 54 tests,
+  pin check, and self-audit `100/100` after cross-platform path-containment
+  hardening.
 
 ## Next Session
 
-Continue the ease/security re-review against the remaining findings, especially
-cross-platform path containment helpers, then decide whether the first release
-should cut a `v1` Action tag before broader public use.
+Finish the ease/security re-review against any remaining low-confidence
+findings, then decide whether the first release should cut a `v1` Action tag
+before broader public use.

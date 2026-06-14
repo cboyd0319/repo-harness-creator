@@ -4,6 +4,11 @@ Use this for compact current evidence. Keep raw logs out of this file.
 
 | Date | Scope | Command Or Review | Result | Notes |
 | --- | --- | --- | --- | --- |
+| 2026-06-14 | POSIX verification | `./init.sh` | pass | Doctor, compile, 54 tests, pin check, and self-audit `100/100` after cross-platform path-containment hardening. |
+| 2026-06-14 | PowerShell verification | `pwsh -NoProfile -File ./init.ps1` | pass | Doctor, compile, 54 tests, pin check, and self-audit `100/100` after cross-platform path-containment hardening. |
+| 2026-06-14 | Pin enforcement | `PYTHONPATH=src:. python3 scripts/check_pins.py --root .` | pass | Package build pins and external Action SHAs validated after Action metadata wording changed. |
+| 2026-06-14 | Local unit tests | `PYTHONPATH=src:. python3 -m unittest discover -s tests` | pass | 54 tests after cross-platform path-containment hardening. |
+| 2026-06-14 | Cross-platform path containment | `PYTHONPATH=src:. python3 -m unittest tests.test_github_action tests.test_generate_audit tests.test_detect` | pass | 25 focused tests after shared path-text handling for POSIX and Windows absolute/rooted syntax, report paths, manifest paths, and Markdown links. |
 | 2026-06-14 | POSIX verification | `./init.sh` | pass | Doctor, compile, 52 tests, pin check, and self-audit `100/100` after research-refresh transport hardening. |
 | 2026-06-14 | PowerShell verification | `pwsh -NoProfile -File ./init.ps1` | pass | Doctor, compile, 52 tests, pin check, and self-audit `100/100` after research-refresh transport hardening. |
 | 2026-06-14 | Research refresh | `PYTHONPATH=src:. python3 scripts/refresh_research.py --root .` | pass | 49 sources checked through pinned public-DNS transport; one Red Hat 403 remains recorded. |

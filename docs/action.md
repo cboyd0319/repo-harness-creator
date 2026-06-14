@@ -64,8 +64,8 @@ generated harness files is intentional.
 | `apply` | `false` | Apply safe corrections for `update` |
 | `force` | `false` | Allow overwrites for generated files |
 | `agent-file` | `AGENTS.md` | Root instruction file to generate |
-| `html-report` | empty | Optional target-relative HTML report path |
-| `json-report` | empty | Optional target-relative JSON report path |
+| `html-report` | empty | Optional target-relative HTML report path; POSIX and Windows absolute/rooted paths are rejected |
+| `json-report` | empty | Optional target-relative JSON report path; POSIX and Windows absolute/rooted paths are rejected |
 
 Report paths must be relative and stay inside `target`. Absolute paths and
 traversal outside the target repository are rejected.

@@ -195,8 +195,8 @@ default posture is intentionally restrictive.
 - Local home paths are redacted from durable output.
 - GitHub Action outputs use GitHub environment-file delimiter blocks instead
   of flattening line breaks before writing to `$GITHUB_OUTPUT`.
-- GitHub Action report paths must be relative and stay inside the target
-  repository.
+- GitHub Action report paths must be relative in both POSIX and Windows syntax
+  and stay inside the target repository.
 - GitHub Action report outputs use target-relative forward-slash paths on every
   runner.
 - The composite Action sets `PYTHONSAFEPATH=1` so the caller repository's
