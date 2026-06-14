@@ -8,6 +8,14 @@ from pathlib import Path
 from repo_harness_creator.audit import audit_target
 from repo_harness_creator.generate import create_harness
 
+AGENTS_SECTION_ORDER = [
+    "## Project overview",
+    "## Build and test commands",
+    "## Code style guidelines",
+    "## Testing instructions",
+    "## Security considerations",
+]
+
 
 def _supports_directory_symlink() -> bool:
     with tempfile.TemporaryDirectory() as tmp:
@@ -36,6 +44,29 @@ def _supports_file_symlink() -> bool:
 
 
 class GenerateAuditTests(unittest.TestCase):
+    def test_agents_files_follow_required_section_contract(self) -> None:
+        repo_root = Path(__file__).resolve().parents[1]
+        root_agents = (repo_root / "AGENTS.md").read_text(encoding="utf-8")
+        template_agents = (
+            repo_root / "src/repo_harness_creator/templates/agents.md.tmpl"
+        ).read_text(encoding="utf-8")
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            create_harness(root)
+            generated_agents = (root / "AGENTS.md").read_text(encoding="utf-8")
+
+        for content in (root_agents, template_agents, generated_agents):
+            headings = [
+                line
+                for line in content.splitlines()
+                if line.startswith("## ")
+            ]
+            self.assertEqual(headings, AGENTS_SECTION_ORDER)
+            self.assertIn("Startup", content)
+            self.assertIn("Definition Of Done", content)
+            self.assertIn("End of Session", content)
+            self.assertIn("personal machines", content)
+
     def test_init_writes_cross_platform_harness_and_audits_high(self) -> None:
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp)

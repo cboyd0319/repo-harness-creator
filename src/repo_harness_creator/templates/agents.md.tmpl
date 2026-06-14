@@ -1,5 +1,7 @@
 # {{agent_file}}
 
+## Project overview
+
 {{project_name}} uses a repo harness so coding agents can start with the right
 context, stay scoped, verify work, and leave a clean restart path.
 
@@ -9,72 +11,69 @@ Package managers: {{package_managers}}
 Harness platform contract: Python 3.13+, macOS 15+, Windows 11+, Ubuntu 22.04+
 or another modern Linux distribution with Python 3.13+.
 
-## Startup
+Startup path:
 
 1. Confirm the working directory.
 2. Read this file and `docs/harness/README.md`.
 3. Read `feature_list.json`, `progress.md`, and `session-handoff.md`.
-4. Run `./init.sh` on macOS/Linux or `.\init.ps1` on Windows when environment
-   verification is needed.
+4. Check `docs/harness/component-inventory.md` before changing component
+   boundaries or verification routing.
 5. Pick one current objective before editing.
 
-## Working Rules
+## Build and test commands
 
-- People run this repo's commands on personal machines. Choose the most secure
-  and easiest behavior for edge cases. When those conflict, security wins and
-  the error message must explain the safe next step.
-- One feature or fix at a time unless `docs/harness/multi-agent-orchestration.md`
-  defines separate owners.
-- Do not overwrite user work or generated artifacts without explicit approval.
-- Do not claim done without verification evidence.
-- Keep project-specific facts in repo docs, not in chat history.
-- Prefer repo-relative paths. Do not commit machine-specific local paths.
-- Use latest stable supported packages with hard pins. Direct dependencies use
-  exact versions; external GitHub Actions use full-length commit SHAs with
-  version comments.
-
-## Required State
-
-- `feature_list.json`: machine-readable feature state and dependencies.
-- `progress.md`: current objective, evidence, and next step.
-- `session-handoff.md`: blockers, touched files, and restart notes.
-- `docs/harness/component-inventory.md`: root and nested component boundaries.
-- `docs/harness/dependency-change-policy.md`: package, tool, and Action pin
-  policy.
-- `docs/harness/security-boundary-map.md`: security, privacy, permission, and
-  cost boundaries.
-- `docs/harness/evidence-log.md`: compact verification ledger.
-- `docs/harness/clean-state-checklist.md`: required end-of-session condition.
-- `docs/harness/evaluator-rubric.md`: review rubric for non-trivial work.
-
-## Verification
-
-Use the smallest reliable check for the change. Current detected commands:
+Use the smallest reliable command for the change. Current detected commands:
 
 {{commands_markdown}}
 
-Full local entrypoints:
+Full local verification on macOS or Linux:
 
 ```bash
 ./init.sh
 ```
 
+Full local verification on Windows:
+
 ```powershell
 .\init.ps1
 ```
 
-## Definition Of Done
+## Code style guidelines
 
-- Target behavior or documentation change is complete.
-- Acceptance criteria are satisfied.
-- Relevant checks ran, or skipped checks are recorded with risk.
-- `feature_list.json`, `progress.md`, or the relevant plan reflects durable
-  state.
-- `docs/harness/clean-state-checklist.md` would pass for the session.
-- The next session can restart from the files above.
+- Follow the repository's existing language, framework, formatting, and helper
+  patterns.
+- Prefer the smallest correct change. Preserve user changes and dirty work.
+- One feature or fix at a time unless `docs/harness/multi-agent-orchestration.md`
+  defines separate owners.
+- Keep project-specific facts in repo docs, not in chat history.
+- Prefer repo-relative paths. Do not commit machine-specific local paths.
+- Use latest stable supported packages with hard pins. Direct dependencies use
+  exact versions; external GitHub Actions use full-length commit SHAs with
+  version comments.
+- Keep this file as a map. Durable detail belongs in `docs/harness/`.
 
-## End Of Session
+## Testing instructions
 
-Update `progress.md` and `session-handoff.md` with current state, verification
-evidence, blockers, and the recommended next step. Use
-`docs/harness/clean-state-checklist.md` before claiming the session is complete.
+- Do not claim done without verification evidence.
+- Add or update focused tests for changed behavior when practical.
+- Record skipped checks with reason and risk in durable state.
+- Definition Of Done: target behavior or documentation change is complete,
+  acceptance criteria are satisfied, relevant checks ran, and the next session
+  can restart from the harness files.
+- End of Session: update `progress.md` and `session-handoff.md` with current
+  state, verification evidence, blockers, and the recommended next step. Use
+  `docs/harness/clean-state-checklist.md` before claiming the session is
+  complete.
+
+## Security considerations
+
+- People may run this repo's commands on personal machines. Choose the most
+  secure and easiest behavior for edge cases. When those conflict, security wins
+  and the error message must explain the safe next step.
+- Do not overwrite user work or generated artifacts without explicit approval.
+- Respect `docs/harness/security-boundary-map.md` for security, privacy,
+  permission, and cost boundaries.
+- Respect `docs/harness/dependency-change-policy.md` for package, tool, and
+  Action pin policy.
+- Do not commit secrets, credentials, private data, machine-specific paths, or
+  long raw command output.

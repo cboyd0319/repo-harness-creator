@@ -6,7 +6,8 @@ Last Updated: 2026-06-14 UTC
 
 Set up repo-harness-creator as a credible, cross-platform harness creation and
 assessment tool, including the deep local-source pass, secure pinning,
-self-healing, component-boundary improvements, and a high-quality public README.
+self-healing, component-boundary improvements, a high-quality public README,
+and the required AGENTS instruction format.
 
 ## Files
 
@@ -27,14 +28,16 @@ self-healing, component-boundary improvements, and a high-quality public README.
 ## Blockers
 
 - Live Ubuntu 22.04, macOS 15, and Windows 2025 CI execution depends on pushing
-  the repository. Local macOS POSIX and PowerShell checks pass with 37 tests,
+  the repository. Local macOS POSIX and PowerShell checks pass with 38 tests,
   pin check, and self-audit `100/100`.
-- Current focused local suite passes with 37 tests, pin check, and self-audit
+- Current focused local suite passes with 38 tests, pin check, and self-audit
   `100/100`.
 - Research metadata refresh currently tracks 44 sources with one recorded Red
   Hat 403 fetch failure.
 - Root Action manifest regression coverage now checks quoted description values
   containing colons.
+- Root, template, and generated `AGENTS.md` files now have the required five
+  section headings.
 - Hosted execution of the reusable Action `uses: ./` smoke step is pending until
   the repo is pushed.
 
