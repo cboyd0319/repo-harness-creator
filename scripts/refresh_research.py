@@ -7,13 +7,14 @@ import html
 import ipaddress
 import json
 import re
+import socket
 import sys
 from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
 from urllib.error import HTTPError, URLError
 from urllib.parse import urlparse
-from urllib.request import Request, urlopen
+from urllib.request import HTTPRedirectHandler, Request, build_opener
 
 TITLE_RE = re.compile(r"<title[^>]*>(.*?)</title>", re.IGNORECASE | re.DOTALL)
 H_RE = re.compile(r"<h([12])[^>]*>(.*?)</h\1>", re.IGNORECASE | re.DOTALL)
@@ -55,7 +56,9 @@ def main(argv: list[str] | None = None) -> int:
         "failureCount": failures,
         "sources": records,
     }
-    lock_path.write_text(f"{json.dumps(lock, indent=2, sort_keys=True)}\n", encoding="utf-8")
+    lock_path.write_text(
+        f"{json.dumps(lock, indent=2, sort_keys=True)}\n", encoding="utf-8"
+    )
     inbox_path.write_text(_render_inbox(lock), encoding="utf-8")
     print(f"Refreshed {len(records)} research sources with {failures} failures.")
     return 1 if failures == len(records) else 0
@@ -74,10 +77,13 @@ def _fetch_source(source: dict[str, Any], *, timeout: int) -> dict[str, Any]:
             url,
             headers={
                 "User-Agent": "repo-harness-creator research refresh",
-                "Accept": "application/json,text/html,application/xhtml+xml,text/plain;q=0.9,*/*;q=0.1",
+                "Accept": (
+                    "application/json,text/html,application/xhtml+xml,"
+                    "text/plain;q=0.9,*/*;q=0.1"
+                ),
             },
         )
-        with urlopen(request, timeout=timeout) as response:
+        with _open_url(request, timeout=timeout) as response:
             status = int(getattr(response, "status", 200))
             content_type = response.headers.get("content-type", "")
             raw = response.read(512_000)
@@ -109,6 +115,12 @@ def _source_url_error(url: str) -> str:
         return "source URL must include a host"
     if parsed.username or parsed.password:
         return "source URL must not include credentials"
+    try:
+        port = parsed.port or 443
+    except ValueError:
+        return "source URL port is invalid"
+    if port != 443:
+        return "source URL must use the default https port"
 
     host = hostname.lower().rstrip(".")
     if host == "localhost" or host.endswith(".localhost"):
@@ -116,10 +128,44 @@ def _source_url_error(url: str) -> str:
     try:
         address = ipaddress.ip_address(host)
     except ValueError:
-        return ""
-    if not address.is_global:
-        return "source URL must target a public address"
+        try:
+            addresses = _resolve_host_addresses(host, port)
+        except OSError as exc:
+            return f"source URL host could not be resolved: {exc}"
+    else:
+        addresses = [address]
+    if any(not address.is_global for address in addresses):
+        return "source URL must target public addresses"
     return ""
+
+
+def _resolve_host_addresses(
+    host: str, port: int
+) -> list[ipaddress.IPv4Address | ipaddress.IPv6Address]:
+    addresses = []
+    resolved = socket.getaddrinfo(host, port, type=socket.SOCK_STREAM)
+    for family, _, _, _, sockaddr in resolved:
+        if family not in {socket.AF_INET, socket.AF_INET6}:
+            continue
+        addresses.append(ipaddress.ip_address(sockaddr[0]))
+    if not addresses:
+        raise OSError("no IP addresses found")
+    return addresses
+
+
+class _ValidatedRedirectHandler(HTTPRedirectHandler):
+    def redirect_request(  # type: ignore[override]
+        self, req, fp, code, msg, headers, newurl
+    ):
+        url_error = _source_url_error(newurl)
+        if url_error:
+            raise URLError(f"redirect target rejected: {url_error}")
+        return super().redirect_request(req, fp, code, msg, headers, newurl)
+
+
+def _open_url(request: Request, *, timeout: int):
+    opener = build_opener(_ValidatedRedirectHandler)
+    return opener.open(request, timeout=timeout)
 
 
 def _extract_metadata(content_type: str, text: str) -> tuple[str, list[str]]:
@@ -292,7 +338,8 @@ def _render_inbox(lock: dict[str, Any]) -> str:
             "- Repeated source finding becomes an audit check.",
             "- Repeated operational failure becomes a verification command.",
             "- Repeated policy concern becomes a harness policy doc.",
-            "- Speculative or vendor-specific claims stay as source notes until verified.",
+            "- Speculative or vendor-specific claims stay as source notes "
+            "until verified.",
         ]
     )
     return "\n".join(lines) + "\n"

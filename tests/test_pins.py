@@ -24,7 +24,8 @@ class PinCheckTests(unittest.TestCase):
             )
             (root / ".github/workflows/ci.yml").write_text(
                 "steps:\n"
-                "  - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6\n"
+                "  - uses: actions/checkout@"
+                "df4cb1c069e1874edd31b4311f1884172cec0e10 # v6\n"
                 "  - uses: ./\n",
                 encoding="utf-8",
             )
@@ -53,6 +54,22 @@ class PinCheckTests(unittest.TestCase):
         self.assertGreaterEqual(len(failures), 2)
         self.assertTrue(any("exact pin" in failure for failure in failures))
         self.assertTrue(any("40-char SHA" in failure for failure in failures))
+
+    def test_read_only_ci_checkout_does_not_persist_credentials(self) -> None:
+        root = Path(__file__).resolve().parents[1]
+        lines = (root / ".github/workflows/ci.yml").read_text(
+            encoding="utf-8"
+        ).splitlines()
+        checkout_line = next(
+            index
+            for index, line in enumerate(lines)
+            if "uses: actions/checkout@" in line
+        )
+        checkout_block = lines[checkout_line : checkout_line + 5]
+
+        self.assertTrue(
+            any("persist-credentials: false" in line for line in checkout_block)
+        )
 
 
 if __name__ == "__main__":

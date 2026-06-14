@@ -1,10 +1,10 @@
 from __future__ import annotations
 
+import contextlib
+import io
 import json
 import tempfile
 import unittest
-import contextlib
-import io
 from io import BytesIO
 from pathlib import Path
 from unittest import mock
@@ -51,7 +51,16 @@ class RefreshResearchTests(unittest.TestCase):
             )
 
             with (
-                mock.patch.object(refresh_research, "urlopen", return_value=_FakeResponse()),
+                mock.patch.object(
+                    refresh_research,
+                    "_resolve_host_addresses",
+                    return_value=[
+                        refresh_research.ipaddress.ip_address("93.184.216.34")
+                    ],
+                ),
+                mock.patch.object(
+                    refresh_research, "_open_url", return_value=_FakeResponse()
+                ),
                 contextlib.redirect_stdout(io.StringIO()),
             ):
                 code = refresh_research.main(["--root", str(root)])
@@ -78,20 +87,64 @@ class RefreshResearchTests(unittest.TestCase):
             {"id": "loopback", "url": "https://127.0.0.1/source", "category": "test"},
             {"id": "private", "url": "https://10.0.0.1/source", "category": "test"},
             {
+                "id": "port",
+                "url": "https://example.com:8443/source",
+                "category": "test",
+            },
+            {
                 "id": "credentials",
                 "url": "https://user:pass@example.com/source",
                 "category": "test",
             },
         ]
 
-        with mock.patch.object(refresh_research, "urlopen") as urlopen:
+        with mock.patch.object(refresh_research, "_open_url") as open_url:
             records = [
                 refresh_research._fetch_source(source, timeout=1)
                 for source in sources
             ]
 
         self.assertTrue(all(record["status"] == "error" for record in records))
-        urlopen.assert_not_called()
+        open_url.assert_not_called()
+
+    def test_refresh_rejects_hostname_with_non_public_resolution(self) -> None:
+        source = {
+            "id": "private-dns",
+            "url": "https://metadata.example/source",
+            "category": "test",
+        }
+
+        with (
+            mock.patch.object(
+                refresh_research,
+                "_resolve_host_addresses",
+                return_value=[
+                    refresh_research.ipaddress.ip_address("8.8.8.8"),
+                    refresh_research.ipaddress.ip_address("10.0.0.5"),
+                ],
+            ),
+            mock.patch.object(refresh_research, "_open_url") as open_url,
+        ):
+            record = refresh_research._fetch_source(source, timeout=1)
+
+        self.assertEqual(record["status"], "error")
+        self.assertIn("public addresses", record["error"])
+        open_url.assert_not_called()
+
+    def test_refresh_rejects_redirect_to_non_public_url(self) -> None:
+        handler = refresh_research._ValidatedRedirectHandler()
+
+        with self.assertRaises(refresh_research.URLError) as raised:
+            handler.redirect_request(
+                None,
+                None,
+                302,
+                "Found",
+                {},
+                "https://127.0.0.1/metadata",
+            )
+
+        self.assertIn("redirect target rejected", str(raised.exception))
 
     def test_partial_json_metadata_extracts_package_title(self) -> None:
         title, headings = refresh_research._extract_json_metadata(

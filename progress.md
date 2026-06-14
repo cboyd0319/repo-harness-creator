@@ -46,39 +46,52 @@ maintenance loop.
 - Tightened research refresh to match the documented public-source boundary:
   non-HTTPS URLs, embedded credentials, localhost, and literal non-public IP
   targets are rejected before any fetch.
-- Refreshed the research ledger to 46 sources, adding Python packaging and
-  Python command-line environment docs. OpenAI and Red Hat public pages returned
-  HTTP 403 and are recorded in the lock file.
+- Refreshed the research ledger to 49 sources, adding Python packaging, Python
+  command-line, Python URL fetching, GitHub checkout, and OWASP SSRF guidance.
+  The Red Hat public page returned HTTP 403 and is recorded in the lock file.
 - Hosted CI run `27489182164` passed on Ubuntu and macOS but exposed a Windows
   output separator regression in Action report outputs. The local fix now
   normalizes those outputs to forward slashes before writing `GITHUB_OUTPUT`.
+- Hosted CI run `27489310186` passed on `main` for Ubuntu 22.04, macOS 15, and
+  Windows 2025 across Python 3.13.14 and 3.14.6.
+- Continued the ease/security re-review against current GitHub Actions, Python,
+  Python Packaging, and OWASP guidance. The current pass tightens research
+  refresh URL validation for DNS resolutions and redirects, and disables
+  persisted checkout credentials in the read-only CI workflow and examples.
 
 ## Recommended Next Step
 
-Verify the latest pushed GitHub-hosted CI matrix, including the local
-`uses: ./` Action smoke step, on Ubuntu 22.04, macOS 15, and Windows 2025. If
-it is green, decide whether to cut a `v1` Action tag before broader public use.
+Verify and push the current DNS/redirect and checkout-credential hardening
+changes. After hosted CI is green, decide whether to cut a `v1` Action tag
+before broader public use.
 
 ## Verification Evidence
 
 - `./init.sh` passed on macOS 26.5.1 with Python 3.14.5: doctor, compile,
-  43 unit tests, pin check, self-audit `100/100`.
+  46 unit tests, pin check, self-audit `100/100`.
 - `pwsh -NoProfile -File ./init.ps1` passed on macOS 26.5.1 with Python
-  3.14.5: doctor, compile, 43 unit tests, pin check, self-audit `100/100`.
+  3.14.5: doctor, compile, 46 unit tests, pin check, self-audit `100/100`.
 - Isolated virtualenv package install passed; `repo-harness --version` returned
   `0.1.0`, generated target init included component and research starter files,
   generated 32 research source records, and installed CLI audit passed.
-- Isolated generated-harness smoke passed with 46 research source records.
-- `PYTHONPATH=src:. python3 -m unittest discover -s tests` passed with 43
+- Isolated generated-harness smoke passed with 49 research source records.
+- `PYTHONPATH=src:. python3 -m unittest discover -s tests` passed with 46
   tests.
 - `PYTHONPATH=src:. python3 -m unittest tests.test_github_action` passed with
   5 focused Action tests after report output normalization.
 - `PYTHONPATH=src:. python3 scripts/check_pins.py --root .` passed.
 - `PYTHONPATH=src:. python3 -m repo_harness_creator audit --target .
   --min-score 85` passed with self-audit `100/100`.
-- `python3 scripts/refresh_research.py --root .` refreshed 46 sources with two
-  recorded 403 fetch failures from OpenAI and Red Hat.
+- `python3 scripts/refresh_research.py --root .` refreshed 49 sources with one
+  recorded 403 fetch failure from Red Hat.
 - `git diff --check` passed.
-- Hosted CI run `27489182164` failed on Windows because report outputs used
-  backslashes. The local fix normalizes those outputs; verify the latest hosted
-  CI status after push.
+- Hosted CI run `27489310186` passed on `main` after the report output fix.
+- `PYTHONPATH=src:. python3 -m unittest tests.test_pins
+  tests.test_refresh_research` passed with 16 focused tests.
+- `PYTHONPATH=src:. python3 scripts/check_pins.py --root .` passed after the
+  read-only CI checkout change.
+- `PYTHONPATH=src:. python3 scripts/refresh_research.py --root .` refreshed 49
+  sources with one recorded 403 fetch failure from Red Hat under the stricter
+  DNS and redirect validation.
+- Isolated generated-harness smoke passed with 49 research source records after
+  adding the new security guidance sources.

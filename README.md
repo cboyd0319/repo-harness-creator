@@ -152,6 +152,8 @@ jobs:
     runs-on: ubuntu-22.04
     steps:
       - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6
+        with:
+          persist-credentials: false
       - uses: cboyd0319/repo-harness-creator@<reviewed-commit-sha>
         with:
           command: audit
@@ -202,8 +204,9 @@ default posture is intentionally restrictive.
 
 Network access is limited to explicit research-refresh workflows and normal
 GitHub Actions setup behavior, not routine local harness generation. Research
-refresh accepts HTTPS public-source URLs only; local files, credentials, and
-localhost or private-address targets are rejected.
+refresh accepts default-port HTTPS public-source URLs only; local files,
+credentials, localhost, private-address targets, private DNS resolutions, and
+unsafe redirects are rejected.
 
 ## Self-Healing
 

@@ -21,6 +21,8 @@ jobs:
     runs-on: ubuntu-22.04
     steps:
       - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6
+        with:
+          persist-credentials: false
       - uses: cboyd0319/repo-harness-creator@<reviewed-commit-sha> # v1
         with:
           command: audit
@@ -87,3 +89,7 @@ For production workflows, pin this Action and all other third-party Actions to a
 full-length commit SHA. A release tag such as `@v1` is acceptable for quick
 evaluation, but release-critical checks should use an immutable SHA after
 reviewing the release.
+
+Audit-only workflows should also set `persist-credentials: false` on
+`actions/checkout`, as shown above. Workflows that intentionally push branches
+or tags need their own reviewed credential path.

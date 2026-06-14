@@ -218,14 +218,29 @@
       "category": "security"
     },
     {
+      "id": "python-urllib-request",
+      "url": "https://docs.python.org/3/library/urllib.request.html",
+      "category": "security"
+    },
+    {
       "id": "github-actions-secure-use",
       "url": "https://docs.github.com/en/actions/reference/security/secure-use",
+      "category": "supply-chain"
+    },
+    {
+      "id": "github-actions-checkout",
+      "url": "https://github.com/actions/checkout",
       "category": "supply-chain"
     },
     {
       "id": "github-composite-actions",
       "url": "https://docs.github.com/en/actions/tutorials/create-actions/create-a-composite-action",
       "category": "github-actions"
+    },
+    {
+      "id": "owasp-ssrf-cheat-sheet",
+      "url": "https://cheatsheetseries.owasp.org/cheatsheets/Server_Side_Request_Forgery_Prevention_Cheat_Sheet.html",
+      "category": "security"
     },
     {
       "id": "setuptools-pypi",

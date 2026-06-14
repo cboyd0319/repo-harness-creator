@@ -1,13 +1,26 @@
 {
-  "checkedAt": "2026-06-14T04:59:12+00:00",
-  "failureCount": 2,
-  "sourceCount": 46,
+  "checkedAt": "2026-06-14T05:53:57+00:00",
+  "failureCount": 1,
+  "sourceCount": 49,
   "sources": [
     {
       "category": "field-report",
-      "error": "HTTP Error 403: Forbidden",
+      "contentType": "text/html",
+      "headings": [
+        "Harness engineering: leveraging Codex in an agent-first world",
+        "We started with an empty git repository",
+        "Redefining the role of the engineer",
+        "Increasing application legibility",
+        "We made repository knowledge the system of record",
+        "Agent legibility is the goal",
+        "Enforcing architecture and taste",
+        "Throughput changes the merge philosophy"
+      ],
+      "httpStatus": 200,
       "id": "openai-harness-engineering",
-      "status": "error",
+      "sha256": "14e768d684cce937df67d515cf6bd6436ff2ce494a7a91d91ad9480e51b5047d",
+      "status": "ok",
+      "title": "Harness engineering: leveraging Codex in an agent-first world | OpenAI",
       "url": "https://openai.com/index/harness-engineering/"
     },
     {
@@ -23,7 +36,7 @@
       ],
       "httpStatus": 200,
       "id": "anthropic-effective-harnesses",
-      "sha256": "3fc68b8037f15f7114789b026bc994a6d81e9fbbb9983ef6e61356e711dc4d06",
+      "sha256": "c93820c073896fa901379197740aca34163531e11f70c95e16327ca43206c106",
       "status": "ok",
       "title": "Effective harnesses for long-running agents \\ Anthropic",
       "url": "https://www.anthropic.com/engineering/effective-harnesses-for-long-running-agents"
@@ -43,7 +56,7 @@
       ],
       "httpStatus": 200,
       "id": "anthropic-long-running-apps",
-      "sha256": "cf590c9ee92a3fc3575740b25ceadb4999887370a678d39c30e8ae5bc4990d81",
+      "sha256": "cece1d27d53f7e4e6825cb653631dec8864e7c0bc11f75adc70e17a0e8bffcaf",
       "status": "ok",
       "title": "Harness design for long-running application development \\ Anthropic",
       "url": "https://www.anthropic.com/engineering/harness-design-long-running-apps"
@@ -228,7 +241,7 @@
       ],
       "httpStatus": 200,
       "id": "google-antigravity-agent",
-      "sha256": "d533cceba10bc5909ebc02eb7b13fb41019cc0a4d40627a12a2a2e95812133c7",
+      "sha256": "5b50db4a524dab3a478536af487a86053e57f03845c65b0b49bd98331d378f2d",
       "status": "ok",
       "title": "Antigravity Agent | Gemini API | Google AI for Developers",
       "url": "https://ai.google.dev/gemini-api/docs/antigravity-agent"
@@ -306,7 +319,7 @@
       ],
       "httpStatus": 200,
       "id": "walkinglabs-github",
-      "sha256": "18d82e612e413e498fd9872d4357fc8ed4b47dd237e85c15955c34be44dabd3f",
+      "sha256": "184d0abdcfb18ba6517970162f4abddbde58cd6dd19afa377a07cb74bfb526b6",
       "status": "ok",
       "title": "GitHub - walkinglabs/learn-harness-engineering: Harness engineering beginner tutorial, from 0 to 1 \u00b7 GitHub",
       "url": "https://github.com/walkinglabs/learn-harness-engineering"
@@ -346,7 +359,7 @@
       ],
       "httpStatus": 200,
       "id": "walkinglabs-harness-creator-skill",
-      "sha256": "66cfb94fd6ca42403b31bca41d7615d9d4cf171305c182b642312c0e42f7fc6d",
+      "sha256": "4ab723bd6a89e0e24bb4cd1aff2c4469c66b39cfb717b443c195b343d1cd8195",
       "status": "ok",
       "title": "learn-harness-engineering/skills/harness-creator at main \u00b7 walkinglabs/learn-harness-engineering \u00b7 GitHub",
       "url": "https://github.com/walkinglabs/learn-harness-engineering/tree/main/skills/harness-creator"
@@ -366,7 +379,7 @@
       ],
       "httpStatus": 200,
       "id": "agentpatterns-copilot-harness",
-      "sha256": "32915f781a4ee8deeaa16adb74875e2956f69171901102e0656bdbd18630a2d7",
+      "sha256": "3d8f827ae21fa1d755cf75cb518d03666dc5719502b11b240ff4e7321b537c28",
       "status": "ok",
       "title": "GitHub Copilot: Harness Engineering for Agent-Ready Code - AgentPatterns.ai",
       "url": "https://agentpatterns.ai/training/copilot/harness-engineering/"
@@ -414,7 +427,7 @@
       ],
       "httpStatus": 200,
       "id": "charlesanim-harness-engineering",
-      "sha256": "d6e6e9cf2af3fa50e66a839c3a77bb9bf6b52ea52c989c07c961408862ae09b1",
+      "sha256": "dec20e3d9869256737b4121aadf15636ef62fecea7110c92a7671bec037a2f94",
       "status": "ok",
       "title": "GitHub - charlesanim/harness-engineering: Agent skill: set up OpenAI's harness engineering methodology in any repo. Works with Copilot, Codex, Claude, Cursor. \u00b7 GitHub",
       "url": "https://github.com/charlesanim/harness-engineering"
@@ -776,6 +789,26 @@
       "url": "https://docs.python.org/3/using/cmdline.html"
     },
     {
+      "category": "security",
+      "contentType": "text/html",
+      "headings": [
+        "urllib.request \u2014 Extensible library for opening URLs \u00b6",
+        "Request Objects \u00b6",
+        "OpenerDirector Objects \u00b6",
+        "BaseHandler Objects \u00b6",
+        "HTTPRedirectHandler Objects \u00b6",
+        "HTTPCookieProcessor Objects \u00b6",
+        "ProxyHandler Objects \u00b6",
+        "HTTPPasswordMgr Objects \u00b6"
+      ],
+      "httpStatus": 200,
+      "id": "python-urllib-request",
+      "sha256": "03c1064e683f3c8fb1892aed14946e5f218c0f1918272a7b73940f090b912830",
+      "status": "ok",
+      "title": "urllib.request \u2014 Extensible library for opening URLs \u2014 Python 3.14.6 documentation",
+      "url": "https://docs.python.org/3/library/urllib.request.html"
+    },
+    {
       "category": "supply-chain",
       "contentType": "text/html",
       "headings": [
@@ -796,6 +829,26 @@
       "url": "https://docs.github.com/en/actions/reference/security/secure-use"
     },
     {
+      "category": "supply-chain",
+      "contentType": "text/html",
+      "headings": [
+        "Navigation Menu",
+        "Search code, repositories, users, issues, pull requests...",
+        "Provide feedback",
+        "Saved searches",
+        "Use saved searches to filter your results more quickly",
+        "actions/checkout",
+        "Folders and files",
+        "Latest commit"
+      ],
+      "httpStatus": 200,
+      "id": "github-actions-checkout",
+      "sha256": "9d19d7541f4f220a294bc83cd04ffd9504317df2e41192997c723a6f8a50c7d7",
+      "status": "ok",
+      "title": "GitHub - actions/checkout: Action for checking out a repo \u00b7 GitHub",
+      "url": "https://github.com/actions/checkout"
+    },
+    {
       "category": "github-actions",
       "contentType": "text/html",
       "headings": [
@@ -814,6 +867,26 @@
       "status": "ok",
       "title": "Creating a composite action - GitHub Docs",
       "url": "https://docs.github.com/en/actions/tutorials/create-actions/create-a-composite-action"
+    },
+    {
+      "category": "security",
+      "contentType": "text/html",
+      "headings": [
+        "Server-Side Request Forgery Prevention Cheat Sheet \u00b6",
+        "Introduction \u00b6",
+        "Context \u00b6",
+        "Overview of a SSRF common flow \u00b6",
+        "Cases \u00b6",
+        "IMDSv2 in AWS \u00b6",
+        "Deny-list (Last Resort) \u00b6",
+        "Semgrep Rules \u00b6"
+      ],
+      "httpStatus": 200,
+      "id": "owasp-ssrf-cheat-sheet",
+      "sha256": "28b22a0a439bc57825fe90803df57c9aeb03a371fe76fffe8877dc199583f5d9",
+      "status": "ok",
+      "title": "Server Side Request Forgery Prevention - OWASP Cheat Sheet Series",
+      "url": "https://cheatsheetseries.owasp.org/cheatsheets/Server_Side_Request_Forgery_Prevention_Cheat_Sheet.html"
     },
     {
       "category": "packaging",

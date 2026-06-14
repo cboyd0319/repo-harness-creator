@@ -113,7 +113,13 @@ project-owned docs instead of machine-specific absolute paths.
   Redaction now covers home paths with spaces and the current user's home path.
 - Research refresh is a metadata check for public sources, not a general URL
   fetcher. The refresh script now rejects non-HTTPS URLs, embedded
-  credentials, localhost, and literal non-public IP targets before fetching.
+  credentials, non-default HTTPS ports, localhost, literal non-public IP
+  targets, hostnames that resolve to non-public addresses, and redirects to
+  unsafe targets before fetching.
+- Read-only CI jobs should not keep checkout credentials available to later
+  steps. The main CI checkout now opts out of persisted credentials; the
+  self-heal workflow keeps credentials because it intentionally pushes a
+  review branch.
 - Compatibility instruction files are source-backed. `CLAUDE.md`,
   `GEMINI.md`, and `.github/copilot-instructions.md` route to `AGENTS.md`
   without duplicating the project manual.
