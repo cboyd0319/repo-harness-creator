@@ -78,8 +78,8 @@ def run_from_env(env: Mapping[str, str]) -> int:
     else:
         raise ValueError("command must be one of: audit, init, update, doctor")
 
-    json_path = _write_json_report(json_report, result)
-    html_path = _write_html_report(html_report, result)
+    json_path = _write_json_report(json_report, target, result)
+    html_path = _write_html_report(html_report, target, result)
     text_report = format_audit(result)
     print(text_report)
     _summary(env, "Repo Harness Audit", _summary_markdown(result, changed_files))
@@ -98,22 +98,49 @@ def run_from_env(env: Mapping[str, str]) -> int:
     return 0
 
 
-def _write_json_report(path_text: str, result: Any) -> str:
-    if not path_text:
+def _write_json_report(path_text: str, target: Path, result: Any) -> str:
+    path = _report_path(path_text, target)
+    if path is None:
         return ""
-    path = Path(path_text)
     path.parent.mkdir(parents=True, exist_ok=True)
     path.write_text(f"{json.dumps(audit_to_dict(result), indent=2)}\n", encoding="utf-8")
-    return str(path)
+    return _relative_to_target(path, target)
 
 
-def _write_html_report(path_text: str, result: Any) -> str:
-    if not path_text:
+def _write_html_report(path_text: str, target: Path, result: Any) -> str:
+    path = _report_path(path_text, target)
+    if path is None:
         return ""
-    path = Path(path_text)
     path.parent.mkdir(parents=True, exist_ok=True)
     path.write_text(render_html_report(result), encoding="utf-8")
-    return str(path)
+    return _relative_to_target(path, target)
+
+
+def _report_path(path_text: str, target: Path) -> Path | None:
+    if not path_text:
+        return None
+    requested = Path(path_text)
+    if requested.is_absolute():
+        raise ValueError("report paths must be relative to the target repository")
+    path = target / requested
+    if not _is_inside_target(path, target):
+        raise ValueError("report paths must stay inside the target repository")
+    return path
+
+
+def _is_inside_target(path: Path, target: Path) -> bool:
+    try:
+        path.resolve(strict=False).relative_to(target.resolve(strict=False))
+    except ValueError:
+        return False
+    return True
+
+
+def _relative_to_target(path: Path, target: Path) -> str:
+    try:
+        return str(path.resolve().relative_to(target.resolve()))
+    except ValueError:
+        return redact_local_paths(str(path))
 
 
 def _print_writes(root: Path, writes: tuple[Any, ...]) -> None:

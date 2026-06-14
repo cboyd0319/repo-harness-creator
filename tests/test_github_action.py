@@ -45,8 +45,8 @@ class GitHubActionTests(unittest.TestCase):
                 "INPUT_TARGET": str(root),
                 "INPUT_MIN_SCORE": "85",
                 "INPUT_FAIL_ON_SCORE": "true",
-                "INPUT_HTML_REPORT": str(root / "report.html"),
-                "INPUT_JSON_REPORT": str(root / "report.json"),
+                "INPUT_HTML_REPORT": "report.html",
+                "INPUT_JSON_REPORT": "reports/report.json",
                 "GITHUB_OUTPUT": str(output),
                 "GITHUB_STEP_SUMMARY": str(summary),
             }
@@ -55,10 +55,32 @@ class GitHubActionTests(unittest.TestCase):
                 code = run_from_env(env)
 
             self.assertEqual(code, 0)
-            self.assertIn("overall-score=", output.read_text(encoding="utf-8"))
+            output_text = output.read_text(encoding="utf-8")
+            self.assertIn("overall-score=", output_text)
+            self.assertIn("report-json=reports/report.json", output_text)
+            self.assertIn("report-html=report.html", output_text)
             self.assertTrue((root / "report.html").exists())
-            self.assertTrue((root / "report.json").exists())
+            self.assertTrue((root / "reports" / "report.json").exists())
             self.assertIn("Repo Harness Audit", summary.read_text(encoding="utf-8"))
+
+    def test_action_report_paths_must_stay_inside_target(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp) / "repo"
+            root.mkdir()
+            create_harness(root)
+            outside = Path(tmp) / "outside.html"
+            for report_path in ("../outside.html", str(outside)):
+                with self.subTest(report_path=report_path):
+                    env = {
+                        "INPUT_COMMAND": "audit",
+                        "INPUT_TARGET": str(root),
+                        "INPUT_HTML_REPORT": report_path,
+                    }
+
+                    with self.assertRaises(ValueError):
+                        run_from_env(env)
+
+            self.assertFalse(outside.exists())
 
     def test_action_outputs_do_not_allow_newline_injection(self) -> None:
         with tempfile.TemporaryDirectory() as tmp:

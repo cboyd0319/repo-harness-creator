@@ -40,7 +40,8 @@ maintenance loop.
 - Completed a current best-practice hardening pass. Added PEP 639
   `license-files` metadata, set `PYTHONSAFEPATH=1` in the composite Action,
   ignored root manifest symlinks that resolve outside target repositories, and
-  expanded local home-path redaction.
+  expanded local home-path redaction. GitHub Action report paths now must be
+  target-relative and resolve inside the target repository.
 - Tightened research refresh to match the documented public-source boundary:
   non-HTTPS URLs, embedded credentials, localhost, and literal non-public IP
   targets are rejected before any fetch.
@@ -56,14 +57,14 @@ Push the branch and verify the GitHub-hosted CI matrix, including the local
 ## Verification Evidence
 
 - `./init.sh` passed on macOS 26.5.1 with Python 3.14.5: doctor, compile,
-  42 unit tests, pin check, self-audit `100/100`.
+  43 unit tests, pin check, self-audit `100/100`.
 - `pwsh -NoProfile -File ./init.ps1` passed on macOS 26.5.1 with Python
-  3.14.5: doctor, compile, 42 unit tests, pin check, self-audit `100/100`.
+  3.14.5: doctor, compile, 43 unit tests, pin check, self-audit `100/100`.
 - Isolated virtualenv package install passed; `repo-harness --version` returned
   `0.1.0`, generated target init included component and research starter files,
   generated 32 research source records, and installed CLI audit passed.
 - Isolated generated-harness smoke passed with 46 research source records.
-- `PYTHONPATH=src:. python3 -m unittest discover -s tests` passed with 42
+- `PYTHONPATH=src:. python3 -m unittest discover -s tests` passed with 43
   tests.
 - `PYTHONPATH=src:. python3 scripts/check_pins.py --root .` passed.
 - `PYTHONPATH=src:. python3 -m repo_harness_creator audit --target .

@@ -103,6 +103,9 @@ project-owned docs instead of machine-specific absolute paths.
 - Action startup should not let caller-controlled files shadow the Action
   library. The reusable Action now sets `PYTHONSAFEPATH=1` and `PYTHONPATH` to
   the action checkout.
+- Action report paths should be easy to reason about and not write outside the
+  audited repository by accident. The reusable Action now accepts only
+  target-relative report paths that resolve inside `target`.
 - Package metadata should make legal files explicit. `pyproject.toml` now uses
   PEP 639 `license-files` metadata for `LICENSE`.
 - Durable output should hide home paths across common personal-machine shapes.
