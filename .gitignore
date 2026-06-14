@@ -1,14 +1,51 @@
+# OS and editor noise
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Local secrets and agent/tool credentials
+.env
+.env.*
+!.env.example
+*.token
+.mcpregistry_*
+.claude/
+.opencode/
+
+# Python caches and environments
 __pycache__/
 *.py[cod]
+*$py.class
 *.egg-info/
+.eggs/
+*.egg
 .pytest_cache/
 .ruff_cache/
 .mypy_cache/
 .pyright/
+.hypothesis/
+.tox/
+.nox/
 .venv/
+.venv*/
 venv/
+env/
+ENV/
+
+# Build, coverage, and reports
 build/
 dist/
+pip-wheel-metadata/
+htmlcov/
+.coverage
+.coverage.*
+coverage.xml
+*.cover
+*.log
 *.json.tmp
-harness-report.html
+*.tmp
+harness-report.*
 harness-action-report.*

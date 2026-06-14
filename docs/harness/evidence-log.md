@@ -4,6 +4,11 @@ Use this for compact current evidence. Keep raw logs out of this file.
 
 | Date | Scope | Command Or Review | Result | Notes |
 | --- | --- | --- | --- | --- |
+| 2026-06-14 | Deep agent governance toolkit comparison | Read-only `agy` comparison plus local file review | pass | Accepted contribution policy, PR template, stronger security scope, `.gitignore` hygiene, and Action min-score validation; deferred external workflow gates, SBOM, Scorecard, fuzzing, and CODEOWNERS for current scope. |
+| 2026-06-14 | AGT-derived Action and policy checks | `PYTHONPATH=src:. python3 -m unittest tests.test_github_action tests.test_generate_audit tests.test_pins`, `PYTHONPATH=src:. python3 scripts/check_pins.py --root .` | pass | 25 focused tests and pin enforcement passed after Action score-range validation, contribution docs, PR template, and security policy expansion. |
+| 2026-06-14 | POSIX verification | `./init.sh` | pass | Doctor, compile, 56 tests, pin check, and self-audit `100/100` after the deeper AGT-derived changes. |
+| 2026-06-14 | PowerShell verification | `pwsh -NoProfile -File ./init.ps1` | pass | Doctor, compile, 56 tests, pin check, and self-audit `100/100` after the deeper AGT-derived changes. |
+| 2026-06-14 | Gitignore/security policy checks | `git check-ignore -v ...`, `git diff --check`, `PYTHONPATH=src:. python3 -m repo_harness_creator audit --target . --min-score 85` | pass | macOS artifacts, local credential patterns, and harness reports are ignored; diff hygiene passed; self-audit stayed `100/100`. |
 | 2026-06-14 | POSIX verification | `./init.sh` | pass | Doctor, compile, 55 tests, pin check, and self-audit `100/100` after self-heal staging hardening. |
 | 2026-06-14 | PowerShell verification | `pwsh -NoProfile -File ./init.ps1` | pass | Doctor, compile, 55 tests, pin check, and self-audit `100/100` after self-heal staging hardening. |
 | 2026-06-14 | Pin enforcement | `PYTHONPATH=src:. python3 scripts/check_pins.py --root .` | pass | Package build pins and external Action SHAs validated after self-heal workflow change. |

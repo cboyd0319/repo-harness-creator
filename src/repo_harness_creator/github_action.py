@@ -30,7 +30,7 @@ def main() -> int:
 def run_from_env(env: Mapping[str, str]) -> int:
     command = env.get("INPUT_COMMAND", "audit").strip().lower()
     target = Path(env.get("INPUT_TARGET", ".")).resolve()
-    min_score = _int_input(env.get("INPUT_MIN_SCORE", "85"), "min-score")
+    min_score = _score_input(env.get("INPUT_MIN_SCORE", "85"), "min-score")
     fail_on_score = _bool_input(env.get("INPUT_FAIL_ON_SCORE", "true"))
     html_report = env.get("INPUT_HTML_REPORT", "").strip()
     json_report = env.get("INPUT_JSON_REPORT", "").strip()
@@ -202,6 +202,13 @@ def _int_input(value: str | None, name: str) -> int:
         return int(str(value or "").strip())
     except ValueError as exc:
         raise ValueError(f"{name} must be an integer") from exc
+
+
+def _score_input(value: str | None, name: str) -> int:
+    score = _int_input(value, name)
+    if score < 0 or score > 100:
+        raise ValueError(f"{name} must be between 0 and 100")
+    return score
 
 
 if __name__ == "__main__":

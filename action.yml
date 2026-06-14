@@ -20,7 +20,7 @@ inputs:
     required: false
     default: "3.13.14"
   min-score:
-    description: Minimum acceptable audit score.
+    description: Minimum acceptable audit score from 0 to 100.
     required: false
     default: "85"
   fail-on-score:

@@ -87,13 +87,36 @@ maintenance loop.
 - Updated the scheduled self-healing workflow so it stages generated root
   harness files along with `docs/harness` and source templates, preventing
   unstaged root updates from causing empty commits or incomplete pull requests.
+- Re-ran a deeper read-only comparison against `agent-governance-toolkit`.
+  Accepted the small, durable pieces that fit this repo now: contribution
+  policy, PR template, stronger security scope, `.gitignore` hygiene, and
+  GitHub Action `min-score` validation. Deferred external workflow gates,
+  SBOM/provenance, Scorecard, fuzzing, and CODEOWNERS until the release path
+  and maintainer model justify the extra automation.
 
 ## Recommended Next Step
 
-Decide whether to cut a `v1` Action tag before broader public use.
+Decide whether to cut a `v1` Action tag before broader public use, then decide
+whether release-time SBOM/provenance or Scorecard should be the next
+AGT-derived workflow gate.
 
 ## Verification Evidence
 
+- Read-only `agy` deep comparison against `agent-governance-toolkit` completed;
+  accepted contribution policy, PR template, stronger security scope,
+  `.gitignore` hygiene, and Action `min-score` validation while deferring
+  heavier workflow gates.
+- `PYTHONPATH=src:. python3 -m unittest tests.test_github_action
+  tests.test_generate_audit tests.test_pins` passed with 25 focused tests after
+  the deeper AGT-derived change slice.
+- `PYTHONPATH=src:. python3 scripts/check_pins.py --root .` passed after the
+  Action metadata wording update.
+- `./init.sh` passed on macOS 26.5.1 with Python 3.14.5 after the deeper
+  AGT-derived changes: doctor, compile, 56 unit tests, pin check, self-audit
+  `100/100`.
+- `pwsh -NoProfile -File ./init.ps1` passed on macOS 26.5.1 with Python
+  3.14.5 after the deeper AGT-derived changes: doctor, compile, 56 unit tests,
+  pin check, self-audit `100/100`.
 - `./init.sh` passed on macOS 26.5.1 with Python 3.14.5: doctor, compile,
   46 unit tests, pin check, self-audit `100/100`.
 - `pwsh -NoProfile -File ./init.ps1` passed on macOS 26.5.1 with Python
@@ -174,6 +197,13 @@ Decide whether to cut a `v1` Action tag before broader public use.
 - `pwsh -NoProfile -File ./init.ps1` passed on macOS 26.5.1 with Python
   3.14.5 after self-heal staging hardening: doctor, compile, 55 unit tests, pin
   check, self-audit `100/100`.
+- Read-only `agy` comparison against `agent-governance-toolkit` completed; the
+  accepted changes were limited to `.gitignore` hygiene and `SECURITY.md`.
+- `git check-ignore -v ...` confirmed macOS artifacts, local credential
+  patterns, and harness report outputs are ignored.
+- `git diff --check` passed after the `.gitignore` and `SECURITY.md` update.
+- `PYTHONPATH=src:. python3 -m repo_harness_creator audit --target .
+  --min-score 85` passed with self-audit `100/100`.
 - `PYTHONPATH=src:. python3 -m unittest discover -s tests` passed with 50
   tests after the current ease/security fix slice.
 - `./init.sh` passed on macOS 26.5.1 with Python 3.14.5 after the current

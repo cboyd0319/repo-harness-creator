@@ -18,6 +18,9 @@ and the required AGENTS instruction format.
 - `docs/action.md`
 - `README.md`
 - `AGENTS.md`
+- `CONTRIBUTING.md`
+- `SECURITY.md`
+- `.github/pull_request_template.md`
 - `init.sh`
 - `init.ps1`
 - `tests/test_local_entrypoints.py`
@@ -31,9 +34,9 @@ and the required AGENTS instruction format.
 ## Blockers
 
 - No known blockers.
-- Current full local POSIX and PowerShell verification passes with 50 tests, pin
+- Current full local POSIX and PowerShell verification passes with 56 tests, pin
   check, and self-audit `100/100`; POSIX also passes when launched with
-  `PYTHONPATH=/tmp`.
+  `PYTHONPATH=/tmp` in prior verification.
 - Research metadata refresh currently tracks 49 sources with one recorded Red
   Hat 403 fetch failure.
 - Root Action manifest regression coverage now checks quoted description values
@@ -109,8 +112,20 @@ and the required AGENTS instruction format.
 - Current full local POSIX and PowerShell verification passes with 55 tests,
   pin check, and self-audit `100/100` after the final ease/security review
   fixes.
+- Re-ran a deeper read-only comparison against `agent-governance-toolkit`.
+  Accepted contribution policy, PR template, stronger security scope,
+  `.gitignore` hygiene, and Action `min-score` validation. Deferred external
+  workflow gates, SBOM/provenance, Scorecard, fuzzing, and CODEOWNERS until the
+  release path and maintainer model justify them.
+- Current focused AGT-derived checks pass: `PYTHONPATH=src:. python3 -m
+  unittest tests.test_github_action tests.test_generate_audit tests.test_pins`
+  and `PYTHONPATH=src:. python3 scripts/check_pins.py --root .`.
+- Current full AGT-derived checks pass: `./init.sh` and `pwsh -NoProfile -File
+  ./init.ps1`, each with doctor, compile, 56 tests, pin check, and self-audit
+  `100/100`.
 
 ## Next Session
 
 Decide whether the first release should cut a `v1` Action tag before broader
-public use.
+public use, then decide whether release-time SBOM/provenance or Scorecard
+should be the next AGT-derived workflow gate.

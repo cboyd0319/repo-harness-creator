@@ -180,7 +180,8 @@ Run `repo-harness <command> --help` for command-specific options.
 ## Security Model
 
 People may run this tool on personal machines and private repositories, so the
-default posture is intentionally restrictive.
+default posture is intentionally restrictive. See [SECURITY.md](SECURITY.md)
+for vulnerability reporting, scope, and severity guidance.
 
 - Normal `init`, `audit`, `update`, and `doctor` commands use the Python
   standard library and do not install runtime dependencies.
@@ -263,7 +264,9 @@ PYTHONPATH=src python -m repo_harness_creator audit --target . --min-score 85
 
 ## Contributing
 
-Keep changes small, reviewed, and source-backed.
+Keep changes small, reviewed, and source-backed. See
+[CONTRIBUTING.md](CONTRIBUTING.md) for PR expectations, sign-off guidance,
+prior-art attribution, and AI-assisted contribution rules.
 
 Before opening a pull request:
 

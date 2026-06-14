@@ -58,9 +58,12 @@
         "2026-06-14: Shared path handling rejects POSIX and Windows absolute/rooted syntax for Action report paths and audit checks; focused path tests passed.",
         "2026-06-14: POSIX and PowerShell entrypoints pass with 54 tests, pin check, and self-audit 100/100 after cross-platform path-containment hardening.",
         "2026-06-14: Self-heal PR creation stages generated root harness files, docs/harness, and source templates; focused workflow test passed.",
-        "2026-06-14: POSIX and PowerShell entrypoints pass with 55 tests, pin check, and self-audit 100/100 after final ease/security review fixes."
+        "2026-06-14: POSIX and PowerShell entrypoints pass with 55 tests, pin check, and self-audit 100/100 after final ease/security review fixes.",
+        "2026-06-14: Agent-governance-toolkit comparison accepted lightweight ignore hygiene and a short security policy; self-audit remains 100/100.",
+        "2026-06-14: Deeper agent-governance-toolkit pass accepted contribution policy, PR template, stronger security scope, and Action min-score validation; focused tests and pin check passed.",
+        "2026-06-14: POSIX and PowerShell entrypoints pass with 56 tests, pin check, and self-audit 100/100 after the deeper AGT-derived changes."
       ],
-      "notes": "Prior pushed CI passed; current final ease/security review fixes pass focused, full unit, pin, POSIX, and PowerShell verification."
+      "notes": "Prior pushed CI passed; current AGT-derived contribution, security, and Action validation updates pass focused tests and pin enforcement."
     }
   ]
 }

@@ -54,6 +54,8 @@ workflow files, Action metadata, or packaging configuration change.
   code.
 - Keep generated artifacts portable. Do not commit machine-specific absolute
   local paths.
+- Follow `CONTRIBUTING.md` for submitted work. Use signed-off commits for
+  commits intended for review.
 - Keep this file as a map. Move long-running policy, research, and operational
   detail into `docs/harness/`.
 

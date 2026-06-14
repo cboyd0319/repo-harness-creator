@@ -59,7 +59,7 @@ generated harness files is intentional.
 | `command` | `audit` | `audit`, `init`, `update`, or `doctor` |
 | `target` | `.` | Repository path to inspect or modify |
 | `python-version` | `3.13.14` | Python version passed to `actions/setup-python` |
-| `min-score` | `85` | Minimum passing structural audit score |
+| `min-score` | `85` | Minimum passing structural audit score from 0 to 100 |
 | `fail-on-score` | `true` | Fail the action when score is below threshold |
 | `apply` | `false` | Apply safe corrections for `update` |
 | `force` | `false` | Allow overwrites for generated files |

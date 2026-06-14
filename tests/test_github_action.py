@@ -109,6 +109,15 @@ class GitHubActionTests(unittest.TestCase):
 
             self.assertFalse(outside.exists())
 
+    def test_action_min_score_must_be_score_range(self) -> None:
+        for min_score in ("-1", "101"):
+            with self.subTest(min_score=min_score):
+                with self.assertRaisesRegex(
+                    ValueError,
+                    "min-score must be between 0 and 100",
+                ):
+                    run_from_env({"INPUT_MIN_SCORE": min_score})
+
     def test_action_report_paths_normalize_windows_relative_separators(self) -> None:
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp)
