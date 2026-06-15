@@ -24,6 +24,33 @@ The main boundary remains unchanged:
 - Richer analysis, adapters, generated reports, workflows, and policy presets
   should be explicit, reviewable, and target-contained.
 
+## Current Release Boundary
+
+Release prep is intentionally deferred. Keep building the accepted roadmap
+items before returning to release gates, package publishing, or Action tag
+decisions.
+
+The current pre-release buildout includes:
+
+- a dedicated `enhance` or `review` command surface so users do not have to
+  discover existing-instruction review through
+  `init --enhance-existing --dry-run --json`;
+- golden public-repo fixture corpus and generated-artifact quality scorer;
+- first-agent task lifecycle evidence;
+- report expansion for repo-map summaries, policy preset status, and release
+  evidence fields;
+- better instruction-quality and signal-to-noise reporting;
+- compact repo maps from `index`, default SBOM detection, and optional SBOM
+  adapter design;
+- GitHub Action summary polish;
+- `release-check` command or equivalent release report mode;
+- evidence-gated harness maturity levels;
+- expanded policy presets;
+- interactive quickstart/init UX.
+
+Return to release prep only after these items are completed or explicitly
+deferred with owner, evidence, and risk recorded.
+
 ## Surface Impact Checklist
 
 Every roadmap item should identify which HarnessForge surface it changes before

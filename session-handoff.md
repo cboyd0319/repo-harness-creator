@@ -813,7 +813,12 @@ scripts, verification commands, stop hooks, lint/sensor checks, workflow
 permissions, and evaluator loops as harness pieces that change effective agent
 behavior. Focused generator/audit tests passed with 52 tests.
 Push local commits only at an explicit batch/release boundary or user request.
-Next implementation candidates before release prep are `harnessforge report`,
-first-agent lifecycle evidence, the improved `--enhance-existing` plan, and the
-public-repo quality corpus. Release prep remains later: manual macOS/Windows
-platform CI, `v1` Action tag, and release-time SBOM/provenance gates.
+Release prep is intentionally deferred. Continue accepted roadmap work before
+release gates, package publishing, or Action tag decisions. The pre-release
+buildout now includes a dedicated `enhance` or `review` command surface, golden
+public-repo fixture corpus, first-agent task lifecycle evidence, report
+expansion, instruction-quality and signal-to-noise reporting, compact repo maps
+and SBOM detection or adapter design, Action summary polish, `release-check`,
+harness maturity levels, expanded policy presets, and interactive
+quickstart/init UX. Return to release prep only after those items are completed
+or explicitly deferred with owner, evidence, and risk recorded.

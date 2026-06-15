@@ -567,11 +567,15 @@ maintenance loop.
 
 ## Recommended Next Step
 
-Continue with the accepted roadmap work before release prep if the product
-scope remains expanded. The highest-value first implementation candidates are
-`harnessforge report`, first-agent task lifecycle evidence, the improved
-`--enhance-existing` plan, and the public-repo quality corpus. Return to release
-prep when those roadmap items are intentionally deferred or completed.
+Continue accepted roadmap work before release prep. The release boundary is now
+explicitly deferred until the pre-release buildout in `docs/roadmap.md` is
+completed or intentionally deferred with owner, evidence, and risk recorded.
+The next implementation candidates are the dedicated `enhance` or `review`
+command surface, golden public-repo fixture corpus, first-agent task lifecycle
+evidence, report expansion, instruction-quality and signal-to-noise reporting,
+compact repo maps and SBOM detection or adapter design, Action summary polish,
+`release-check`, harness maturity levels, expanded policy presets, and
+interactive quickstart/init UX.
 Push local commits only at an explicit batch/release boundary or user request.
 
 ## Verification Evidence
