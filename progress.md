@@ -296,12 +296,17 @@ maintenance loop.
   remain large skill/memory/platform config trees, LLM-assisted init,
   autonomous push/PR workflows, and copying ASPEC/AWMAN/Maki templates into
   target repos.
+- Implemented read-only `harnessforge inspect --readiness` and
+  `--readiness --json`. The report returns a stable verdict plus warnings,
+  blockers, next actions, detected source-of-truth docs, runnable checks,
+  generated drift, and review-required governance surfaces without running
+  target repository commands or writing files.
 
 ## Recommended Next Step
 
-Implement the P0 remaining-ideas backlog in this order: `inspect --readiness
---json`, source-of-truth spec sync audit, `sync --check`, then a design-only
-issue or doc for `verify --json`. Push local commits only at an explicit
+Continue the P0 remaining-ideas backlog in this order: source-of-truth spec
+sync audit, `sync --check`, then a design-only issue or doc for `verify
+--json`. Push local commits only at an explicit
 batch/release boundary or user request. Remaining product decisions before a
 first public Action release: whether to add component-directed monorepo
 verification commands, path/package exclusions for intentionally vulnerable
@@ -312,6 +317,15 @@ SBOM/provenance controls should become blocking.
 
 ## Verification Evidence
 
+- `PYTHONPATH=src:. python3 -m unittest discover -s tests` passed with
+  143 tests, and `PYTHONPATH=src:. python3 -m compileall src tests scripts`
+  passed after adding read-only inspect readiness reporting.
+- `PYTHONPATH=src:. python3 scripts/check_pins.py --root .`,
+  `PYTHONPATH=src:. python3 -m harnessforge audit --target . --min-score 85`,
+  `git diff --check`, and
+  `PYTHONPATH=src:. python3 -m harnessforge inspect --target . --readiness
+  --json` passed. Self-audit stayed `100/100`; readiness reported warning-only
+  review items for existing local instruction files and no blockers.
 - `PYTHONPATH=src:. python3 -m harnessforge audit --target . --min-score 85`
   and `git diff --check` passed after adding the remaining-ideas research
   artifact and updating handoff state.

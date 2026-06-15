@@ -81,6 +81,131 @@ class CliTests(unittest.TestCase):
         self.assertIn("just ci", payload["verificationCommands"])
         self.assertIn("justfile", payload["routingMarkers"])
 
+    def test_inspect_readiness_json_reports_ready_without_writing(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            (root / "pyproject.toml").write_text(
+                "[project]\nname='demo'\n",
+                encoding="utf-8",
+            )
+            (root / "tests").mkdir()
+            (root / "tests" / "test_demo.py").write_text(
+                "import unittest\n",
+                encoding="utf-8",
+            )
+            stdout = io.StringIO()
+            with contextlib.redirect_stdout(stdout):
+                code = main(["inspect", "--target", str(root), "--readiness", "--json"])
+
+            payload = json.loads(stdout.getvalue())
+            agents_exists = (root / "AGENTS.md").exists()
+
+        self.assertEqual(code, 0)
+        self.assertFalse(agents_exists)
+        self.assertEqual(payload["verdict"], "ready")
+        self.assertEqual(payload["blockedReasons"], [])
+        self.assertEqual(payload["warnings"], [])
+        for key in (
+            "nextActions",
+            "sourceOfTruth",
+            "runnableChecks",
+            "generatedDrift",
+            "reviewRequired",
+        ):
+            self.assertIn(key, payload)
+        self.assertIn("python -m unittest discover", payload["runnableChecks"])
+
+    def test_inspect_readiness_blocks_missing_verification(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            (root / "README.md").write_text("# Notes\n", encoding="utf-8")
+            stdout = io.StringIO()
+            with contextlib.redirect_stdout(stdout):
+                code = main(["inspect", "--target", str(root), "--readiness", "--json"])
+
+            payload = json.loads(stdout.getvalue())
+
+        self.assertEqual(code, 0)
+        self.assertEqual(payload["verdict"], "blocked")
+        self.assertTrue(
+            any("No project verification" in item for item in payload["blockedReasons"])
+        )
+        self.assertTrue(any("--command" in item for item in payload["nextActions"]))
+
+    def test_inspect_readiness_warns_for_specs_and_governance_surfaces(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            (root / "pyproject.toml").write_text(
+                "[project]\nname='demo'\n",
+                encoding="utf-8",
+            )
+            (root / "tests").mkdir()
+            (root / "tests" / "test_demo.py").write_text("", encoding="utf-8")
+            (root / "AGENTS.md").write_text(
+                "# Existing\n\nProject-owned instructions.\n",
+                encoding="utf-8",
+            )
+            (root / "specs" / "architecture").mkdir(parents=True)
+            (root / "specs" / "work-items").mkdir(parents=True)
+            (root / "specs" / "foundation.md").write_text("# Foundation\n", encoding="utf-8")
+            (root / "specs" / "architecture" / "design.md").write_text(
+                "# Design\n",
+                encoding="utf-8",
+            )
+            (root / "specs" / "work-items" / "0000-template.md").write_text(
+                "# Work Item\n",
+                encoding="utf-8",
+            )
+            (root / ".github" / "workflows").mkdir(parents=True)
+            (root / ".github" / "workflows" / "copilot-setup-steps.yml").write_text(
+                "name: setup\n",
+                encoding="utf-8",
+            )
+            (root / ".mcp.json").write_text("{}\n", encoding="utf-8")
+            stdout = io.StringIO()
+            with contextlib.redirect_stdout(stdout):
+                code = main(["inspect", "--target", str(root), "--readiness", "--json"])
+
+            payload = json.loads(stdout.getvalue())
+
+        self.assertEqual(code, 0)
+        self.assertEqual(payload["verdict"], "warning")
+        self.assertIn("structured project specs", payload["sourceOfTruth"])
+        self.assertTrue(any("AGENTS.md" in item for item in payload["reviewRequired"]))
+        self.assertTrue(any("MCP" in item for item in payload["reviewRequired"]))
+        self.assertTrue(any("agent setup workflow" in item for item in payload["warnings"]))
+
+    def test_inspect_readiness_reports_generated_drift(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            with contextlib.redirect_stdout(io.StringIO()):
+                init_code = main(["init", "--target", str(root)])
+            (root / "AGENTS.md").write_text("# edited\n", encoding="utf-8")
+            stdout = io.StringIO()
+            with contextlib.redirect_stdout(stdout):
+                code = main(["inspect", "--target", str(root), "--readiness", "--json"])
+
+            payload = json.loads(stdout.getvalue())
+
+        self.assertEqual(init_code, 0)
+        self.assertEqual(code, 0)
+        self.assertEqual(payload["verdict"], "warning")
+        drift = {item["path"]: item for item in payload["generatedDrift"]}
+        self.assertEqual(drift["AGENTS.md"]["fileStatus"], "modified")
+        self.assertTrue(any("generated drift" in item for item in payload["warnings"]))
+
+    def test_inspect_readiness_text_reports_verdict_and_next_actions(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            (root / "README.md").write_text("# Notes\n", encoding="utf-8")
+            stdout = io.StringIO()
+            with contextlib.redirect_stdout(stdout):
+                code = main(["inspect", "--target", str(root), "--readiness"])
+
+        self.assertEqual(code, 0)
+        self.assertIn("Readiness: blocked", stdout.getvalue())
+        self.assertIn("Next actions:", stdout.getvalue())
+
     def test_init_can_scaffold_optional_workflows(self) -> None:
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp)

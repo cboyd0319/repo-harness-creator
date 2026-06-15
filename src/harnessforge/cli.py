@@ -11,6 +11,7 @@ from .detect import detect_project
 from .doctor import doctor_json, doctor_report, format_doctor
 from .generate import PLATFORM_CONTRACTS, create_harness
 from .models import DriftResult, ProjectProfile, WriteResult
+from .readiness import format_readiness, inspect_readiness, readiness_to_dict
 from .redact import redact_local_paths
 from .update import build_drift_report, plan_or_apply_update
 
@@ -51,6 +52,7 @@ def build_parser() -> argparse.ArgumentParser:
     inspect.add_argument("--target", type=Path, default=Path.cwd())
     inspect.add_argument("--package-manager")
     inspect.add_argument("--command", dest="commands", action="append", default=[])
+    inspect.add_argument("--readiness", action="store_true")
     inspect.add_argument("--json", action="store_true")
     inspect.set_defaults(func=_inspect)
 
@@ -139,6 +141,13 @@ def _inspect(args: argparse.Namespace) -> int:
         explicit_package_manager=args.package_manager,
         explicit_commands=tuple(args.commands),
     )
+    if args.readiness:
+        report = inspect_readiness(profile)
+        if args.json:
+            print(json.dumps(readiness_to_dict(report), indent=2))
+        else:
+            print(format_readiness(report))
+        return 0
     if args.json:
         print(json.dumps(_profile_to_dict(profile), indent=2))
         return 0

@@ -77,7 +77,14 @@ Inspect what HarnessForge detects before writing files:
 ```bash
 harnessforge inspect --target /path/to/repo
 harnessforge inspect --target /path/to/repo --json
+harnessforge inspect --target /path/to/repo --readiness
+harnessforge inspect --target /path/to/repo --readiness --json
 ```
+
+Readiness mode is static and read-only. It reports whether the target appears
+ready, warning-only, or blocked based on detected verification commands,
+generated-file drift, existing instruction files, source-of-truth docs, and
+agent governance surfaces. It does not run target repository commands.
 
 Preview the files first:
 
@@ -188,7 +195,7 @@ input, output, and update mode.
 
 | Command | Purpose |
 | --- | --- |
-| `harnessforge inspect` | Show detected project profile without writing files |
+| `harnessforge inspect` | Show detected project profile or readiness without writing files |
 | `harnessforge init` | Create missing harness artifacts |
 | `harnessforge audit` | Score an existing repo harness |
 | `harnessforge update` | Plan or apply safe missing-file corrections |

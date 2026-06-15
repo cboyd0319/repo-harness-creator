@@ -37,6 +37,7 @@ and the required AGENTS instruction format.
 - `src/harnessforge/generate.py`
 - `src/harnessforge/github_action.py`
 - `src/harnessforge/models.py`
+- `src/harnessforge/readiness.py`
 - `src/harnessforge/update.py`
 - `src/harnessforge/templates/claude.md.tmpl`
 - `src/harnessforge/templates/gemini.md.tmpl`
@@ -56,9 +57,12 @@ and the required AGENTS instruction format.
 
 - No known blockers.
 - Current remaining-ideas research pass completed without AGY. The ranked
-  backlog lives in `docs/harness/remaining-ideas-research.md`. P0 candidates:
-  read-only `inspect --readiness --json`, source-of-truth spec sync audit,
-  `sync --check`, and a design-only `verify --json` contract. P1 candidates:
+  backlog lives in `docs/harness/remaining-ideas-research.md`. Implemented the
+  first P0 item: read-only `inspect --readiness --json`, including static
+  verdicts, blockers, warnings, next actions, source-of-truth signals,
+  runnable checks, generated drift, and governance review surfaces. Remaining
+  P0 candidates: source-of-truth spec sync audit, `sync --check`, and a
+  design-only `verify --json` contract. P1 candidates:
   workflow/work-item inventory, context-budget and duplication audit,
   permission/governance inventory, and guided first-run UX. P2 candidates:
   opt-in blueprints, real-agent evals, source-verified platform adapters, and
@@ -75,8 +79,10 @@ and the required AGENTS instruction format.
   repo-local control planes, but it does not generate sibling-repo
   instructions, personal tool mandates, large skill trees, blueprints, MCP
   setup, or extra agent adapters by default. Current verification passes full
-  unit discovery with 138 tests, compile, pin check, self-audit `100/100`, and
-  diff hygiene.
+  unit discovery with 143 tests, compile, pin check, self-audit `100/100`,
+  diff hygiene, and a read-only readiness smoke against this repo. Readiness is
+  warning-only because existing local instruction files need review; there are
+  no readiness blockers.
 - Current expanded reference-repo quality batch ran shadow generation and
   content review against agent-governance-toolkit, apple-container,
   Bluepeak-AI, JobSentinel, nhl-betting-analytics, persona, RunHaven,
@@ -406,9 +412,9 @@ and the required AGENTS instruction format.
 
 ## Next Session
 
-Implement the P0 remaining-ideas backlog: `inspect --readiness --json`,
-source-of-truth spec sync audit, `sync --check`, then a design-only
-`verify --json` contract. Push local commits only at an explicit batch/release
+Continue the P0 remaining-ideas backlog: source-of-truth spec sync audit,
+`sync --check`, then a design-only `verify --json` contract. Push local commits
+only at an explicit batch/release
 boundary or user request. Remaining product decisions before public release:
 component-directed monorepo verification commands, path/package exclusions for
 intentionally vulnerable training repos, Maven/Gradle dependency pin parsing,

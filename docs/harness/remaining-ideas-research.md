@@ -256,7 +256,7 @@ Sources:
 
 ### P0: Next Implementation Candidates
 
-1. Add `harnessforge inspect --readiness --json`.
+1. Implemented: add `harnessforge inspect --readiness --json`.
    - Output: `verdict`, `warnings`, `blockedReasons`, `nextActions`,
      `sourceOfTruth`, `runnableChecks`, `generatedDrift`, and
      `reviewRequired`.
@@ -345,10 +345,9 @@ HarnessForge generator behavior:
 
 Implement P0 in this order:
 
-1. `inspect --readiness --json`
-2. source-of-truth spec sync audit
-3. `sync --check` alias
-4. design-only issue/doc for `verify --json`
+1. source-of-truth spec sync audit
+2. `sync --check` alias
+3. design-only issue/doc for `verify --json`
 
 This sequence improves user experience immediately without expanding the
 generator's default write surface.
