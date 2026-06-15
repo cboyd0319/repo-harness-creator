@@ -39,6 +39,17 @@ class VerifyContractTests(unittest.TestCase):
         self.assertIn("planned", schema["$defs"]["checkStatus"]["enum"])
         self.assertIn("timed_out", schema["$defs"]["checkStatus"]["enum"])
 
+    def test_effectiveness_eval_contract_records_evidence_boundaries(self) -> None:
+        contract = (
+            REPO_ROOT / "docs" / "harness" / "effectiveness-eval-contract.md"
+        ).read_text(encoding="utf-8")
+
+        self.assertIn("candidate-sensitive metric", contract)
+        self.assertIn("held-out", contract)
+        self.assertIn("frozen replay", contract)
+        self.assertIn("worst-case quality", contract)
+        self.assertIn("structural audit", contract)
+
 
 if __name__ == "__main__":
     unittest.main()

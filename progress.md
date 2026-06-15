@@ -434,6 +434,15 @@ blocking.
   `.claude-plugin/marketplace.json`, `skills/meta-harness/SKILL.md`, and
   `install.sh` in `governanceInventory` instead of incorrectly reporting
   clean ready.
+- A paper-catalog and arXiv harness-eval mining pass added a proposed
+  `effectiveness-eval-contract.md` and read-only `effectivenessInventory`
+  readiness output. The imported boundary is local and advisory: detect eval
+  assets, require candidate-sensitive and held-out evidence before claims, and
+  keep synthesized or evolved harness loops out of default generated content.
+- Current effectiveness-eval checks pass: focused readiness and contract tests,
+  full unit discovery with 162 tests, compile, pin check, JSON validation,
+  local-path scan, diff hygiene, self-audit `100/100`, quickstart smoke, and
+  `sync --check` with expected warning exit code `1`.
 - The user-supplied Meta-Harness PDF was unavailable to local text extractors,
   so the same paper was reviewed via arXiv HTML. `docs/harness/verify-json-contract.md`
   now records that benchmark/eval claims need candidate-sensitive metrics,

@@ -95,7 +95,9 @@ class CliTests(unittest.TestCase):
             )
             stdout = io.StringIO()
             with contextlib.redirect_stdout(stdout):
-                code = main(["inspect", "--target", str(root), "--readiness", "--json"])
+                code = main(
+                    ["inspect", "--target", str(root), "--readiness", "--json"]
+                )
 
             payload = json.loads(stdout.getvalue())
             agents_exists = (root / "AGENTS.md").exists()
@@ -115,6 +117,7 @@ class CliTests(unittest.TestCase):
             "workItemInventory",
             "contextBudget",
             "governanceInventory",
+            "effectivenessInventory",
         ):
             self.assertIn(key, payload)
         self.assertIn("python -m unittest discover", payload["runnableChecks"])
@@ -286,6 +289,55 @@ class CliTests(unittest.TestCase):
         self.assertTrue(any("skill" in item for item in payload["reviewRequired"]))
         self.assertTrue(any("plugin" in item for item in payload["reviewRequired"]))
         self.assertTrue(any("installer" in item for item in payload["reviewRequired"]))
+
+    def test_inspect_readiness_reports_effectiveness_inventory(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            (root / "pyproject.toml").write_text(
+                "[project]\nname='demo'\n",
+                encoding="utf-8",
+            )
+            (root / "tests").mkdir()
+            (root / "tests" / "test_demo.py").write_text("", encoding="utf-8")
+            (root / "evals").mkdir()
+            (root / "evals" / "harness-effectiveness.md").write_text(
+                "# Harness Effectiveness Eval\n",
+                encoding="utf-8",
+            )
+            (root / "benchmarks").mkdir()
+            (root / "benchmarks" / "run_log.jsonl").write_text(
+                "{\"agent\":\"baseline\",\"quality\":1.0,\"cost\":100}\n",
+                encoding="utf-8",
+            )
+            (root / "score_harness.py").write_text(
+                "print('score')\n",
+                encoding="utf-8",
+            )
+            (root / "results.jsonl").write_text(
+                "{\"verdict\":\"planned\"}\n",
+                encoding="utf-8",
+            )
+            stdout = io.StringIO()
+            with contextlib.redirect_stdout(stdout):
+                code = main(["inspect", "--target", str(root), "--readiness", "--json"])
+
+            payload = json.loads(stdout.getvalue())
+
+        self.assertEqual(code, 0)
+        inventory = {item["path"]: item for item in payload["effectivenessInventory"]}
+        self.assertEqual(
+            inventory["evals/harness-effectiveness.md"]["category"], "eval-spec"
+        )
+        self.assertEqual(
+            inventory["benchmarks/run_log.jsonl"]["category"], "result-log"
+        )
+        self.assertEqual(inventory["score_harness.py"]["category"], "scorer")
+        self.assertEqual(inventory["results.jsonl"]["category"], "result-log")
+        self.assertTrue(any("effectiveness eval" in item for item in payload["warnings"]))
+        self.assertTrue(
+            any("candidate-sensitive" in item for item in payload["reviewRequired"])
+        )
+        self.assertTrue(any("held-out" in item for item in payload["reviewRequired"]))
 
     def test_quickstart_guides_first_run_without_writing(self) -> None:
         with tempfile.TemporaryDirectory() as tmp:

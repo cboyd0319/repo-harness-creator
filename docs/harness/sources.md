@@ -41,6 +41,14 @@ packaging, CI, or platform support changes.
 | "AI Harness Engineering: A Runtime Substrate for Foundation-Model Software Agents" | Task state, observability, verification, permissions, entropy auditing, and episode evidence |
 | "Observability-Driven Automatic Evolution of Coding-Agent Harnesses" | Observability and feedback-driven harness correction loop |
 | "Code as Agent Harness" | Executable, verifiable, stateful agent harness direction |
+| Awesome Code as Agent Harness Papers | Harness-interface, mechanism, scaling, and application taxonomy plus source-catalog quality controls |
+| "AutoHarness: improving LLM agents by automatically synthesizing a code harness" | Invalid-action prevention, environment feedback, and synthesized harness candidates as proposal-only changes |
+| "Natural-Language Agent Harnesses" | Inspectable modular harness policy documents, explicit runtime contracts, and artifact boundaries |
+| "VeRO: A Harness for Agents to Optimize Agents" | Versioned snapshots, budget-controlled evaluation, rewards, observations, and structured traces |
+| "Claw-SWE-Bench" and "RealClawBench" | Adapter contracts, workspace reconstruction, patch extraction, runtime budgets, deterministic scorers, and cost accounting |
+| "ClawsBench" and "Agent-ValueBench" | Separate success, safety, value, and trajectory-level scoring for agent harnesses |
+| "Building Effective AI Coding Agents for the Terminal" | Terminal-agent safety controls, context management, model routing, memory, and instruction-reminder patterns |
+| "Agentic Harness for Real-World Compilers" | Domain-specific harnesses need project-owned tools, benchmarks, and sparse-bug workflow support |
 | Lee et al., "Meta-Harness: End-to-End Optimization of Model Harnesses" | Candidate-sensitive harness evaluation, full-history traces, queryable run logs, held-out validation, Pareto quality/cost frontiers, and frozen-replay overclaim boundaries |
 | VS Code, "The Coding Harness Behind GitHub Copilot in VS Code" | Editor-harness responsibilities and Copilot feedback-loop framing |
 | HumanLayer, "Harness Engineering for Coding Agents" | Harness as coding-agent configuration surface and skill/prompt/tooling practice |
@@ -89,6 +97,9 @@ packaging, CI, or platform support changes.
   `skills/harness-creator` local sibling references for initializer flow,
   structural benchmarking, project progression, and skill-packaged harness
   validation patterns.
+- Awesome Code as Agent Harness Papers local sibling reference for the
+  harness-paper taxonomy, source-list release controls, and missing-citation
+  handling.
 
 Generated harnesses must use portable URLs, repo-relative paths, or
 project-owned docs instead of machine-specific absolute paths.
@@ -237,3 +248,8 @@ project-owned docs instead of machine-specific absolute paths.
   validation, anti-leakage checks, worst-case quality, do-no-harm floors, and
   queryable run logs. Imported controls are limited to eval guidance and
   advisory detection of skill, plugin, and installer surfaces.
+- The Code as Agent Harness paper catalog and additional harness-eval papers
+  reinforced a bounded eval contract: name the changed harness layer, keep
+  candidate snapshots versioned, require adapter/workspace/runtime contracts,
+  separate success from safety and trajectory quality, and treat synthesized or
+  evolved harnesses as proposals until reviewed.

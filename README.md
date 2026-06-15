@@ -205,6 +205,7 @@ Readiness reports:
 - `workItemInventory`
 - `contextBudget`
 - `governanceInventory`
+- `effectivenessInventory`
 
 `sync --check` wraps the same readiness report in a CI-friendly command with
 stable exit codes:
@@ -235,6 +236,21 @@ Governance inventory is advisory as well. It reports MCP configs, agent
 settings, agent skills, agent plugin manifests, installer scripts, hooks,
 devcontainers, sandbox configs, agent setup workflows, and environment template
 or local env files as review surfaces without reading or exposing secret values.
+
+Effectiveness inventory is advisory. It reports visible benchmark, eval,
+scorer, result-log, and frontier artifacts so humans can review whether real
+agent-effectiveness claims have candidate-sensitive metrics, held-out tasks,
+runtime budgets, adapter contracts, worst-case quality, and reproducible
+evidence. Static readiness can find eval surfaces; it cannot validate them.
+
+## Effectiveness Eval Contract
+
+HarnessForge has a proposed evidence contract for real-agent or benchmark
+claims. It keeps structural harness quality separate from measured agent
+effectiveness and defines the minimum review surface before promoting an
+evolved, synthesized, or benchmark-winning harness change.
+
+See [docs/harness/effectiveness-eval-contract.md](docs/harness/effectiveness-eval-contract.md).
 
 ## Planned Verify JSON Contract
 

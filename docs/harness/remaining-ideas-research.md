@@ -261,17 +261,64 @@ Sources:
 - https://github.com/jcaiagent7143-ui/harnessforge/blob/main/docs/reference/verify-protocol.md
 - https://github.com/jcaiagent7143-ui/harnessforge/blob/main/BENCHMARKS.md
 
-### Code As Agent Harness
+### Code As Agent Harness And Paper Catalog
 
 The survey frames code as executable, inspectable, and stateful harness
 material. It highlights planning, memory, tool use, deterministic sensors,
 permissioned state transitions, multi-agent state, and regression-free harness
 improvement.
 
-HarnessForge implication: a future project-check contract and benchmark loop
-are more important than generating larger prose files.
+The companion paper catalog adds a useful taxonomy: harness interface,
+harness mechanisms, scaling the harness, and application domains. Its release
+notes also reinforce source-list quality controls: every public paper row needs
+a canonical URL, venue/arXiv IDs should be audited, and missing citations
+should be explicit instead of silently invented.
 
-Source: https://arxiv.org/html/2605.18747v1
+HarnessForge implication: project-check contracts, eval evidence, and source
+integrity are more important than generating larger prose files. For this repo,
+that means advisory eval inventory and an effectiveness evidence contract. For
+generated target repos, this should remain a lightweight boundary rather than a
+large research bibliography.
+
+Sources:
+
+- https://arxiv.org/html/2605.18747v1
+- https://github.com/YennNing/Awesome-Code-as-Agent-Harness-Papers
+
+### Additional Harness-Eval Papers
+
+The arXiv/paper-catalog pass surfaced several reusable ideas:
+
+- AutoHarness: invalid-action prevention and environment feedback are harness
+  responsibilities, but generated target repos should not receive synthesized
+  runtime policy code by default.
+- Agentic Harness Engineering, VeRO, and Meta-Harness: evolved harness changes
+  need versioned components, observations, candidate identifiers, predictions
+  or rewards, budget-controlled runs, and queryable logs.
+- Natural-Language Agent Harnesses: harness policy can be represented as
+  inspectable modules, but HarnessForge should keep that as documentation and
+  review structure rather than a new runtime language.
+- Claw-SWE-Bench and RealClawBench: cross-agent comparisons need adapter
+  contracts, reconstructed environments, fixed prompts, runtime budgets,
+  patch extraction, deterministic scorers, and cost accounting.
+- ClawsBench and Agent-ValueBench: success, safety, values, and trajectory
+  behavior must be reported separately.
+- Terminal-agent and compiler-harness papers: domain-specific harnesses need
+  domain tools and benchmarks. HarnessForge should detect and route to existing
+  project checks rather than generate domain-specific automation.
+
+Sources:
+
+- https://arxiv.org/abs/2603.03329
+- https://arxiv.org/abs/2604.25850
+- https://arxiv.org/abs/2602.22480
+- https://arxiv.org/abs/2603.25723
+- https://arxiv.org/abs/2606.12344
+- https://arxiv.org/abs/2606.03889
+- https://arxiv.org/abs/2604.05172
+- https://arxiv.org/abs/2605.10365
+- https://arxiv.org/abs/2603.05344
+- https://arxiv.org/abs/2603.20075
 
 ### OpenHarness
 

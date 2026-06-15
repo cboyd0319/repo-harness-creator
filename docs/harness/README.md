@@ -21,7 +21,7 @@ agent sessions.
 | Tools | `harnessforge`, `action.yml`, `init.sh`, `init.ps1`, `scripts/check_pins.py` | Creation, audit, update, CI action, local checks, and pin enforcement |
 | Environment | `pyproject.toml`, CI matrix, `component-inventory.md`, `dependency-change-policy.md` | Python, OS, package, component, and Action support contract |
 | State | `feature_list.json`, `progress.md`, `evidence-log.md` | Current objective, evidence, and restart state |
-| Feedback | tests, self-audit, CI, `evaluator-rubric.md`, `verify-json-contract.md`, research refresh | Deterministic quality checks, planned machine-readable verification output, and source drift signal |
+| Feedback | tests, self-audit, CI, `evaluator-rubric.md`, `verify-json-contract.md`, `effectiveness-eval-contract.md`, research refresh | Deterministic quality checks, planned machine-readable verification output, benchmark-claim boundaries, and source drift signal |
 | Scope | `docs/harness/change-contract.md`, `security-boundary-map.md`, `feature-privacy-labels.json` | Acceptance, rollback, security, and data-flow discipline |
 | Lifecycle | `session-handoff.md`, `clean-state-checklist.md`, `quality-document.md`, `release-controls.md`, `self-healing.md`, entropy control | Restart, release readiness, recurring maintenance, and reviewed automation |
 
@@ -69,6 +69,11 @@ Governance inventory reports MCP configs, agent settings, agent skills, agent
 plugin manifests, installer scripts, hooks, devcontainers, sandbox configs,
 agent setup workflows, and environment files as review surfaces before agents
 receive tool or runner access.
+
+Effectiveness inventory reports visible eval specs, benchmark files, scorer
+scripts, result logs, and frontier files as review surfaces before anyone
+claims a harness improves agent performance. It is a static inventory only.
+Use `effectiveness-eval-contract.md` for the evidence boundary.
 
 The GitHub Action in `action.yml` exposes the same behavior to other
 repositories. Keep it wired to the Python library instead of duplicating logic

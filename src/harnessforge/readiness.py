@@ -11,6 +11,11 @@ from .context_budget import (
     context_budget_to_dict,
 )
 from .detect import MISSING_VERIFICATION_COMMAND
+from .effectiveness_inventory import (
+    EffectivenessItem,
+    analyze_effectiveness_inventory,
+    effectiveness_item_to_dict,
+)
 from .governance_inventory import (
     GovernanceItem,
     analyze_governance_inventory,
@@ -61,6 +66,7 @@ class ReadinessReport:
     work_item_inventory: tuple[WorkItem, ...]
     context_budget: ContextBudgetReport
     governance_inventory: tuple[GovernanceItem, ...]
+    effectiveness_inventory: tuple[EffectivenessItem, ...]
 
 
 def inspect_readiness(profile: ProjectProfile) -> ReadinessReport:
@@ -71,6 +77,7 @@ def inspect_readiness(profile: ProjectProfile) -> ReadinessReport:
     inventory = analyze_workflow_inventory(profile.root, profile.files)
     context_budget = analyze_context_budget(profile.root, profile.files)
     governance_inventory = analyze_governance_inventory(profile.files)
+    effectiveness_inventory = analyze_effectiveness_inventory(profile.files)
     runnable_checks = tuple(
         command
         for command in profile.verification_commands
@@ -116,6 +123,7 @@ def inspect_readiness(profile: ProjectProfile) -> ReadinessReport:
     warnings.extend(inventory.warnings)
     warnings.extend(context_budget.warnings)
     warnings.extend(governance_inventory.warnings)
+    warnings.extend(effectiveness_inventory.warnings)
     if source_of_truth:
         next_actions.append(
             "Review detected source-of-truth docs before enhancing or generating "
@@ -133,6 +141,10 @@ def inspect_readiness(profile: ProjectProfile) -> ReadinessReport:
         next_actions.append(
             "Review governance inventory before giving agents tool, environment, or runner access."
         )
+    if effectiveness_inventory.items:
+        next_actions.append(
+            "Review effectiveness eval inventory before making harness performance claims."
+        )
     instruction_text = _instruction_text(profile.root, file_set)
     if instruction_text and not instruction_routes_to_specs(instruction_text, spec_report):
         review_required.append(
@@ -140,6 +152,7 @@ def inspect_readiness(profile: ProjectProfile) -> ReadinessReport:
         )
 
     review_required.extend(governance_inventory.review_required)
+    review_required.extend(effectiveness_inventory.review_required)
     review_required.extend(inventory.review_required)
     if any(item in file_set for item in AGENT_SETUP_WORKFLOWS):
         warnings.append(
@@ -174,6 +187,7 @@ def inspect_readiness(profile: ProjectProfile) -> ReadinessReport:
         work_item_inventory=inventory.work_items,
         context_budget=context_budget,
         governance_inventory=governance_inventory.items,
+        effectiveness_inventory=effectiveness_inventory.items,
     )
 
 
@@ -197,6 +211,10 @@ def readiness_to_dict(report: ReadinessReport) -> dict[str, Any]:
         "contextBudget": context_budget_to_dict(report.context_budget),
         "governanceInventory": [
             governance_item_to_dict(item) for item in report.governance_inventory
+        ],
+        "effectivenessInventory": [
+            effectiveness_item_to_dict(item)
+            for item in report.effectiveness_inventory
         ],
     }
 
@@ -254,6 +272,14 @@ def format_readiness(report: ReadinessReport) -> str:
         tuple(
             f"{item.path}: {item.category}, surfaces={', '.join(item.surfaces)}"
             for item in report.governance_inventory
+        ),
+    )
+    _append_section(
+        lines,
+        "Effectiveness inventory",
+        tuple(
+            f"{item.path}: {item.category}, signals={', '.join(item.signals)}"
+            for item in report.effectiveness_inventory
         ),
     )
     _append_section(lines, "Next actions", report.next_actions)

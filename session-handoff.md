@@ -482,6 +482,16 @@ release. The strongest remaining P2 item is measured real-agent or
 harness-quality eval guidance, now informed by the Harness Forge and
 Meta-Harness paper review's frozen-replay, full-history log, validation, and
 candidate-sensitive scorer guardrails.
+Current in-progress release-prep slice adds local docs and readiness inventory
+for that eval boundary: `effectiveness-eval-contract.md` defines the evidence
+contract, and `effectivenessInventory` reports visible eval specs, scorer
+scripts, result logs, and frontier artifacts as review surfaces. The
+Code-as-harness paper catalog and additional arXiv pass are mined only for
+product ideas; they are not being copied into generated target-repo defaults.
+Current verification passes: focused readiness and contract tests, full unit
+discovery with 162 tests, compile, pin check, JSON validation, local-path scan,
+diff hygiene, self-audit `100/100`, quickstart smoke, and `sync --check` with
+expected warning exit code `1`.
 Push local commits only at an explicit batch/release boundary or user request.
 Remaining product decisions before public release: component-directed monorepo
 verification commands, path/package exclusions for intentionally vulnerable
