@@ -24,6 +24,28 @@ TITLE_RE = re.compile(r"<title[^>]*>(.*?)</title>", re.IGNORECASE | re.DOTALL)
 H_RE = re.compile(r"<h([12])[^>]*>(.*?)</h\1>", re.IGNORECASE | re.DOTALL)
 TAG_RE = re.compile(r"<[^>]+>")
 MD_HEADING_RE = re.compile(r"^(#{1,2})\s+(.+?)\s*$")
+SOURCE_ID_RE = re.compile(r"^[a-z0-9][a-z0-9._-]*$")
+PLACEHOLDER_RE = re.compile(
+    r"\b(?:placeholder|todo|tbd|coming soon)\b|x{4,}", re.IGNORECASE
+)
+MACOS_USER_DIR = "/" + "Users" + "/"
+POSIX_HOME_DIR_RE = "/" + "home" + r"/[A-Za-z0-9_.-]+"
+WINDOWS_USER_DIR_RE = r"[A-Za-z]:\\" + "Users" + r"\\"
+LOCAL_ABSOLUTE_PATH_RE = re.compile(
+    r"(?:file://|"
+    + re.escape(MACOS_USER_DIR)
+    + "|"
+    + POSIX_HOME_DIR_RE
+    + "|"
+    + WINDOWS_USER_DIR_RE
+    + ")"
+)
+PLACEHOLDER_HOSTS = {"example.com", "example.net", "example.org", "example.test"}
+SOURCE_LEDGER_DOCS = (
+    "docs/harness/sources.md",
+    "docs/harness/research-inbox.md",
+    "docs/harness/research-sources.lock.json",
+)
 WITHHELD_ADVERSARIAL_METADATA = "[withheld: adversarial instruction pattern]"
 ADVERSARIAL_METADATA_PATTERNS = (
     (
@@ -92,6 +114,11 @@ def main(argv: list[str] | None = None) -> int:
     )
     parser.add_argument("--root", default=".", help="Repository root.")
     parser.add_argument("--timeout", type=int, default=20)
+    parser.add_argument(
+        "--check",
+        action="store_true",
+        help="Validate research source ledgers without fetching URLs.",
+    )
     args = parser.parse_args(argv)
 
     root = Path(args.root).resolve()
@@ -103,6 +130,15 @@ def main(argv: list[str] | None = None) -> int:
     if not isinstance(sources, list) or not sources:
         print("research-sources.json has no sources", file=sys.stderr)
         return 1
+    hygiene_errors = validate_research_ledgers(root, data)
+    if hygiene_errors:
+        print("Research source check failed:", file=sys.stderr)
+        for error in hygiene_errors:
+            print(f"  - {error}", file=sys.stderr)
+        return 1
+    if args.check:
+        print("Research source check passed.")
+        return 0
 
     checked_at = datetime.now(UTC).replace(microsecond=0).isoformat()
     records = []
@@ -128,6 +164,164 @@ def main(argv: list[str] | None = None) -> int:
     inbox_path.write_text(_render_inbox(lock), encoding="utf-8")
     print(f"Refreshed {len(records)} research sources with {failures} failures.")
     return 1 if failures == len(records) else 0
+
+
+def validate_research_ledgers(root: Path, data: dict[str, Any]) -> list[str]:
+    failures: list[str] = []
+    sources = data.get("sources")
+    if not isinstance(sources, list) or not sources:
+        return ["docs/harness/research-sources.json has no sources"]
+
+    seen_ids: dict[str, int] = {}
+    seen_urls: dict[str, int] = {}
+    source_ids: list[str] = []
+    source_urls: list[str] = []
+    for index, source in enumerate(sources):
+        label = f"docs/harness/research-sources.json sources[{index}]"
+        if not isinstance(source, dict):
+            failures.append(f"{label} must be an object")
+            continue
+        source_id = _source_string_field(source, "id", label, failures)
+        url = _source_string_field(source, "url", label, failures)
+        _source_string_field(source, "category", label, failures)
+        if source_id:
+            source_ids.append(source_id)
+            lowered = source_id.lower()
+            if not SOURCE_ID_RE.match(source_id):
+                failures.append(f"{label}.id must be a stable lowercase id")
+            if lowered in seen_ids:
+                failures.append(
+                    f"{label}.id duplicate source id {source_id!r}; first seen "
+                    f"at sources[{seen_ids[lowered]}]"
+                )
+            else:
+                seen_ids[lowered] = index
+        if url:
+            source_urls.append(url)
+            url_key = url.rstrip("/")
+            if url_key in seen_urls:
+                failures.append(
+                    f"{label}.url duplicate source url {url!r}; first seen "
+                    f"at sources[{seen_urls[url_key]}]"
+                )
+            else:
+                seen_urls[url_key] = index
+            url_error = _source_url_syntax_error(url)
+            if url_error:
+                failures.append(f"{label}.url {url_error}")
+
+    failures.extend(_validate_research_lock(root, source_ids, source_urls))
+    failures.extend(_validate_source_docs(root))
+    return failures
+
+
+def _source_string_field(
+    source: dict[str, Any], field: str, label: str, failures: list[str]
+) -> str:
+    value = source.get(field)
+    if not isinstance(value, str) or not value.strip():
+        failures.append(f"{label}.{field} must be a non-empty string")
+        return ""
+    stripped = value.strip()
+    if PLACEHOLDER_RE.search(stripped):
+        failures.append(f"{label}.{field} must not contain placeholder text")
+    if LOCAL_ABSOLUTE_PATH_RE.search(stripped):
+        failures.append(f"{label}.{field} must not contain a local absolute path")
+    return stripped
+
+
+def _source_url_syntax_error(url: str) -> str:
+    try:
+        parsed = urlparse(url)
+        hostname = parsed.hostname
+    except ValueError:
+        return "source URL is invalid"
+    if parsed.scheme.lower() != "https":
+        return "source URL must use https"
+    if not hostname:
+        return "source URL must include a host"
+    if parsed.username or parsed.password:
+        return "source URL must not include credentials"
+    try:
+        port = parsed.port or 443
+    except ValueError:
+        return "source URL port is invalid"
+    if port != 443:
+        return "source URL must use the default https port"
+    host = hostname.lower().rstrip(".")
+    if host in PLACEHOLDER_HOSTS:
+        return "source URL must not use a placeholder host"
+    if host == "localhost" or host.endswith(".localhost"):
+        return "source URL must not target localhost"
+    try:
+        address = ipaddress.ip_address(host)
+    except ValueError:
+        pass
+    else:
+        if not address.is_global:
+            return "source URL must target public addresses"
+    if parsed.query:
+        return "source URL must not include query parameters"
+    if parsed.fragment:
+        return "source URL must not include a fragment"
+    if host == "arxiv.org" and not parsed.path.startswith("/abs/"):
+        return "arXiv sources must use canonical /abs/ URLs"
+    if LOCAL_ABSOLUTE_PATH_RE.search(url):
+        return "source URL must not contain a local absolute path"
+    if PLACEHOLDER_RE.search(url):
+        return "source URL must not contain placeholder text"
+    return ""
+
+
+def _validate_research_lock(
+    root: Path, source_ids: list[str], source_urls: list[str]
+) -> list[str]:
+    path = root / "docs/harness/research-sources.lock.json"
+    if not path.exists():
+        return []
+    failures: list[str] = []
+    text = path.read_text(encoding="utf-8")
+    if LOCAL_ABSOLUTE_PATH_RE.search(text):
+        failures.append(f"{path.relative_to(root)} contains a local absolute path")
+    try:
+        data = json.loads(text)
+    except json.JSONDecodeError as exc:
+        return [f"{path.relative_to(root)} is invalid JSON: {exc}"]
+    records = data.get("sources")
+    if not isinstance(records, list):
+        return [f"{path.relative_to(root)} sources must be a list"]
+    if data.get("sourceCount") != len(source_ids):
+        failures.append(
+            f"{path.relative_to(root)} sourceCount does not match research-sources.json"
+        )
+    if len(records) != len(source_ids):
+        failures.append(
+            f"{path.relative_to(root)} source records do not match research-sources.json"
+        )
+        return failures
+    lock_ids = [record.get("id") for record in records if isinstance(record, dict)]
+    lock_urls = [record.get("url") for record in records if isinstance(record, dict)]
+    if lock_ids != source_ids:
+        failures.append(
+            f"{path.relative_to(root)} source ids do not match research-sources.json"
+        )
+    if lock_urls != source_urls:
+        failures.append(
+            f"{path.relative_to(root)} source urls do not match research-sources.json"
+        )
+    return failures
+
+
+def _validate_source_docs(root: Path) -> list[str]:
+    failures: list[str] = []
+    for relative in SOURCE_LEDGER_DOCS:
+        path = root / relative
+        if not path.exists():
+            continue
+        text = path.read_text(encoding="utf-8")
+        if LOCAL_ABSOLUTE_PATH_RE.search(text):
+            failures.append(f"{relative} contains a local absolute path")
+    return failures
 
 
 def _fetch_source(source: dict[str, Any], *, timeout: int) -> dict[str, Any]:

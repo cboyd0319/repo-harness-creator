@@ -98,5 +98,8 @@ Invoke-Native $PythonBin -m unittest discover -s tests
 Write-Host "== Pin check =="
 Invoke-Native $PythonBin scripts/check_pins.py --root .
 
+Write-Host "== Research source check =="
+Invoke-Native $PythonBin scripts/refresh_research.py --root . --check
+
 Write-Host "== Self audit =="
 Invoke-Native $PythonBin -m harnessforge audit --target . --min-score 85

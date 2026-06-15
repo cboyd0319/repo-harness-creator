@@ -59,5 +59,8 @@ echo "== Tests =="
 echo "== Pin check =="
 "$PYTHON_BIN" scripts/check_pins.py --root .
 
+echo "== Research source check =="
+"$PYTHON_BIN" scripts/refresh_research.py --root . --check
+
 echo "== Self audit =="
 "$PYTHON_BIN" -m harnessforge audit --target . --min-score 85

@@ -517,6 +517,7 @@ Focused checks:
 ```bash
 PYTHONPATH=src:. python -m unittest discover -s tests
 PYTHONPATH=src:. python scripts/check_pins.py --root .
+PYTHONPATH=src:. python scripts/refresh_research.py --root . --check
 PYTHONPATH=src:. python -m harnessforge audit --target . --min-score 85
 PYTHONPATH=src:. python -m harnessforge sync --check --target . --json
 ```
@@ -534,7 +535,7 @@ readiness blocker.
 | `docs/harness/` | This repo's own harness and research ledger |
 | `tests/` | Unit and regression tests |
 | `scripts/check_pins.py` | Hard-pin policy check |
-| `scripts/refresh_research.py` | Research metadata refresh |
+| `scripts/refresh_research.py` | No-network research ledger check and explicit metadata refresh |
 | `action.yml` | Composite GitHub Action metadata |
 
 ## Contributing

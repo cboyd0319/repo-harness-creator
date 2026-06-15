@@ -37,11 +37,14 @@ Focused checks:
 PYTHONPATH=src:. python3 -m unittest discover -s tests
 PYTHONPATH=src:. python3 scripts/check_pins.py --root .
 PYTHONPATH=src:. python3 -m harnessforge audit --target . --min-score 85
+PYTHONPATH=src:. python3 scripts/refresh_research.py --root . --check
 ```
 
-Run `python3 scripts/refresh_research.py --root .` only when refreshing the
-research ledger. Run `python3 scripts/check_pins.py --root .` when dependencies,
-workflow files, Action metadata, or packaging configuration change.
+Run `python3 scripts/refresh_research.py --root . --check` when research
+ledgers or source docs change. Run `python3 scripts/refresh_research.py --root
+.` only when refreshing fetched research metadata. Run `python3
+scripts/check_pins.py --root .` when dependencies, workflow files, Action
+metadata, or packaging configuration change.
 
 Prefer local verification and local commits during active work. Push only at an
 explicit batch boundary, release point, or user request because remote CI has

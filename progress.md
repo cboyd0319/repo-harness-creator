@@ -358,10 +358,11 @@ maintenance loop.
 
 ## Recommended Next Step
 
-The P1 backlog from the remaining-ideas research pass is implemented. Continue
-release prep by deciding whether any P2 item is required before a public Action
-release, with measured real-agent evals and source-verified platform adapters
-as the strongest remaining candidates.
+The P1 backlog from the remaining-ideas research pass is implemented. The
+source-ledger hygiene gate is now part of local verification. Continue release
+prep by deciding whether any P2 item is required before a public Action
+release, with a machine-readable effectiveness-evidence schema and
+source-verified platform adapters as the strongest remaining candidates.
 Push local commits only at an explicit batch/release boundary or user request.
 Remaining product decisions before a first public Action release: whether to
 add component-directed monorepo verification commands, path/package exclusions
@@ -449,6 +450,14 @@ blocking.
   separation, multi-agent role/topology/shared-state/convergence requirements,
   adaptive harness promotion loops, domain-harness ownership boundaries, and
   source-ledger hygiene.
+- Added a no-network research source hygiene gate. `scripts/refresh_research.py
+  --check` validates duplicate source IDs and URLs, required fields,
+  placeholder text, canonical URL shape, arXiv `/abs/` URLs, lock-file
+  consistency, and local-path leakage before any metadata fetch. Root POSIX and
+  PowerShell entrypoints now run this gate after pin checks.
+- Current source-ledger hygiene checks pass: focused refresh and entrypoint
+  tests, `scripts/refresh_research.py --root . --check`, full POSIX and
+  PowerShell entrypoints with 165 tests, pin check, and self-audit `100/100`.
 - The user-supplied Meta-Harness PDF was unavailable to local text extractors,
   so the same paper was reviewed via arXiv HTML. `docs/harness/verify-json-contract.md`
   now records that benchmark/eval claims need candidate-sensitive metrics,

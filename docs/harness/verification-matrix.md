@@ -21,7 +21,7 @@ Windows remote checks are manual `workflow_dispatch` platform checks.
 | Dependencies, tool versions, or workflow Actions | `python scripts/check_pins.py --root .`, primary-source version evidence, install smoke, and affected tests |
 | AI/RAG/agent tools, external data flow, auth, secrets, or deployment boundary | Update security boundary/threat model evidence, run focused abuse-case tests, self-audit, and affected local tests |
 | Training, demo, or intentionally vulnerable fixtures | Confirm owner/path and accepted risk, avoid automatic remediation unless in scope, and run targeted fixture tests |
-| Self-healing or research refresh | `python scripts/refresh_research.py --root .`, `python scripts/check_pins.py --root .`, unit tests, and self-audit |
+| Self-healing or research refresh | `python scripts/refresh_research.py --root . --check`, `python scripts/refresh_research.py --root .` when refreshing metadata, `python scripts/check_pins.py --root .`, unit tests, and self-audit |
 
 ## Full Local Check
 

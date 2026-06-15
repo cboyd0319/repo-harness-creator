@@ -260,3 +260,7 @@ project-owned docs instead of machine-specific absolute paths.
   synchronization rule, and convergence rule before results are comparable.
   Source catalogs should keep canonical URLs, missing-citation records, stale
   venue checks, dedup policy, and optional broken-link checks.
+- Source-ledger hygiene is now an offline gate, not only a research-refresh
+  side effect. The gate checks duplicate source IDs and URLs, required source
+  fields, placeholder text, local-path leakage, canonical source URL shape,
+  arXiv `/abs/` links, and lock-file consistency before any network fetch.

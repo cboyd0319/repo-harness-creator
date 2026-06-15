@@ -35,8 +35,10 @@ agent sessions.
 6. Run `./init.sh` or the narrowest relevant subset.
 7. Run `python scripts/check_pins.py --root .` for dependency, Action, or
    workflow changes.
-8. Use `clean-state-checklist.md` before ending non-trivial sessions.
-9. Update state and handoff files when durable facts change.
+8. Run `python scripts/refresh_research.py --root . --check` for research
+   source ledger or source-doc changes.
+9. Use `clean-state-checklist.md` before ending non-trivial sessions.
+10. Update state and handoff files when durable facts change.
 
 ## Assessment And Updates
 

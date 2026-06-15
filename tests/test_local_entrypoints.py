@@ -23,6 +23,14 @@ class LocalEntrypointTests(unittest.TestCase):
         self.assertIn("-m compileall scripts src tests", init_sh)
         self.assertIn("-m compileall scripts src tests", init_ps1)
 
+    def test_root_entrypoints_check_research_source_ledgers(self) -> None:
+        root = Path(__file__).resolve().parents[1]
+        init_sh = (root / "init.sh").read_text(encoding="utf-8")
+        init_ps1 = (root / "init.ps1").read_text(encoding="utf-8")
+
+        self.assertIn("scripts/refresh_research.py --root . --check", init_sh)
+        self.assertIn("scripts/refresh_research.py --root . --check", init_ps1)
+
     def test_powershell_entrypoints_prefer_python3_before_python(self) -> None:
         root = Path(__file__).resolve().parents[1]
         for path in (

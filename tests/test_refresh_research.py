@@ -85,6 +85,81 @@ class _FakeTLSContext:
 
 
 class RefreshResearchTests(unittest.TestCase):
+    def test_check_rejects_duplicate_ids_urls_and_placeholders(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            (root / "docs/harness").mkdir(parents=True)
+            (root / "docs/harness/research-sources.json").write_text(
+                json.dumps(
+                    {
+                        "version": 1,
+                        "sources": [
+                            {
+                                "id": "demo",
+                                "url": "https://example.com/source",
+                                "category": "test",
+                            },
+                            {
+                                "id": "demo",
+                                "url": "https://example.com/source",
+                                "category": "placeholder",
+                            },
+                            {
+                                "id": "missing-url",
+                                "category": "test",
+                            },
+                        ],
+                    }
+                ),
+                encoding="utf-8",
+            )
+            stderr = io.StringIO()
+
+            with (
+                mock.patch.object(refresh_research, "_open_url") as open_url,
+                contextlib.redirect_stderr(stderr),
+            ):
+                code = refresh_research.main(["--root", str(root), "--check"])
+
+        self.assertEqual(code, 1)
+        output = stderr.getvalue()
+        self.assertIn("duplicate source id", output)
+        self.assertIn("duplicate source url", output)
+        self.assertIn("placeholder", output)
+        self.assertIn("url must be a non-empty string", output)
+        open_url.assert_not_called()
+
+    def test_check_rejects_local_paths_in_source_docs(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            (root / "docs/harness").mkdir(parents=True)
+            (root / "docs/harness/research-sources.json").write_text(
+                json.dumps(
+                    {
+                        "version": 1,
+                        "sources": [
+                            {
+                                "id": "demo",
+                                "url": "https://research.invalid/source",
+                                "category": "test",
+                            }
+                        ],
+                    }
+                ),
+                encoding="utf-8",
+            )
+            (root / "docs/harness/sources.md").write_text(
+                "Local source: " + "/" + "Users" + "/example/private-paper.pdf\n",
+                encoding="utf-8",
+            )
+            stderr = io.StringIO()
+
+            with contextlib.redirect_stderr(stderr):
+                code = refresh_research.main(["--root", str(root), "--check"])
+
+        self.assertEqual(code, 1)
+        self.assertIn("local absolute path", stderr.getvalue())
+
     def test_refresh_writes_lock_and_inbox(self) -> None:
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp)
@@ -96,7 +171,7 @@ class RefreshResearchTests(unittest.TestCase):
                         "sources": [
                             {
                                 "id": "demo",
-                                "url": "https://example.test/source",
+                                "url": "https://research.invalid/source",
                                 "category": "test",
                             }
                         ],
@@ -146,7 +221,7 @@ class RefreshResearchTests(unittest.TestCase):
                         "sources": [
                             {
                                 "id": "poisoned",
-                                "url": "https://example.test/source",
+                                "url": "https://research.invalid/source",
                                 "category": "test",
                             }
                         ],
@@ -202,7 +277,7 @@ class RefreshResearchTests(unittest.TestCase):
                         "sources": [
                             {
                                 "id": "encoded",
-                                "url": "https://example.test/source",
+                                "url": "https://research.invalid/source",
                                 "category": "test",
                             }
                         ],
@@ -515,6 +590,9 @@ class RefreshResearchTests(unittest.TestCase):
         template_ids = [source["id"] for source in template_sources["sources"]]
         self.assertEqual(repo_ids, template_ids)
         self.assertEqual(len(repo_ids), len(set(repo_ids)))
+        self.assertEqual(
+            refresh_research.validate_research_ledgers(root, repo_sources), []
+        )
 
 
 if __name__ == "__main__":

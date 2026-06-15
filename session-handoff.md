@@ -30,7 +30,6 @@ and the required AGENTS instruction format.
 - `.github/workflows/harness-self-heal.yml`
 - `scripts/check_pins.py`
 - `pins.toml`
-- `scripts/refresh_research.py`
 - `src/harnessforge/audit.py`
 - `src/harnessforge/cli.py`
 - `src/harnessforge/detect.py`
@@ -47,9 +46,12 @@ and the required AGENTS instruction format.
 - `src/harnessforge/templates/research-sources.json.tmpl`
 - `tests/test_detect.py`
 - `tests/test_generate_audit.py`
+- `tests/test_refresh_research.py`
 - `tests/test_pins.py`
 - `docs/harness/evaluator-rubric.md`
+- `docs/harness/evidence-log.md`
 - `docs/harness/sources.md`
+- `docs/harness/verification-matrix.md`
 - `docs/harness/reference-mining-notes.md`
 - `docs/harness/remaining-ideas-research.md`
 - `.gitignore`
@@ -476,22 +478,22 @@ and the required AGENTS instruction format.
 
 ## Next Session
 
-The P1 backlog from the remaining-ideas research pass is implemented. Continue
-release prep by deciding whether any P2 item is required before a public Action
-release. The strongest remaining P2 item is measured real-agent or
-harness-quality eval guidance, now informed by the Harness Forge and
-Meta-Harness paper review's frozen-replay, full-history log, validation, and
-candidate-sensitive scorer guardrails.
-Current in-progress release-prep slice adds local docs and readiness inventory
-for that eval boundary: `effectiveness-eval-contract.md` defines the evidence
-contract, and `effectivenessInventory` reports visible eval specs, scorer
-scripts, result logs, and frontier artifacts as review surfaces. The
-Code-as-harness paper catalog and additional arXiv pass are mined only for
-product ideas; they are not being copied into generated target-repo defaults.
-Current verification passes: focused readiness and contract tests, full unit
-discovery with 162 tests, compile, pin check, JSON validation, local-path scan,
-diff hygiene, self-audit `100/100`, quickstart smoke, and `sync --check` with
-expected warning exit code `1`.
+The P1 backlog from the remaining-ideas research pass is implemented. The
+latest release-prep slice added a no-network research source hygiene gate:
+`scripts/refresh_research.py --check` validates duplicate source IDs and URLs,
+required fields, placeholder text, canonical URL shape, arXiv `/abs/` URLs,
+lock-file consistency, and local-path leakage before any metadata fetch. Root
+POSIX and PowerShell entrypoints now run that gate after pin checks.
+Current verification passes: focused refresh and entrypoint tests,
+`scripts/refresh_research.py --root . --check`, POSIX and PowerShell
+entrypoints with 165 tests, pin check, and self-audit `100/100`.
+Continue release prep by deciding whether any P2 item is required before a
+public Action release. The strongest remaining bounded item is turning the
+effectiveness-eval guidance into a small machine-readable evidence schema and
+example payload. Source-verified platform adapters are the next strongest P2.
+Existing eval guidance comes from the Harness Forge, Meta-Harness, Code as
+Agent Harness catalog, and arXiv harness-eval reviews; those sources are mined
+only for product ideas and are not copied into generated target-repo defaults.
 The deeper Code as Agent Harness catalog pass added more eval-contract detail:
 surface-layer naming, feedback-channel separation, multi-agent role/topology
 and convergence requirements, adaptive promotion loops, domain-harness
