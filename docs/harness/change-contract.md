@@ -11,11 +11,11 @@ What user problem or harness failure is being addressed?
 
 In scope:
 
-- TBD
+- REVIEW REQUIRED: list included files, behavior, or components for the change.
 
 Non-goals:
 
-- TBD
+- REVIEW REQUIRED: list explicit non-goals and preserved boundaries.
 
 ## Acceptance Criteria
 

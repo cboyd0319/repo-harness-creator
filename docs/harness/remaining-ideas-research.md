@@ -770,12 +770,13 @@ Sources:
    - Returns CI-oriented exit codes: ready `0`, warning `1`, blocked `2`.
    - No write semantics and no target command execution.
 
-4. Implemented: `verify --json` plan mode separately from `audit --json`.
+4. Implemented: `verify --json` default plan mode separately from `audit --json`.
    - `audit` scores harness structure.
    - `verify` reports project checks with stable planned/blocked statuses,
      messages, and reserved run-mode fields.
    - Default mode is static and does not run target repository commands.
-   - Contract doc, schema, example payload, and CLI plan mode now exist.
+   - Explicit `--run` mode records executed check evidence when requested.
+   - Contract doc, schema, example payload, and CLI modes now exist.
 
 ### P1: Important After P0
 

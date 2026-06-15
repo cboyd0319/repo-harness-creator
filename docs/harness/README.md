@@ -89,9 +89,13 @@ does not run those checks.
 `update` reports recommended safe corrections unless `--apply` is passed.
 Existing files are skipped unless `--force` is passed.
 
-`verify --json` is implemented in plan mode and documented in
+`verify --json` defaults to read-only plan mode and is documented in
 `verify-json-contract.md`, with schema and example artifacts beside it. It
 reports detected or explicit checks without running target repository commands.
+Use `verify --json --run` only when project checks should execute; run mode
+records exit codes, durations, capped stdout and stderr previews, and timing
+metadata. Use `--json-report <target-relative-path>` to persist the payload
+without shell redirection.
 
 Project-owned source records use `source-record.schema.json` and
 `source-record-example.json`. Keep them separate from the fixed

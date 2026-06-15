@@ -76,6 +76,9 @@ maintenance loop.
   redirected to `windows-2025-vs2026` by June 15, 2026. The CI matrix now uses
   the explicit `windows-2025-vs2026` runner label, matching current GitHub
   runner docs and removing ambiguity about the Windows image under test.
+- Completed a docs consistency pass so the root README, harness README, and
+  composite Action metadata describe the current Action command surface and
+  `verify --json --run` report behavior accurately.
 - Closed the research-refresh DNS-rebinding transport gap. Refresh now connects
   HTTPS fetch sockets to the validated public DNS result while preserving the
   original host for TLS verification, and still revalidates redirects before
@@ -325,10 +328,10 @@ maintenance loop.
   project is different, and organize usage around inspect, readiness, sync,
   generation boundaries, generated files, audit, update/drift, GitHub Action
   use, security, and verification.
-- Added `verify --json` plan mode plus the contract docs, JSON schema, and
-  example payload under `docs/harness/`. The command maps detected or explicit
-  project checks into stable planned/blocked JSON without running target
-  repository commands.
+- Added `verify --json` default plan mode plus the contract docs, JSON schema,
+  and example payload under `docs/harness/`. The command maps detected or
+  explicit project checks into stable JSON without running target repository
+  commands unless `--run` is passed.
 - Added read-only workflow and work-item inventory to readiness. The inventory
   reports `.github/workflows/`, `aspec/workflows/`, and `workflows/` TOML/YAML
   files, visible setup/teardown/remediation/push/pull-request/CI-polling/
@@ -482,6 +485,10 @@ maintenance loop.
   index/effectiveness JSON and text smokes, compile, pin check, research source
   check, JSON validation, session/plan/index/effectiveness JSON smokes,
   self-audit `100/100`, changed-file local-path scan, and diff hygiene.
+- Latest docs consistency verification passed focused Action/generator/pin
+  tests with 87 tests, pin check, self-audit `100/100`, local-path and
+  stale-wording scans, diff hygiene, and POSIX/PowerShell entrypoints with 227
+  tests each.
 
 ## Recommended Next Step
 
@@ -493,6 +500,20 @@ Push local commits only at an explicit batch/release boundary or user request.
 
 ## Verification Evidence
 
+- `PYTHONPATH=src:. python3 -m unittest tests.test_github_action
+  tests.test_generate_audit tests.test_pins` passed with 87 tests after the
+  docs consistency pass.
+- `PYTHONPATH=src:. python3 scripts/check_pins.py --root .` passed after the
+  composite Action metadata wording update.
+- `PYTHONPATH=src:. python3 -m harnessforge audit --target .
+  --min-score 85` passed with self-audit `100/100` after the docs consistency
+  pass.
+- `./init.sh` passed on macOS 26.5.1 with Python 3.14.6 after the docs
+  consistency pass: doctor, compile, 227 unit tests, pin check, research source
+  check, and self-audit `100/100`.
+- `pwsh -NoProfile -File ./init.ps1` passed on macOS 26.5.1 with Python 3.14.6
+  after the docs consistency pass: doctor, compile, 227 unit tests, pin check,
+  research source check, and self-audit `100/100`.
 - Large-codebase analysis and indexing research reviewed primary project
   sources for Zoekt, Sourcebot, Livegrep, Hound, OpenGrok, Universal Ctags,
   Tree-sitter, ast-grep, Aider repo maps, SCIP, LSIF, Kythe, Glean, Stack

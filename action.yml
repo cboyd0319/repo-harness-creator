@@ -80,7 +80,7 @@ inputs:
     required: false
     default: ""
   json-report:
-    description: Optional target-relative path for a JSON audit report.
+    description: Optional target-relative path for an audit, sync, or verify JSON report.
     required: false
     default: ""
 

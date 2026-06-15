@@ -86,8 +86,8 @@ effectiveness still needs representative task runs and human review.
 - Provides explicit blueprint mode for richer project operating models. Built-in
   packs cover agentic applications, spec-driven projects, web services,
   data/ML, security-sensitive repos, and workflow automation.
-- Provides a composite GitHub Action for audit, init, update, and doctor
-  workflows.
+- Provides a composite GitHub Action for audit, init, update, sync, verify, and
+  doctor workflows.
 
 ## Default Boundaries
 

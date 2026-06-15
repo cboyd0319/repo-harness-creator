@@ -82,6 +82,9 @@ and advanced product modes.
 ## Blockers
 
 - No known blockers.
+- Latest docs consistency pass reconciled the root README, harness README, and
+  composite Action metadata with the current `sync`, `verify`, and Action
+  behavior.
 - Current remaining-ideas research pass completed without AGY. The ranked
   backlog lives in `docs/harness/remaining-ideas-research.md`. Implemented the
   first P0 item: read-only `inspect --readiness --json`, including static
@@ -93,8 +96,8 @@ and advanced product modes.
   read-only `sync --check`, which wraps readiness, generated drift,
   source-of-truth spec routing, and review-required surfaces with exit codes
   `0` ready, `1` warning, and `2` blocked. Implemented the final P0 item:
-  `verify --json` plan-mode CLI plus contract docs, schema, example, and
-  fixture tests. Implemented the first P1 item: read-only workflow and work-item
+  `verify --json` default plan-mode CLI plus contract docs, schema, example,
+  and fixture tests. Implemented the first P1 item: read-only workflow and work-item
   inventory in readiness. Implemented the second P1 item: context-budget and
   duplicate-instruction detection in readiness. Implemented the third P1 item:
   permission/governance inventory in readiness. Implemented the final P1 item:
@@ -151,8 +154,9 @@ and advanced product modes.
   files route agents to detected source-of-truth specs. It also keeps ASPEC
   and AWMAN-derived ideas in scope through `aspec/`, work-item template, and
   repo workflow definition detection without copying their formats.
-- Current sync preflight implementation is a CLI-only read path. It does not
-  add mutation semantics, run target checks, or change generator output.
+- Current sync preflight implementation is a CLI and composite Action read
+  path. It does not add mutation semantics, run target checks, or change
+  generator output.
 - Current sensor registry implementation adds a review-required generated
   `docs/harness/sensor-registry.md`, manifest required-file and snippet
   coverage, generated ownership metadata, and live harness ownership/source/
@@ -162,10 +166,11 @@ and advanced product modes.
   from the outside: value proposition first, then at-a-glance outcomes,
   differentiators, boundaries, quickstart, readiness/sync, generated files,
   audit/update, Action use, security, and verification.
-- Current `verify --json` work is plan-mode only. It adds the CLI command plus
+- Current `verify --json` defaults to read-only plan mode and has explicit
+  run mode behind `--run`. It includes
   `docs/harness/verify-json-contract.md`, `verify-json.schema.json`, and
-  `verify-json-example.json`. It reports detected or explicit project checks
-  without command execution semantics.
+  `verify-json-example.json`, and reports detected or explicit project checks
+  with stable planned, passed, failed, blocked, or timed-out statuses.
 - Current workflow/work-item inventory work is read-only and advisory. It adds
   `src/harnessforge/workflow_inventory.py`, readiness JSON fields
   `workflowInventory` and `workItemInventory`, and review-required warnings for
@@ -541,7 +546,7 @@ and advanced product modes.
 ## Next Session
 
 The next session should continue the robust-mode buildout, not return straight
-to release prep. The latest slices added `verify --json` plan mode,
+to release prep. The latest slices added `verify --json` default plan mode,
 config-precedence reporting, selective generated-owned update refresh,
 Maven/Gradle dependency pin parsing, intentionally vulnerable training-path
 pin-scan exclusions, nested JVM wrapper preference, container runtime
@@ -676,6 +681,9 @@ POSIX/PowerShell entrypoints with 227 tests, compile, JSON/YAML validation, pin
 check, research source check, rendered optional workflow audit and pin smoke,
 session, plan, index, and effectiveness JSON smokes, expected-warning sync JSON
 smoke, self-audit `100/100`, changed-file local-path scan, and diff hygiene.
+Latest docs consistency pass also reran focused Action/generator/pin tests with
+87 tests, pin check, self-audit `100/100`, stale-wording and local-path scans,
+diff hygiene, and both local entrypoints with 227 tests each.
 `sync --check`
 returns the expected warning for local workflow and instruction review surfaces
 without blockers or generated drift.
