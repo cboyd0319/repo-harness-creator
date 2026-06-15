@@ -79,6 +79,9 @@ maintenance loop.
 - Completed a docs consistency pass so the root README, harness README, and
   composite Action metadata describe the current Action command surface and
   `verify --json --run` report behavior accurately.
+- Split the long root README into a shorter landing page and dedicated
+  installation, usage, and capabilities docs so the README stays navigable
+  while detailed behavior remains documented.
 - Closed the research-refresh DNS-rebinding transport gap. Refresh now connects
   HTTPS fetch sockets to the validated public DNS result while preserving the
   original host for TLS verification, and still revalidates redirects before
@@ -489,13 +492,18 @@ maintenance loop.
   tests with 87 tests, pin check, self-audit `100/100`, local-path and
   stale-wording scans, diff hygiene, and POSIX/PowerShell entrypoints with 227
   tests each.
+- README split verification passed focused CLI/audit tests with 118 tests,
+  self-audit `100/100`, local-path scan, and diff hygiene. The audit known-file
+  list now includes the new top-level docs so their local links and path hygiene
+  are checked.
 
 ## Recommended Next Step
 
-The non-release backlog is closed for the current release-prep boundary. If
-release prep resumes, review the current diff, run the release checklist,
-rebuild the isolated package smoke, and decide whether to trigger manual macOS
-and Windows platform CI.
+Implement the new backlog item for generated first-agent harness improvement
+instructions before returning to release prep. If release prep resumes after
+that, review the current diff, run the release checklist, rebuild the isolated
+package smoke, and decide whether to trigger manual macOS and Windows platform
+CI.
 Push local commits only at an explicit batch/release boundary or user request.
 
 ## Verification Evidence
@@ -514,6 +522,12 @@ Push local commits only at an explicit batch/release boundary or user request.
 - `pwsh -NoProfile -File ./init.ps1` passed on macOS 26.5.1 with Python 3.14.6
   after the docs consistency pass: doctor, compile, 227 unit tests, pin check,
   research source check, and self-audit `100/100`.
+- `PYTHONPATH=src:. python3 -m unittest tests.test_generate_audit
+  tests.test_cli` passed with 118 tests after the README split and audit
+  known-file update.
+- `PYTHONPATH=src:. python3 -m harnessforge audit --target .
+  --min-score 85` passed with self-audit `100/100` after the README split.
+- `git diff --check` and the local-path scan passed after the README split.
 - Large-codebase analysis and indexing research reviewed primary project
   sources for Zoekt, Sourcebot, Livegrep, Hound, OpenGrok, Universal Ctags,
   Tree-sitter, ast-grep, Aider repo maps, SCIP, LSIF, Kythe, Glean, Stack

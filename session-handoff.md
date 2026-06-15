@@ -15,6 +15,9 @@ and advanced product modes.
 - `docs/harness/`
 - `action.yml`
 - `docs/action.md`
+- `docs/installation.md`
+- `docs/usage.md`
+- `docs/capabilities.md`
 - `README.md`
 - `AGENTS.md`
 - `CONTRIBUTING.md`
@@ -77,6 +80,7 @@ and advanced product modes.
 - `docs/harness/verification-matrix.md`
 - `docs/harness/reference-mining-notes.md`
 - `docs/harness/remaining-ideas-research.md`
+- `docs/harness/component-inventory.md`
 - `.gitignore`
 
 ## Blockers
@@ -85,6 +89,13 @@ and advanced product modes.
 - Latest docs consistency pass reconciled the root README, harness README, and
   composite Action metadata with the current `sync`, `verify`, and Action
   behavior.
+- Root README split is complete: the README is now a short landing page,
+  with detailed install, usage, and capability/reference content moved to
+  `docs/installation.md`, `docs/usage.md`, and `docs/capabilities.md`.
+- New backlog item added: generated harnesses should include a first-agent
+  instruction that asks the first agent session in a target repo to deepen and
+  improve the harness using HarnessForge's generated structure, detection
+  output, readiness signals, and review boundaries.
 - Current remaining-ideas research pass completed without AGY. The ranked
   backlog lives in `docs/harness/remaining-ideas-research.md`. Implemented the
   first P0 item: read-only `inspect --readiness --json`, including static
@@ -684,6 +695,10 @@ smoke, self-audit `100/100`, changed-file local-path scan, and diff hygiene.
 Latest docs consistency pass also reran focused Action/generator/pin tests with
 87 tests, pin check, self-audit `100/100`, stale-wording and local-path scans,
 diff hygiene, and both local entrypoints with 227 tests each.
+README split verification passed focused CLI/audit tests with 118 tests,
+self-audit `100/100`, local-path scan, and diff hygiene. The audit known-file
+list now includes `docs/installation.md`, `docs/usage.md`, and
+`docs/capabilities.md`.
 `sync --check`
 returns the expected warning for local workflow and instruction review surfaces
 without blockers or generated drift.

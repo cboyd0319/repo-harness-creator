@@ -48,6 +48,11 @@ inventory, not permission to mutate nested projects.
 
 - `docs/assets/logo.png`: repository logo used by the root README and project
   presentation surfaces.
+- `docs/installation.md`: user-facing install, platform contract, and local
+  verification guide.
+- `docs/usage.md`: user-facing CLI workflow guide.
+- `docs/capabilities.md`: user-facing capability, generated-file, boundary,
+  and security guide.
 
 ## Manual Additions
 
