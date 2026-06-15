@@ -190,6 +190,7 @@ Readiness reports:
 - `reviewRequired`
 - `workflowInventory`
 - `workItemInventory`
+- `contextBudget`
 
 `sync --check` wraps the same readiness report in a CI-friendly command with
 stable exit codes:
@@ -210,6 +211,11 @@ Workflow inventory is advisory. It detects `.github/workflows/`,
 setup, teardown, remediation, push, pull-request, CI polling, and credential
 surfaces. Work-item inventory reports templates and concrete work-item files
 without adopting ASPEC or AWMAN formats as generated defaults.
+
+Context budget is also advisory. It reports instruction-file size and repeated
+instruction blocks across `AGENTS.md`, `CLAUDE.md`, `GEMINI.md`, and Copilot
+instructions so teams can keep router files compact and avoid wasting agent
+context on duplicated guidance.
 
 ## Planned Verify JSON Contract
 

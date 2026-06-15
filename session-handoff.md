@@ -70,8 +70,9 @@ and the required AGENTS instruction format.
   `0` ready, `1` warning, and `2` blocked. Implemented the final P0 item:
   design-only `verify --json` contract docs, schema, example, and fixture
   tests. Implemented the first P1 item: read-only workflow and work-item
-  inventory in readiness. Remaining P1 candidates: context-budget and
-  duplication audit, permission/governance inventory, and guided first-run UX.
+  inventory in readiness. Implemented the second P1 item: context-budget and
+  duplicate-instruction detection in readiness. Remaining P1 candidates:
+  permission/governance inventory and guided first-run UX.
   P2 candidates: opt-in blueprints, real-agent evals, source-verified platform
   adapters, and sandbox/container readiness. Rejected defaults remain large
   skill/memory trees, platform permission config, LLM-assisted init,
@@ -86,7 +87,7 @@ and the required AGENTS instruction format.
   repo-local control planes, but it does not generate sibling-repo
   instructions, personal tool mandates, large skill trees, blueprints, MCP
   setup, or extra agent adapters by default. Current verification passes full
-  unit discovery with 155 tests, compile, pin check, self-audit `100/100`,
+  unit discovery with 156 tests, compile, pin check, self-audit `100/100`,
   diff hygiene, a read-only readiness smoke, and `sync --check` smoke against
   this repo. Readiness and sync check are warning-only because existing local
   instruction files and the two repo-local GitHub workflow definitions need
@@ -122,6 +123,10 @@ and the required AGENTS instruction format.
   setup, teardown, remediation, push, pull-request, CI-polling, and credential
   surfaces. It detects existing repo surfaces; it does not generate ASPEC,
   AWMAN, workflow engines, or automation defaults.
+- Current context-budget work is read-only and advisory. It adds
+  `src/harnessforge/context_budget.py` and readiness JSON field
+  `contextBudget`, reporting instruction file size and duplicate instruction
+  blocks across AGENTS, Claude, Gemini, and Copilot instruction routers.
 - Current expanded reference-repo quality batch ran shadow generation and
   content review against agent-governance-toolkit, apple-container,
   Bluepeak-AI, JobSentinel, nhl-betting-analytics, persona, RunHaven,
@@ -451,7 +456,7 @@ and the required AGENTS instruction format.
 
 ## Next Session
 
-Continue with the next P1 backlog item: context-budget and duplication audit.
+Continue with the next P1 backlog item: permission/governance inventory.
 Push local commits only at an explicit batch/release boundary or user request.
 Remaining product decisions before public release: component-directed monorepo
 verification commands, path/package exclusions for intentionally vulnerable

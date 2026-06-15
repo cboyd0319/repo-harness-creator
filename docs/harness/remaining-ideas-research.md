@@ -383,10 +383,12 @@ Sources:
    - Readiness JSON now reports `workflowInventory` and `workItemInventory`
      with advisory review warnings and review-required items.
 
-6. Add context-budget and duplication audit.
+6. Implemented: add context-budget and duplication audit.
    - Report large instruction files, duplicated router content, and generated
      files that repeat canonical docs too heavily.
-   - Keep the score advisory until thresholds are proven on real repos.
+   - Readiness JSON now reports `contextBudget` with instruction-file line and
+     character counts plus duplicate instruction-block pairs.
+   - Findings remain advisory until thresholds are proven on real repos.
 
 7. Add permission/governance inventory.
    - Detect MCP configs, agent settings, hooks, permission files, cloud-agent
@@ -443,6 +445,6 @@ HarnessForge generator behavior:
 
 ## Suggested Next Step
 
-Move to the next P1 backlog item: context-budget and duplication audit. That
+Move to the next P1 backlog item: permission/governance inventory. That
 keeps improving user experience without expanding the generator's default write
 surface.

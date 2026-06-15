@@ -58,6 +58,8 @@ contract is plan-only until explicit command execution is implemented.
 Readiness also includes advisory workflow and work-item inventory. Treat
 detected setup, teardown, remediation, push, pull-request, CI polling, and
 credential surfaces as review inputs before agent automation relies on them.
+It also includes advisory context-budget data for instruction file size and
+duplicated router text.
 
 The GitHub Action in `action.yml` exposes the same behavior to other
 repositories. Keep it wired to the Python library instead of duplicating logic

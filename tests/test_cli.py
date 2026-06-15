@@ -113,6 +113,7 @@ class CliTests(unittest.TestCase):
             "reviewRequired",
             "workflowInventory",
             "workItemInventory",
+            "contextBudget",
         ):
             self.assertIn(key, payload)
         self.assertIn("python -m unittest discover", payload["runnableChecks"])
@@ -133,6 +134,48 @@ class CliTests(unittest.TestCase):
             any("No project verification" in item for item in payload["blockedReasons"])
         )
         self.assertTrue(any("--command" in item for item in payload["nextActions"]))
+
+    def test_inspect_readiness_reports_context_budget_and_duplication(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            (root / "pyproject.toml").write_text(
+                "[project]\nname='demo'\n",
+                encoding="utf-8",
+            )
+            (root / "tests").mkdir()
+            (root / "tests" / "test_demo.py").write_text("", encoding="utf-8")
+            repeated_block = "\n".join(
+                f"- Shared routing rule {index}" for index in range(1, 7)
+            )
+            long_tail = "\n".join(f"- Extra local rule {index}" for index in range(320))
+            (root / "AGENTS.md").write_text(
+                "# Existing\n\n" + repeated_block + "\n" + long_tail + "\n",
+                encoding="utf-8",
+            )
+            (root / "CLAUDE.md").write_text(
+                "# Claude\n\n" + repeated_block + "\n",
+                encoding="utf-8",
+            )
+            stdout = io.StringIO()
+            with contextlib.redirect_stdout(stdout):
+                code = main(["inspect", "--target", str(root), "--readiness", "--json"])
+
+            payload = json.loads(stdout.getvalue())
+
+        self.assertEqual(code, 0)
+        context = payload["contextBudget"]
+        files = {item["path"]: item for item in context["instructionFiles"]}
+        self.assertGreater(files["AGENTS.md"]["lineCount"], 300)
+        self.assertIn("oversized", files["AGENTS.md"]["findings"])
+        duplicates = context["duplicateInstructionBlocks"]
+        self.assertTrue(
+            any(
+                item["left"] == "AGENTS.md" and item["right"] == "CLAUDE.md"
+                for item in duplicates
+            )
+        )
+        self.assertTrue(any("context budget" in item for item in payload["warnings"]))
+        self.assertTrue(any("duplicate instruction" in item for item in payload["warnings"]))
 
     def test_inspect_readiness_warns_for_specs_and_governance_surfaces(self) -> None:
         with tempfile.TemporaryDirectory() as tmp:

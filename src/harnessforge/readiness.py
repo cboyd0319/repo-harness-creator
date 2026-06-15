@@ -5,6 +5,11 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
 
+from .context_budget import (
+    ContextBudgetReport,
+    analyze_context_budget,
+    context_budget_to_dict,
+)
 from .detect import MISSING_VERIFICATION_COMMAND
 from .models import DriftResult, ProjectProfile
 from .paths import path_from_relative_text
@@ -63,6 +68,7 @@ class ReadinessReport:
     review_required: tuple[str, ...]
     workflow_inventory: tuple[WorkflowItem, ...]
     work_item_inventory: tuple[WorkItem, ...]
+    context_budget: ContextBudgetReport
 
 
 def inspect_readiness(profile: ProjectProfile) -> ReadinessReport:
@@ -71,6 +77,7 @@ def inspect_readiness(profile: ProjectProfile) -> ReadinessReport:
     ownership = _generated_ownership(profile.root)
     spec_report = analyze_spec_system(profile.root, profile.files)
     inventory = analyze_workflow_inventory(profile.root, profile.files)
+    context_budget = analyze_context_budget(profile.root, profile.files)
     runnable_checks = tuple(
         command
         for command in profile.verification_commands
@@ -114,6 +121,7 @@ def inspect_readiness(profile: ProjectProfile) -> ReadinessReport:
         )
     warnings.extend(spec_report.quality_warnings)
     warnings.extend(inventory.warnings)
+    warnings.extend(context_budget.warnings)
     if source_of_truth:
         next_actions.append(
             "Review detected source-of-truth docs before enhancing or generating "
@@ -122,6 +130,10 @@ def inspect_readiness(profile: ProjectProfile) -> ReadinessReport:
     if inventory.workflows or inventory.work_items:
         next_actions.append(
             "Review workflow and work-item inventory before agent automation relies on it."
+        )
+    if context_budget.warnings:
+        next_actions.append(
+            "Review context budget findings before expanding instruction files."
         )
     instruction_text = _instruction_text(profile.root, file_set)
     if instruction_text and not instruction_routes_to_specs(instruction_text, spec_report):
@@ -162,6 +174,7 @@ def inspect_readiness(profile: ProjectProfile) -> ReadinessReport:
         review_required=tuple(_dedupe(review_required)),
         workflow_inventory=inventory.workflows,
         work_item_inventory=inventory.work_items,
+        context_budget=context_budget,
     )
 
 
@@ -182,6 +195,7 @@ def readiness_to_dict(report: ReadinessReport) -> dict[str, Any]:
         "workItemInventory": [
             work_item_to_dict(item) for item in report.work_item_inventory
         ],
+        "contextBudget": context_budget_to_dict(report.context_budget),
     }
 
 
@@ -215,6 +229,22 @@ def format_readiness(report: ReadinessReport) -> str:
         lines,
         "Work-item inventory",
         tuple(f"{item.path}: {item.kind}" for item in report.work_item_inventory),
+    )
+    _append_section(
+        lines,
+        "Context budget",
+        tuple(
+            f"{item.path}: {item.line_count} lines, {item.char_count} chars"
+            for item in report.context_budget.instruction_files
+        ),
+    )
+    _append_section(
+        lines,
+        "Duplicate instruction blocks",
+        tuple(
+            f"{item.left} <-> {item.right}: {item.line_count} repeated lines"
+            for item in report.context_budget.duplicate_instruction_blocks
+        ),
     )
     _append_section(lines, "Next actions", report.next_actions)
     return "\n".join(lines).rstrip()

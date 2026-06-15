@@ -334,10 +334,14 @@ maintenance loop.
   files, visible setup/teardown/remediation/push/pull-request/CI-polling/
   credential surfaces, work-item templates, and concrete work-item files
   without generating or adopting ASPEC/AWMAN workflow formats.
+- Added advisory context-budget and duplicate-instruction detection to
+  readiness. The `contextBudget` payload reports instruction-file line and
+  character counts plus repeated instruction-block pairs across `AGENTS.md`,
+  `CLAUDE.md`, `GEMINI.md`, and Copilot instructions.
 
 ## Recommended Next Step
 
-Continue with the next P1 backlog item: context-budget and duplication audit.
+Continue with the next P1 backlog item: permission/governance inventory.
 Push local commits only at an explicit batch/release boundary or user request.
 Remaining product decisions before a first public Action release: whether to
 add component-directed monorepo verification commands, path/package exclusions
@@ -379,6 +383,15 @@ blocking.
   code `1` after adding workflow/work-item inventory. The warning now includes
   this repo's two GitHub workflow definitions, plus existing local instruction
   review items; no blockers or generated drift were reported.
+- `PYTHONPATH=src:. python3 -m unittest discover -s tests` passed with
+  156 tests, `PYTHONPATH=src:. python3 -m compileall src tests scripts`
+  passed, `PYTHONPATH=src:. python3 scripts/check_pins.py --root .` passed,
+  `PYTHONPATH=src:. python3 -m harnessforge audit --target . --min-score 85`
+  passed with self-audit `100/100`, and `PYTHONPATH=src:. python3 -m
+  harnessforge sync --check --target . --json` returned expected warning exit
+  code `1` after adding context-budget readiness. This repo has no
+  context-budget findings; warning state still comes from workflow and existing
+  local instruction review items.
 - `PYTHONPATH=src:. python3 -m unittest discover -s tests` passed with
   148 tests, and `PYTHONPATH=src:. python3 -m compileall src tests scripts`
   passed after adding source-of-truth spec sync detection.
