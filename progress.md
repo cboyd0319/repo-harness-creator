@@ -30,6 +30,12 @@ generated harness effectiveness, product-boundary enforcement, or verification.
 
 ## Latest Work
 
+- Added evidence-gated harness maturity levels to `harnessforge report`,
+  `harnessforge release-check`, and Action summaries. Maturity is cumulative:
+  generated, reviewed, verified, release-ready, then measured.
+- The maturity report stays separate from structural audit score and exposes
+  the next blocked evidence tier so a 100/100 structural audit cannot imply
+  real-agent effectiveness.
 - Polished GitHub Action step summaries. `command: report` now shows a compact
   signal table for readiness, score, drift, docs fan-out, verify/effectiveness
   evidence, instruction quality, first-agent lifecycle, repo-map counts, and
@@ -90,21 +96,18 @@ generated harness effectiveness, product-boundary enforcement, or verification.
 
 ## Verification
 
-Latest release-check and skill-source verification:
+Latest maturity-level verification:
 
-- focused CLI/Action tests passed with 107 tests after adding
-  `harnessforge release-check` and Action `command: release-check`.
-- Anthropic `skill-creator` local source review added generated harness-skill
-  guidance for trigger-specific descriptions, progressive disclosure, and
-  pressure-prompt evaluation.
-- generated-content tests passed with 56 tests after trimming generated
-  Markdown back under budget.
-- full unit discovery passed with 255 tests; compile, JSON validation, pin
-  check, research source check, self-audit `100/100`, generated smoke audit
-  `100/100`, report JSON smoke, expected-block release-check JSON smoke, diff
-  hygiene, and local-path scan passed.
-- roadmap now tracks accepted `src/harnessforge/` source package organization
-  work as product-internal cleanup.
+- focused maturity, CLI, and Action tests passed with 110 tests.
+- full unit discovery passed with 258 tests.
+- compile, JSON validation, pin check, research source check, self-audit
+  `100/100`, generated smoke audit `100/100`, report JSON smoke,
+  expected-block release-check JSON smoke, diff hygiene, and local-path scan
+  passed.
+- local report JSON emitted `harnessforge.maturity.v1` with current level
+  `generated` and next level `reviewed`.
+- local release-check JSON emitted valid maturity summary and returned expected
+  strict-gate `blocked` status.
 
 Latest Action summary verification:
 
@@ -143,7 +146,6 @@ Earlier optimization verification also included:
 Continue accepted pre-release backlog before release prep:
 
 - optional SBOM adapter design if needed
-- harness maturity levels
 - expanded policy presets
 - interactive quickstart/init UX
 

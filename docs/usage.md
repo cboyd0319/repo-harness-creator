@@ -88,8 +88,10 @@ structural index summary, stored verify evidence, stored effectiveness
 evidence, first-agent task lifecycle evidence, platform contract, and docs
 fan-out routing status. It also includes instruction-quality and context-budget
 signals for startup instruction files plus the compact repo-map summary from
-`index`. It is read-only by default, does not run target repository commands,
-and writes files only when a target-relative `--json-report` or
+`index`. It also reports an evidence-gated maturity level from `generated` to
+`measured` without treating structural audit score as proof of real-agent
+effectiveness. It is read-only by default, does not run target repository
+commands, and writes files only when a target-relative `--json-report` or
 `--markdown-report` path is supplied.
 
 Use `--require-verify-evidence` when the report should include release-gate
@@ -117,7 +119,8 @@ harnessforge release-check --target /path/to/repo --markdown-report docs/harness
 passed run-mode verify evidence, applies the `--min-score` audit threshold,
 checks generated drift, instruction quality, first-agent lifecycle, docs
 fan-out, release controls, effectiveness evidence, and existing SBOM evidence.
-It returns `0` for passed, `1` for warning, and `2` for blocked.
+It includes the same maturity level from the source report and returns `0` for
+passed, `1` for warning, and `2` for blocked.
 
 Use `--command` when detection cannot infer repo-owned verification commands;
 release-check records the command as readiness context but does not execute it.

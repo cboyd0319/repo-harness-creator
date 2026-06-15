@@ -36,9 +36,7 @@ def build_release_check(
         report,
         min_score=min_score,
         require_sbom=require_sbom,
-        release_controls_present=(
-            target.resolve() / "docs/harness/release/release-controls.md"
-        ).is_file(),
+        release_controls_present=bool(report["releaseControls"]["present"]),
     )
     verdict = _verdict(gates)
     return {
@@ -88,6 +86,7 @@ def format_release_check(payload: dict[str, Any]) -> str:
             f"- Generated drift: {summary['generatedDriftActionable']} actionable",
             f"- Instruction quality: `{summary['instructionQualityStatus']}`",
             f"- First-agent lifecycle: `{summary['firstAgentLifecycleStatus']}`",
+            f"- Maturity level: `{summary['maturityLevel']}`",
             f"- Docs fan-out: `{summary['docsFanoutVerdict']}`",
             f"- SBOM files: {summary['sbomCount']}",
             "",
@@ -392,6 +391,8 @@ def _summary(report: dict[str, Any]) -> dict[str, Any]:
         "firstAgentLifecycleStatus": report["firstAgentTask"]["lifecycle"]["status"],
         "docsFanoutVerdict": report["docsFanout"]["contract"]["verdict"],
         "effectivenessVerdict": report["effectiveness"]["verdict"],
+        "maturityLevel": report["maturity"]["currentLevel"],
+        "maturityNextLevel": report["maturity"]["nextLevel"],
         "repoMapUnknowns": len(report["index"]["repoMap"]["unknowns"]),
         "sbomCount": report["index"]["summary"]["sbomCount"],
     }
@@ -405,6 +406,8 @@ def _source_report_summary(report: dict[str, Any]) -> dict[str, Any]:
         "readiness": report["readiness"],
         "audit": report["audit"],
         "verifyEvidence": report["verifyEvidence"],
+        "maturity": report["maturity"],
+        "releaseControls": report["releaseControls"],
         "docsFanout": report["docsFanout"],
         "nextActions": report["nextActions"],
     }

@@ -776,6 +776,12 @@ class CliTests(unittest.TestCase):
             "docs/harness/evidence/first-agent-review.json",
         )
         self.assertEqual(payload["platform"]["contract"], "cross-platform")
+        self.assertEqual(payload["releaseControls"]["present"], True)
+        self.assertEqual(
+            payload["maturity"]["schemaVersion"], "harnessforge.maturity.v1"
+        )
+        self.assertEqual(payload["maturity"]["currentLevel"], "generated")
+        self.assertEqual(payload["maturity"]["nextLevel"], "reviewed")
         self.assertEqual(
             payload["docsFanout"]["authoritativeMap"]["status"], "pending_review"
         )
@@ -1101,7 +1107,10 @@ class CliTests(unittest.TestCase):
         self.assertEqual(gates["first-agent-lifecycle"]["status"], "passed")
         self.assertEqual(gates["effectiveness-evidence"]["status"], "warning")
         self.assertEqual(gates["sbom"]["status"], "not_required")
+        self.assertIn("maturityLevel", payload["summary"])
+        self.assertIn("currentLevel", payload["sourceReport"]["maturity"])
         self.assertIn("# HarnessForge Release Check", markdown)
+        self.assertIn("Maturity level:", markdown)
         self.assertIn("Publishes performed: `false`", markdown)
 
     def test_plan_json_maps_changed_files_without_running_checks(self) -> None:

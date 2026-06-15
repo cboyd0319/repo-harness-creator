@@ -302,6 +302,7 @@ class GitHubActionTests(unittest.TestCase):
         self.assertEqual(outputs["docs-fanout-verdict"], "not_required")
         self.assertIn("# HarnessForge Release Check", markdown)
         self.assertIn("HarnessForge Release Check", summary_text)
+        self.assertIn("Maturity level", summary_text)
         self.assertIn("first-agent-lifecycle", summary_text)
 
     def test_action_sync_writes_readiness_report_and_outputs(self) -> None:

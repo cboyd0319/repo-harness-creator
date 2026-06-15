@@ -38,11 +38,11 @@ boundaries it preserves. See [Usage](usage.md) for commands and
   project commands.
 - Composes readiness, audit, generated drift, structural index, verify
   evidence, effectiveness evidence, first-agent task status, platform
-  contract, and docs fan-out routing status into one read-only JSON or Markdown
-  report.
+  contract, docs fan-out routing status, release-control presence, and
+  evidence-gated maturity into one read-only JSON or Markdown report.
 - Assembles read-only release readiness gates from existing report evidence
-  without publishing artifacts, tagging, pushing, uploading, or running target
-  commands.
+  and the source report maturity level without publishing artifacts, tagging,
+  pushing, uploading, or running target commands.
 - Provides explicit blueprint mode for richer project operating models. Built-in
   packs cover agentic applications, spec-driven projects, web services,
   data/ML, security-sensitive repos, and workflow automation.

@@ -37,18 +37,11 @@ schemas, manifest formats, CLI outputs, Action behavior, or docs as backward
 compatibility promises. Add a shim only when a maintainer declares a release
 boundary or records a temporary evaluation bridge with removal criteria.
 
-The current pre-release buildout includes:
+The current remaining pre-release buildout includes:
 
-- golden public-repo fixture corpus and generated-artifact quality scorer;
-- first-agent task lifecycle evidence;
-- report expansion for repo-map summaries, policy preset status, and release
-  evidence fields;
+- report expansion for policy preset status;
 - better instruction-quality and signal-to-noise reporting;
-- compact repo maps from `index`, default SBOM detection, and optional SBOM
-  adapter design;
-- GitHub Action summary polish;
-- `release-check` command or equivalent release report mode;
-- evidence-gated harness maturity levels;
+- optional SBOM adapter design;
 - expanded policy presets;
 - interactive quickstart/init UX.
 
@@ -708,9 +701,10 @@ Remaining optional release-policy extensions:
 
 ### Harness Maturity Levels
 
-Add evidence-gated maturity labels alongside structural audit score.
+Status: implemented in `harnessforge report`, `harnessforge release-check`,
+and Action summaries.
 
-Candidate levels:
+Evidence-gated maturity labels now sit alongside structural audit score:
 
 - `generated`: HarnessForge created or detected the harness structure.
 - `reviewed`: project maintainers reviewed placeholders and boundaries.
@@ -775,15 +769,12 @@ advertise internal paths as stable API.
    the Action, and continue quality passes against real repositories.
 2. Keep the pinned public-repo quality corpus and generated-artifact scorer
    green as quality and detection gates evolve.
-3. Expand `harnessforge report` with repo-map, policy preset, and release
-   evidence fields as those surfaces land.
+3. Expand `harnessforge report` with policy preset status.
 4. Add evidence-gated feature-state and deeper instruction-quality reporting
    to the generated-harness quality scorer.
-5. Add compact repo maps from `index`, then SBOM detection and optional SBOM
-   adapter design.
-6. Improve GitHub Action summaries and release evidence automation.
-7. Add maturity levels and expanded policy presets.
-8. Design the interactive quickstart/init UX once the underlying decisions are
+5. Design the optional SBOM adapter before adding any SBOM generation behavior.
+6. Add expanded policy presets.
+7. Design the interactive quickstart/init UX once the underlying decisions are
    stable.
 
 ## Rejected Defaults

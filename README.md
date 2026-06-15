@@ -149,8 +149,8 @@ preflight.
 | `inspect` | Repository detection and static readiness |
 | `index` | Read-only structural map for large existing repos |
 | `session` | Restart snapshot with git, readiness, audit, and state-file status |
-| `report` | Unified read-only harness status report with optional JSON and Markdown outputs |
-| `release-check` | Read-only release readiness gate over existing harness evidence |
+| `report` | Unified read-only harness status and maturity report with optional JSON and Markdown outputs |
+| `release-check` | Read-only release readiness and maturity gate over existing harness evidence |
 | `enhance` | Review existing instruction files without writing files |
 | `plan` | Diff-aware verification planning without command execution |
 | `sync --check` | CI-oriented readiness preflight with stable exit codes |

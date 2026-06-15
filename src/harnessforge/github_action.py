@@ -456,6 +456,7 @@ def _report_summary_markdown(payload: dict[str, Any]) -> str:
         f"| Effectiveness | `{payload['effectiveness']['verdict']}` |",
         f"| Instruction quality | `{payload['instructionQuality']['summary']['status']}` |",
         f"| First-agent lifecycle | `{payload['firstAgentTask']['lifecycle']['status']}` |",
+        f"| Maturity level | `{payload['maturity']['currentLevel']}` |",
         f"| Repo map | `{repo_map['componentCount']}` components, `{repo_map['sourceOfTruthCount']}` source docs |",
         f"| SBOM files | `{repo_map['sbomCount']}` |",
     ]
@@ -471,6 +472,7 @@ def _release_check_summary_markdown(payload: dict[str, Any]) -> str:
         f"- Audit score: `{payload['summary']['auditScore']}/100`",
         f"- Readiness: `{payload['summary']['readinessVerdict']}`",
         f"- Verify evidence: `{payload['summary']['verifyEvidenceVerdict']}`",
+        f"- Maturity level: `{payload['summary']['maturityLevel']}`",
         "",
         "| Gate | Status |",
         "| --- | --- |",

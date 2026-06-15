@@ -13,7 +13,7 @@ or other externally visible release steps.
   verification could not run.
 - Run `harnessforge release-check --target . --markdown-report
   docs/harness/evidence/release-check-<date>.md` to assemble the current
-  read-only release evidence gates.
+  read-only release evidence gates and maturity level.
 - Review any failed, timed_out, or blocked check with owner, risk, and next
   action before promotion.
 - Run `python scripts/check_pins.py --root .`.

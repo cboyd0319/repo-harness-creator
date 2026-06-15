@@ -14,6 +14,7 @@ from .first_agent import (
 )
 from .harness_paths import existing_harness_path, harness_path
 from .indexer import build_index_report
+from .maturity import build_maturity_report
 from .planner import DiffPlanReport, build_diff_plan
 from .readiness import inspect_readiness, readiness_to_dict
 from .reports import report_path, relative_to_target
@@ -105,16 +106,19 @@ def build_report(
         "instructionQuality": readiness_payload["instructionQuality"],
         "firstAgentTask": first_agent,
         "platform": _platform_summary(manifest),
+        "releaseControls": _release_controls_summary(profile.root),
         "docsFanout": docs_fanout,
-        "nextActions": _next_actions(
-            readiness_payload,
-            audit_payload,
-            drift,
-            effectiveness,
-            first_agent,
-            docs_fanout,
-        ),
     }
+    payload["maturity"] = build_maturity_report(payload)
+    payload["nextActions"] = _next_actions(
+        readiness_payload,
+        audit_payload,
+        drift,
+        effectiveness,
+        first_agent,
+        docs_fanout,
+        payload["maturity"],
+    )
     return payload
 
 
@@ -196,6 +200,16 @@ def format_report(payload: dict[str, Any]) -> str:
             "## Platform",
             "",
             f"- Contract: `{payload['platform']['contract']}`",
+            "",
+            "## Maturity",
+            "",
+            f"- Current level: `{payload['maturity']['currentLevel']}`",
+            f"- Next level: `{payload['maturity']['nextLevel'] or 'none'}`",
+            "",
+            "## Release Controls",
+            "",
+            f"- Present: `{str(payload['releaseControls']['present']).lower()}`",
+            f"- Path: `{payload['releaseControls']['path']}`",
             "",
             "## Docs Fan-Out",
             "",
@@ -327,6 +341,14 @@ def _platform_summary(manifest: dict[str, Any]) -> dict[str, Any]:
             if isinstance(source_review, dict)
             else False
         ),
+    }
+
+
+def _release_controls_summary(root: Path) -> dict[str, Any]:
+    path = "docs/harness/release/release-controls.md"
+    return {
+        "path": path,
+        "present": (root / path).is_file(),
     }
 
 
@@ -711,6 +733,7 @@ def _next_actions(
     effectiveness: dict[str, Any],
     first_agent: dict[str, Any],
     docs_fanout: dict[str, Any],
+    maturity: dict[str, Any],
 ) -> list[str]:
     actions: list[str] = [
         "Run harnessforge report --target <repo> --markdown-report "
@@ -736,6 +759,14 @@ def _next_actions(
         )
     if docs_fanout["contract"]["blockedReasons"]:
         actions.extend(docs_fanout["contract"]["blockedReasons"])
+    if maturity["nextLevel"]:
+        blocked = ", ".join(
+            requirement["id"] for requirement in maturity["blockedRequirements"]
+        )
+        actions.append(
+            f"Advance harness maturity from {maturity['currentLevel']} to "
+            f"{maturity['nextLevel']} by resolving: {blocked}."
+        )
     return _dedupe(actions)
 
 

@@ -9,6 +9,12 @@ generated harness quality, product boundaries, and verification evidence intact.
 
 ## What Changed
 
+- Evidence-gated harness maturity levels are implemented in unified report,
+  release-check, and Action summaries. Levels are cumulative: generated,
+  reviewed, verified, release-ready, then measured.
+- Maturity remains separate from structural audit score and reports the next
+  blocked evidence tier instead of treating a high audit score as proof of
+  real-agent effectiveness.
 - GitHub Action summaries are polished for report and sync. `command: report`
   now writes a compact signal table with readiness, score, drift, docs
   fan-out, verify/effectiveness evidence, instruction quality, first-agent
@@ -66,6 +72,11 @@ generated harness quality, product boundaries, and verification evidence intact.
 
 ## Files
 
+- `src/harnessforge/maturity.py`
+- `tests/test_maturity.py`
+- `src/harnessforge/report.py`
+- `src/harnessforge/release_check.py`
+- `src/harnessforge/github_action.py`
 - `src/harnessforge/templates/agent-operating-model.md.tmpl`
 - `src/harnessforge/templates/agents.md.tmpl`
 - `src/harnessforge/templates/authoritative-facts.md.tmpl`
@@ -109,17 +120,17 @@ generated harness quality, product boundaries, and verification evidence intact.
 
 Latest checks:
 
-- focused CLI/Action tests passed with 107 tests after adding read-only
-  `release-check` and Action `command: release-check`
-- local Anthropic `skill-creator` source review informed generated harness-skill
-  trigger, progressive-disclosure, and pressure-prompt guidance
-- generated-content tests passed with 56 tests after template and manifest
-  trimming
-- full unit discovery passed with 255 tests; compile, JSON validation, pin
-  check, research source check, self-audit `100/100`, generated smoke audit
-  `100/100`, report JSON smoke, expected-block release-check JSON smoke, diff
-  hygiene, and local-path scan passed
-- accepted roadmap item added for reorganizing `src/harnessforge/`
+- focused maturity, CLI, and Action tests passed with 110 tests
+- full unit discovery passed with 258 tests
+- compile, JSON validation, pin check, research source check, self-audit
+  `100/100`, generated smoke audit `100/100`, report JSON smoke,
+  expected-block release-check JSON smoke, diff hygiene, and local-path scan
+  passed
+- local report JSON emitted `harnessforge.maturity.v1` with current level
+  `generated` and next level `reviewed`
+- local release-check JSON emitted valid maturity summary and returned expected
+  strict-gate `blocked` status
+- accepted roadmap item remains for reorganizing `src/harnessforge/`
 - focused CLI tests passed with 82 tests
 - focused Action tests passed with 21 tests
 - focused generated/audit tests passed with 56 tests
@@ -172,6 +183,6 @@ Rerun focused tests after any further template or scoring edit.
 
 If the user wants more backlog work, continue with instruction-quality and
 signal-to-noise task-class guidance, optional SBOM adapter design,
-`src/harnessforge/` organization, harness maturity levels, expanded policy
-presets, or interactive quickstart/init UX. The user asked to commit and push
-after the current turn, then continue.
+`src/harnessforge/` organization, expanded policy presets, or interactive
+quickstart/init UX. The user asked to commit and push after the current turn,
+then continue.

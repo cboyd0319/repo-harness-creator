@@ -2123,6 +2123,7 @@ def _manifest_content(
             "isolated directory",
             "Rollback",
             "real-agent effectiveness",
+            "maturity level",
         ],
         "docs/harness/research/source-record.schema.json": [
             "HarnessForge Project Source Record",
