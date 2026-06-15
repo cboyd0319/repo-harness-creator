@@ -13,6 +13,12 @@ from .doctor import doctor_report, format_doctor
 from .generate import create_harness
 from .readiness import inspect_readiness
 from .redact import redact_local_paths
+from .release_check import (
+    build_release_check,
+    format_release_check,
+    release_check_exit_code,
+    write_markdown_release_check,
+)
 from .report import build_report, format_report, write_markdown_report
 from .reports import relative_to_target, report_path, write_json_payload
 from .sync import format_sync_check, sync_check_to_dict, sync_exit_code
@@ -65,6 +71,7 @@ def run_from_env(env: Mapping[str, str]) -> int:
                 "readiness-verdict": "",
                 "sync-exit-code": "",
                 "docs-fanout-verdict": "",
+                "release-verdict": "",
             }
         )
         return 0 if report["ok"] else 1
@@ -115,9 +122,18 @@ def run_from_env(env: Mapping[str, str]) -> int:
             html_report,
             markdown_report,
         )
+    elif command == "release-check":
+        return _run_release_check_command(
+            env,
+            target,
+            json_report,
+            html_report,
+            markdown_report,
+        )
     else:
         raise ValueError(
-            "command must be one of: audit, init, update, sync, verify, report, doctor"
+            "command must be one of: audit, init, update, sync, verify, "
+            "report, release-check, doctor"
         )
 
     json_path = _write_json_report(json_report, target, result)
@@ -138,6 +154,7 @@ def run_from_env(env: Mapping[str, str]) -> int:
             "readiness-verdict": "",
             "sync-exit-code": "",
             "docs-fanout-verdict": "",
+            "release-verdict": "",
         }
     )
     if fail_on_score and result.overall < min_score:
@@ -180,6 +197,7 @@ def _run_sync_command(
             "readiness-verdict": report.verdict,
             "sync-exit-code": str(exit_code),
             "docs-fanout-verdict": "",
+            "release-verdict": "",
         },
     )
     return exit_code
@@ -228,6 +246,7 @@ def _run_verify_command(
             "readiness-verdict": "",
             "sync-exit-code": "",
             "docs-fanout-verdict": "",
+            "release-verdict": "",
         },
     )
     if report.mode != "run":
@@ -284,9 +303,60 @@ def _run_report_command(
             "readiness-verdict": payload["readiness"]["verdict"],
             "sync-exit-code": "",
             "docs-fanout-verdict": payload["docsFanout"]["contract"]["verdict"],
+            "release-verdict": "",
         },
     )
     return 2 if payload["docsFanout"]["contract"]["verdict"] == "blocked" else 0
+
+
+def _run_release_check_command(
+    env: Mapping[str, str],
+    target: Path,
+    json_report: str,
+    html_report: str,
+    markdown_report: str,
+) -> int:
+    if html_report:
+        raise ValueError("html-report is not supported for command=release-check")
+    max_files = _int_input(
+        env.get("INPUT_REPORT_MAX_FILES", "4000"),
+        "report-max-files",
+    )
+    if max_files <= 0:
+        raise ValueError("report-max-files must be greater than 0")
+    payload = build_release_check(
+        target,
+        explicit_commands=_commands_input(env.get("INPUT_REPORT_COMMAND", "")),
+        max_files=max_files,
+        min_score=_score_input(env.get("INPUT_MIN_SCORE", "85"), "min-score"),
+        since=env.get("INPUT_REPORT_SINCE", "").strip() or None,
+        require_docs_fanout_budget=_bool_input(
+            env.get("INPUT_REQUIRE_DOCS_FANOUT_BUDGET", "false")
+        ),
+        require_sbom=_bool_input(env.get("INPUT_REQUIRE_SBOM", "false")),
+    )
+    json_path = write_json_payload(json_report, target, payload)
+    markdown_path = write_markdown_release_check(markdown_report, target, payload)
+    text_report = format_release_check(payload)
+    print(text_report)
+    _summary(env, "HarnessForge Release Check", _release_check_summary_markdown(payload))
+    _output(
+        env,
+        {
+            "overall-score": str(payload["summary"]["auditScore"]),
+            "bottleneck": payload["sourceReport"]["audit"]["bottleneck"],
+            "report-json": json_path,
+            "report-html": "",
+            "report-markdown": markdown_path,
+            "changed-files": "0",
+            "verify-verdict": "",
+            "readiness-verdict": payload["summary"]["readinessVerdict"],
+            "sync-exit-code": "",
+            "docs-fanout-verdict": payload["summary"]["docsFanoutVerdict"],
+            "release-verdict": payload["verdict"],
+        },
+    )
+    return release_check_exit_code(payload)
 
 
 def _write_json_report(path_text: str, target: Path, result: Any) -> str:
@@ -389,6 +459,24 @@ def _report_summary_markdown(payload: dict[str, Any]) -> str:
         f"| Repo map | `{repo_map['componentCount']}` components, `{repo_map['sourceOfTruthCount']}` source docs |",
         f"| SBOM files | `{repo_map['sbomCount']}` |",
     ]
+    if payload["nextActions"]:
+        lines.extend(["", "Next actions:"])
+        lines.extend(f"- {item}" for item in payload["nextActions"][:5])
+    return "\n".join(lines)
+
+
+def _release_check_summary_markdown(payload: dict[str, Any]) -> str:
+    lines = [
+        f"- Verdict: `{payload['verdict']}`",
+        f"- Audit score: `{payload['summary']['auditScore']}/100`",
+        f"- Readiness: `{payload['summary']['readinessVerdict']}`",
+        f"- Verify evidence: `{payload['summary']['verifyEvidenceVerdict']}`",
+        "",
+        "| Gate | Status |",
+        "| --- | --- |",
+    ]
+    for gate in payload["gates"]:
+        lines.append(f"| {gate['id']} | `{gate['status']}` |")
     if payload["nextActions"]:
         lines.extend(["", "Next actions:"])
         lines.extend(f"- {item}" for item in payload["nextActions"][:5])

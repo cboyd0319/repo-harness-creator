@@ -41,6 +41,12 @@ from .readiness import (
     readiness_to_dict,
 )
 from .redact import redact_local_paths
+from .release_check import (
+    build_release_check,
+    format_release_check,
+    release_check_exit_code,
+    write_markdown_release_check,
+)
 from .report import build_report, format_report, write_markdown_report
 from .reports import write_json_payload
 from .session import build_session_report, format_session_report, session_report_to_dict
@@ -305,6 +311,45 @@ def build_parser() -> argparse.ArgumentParser:
         help="write report Markdown to a target-relative path",
     )
     report.set_defaults(func=_report)
+
+    release_check = subparsers.add_parser(
+        "release-check",
+        help="assemble read-only release readiness evidence",
+    )
+    release_check.add_argument("--target", type=Path, default=Path.cwd())
+    release_check.add_argument("--package-manager")
+    release_check.add_argument("--command", dest="commands", action="append", default=[])
+    release_check.add_argument("--min-score", type=int, default=85)
+    release_check.add_argument(
+        "--max-files",
+        type=int,
+        default=4000,
+        help="maximum number of repository files to include in the index summary",
+    )
+    release_check.add_argument(
+        "--since",
+        help="include read-only docs fan-out analysis for changes since this git ref",
+    )
+    release_check.add_argument(
+        "--require-docs-fanout-budget",
+        action="store_true",
+        help="block when docs fan-out exceeds the budget",
+    )
+    release_check.add_argument(
+        "--require-sbom",
+        action="store_true",
+        help="block unless an existing SPDX or CycloneDX SBOM is detected",
+    )
+    release_check.add_argument("--json", action="store_true")
+    release_check.add_argument(
+        "--json-report",
+        help="write release-check JSON to a target-relative path",
+    )
+    release_check.add_argument(
+        "--markdown-report",
+        help="write release-check Markdown to a target-relative path",
+    )
+    release_check.set_defaults(func=_release_check)
 
     plan = subparsers.add_parser(
         "plan",
@@ -816,6 +861,35 @@ def _report_exit_code(payload: dict[str, object]) -> int:
         if isinstance(contract, dict) and contract.get("verdict") == "blocked":
             return 2
     return 0
+
+
+def _release_check(args: argparse.Namespace) -> int:
+    payload = build_release_check(
+        args.target,
+        explicit_package_manager=args.package_manager,
+        explicit_commands=tuple(args.commands),
+        max_files=args.max_files,
+        min_score=args.min_score,
+        require_docs_fanout_budget=args.require_docs_fanout_budget,
+        require_sbom=args.require_sbom,
+        since=args.since,
+    )
+    target = args.target.resolve()
+    json_report = write_json_payload(args.json_report or "", target, payload)
+    markdown_report = write_markdown_release_check(
+        args.markdown_report or "",
+        target,
+        payload,
+    )
+    if args.json:
+        print(json.dumps(payload, indent=2))
+        return release_check_exit_code(payload)
+    if markdown_report:
+        print(f"Markdown release check written to {markdown_report}")
+    if json_report:
+        print(f"JSON release check written to {json_report}")
+    print(format_release_check(payload))
+    return release_check_exit_code(payload)
 
 
 def _plan(args: argparse.Namespace) -> int:

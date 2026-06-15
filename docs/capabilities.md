@@ -40,13 +40,16 @@ boundaries it preserves. See [Usage](usage.md) for commands and
   evidence, effectiveness evidence, first-agent task status, platform
   contract, and docs fan-out routing status into one read-only JSON or Markdown
   report.
+- Assembles read-only release readiness gates from existing report evidence
+  without publishing artifacts, tagging, pushing, uploading, or running target
+  commands.
 - Provides explicit blueprint mode for richer project operating models. Built-in
   packs cover agentic applications, spec-driven projects, web services,
   data/ML, security-sensitive repos, and workflow automation.
 - Provides an offline public-repo fixture corpus for generated-content quality
   and detection regression checks without cloning public repositories.
 - Provides a composite GitHub Action for audit, init, update, sync, verify,
-  report, and doctor workflows.
+  report, release-check, and doctor workflows.
 
 ## Default Boundaries
 
@@ -62,7 +65,7 @@ boundaries it preserves. See [Usage](usage.md) for commands and
   automation. The only optional generated workflow scaffold is the manual
   HarnessForge CI scaffold.
 - It does not run target repository commands during `inspect`, `index`,
-  `effectiveness`, `session`, `report`, `sync --check`, `audit`,
+  `effectiveness`, `session`, `report`, `release-check`, `sync --check`, `audit`,
   `update --drift-report`, or default `verify`. Use `verify --run` when
   command execution is explicitly wanted.
 - It does not clone public repositories or use network access during the
@@ -104,8 +107,9 @@ default posture is intentionally restrictive. See [../SECURITY.md](../SECURITY.m
 for vulnerability reporting, scope, and severity guidance.
 
 - Normal `init`, `inspect`, `index`, `effectiveness`, `session`, `report`,
-  `enhance`, `sync --check`, `audit`, `update`, and `doctor` commands use the
-  Python standard library and do not install runtime dependencies.
+  `release-check`, `enhance`, `sync --check`, `audit`, `update`, and `doctor`
+  commands use the Python standard library and do not install runtime
+  dependencies.
 - Existing files are preserved unless `--force` is explicitly supplied.
 - `--enhance-existing` appends reviewed instruction addenda without replacing
   existing project text.

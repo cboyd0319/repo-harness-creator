@@ -757,11 +757,18 @@ class GenerateAuditTests(unittest.TestCase):
         self.assertIn("Zero-Install Rule", skill)
         self.assertIn("HarnessForge CLI and the HarnessForge GitHub Action are optional", skill)
         self.assertIn("references/repo-harness.md", skill)
+        self.assertIn("trigger contract", skill)
+        self.assertIn("pressure", skill)
         self.assertIn(
             "../../../docs/harness/feedback/verification-matrix.md",
             skill_reference,
         )
         self.assertIn("../../../docs/harness/evidence/evidence-log.md", skill_reference)
+        self.assertIn("https://agentskills.io/specification.md", skill_reference)
+        self.assertIn(
+            "https://github.com/anthropics/skills/tree/main/skills/skill-creator",
+            skill_reference,
+        )
         self.assertIn("repo-owned commands", skill)
 
     def test_generated_harness_skill_matches_agent_skills_spec(self) -> None:
@@ -790,6 +797,8 @@ class GenerateAuditTests(unittest.TestCase):
         self.assertNotIn("--", name)
         self.assertGreaterEqual(len(description), 1)
         self.assertLessEqual(len(description), 1024)
+        self.assertIn("first-agent review", description)
+        self.assertIn("repo-local harness skill", description)
         self.assertLess(len(lines), 500)
 
         expected_refs = ("references/repo-harness.md",)

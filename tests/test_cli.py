@@ -1011,6 +1011,99 @@ class CliTests(unittest.TestCase):
         self.assertIn("## Next Actions", markdown)
         self.assertEqual(payload["schemaVersion"], "harnessforge.report.v1")
 
+    def test_release_check_blocks_missing_verify_evidence_without_running_commands(
+        self,
+    ) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            marker = root / "ran.txt"
+            command = _python_command(
+                "from pathlib import Path; Path('ran.txt').write_text('ran')"
+            )
+            with contextlib.redirect_stdout(io.StringIO()):
+                main(["init", "--target", str(root), "--command", command])
+            stdout = io.StringIO()
+            with contextlib.redirect_stdout(stdout):
+                code = main(["release-check", "--target", str(root), "--json"])
+
+            payload = json.loads(stdout.getvalue())
+
+        self.assertEqual(code, 2)
+        self.assertFalse(marker.exists())
+        self.assertEqual(payload["schemaVersion"], "harnessforge.releaseCheck.v1")
+        self.assertEqual(payload["execution"]["commandsExecuted"], False)
+        self.assertEqual(payload["execution"]["writesPerformed"], False)
+        self.assertEqual(payload["execution"]["publishesPerformed"], False)
+        self.assertEqual(payload["verdict"], "blocked")
+        gates = {item["id"]: item for item in payload["gates"]}
+        self.assertEqual(gates["audit-score"]["status"], "passed")
+        self.assertEqual(gates["verify-evidence"]["status"], "blocked")
+        self.assertIn(
+            "no stored verify evidence report found",
+            gates["verify-evidence"]["message"],
+        )
+
+    def test_release_check_writes_target_contained_evidence_reports(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            with contextlib.redirect_stdout(io.StringIO()):
+                main(
+                    [
+                        "init",
+                        "--target",
+                        str(root),
+                        "--command",
+                        "python -m compileall .",
+                    ]
+                )
+            _write_verify_report(root, "docs/harness/evidence/verify-2026-06-15.json")
+            _write_first_agent_review(root)
+            task = root / "docs/harness/state/first-agent-task.md"
+            task.write_text(
+                task.read_text(encoding="utf-8").replace("REVIEW REQUIRED: ", ""),
+                encoding="utf-8",
+            )
+            stdout = io.StringIO()
+            with contextlib.redirect_stdout(stdout):
+                code = main(
+                    [
+                        "release-check",
+                        "--target",
+                        str(root),
+                        "--json-report",
+                        "docs/harness/evidence/release-check.json",
+                        "--markdown-report",
+                        "docs/harness/evidence/release-check.md",
+                    ]
+                )
+
+            payload = json.loads(
+                (root / "docs/harness/evidence/release-check.json").read_text(
+                    encoding="utf-8"
+                )
+            )
+            markdown = (root / "docs/harness/evidence/release-check.md").read_text(
+                encoding="utf-8"
+            )
+
+        self.assertEqual(code, 1)
+        self.assertIn(
+            "JSON release check written to docs/harness/evidence/release-check.json",
+            stdout.getvalue(),
+        )
+        self.assertIn(
+            "Markdown release check written to docs/harness/evidence/release-check.md",
+            stdout.getvalue(),
+        )
+        self.assertEqual(payload["verdict"], "warning")
+        gates = {item["id"]: item for item in payload["gates"]}
+        self.assertEqual(gates["verify-evidence"]["status"], "passed")
+        self.assertEqual(gates["first-agent-lifecycle"]["status"], "passed")
+        self.assertEqual(gates["effectiveness-evidence"]["status"], "warning")
+        self.assertEqual(gates["sbom"]["status"], "not_required")
+        self.assertIn("# HarnessForge Release Check", markdown)
+        self.assertIn("Publishes performed: `false`", markdown)
+
     def test_plan_json_maps_changed_files_without_running_checks(self) -> None:
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp)

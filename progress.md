@@ -90,6 +90,22 @@ generated harness effectiveness, product-boundary enforcement, or verification.
 
 ## Verification
 
+Latest release-check and skill-source verification:
+
+- focused CLI/Action tests passed with 107 tests after adding
+  `harnessforge release-check` and Action `command: release-check`.
+- Anthropic `skill-creator` local source review added generated harness-skill
+  guidance for trigger-specific descriptions, progressive disclosure, and
+  pressure-prompt evaluation.
+- generated-content tests passed with 56 tests after trimming generated
+  Markdown back under budget.
+- full unit discovery passed with 255 tests; compile, JSON validation, pin
+  check, research source check, self-audit `100/100`, generated smoke audit
+  `100/100`, report JSON smoke, expected-block release-check JSON smoke, diff
+  hygiene, and local-path scan passed.
+- roadmap now tracks accepted `src/harnessforge/` source package organization
+  work as product-internal cleanup.
+
 Latest Action summary verification:
 
 - `PYTHONPATH=src:. python3 -m unittest tests.test_github_action`
@@ -127,9 +143,8 @@ Earlier optimization verification also included:
 Continue accepted pre-release backlog before release prep:
 
 - optional SBOM adapter design if needed
-- `release-check`
 - harness maturity levels
 - expanded policy presets
 - interactive quickstart/init UX
 
-Do not push unless the user asks or a release/batch boundary is declared.
+The user asked to commit and push after the current turn, then continue.

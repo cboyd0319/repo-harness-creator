@@ -109,6 +109,17 @@ generated harness quality, product boundaries, and verification evidence intact.
 
 Latest checks:
 
+- focused CLI/Action tests passed with 107 tests after adding read-only
+  `release-check` and Action `command: release-check`
+- local Anthropic `skill-creator` source review informed generated harness-skill
+  trigger, progressive-disclosure, and pressure-prompt guidance
+- generated-content tests passed with 56 tests after template and manifest
+  trimming
+- full unit discovery passed with 255 tests; compile, JSON validation, pin
+  check, research source check, self-audit `100/100`, generated smoke audit
+  `100/100`, report JSON smoke, expected-block release-check JSON smoke, diff
+  hygiene, and local-path scan passed
+- accepted roadmap item added for reorganizing `src/harnessforge/`
 - focused CLI tests passed with 82 tests
 - focused Action tests passed with 21 tests
 - focused generated/audit tests passed with 56 tests
@@ -161,5 +172,6 @@ Rerun focused tests after any further template or scoring edit.
 
 If the user wants more backlog work, continue with instruction-quality and
 signal-to-noise task-class guidance, optional SBOM adapter design,
-`release-check`, harness maturity levels, or expanded policy presets. If the
-user asks to checkpoint, commit the current slice first.
+`src/harnessforge/` organization, harness maturity levels, expanded policy
+presets, or interactive quickstart/init UX. The user asked to commit and push
+after the current turn, then continue.

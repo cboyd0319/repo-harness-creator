@@ -100,6 +100,31 @@ analysis for changed files since a git ref. Add
 `--require-docs-fanout-budget` when an over-budget docs fan-out or duplicated
 durable fact block should return a blocking report status.
 
+## Release Check
+
+Assemble release readiness evidence without publishing, tagging, uploading,
+pushing, or running target repository commands:
+
+```bash
+harnessforge release-check --target /path/to/repo
+harnessforge release-check --target /path/to/repo --since HEAD
+harnessforge release-check --target /path/to/repo --json
+harnessforge release-check --target /path/to/repo --json-report docs/harness/evidence/release-check.json
+harnessforge release-check --target /path/to/repo --markdown-report docs/harness/evidence/release-check.md
+```
+
+`release-check` is a release gate over existing evidence. It requires current
+passed run-mode verify evidence, applies the `--min-score` audit threshold,
+checks generated drift, instruction quality, first-agent lifecycle, docs
+fan-out, release controls, effectiveness evidence, and existing SBOM evidence.
+It returns `0` for passed, `1` for warning, and `2` for blocked.
+
+Use `--command` when detection cannot infer repo-owned verification commands;
+release-check records the command as readiness context but does not execute it.
+Set `--require-docs-fanout-budget` when docs fan-out should block release
+readiness. Set `--require-sbom` only after the project has opted into SBOM
+evidence as a hard release gate.
+
 ## Readiness And Sync
 
 `inspect --readiness` and `sync --check` are static and read-only. They do not
@@ -397,6 +422,7 @@ alone unless `--force` is supplied.
 | `harnessforge effectiveness` | Assess stored real-agent effectiveness evidence without running benchmarks |
 | `harnessforge session` | Show a read-only restart snapshot with git, readiness, audit, and state-file status |
 | `harnessforge report` | Compose readiness, audit, drift, index, and evidence into one read-only report |
+| `harnessforge release-check` | Assemble read-only release readiness gates from existing evidence |
 | `harnessforge enhance` | Review existing instruction files without writing files |
 | `harnessforge plan` | Map changed files to a read-only verification plan |
 | `harnessforge sync --check` | Run a read-only CI preflight with readiness exit codes |
@@ -414,5 +440,6 @@ Run `harnessforge <command> --help` for command-specific options.
 
 Use [action.md](action.md) for every Action input, output, and command mode,
 including `command: sync` for read-only readiness preflight and
+`command: release-check` for release evidence gates, plus
 `command: verify` with read-only plan mode by default and explicit
 `verify-run: "true"` execution.

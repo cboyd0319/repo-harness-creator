@@ -11,6 +11,9 @@ or other externally visible release steps.
 - Run `harnessforge verify --target . --run --json-report
   docs/harness/evidence/verify-<date>.json`, or record why runnable project
   verification could not run.
+- Run `harnessforge release-check --target . --markdown-report
+  docs/harness/evidence/release-check-<date>.md` to assemble the current
+  read-only release evidence gates.
 - Review any failed, timed_out, or blocked check with owner, risk, and next
   action before promotion.
 - Run `python scripts/check_pins.py --root .`.

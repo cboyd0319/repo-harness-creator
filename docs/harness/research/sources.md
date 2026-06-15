@@ -20,6 +20,7 @@ packaging, CI, or platform support changes.
 | LangChain, "The Anatomy of an Agent Harness" | Filesystem, state, collaboration surface, sandbox and memory primitives |
 | LangChain Deep Agents harness docs | Execution environment, context management, delegation, and HITL patterns |
 | AGENTS.md open format and OpenAI AGENTS.md docs | Predictable root instruction file for coding agents |
+| Anthropic `skill-creator` skill, `https://github.com/anthropics/skills/tree/main/skills/skill-creator` | Skill maintenance patterns for trigger-specific descriptions, progressive disclosure, real-task pressure prompts, with-skill/baseline evaluation, and viewer-backed human review |
 | Claude Code memory docs | `CLAUDE.md` loader behavior and `@AGENTS.md` import pattern |
 | Gemini CLI `GEMINI.md` docs | `GEMINI.md` loader behavior and `@file.md` import pattern |
 | Google Antigravity Agent docs | Antigravity support for mounted `AGENTS.md` instruction files |

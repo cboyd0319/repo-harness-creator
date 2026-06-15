@@ -55,6 +55,7 @@ This repository ships two related surfaces:
 | Avoid overwriting local work | Preserve existing files by default and track generated ownership |
 | Know whether a repo is ready | Run read-only readiness and sync preflight checks |
 | Review harness health in one place | Compose readiness, audit, drift, index, and evidence into one report |
+| Prepare release evidence | Run a read-only release check over audit, verify evidence, drift, docs fan-out, and lifecycle gates |
 | Keep generated harnesses honest | Audit structure, drift, security boundaries, and lifecycle controls |
 | Respect existing spec systems | Detect `.specify`, `specs/`, `aspec/`, work-item templates, and workflow surfaces |
 | Build deeper project operating models | Apply optional blueprints for agentic apps, SDD, web services, data/ML, security, and automation |
@@ -129,6 +130,12 @@ Create one review artifact:
 harnessforge report --target /path/to/repo --markdown-report docs/harness/evidence/report.md
 ```
 
+Assemble release readiness evidence:
+
+```bash
+harnessforge release-check --target /path/to/repo --markdown-report docs/harness/evidence/release-check.md
+```
+
 See [Usage](docs/usage.md) for readiness checks, repo indexing,
 existing-instruction review, verification plans, unified reports, explicit
 verify runs, `harnessforge update` drift workflows, blueprints, and CI
@@ -143,6 +150,7 @@ preflight.
 | `index` | Read-only structural map for large existing repos |
 | `session` | Restart snapshot with git, readiness, audit, and state-file status |
 | `report` | Unified read-only harness status report with optional JSON and Markdown outputs |
+| `release-check` | Read-only release readiness gate over existing harness evidence |
 | `enhance` | Review existing instruction files without writing files |
 | `plan` | Diff-aware verification planning without command execution |
 | `sync --check` | CI-oriented readiness preflight with stable exit codes |

@@ -2115,6 +2115,8 @@ def _manifest_content(
             "Release Controls",
             "--run --json-report",
             "owner, risk, and next action",
+            "harnessforge release-check",
+            "release evidence gates",
             "Manual platform",
             "SBOM",
             "provenance",

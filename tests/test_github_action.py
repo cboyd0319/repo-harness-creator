@@ -114,7 +114,10 @@ class GitHubActionTests(unittest.TestCase):
         action = (root / "action.yml").read_text(encoding="utf-8")
         docs = (root / "docs/action.md").read_text(encoding="utf-8")
 
-        self.assertIn("audit, init, update, sync, verify, report, or doctor", action)
+        self.assertIn(
+            "audit, init, update, sync, verify, report, release-check, or doctor",
+            action,
+        )
         self.assertIn("require-verify-evidence", action)
         self.assertIn("sync-command", action)
         self.assertIn("readiness-verdict", action)
@@ -141,6 +144,18 @@ class GitHubActionTests(unittest.TestCase):
         self.assertIn("report-markdown", docs)
         self.assertIn("report-since", docs)
         self.assertIn("require-docs-fanout-budget", docs)
+
+    def test_action_manifest_and_docs_expose_release_check_command(self) -> None:
+        root = Path(__file__).resolve().parents[1]
+        action = (root / "action.yml").read_text(encoding="utf-8")
+        docs = (root / "docs/action.md").read_text(encoding="utf-8")
+
+        self.assertIn("command: release-check", docs)
+        self.assertIn("require-sbom", action)
+        self.assertIn("release-verdict", action)
+        self.assertIn("Release Evidence Check", docs)
+        self.assertIn("release-verdict", docs)
+        self.assertIn("require-sbom", docs)
 
     def test_action_audit_writes_outputs_and_reports(self) -> None:
         with tempfile.TemporaryDirectory() as tmp:
@@ -235,6 +250,59 @@ class GitHubActionTests(unittest.TestCase):
         self.assertIn("First-agent lifecycle", summary_text)
         self.assertIn("Repo map", summary_text)
         self.assertIn("SBOM files", summary_text)
+
+    def test_action_release_check_writes_reports_and_outputs_verdict(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            create_harness(
+                root,
+                commands=(
+                    _python_command(
+                        "from pathlib import Path; Path('ran.txt').write_text('ran')"
+                    ),
+                ),
+            )
+            _write_verify_report(root, "docs/harness/evidence/verify-current.json")
+            output = root / "outputs.txt"
+            summary = root / "summary.md"
+            env = {
+                "INPUT_COMMAND": "release-check",
+                "INPUT_TARGET": str(root),
+                "INPUT_REPORT_COMMAND": _python_command(
+                    "from pathlib import Path; Path('marker.txt').write_text('ran')"
+                ),
+                "INPUT_JSON_REPORT": "reports/release-check.json",
+                "INPUT_MARKDOWN_REPORT": "reports/release-check.md",
+                "GITHUB_OUTPUT": str(output),
+                "GITHUB_STEP_SUMMARY": str(summary),
+            }
+
+            with contextlib.redirect_stdout(io.StringIO()):
+                code = run_from_env(env)
+
+            payload = json.loads(
+                (root / "reports" / "release-check.json").read_text(encoding="utf-8")
+            )
+            markdown = (root / "reports" / "release-check.md").read_text(
+                encoding="utf-8"
+            )
+            outputs = _parse_github_output(output.read_text(encoding="utf-8"))
+            summary_text = summary.read_text(encoding="utf-8")
+
+        self.assertEqual(code, 1)
+        self.assertEqual(payload["schemaVersion"], "harnessforge.releaseCheck.v1")
+        self.assertEqual(payload["verdict"], "warning")
+        self.assertEqual(payload["execution"]["commandsExecuted"], False)
+        self.assertFalse((root / "ran.txt").exists())
+        self.assertFalse((root / "marker.txt").exists())
+        self.assertEqual(outputs["release-verdict"], "warning")
+        self.assertEqual(outputs["report-json"], "reports/release-check.json")
+        self.assertEqual(outputs["report-markdown"], "reports/release-check.md")
+        self.assertEqual(outputs["readiness-verdict"], "ready")
+        self.assertEqual(outputs["docs-fanout-verdict"], "not_required")
+        self.assertIn("# HarnessForge Release Check", markdown)
+        self.assertIn("HarnessForge Release Check", summary_text)
+        self.assertIn("first-agent-lifecycle", summary_text)
 
     def test_action_sync_writes_readiness_report_and_outputs(self) -> None:
         with tempfile.TemporaryDirectory() as tmp:

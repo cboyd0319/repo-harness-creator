@@ -673,25 +673,38 @@ Remaining polish:
 
 ### Release Evidence Automation
 
-Add a `harnessforge release-check --target <repo>` command or equivalent report
-mode for release prep.
+Status: implemented for the current pre-release contract.
 
-Candidate checks:
+`harnessforge release-check --target <repo>` assembles read-only release
+readiness evidence from the unified report surface. It never publishes, tags,
+uploads, pushes, or runs target repository commands. It returns `0` for passed,
+`1` for warning, and `2` for blocked, and can write target-relative JSON or
+Markdown evidence files.
 
-- package build and isolated install smoke status;
+Implemented checks:
+
 - harness audit status;
 - sync preflight status;
-- pin and research-source checks where applicable;
-- docs local-link and local-path hygiene;
-- generated-harness smoke test;
-- optional platform CI evidence;
-- SBOM/provenance report presence when the project opts into those controls;
+- current run-mode verify evidence;
+- generated-file drift;
+- instruction quality;
+- first-agent lifecycle;
+- docs fan-out budget status;
+- release controls presence;
+- effectiveness evidence;
+- existing SPDX or CycloneDX SBOM evidence, optionally hard-gated with
+  `--require-sbom`;
 - immediate clean-state checks and periodic cleanup or drift-scan evidence when
-  the target project defines those sensors;
-- release notes and tag readiness.
+  the target project defines those sensors.
 
-Release checks should assemble evidence. They should not publish, tag, upload,
-or push without explicit user action.
+Remaining optional release-policy extensions:
+
+- package build and isolated install smoke evidence import;
+- pin and research-source check evidence import where applicable;
+- generated-harness smoke evidence import;
+- optional platform CI evidence import;
+- provenance report presence when the project opts into that control;
+- release notes and tag readiness evidence import.
 
 ### Harness Maturity Levels
 
@@ -733,6 +746,28 @@ Candidate presets:
 
 Presets should have source-reviewed rationale, dry-run output, and fixture
 coverage before they become recommended defaults.
+
+### Source Package Organization
+
+Status: accepted.
+
+Reorganize `src/harnessforge/` so related command, report, generator, evidence,
+and policy modules are easier to navigate and maintain.
+
+Boundary:
+
+- local CLI/runtime source organization is in scope;
+- generated target harness content is out of scope unless imports or templates
+  need a direct adjustment;
+- GitHub Action behavior is out of scope unless module moves affect the Action
+  entry point or packaging data;
+- package import compatibility is not required before the first release, but
+  tests must prove CLI entry points, Action dispatch, and generated rendering
+  still work.
+
+Done when the package layout has clear module groups, stale imports are gone,
+focused import/CLI/Action/generator tests pass, and the public docs do not
+advertise internal paths as stable API.
 
 ## Suggested Build Order
 

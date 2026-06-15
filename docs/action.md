@@ -23,6 +23,10 @@ state files, or release process are present in the caller repository.
   index, verify evidence, effectiveness evidence, first-agent status, and
   platform contract into one review artifact, and writes only requested JSON
   or Markdown reports inside that target.
+- `release-check` reads the declared `target`, assembles release readiness
+  gates from the same report evidence, writes only requested JSON or Markdown
+  reports inside that target, and never publishes, tags, uploads, pushes, or
+  runs target commands.
 - `init` and applied `update` may write generated harness files inside
   `target`; callers should grant write permissions only when they intend to
   commit or open a pull request.
@@ -117,6 +121,31 @@ docs fan-out analysis for changed files since a git ref. Use
 `require-docs-fanout-budget: "true"` when that analysis should fail the Action
 on over-budget fan-out or duplicated durable fact blocks.
 
+## Release Evidence Check
+
+Assemble release readiness evidence without publishing anything:
+
+```yaml
+- uses: cboyd0319/harnessforge@<reviewed-commit-sha> # v1
+  with:
+    command: release-check
+    json-report: docs/harness/evidence/release-check.json
+    markdown-report: docs/harness/evidence/release-check.md
+```
+
+`command: release-check` returns `0` for passed, `1` for warning, and `2` for
+blocked. It requires current passed run-mode verify evidence, applies the
+`min-score` audit threshold, checks generated drift, first-agent lifecycle,
+instruction quality, docs fan-out, release controls, effectiveness evidence,
+and existing SBOM evidence. Use `report-command` when detection cannot infer
+repo-owned verification commands; release-check records those commands but does
+not execute them. Set `require-sbom: "true"` only when the project has opted
+into SBOM evidence as a hard release gate.
+
+The `release-verdict`, `readiness-verdict`, `docs-fanout-verdict`,
+`overall-score`, `report-json`, and `report-markdown` outputs expose the gate
+result to later workflow steps.
+
 ## Verify Project Checks
 
 Plan verification checks without running target commands:
@@ -195,7 +224,7 @@ and not behavior embedded in the composite Action runtime.
 
 | Input | Default | Purpose |
 | --- | --- | --- |
-| `command` | `audit` | `audit`, `init`, `update`, `sync`, `verify`, `report`, or `doctor` |
+| `command` | `audit` | `audit`, `init`, `update`, `sync`, `verify`, `report`, `release-check`, or `doctor` |
 | `target` | `.` | Repository path to inspect or modify |
 | `python-version` | `3.13.14` | Python version passed to `actions/setup-python` |
 | `min-score` | `85` | Minimum passing structural audit score from 0 to 100 |
@@ -209,15 +238,16 @@ and not behavior embedded in the composite Action runtime.
 | `verify-run` | `false` | Execute checks when `command` is `verify`; default verify mode is read-only plan mode |
 | `verify-command` | empty | Optional newline-separated repo-owned verification commands for `command: verify` |
 | `verify-timeout-seconds` | `300` | Per-command timeout when `command` is `verify` and `verify-run` is `true` |
-| `require-verify-evidence` | `false` | Require current passed stored verify evidence when `command` is `sync` or `report` |
+| `require-verify-evidence` | `false` | Require current passed stored verify evidence when `command` is `sync` or `report`; release-check always requires it |
 | `sync-command` | empty | Optional newline-separated repo-owned readiness commands for `command: sync`; commands are not executed |
-| `report-command` | empty | Optional newline-separated repo-owned readiness commands for `command: report`; commands are not executed |
-| `report-max-files` | `4000` | Maximum number of files included in the `command: report` structural index summary |
-| `report-since` | empty | Optional git ref for `command: report` docs fan-out analysis; no target commands are executed |
-| `require-docs-fanout-budget` | `false` | Fail `command: report` when docs fan-out exceeds the budget or duplicate durable fact blocks are present |
+| `report-command` | empty | Optional newline-separated repo-owned readiness commands for `command: report` or `command: release-check`; commands are not executed |
+| `report-max-files` | `4000` | Maximum number of files included in the `command: report` or `command: release-check` structural index summary |
+| `report-since` | empty | Optional git ref for `command: report` or `command: release-check` docs fan-out analysis; no target commands are executed |
+| `require-docs-fanout-budget` | `false` | Fail `command: report` or block `command: release-check` when docs fan-out exceeds the budget or duplicate durable fact blocks are present |
+| `require-sbom` | `false` | Block `command: release-check` when no existing SPDX or CycloneDX SBOM is detected |
 | `html-report` | empty | Optional target-relative HTML report path; POSIX and Windows absolute/rooted paths are rejected |
-| `json-report` | empty | Optional target-relative audit, sync, verify, or report JSON report path; POSIX and Windows absolute/rooted paths are rejected |
-| `markdown-report` | empty | Optional target-relative Markdown report path for `command: report`; POSIX and Windows absolute/rooted paths are rejected |
+| `json-report` | empty | Optional target-relative audit, sync, verify, report, or release-check JSON report path; POSIX and Windows absolute/rooted paths are rejected |
+| `markdown-report` | empty | Optional target-relative Markdown report path for `command: report` or `command: release-check`; POSIX and Windows absolute/rooted paths are rejected |
 
 Report paths must be relative and stay inside `target`. Absolute paths and
 traversal outside the target repository are rejected.
@@ -233,8 +263,10 @@ traversal outside the target repository are rejected.
 | `report-markdown` | Target-relative Markdown report path when requested |
 | `changed-files` | Number of files written or enhanced by `init` or applied `update` |
 | `verify-verdict` | Verify verdict when `command` is `verify` |
-| `readiness-verdict` | Readiness verdict when `command` is `sync` or `report` |
+| `readiness-verdict` | Readiness verdict when `command` is `sync`, `report`, or `release-check` |
 | `sync-exit-code` | Sync readiness exit code when `command` is `sync` |
+| `docs-fanout-verdict` | Docs fan-out verdict when `command` is `report` or `release-check` |
+| `release-verdict` | Release-check verdict when `command` is `release-check` |
 
 Report path outputs use forward slashes on every runner so workflow consumers
 can handle them consistently across Windows and POSIX jobs.
@@ -243,6 +275,8 @@ When `GITHUB_STEP_SUMMARY` is available, the Action writes a concise Markdown
 summary. `command: report` summarizes readiness, audit score, drift, docs
 fan-out, verify evidence, effectiveness evidence, instruction quality,
 first-agent lifecycle, repo-map component/source counts, and SBOM file count.
+`command: release-check` summarizes the release verdict, audit score,
+readiness, verify evidence, and individual release gates.
 `command: sync` includes readiness, warning, review-required, runnable-check,
 instruction-quality, and first-agent lifecycle counts.
 

@@ -8,7 +8,7 @@ branding:
 
 inputs:
   command:
-    description: "Command to run: audit, init, update, sync, verify, report, or doctor."
+    description: "Command to run: audit, init, update, sync, verify, report, release-check, or doctor."
     required: false
     default: audit
   target:
@@ -87,6 +87,10 @@ inputs:
     description: Fail command report when docs fan-out exceeds the configured budget or duplicate durable fact blocks are present.
     required: false
     default: "false"
+  require-sbom:
+    description: Fail command release-check when no existing SPDX or CycloneDX SBOM is detected.
+    required: false
+    default: "false"
   html-report:
     description: Optional target-relative path for an HTML audit report.
     required: false
@@ -129,8 +133,11 @@ outputs:
     description: Sync readiness exit code when command is sync.
     value: ${{ steps.harnessforge.outputs.sync-exit-code }}
   docs-fanout-verdict:
-    description: Docs fan-out verdict when command is report.
+    description: Docs fan-out verdict when command is report or release-check.
     value: ${{ steps.harnessforge.outputs.docs-fanout-verdict }}
+  release-verdict:
+    description: Release-check verdict when command is release-check.
+    value: ${{ steps.harnessforge.outputs.release-verdict }}
 
 runs:
   using: composite
@@ -165,6 +172,7 @@ runs:
         INPUT_REPORT_MAX_FILES: ${{ inputs.report-max-files }}
         INPUT_REPORT_SINCE: ${{ inputs.report-since }}
         INPUT_REQUIRE_DOCS_FANOUT_BUDGET: ${{ inputs.require-docs-fanout-budget }}
+        INPUT_REQUIRE_SBOM: ${{ inputs.require-sbom }}
         INPUT_HTML_REPORT: ${{ inputs.html-report }}
         INPUT_JSON_REPORT: ${{ inputs.json-report }}
         INPUT_MARKDOWN_REPORT: ${{ inputs.markdown-report }}
