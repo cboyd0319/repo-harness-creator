@@ -1097,6 +1097,7 @@ def _manifest_content(
             "When To Add Harness",
             "Assessment And Updates",
             "project-owned generated files",
+            "command: sync",
         ],
         "docs/harness/change-contract.md": [
             "Problem",
@@ -1276,6 +1277,10 @@ def _manifest_content(
             "cancel-in-progress: true",
             "persist-credentials: false",
             "harnessforge@<reviewed-commit-sha>",
+            "Read-only sync preflight",
+            "command: sync",
+            "require-verify-evidence",
+            "sync-exit-code",
         ]
     if with_self_heal_workflow:
         required_files.append(".github/workflows/harness-self-heal.yml")

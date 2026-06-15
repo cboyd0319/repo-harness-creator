@@ -1626,6 +1626,10 @@ class CliTests(unittest.TestCase):
         self.assertIn("Optional workflow scaffold review required", stdout.getvalue())
         self.assertIn("<reviewed-commit-sha>", stdout.getvalue())
         self.assertIn("permissions", stdout.getvalue())
+        self.assertIn(
+            "sync preflight warnings are advisory by default", stdout.getvalue()
+        )
+        self.assertIn("verify evidence gating is off by default", stdout.getvalue())
 
     def test_init_can_generate_macos_only_contract(self) -> None:
         with tempfile.TemporaryDirectory() as tmp:

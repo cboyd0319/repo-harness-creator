@@ -547,6 +547,12 @@ returns the CLI readiness exit code, and exposes `readiness-verdict` plus
 `sync-exit-code` outputs. `require-verify-evidence: "true"` enables the same
 stored verify evidence gate in CI. `sync-command` can provide non-executed
 readiness command overrides when detection cannot infer a project check.
+The optional generated CI workflow scaffold now uses that Action sync preflight
+before audit. It remains manual-only, keeps `require-verify-evidence: "false"`
+by default, records `docs/harness/evidence/sync-preflight.json`, treats warning
+verdicts as advisory, and stops only on blocked readiness using bracket-safe
+Action output syntax for `sync-exit-code`. Generated and root docs describe
+that boundary, and CLI generation warnings call out the default policy.
 `scripts/refresh_research.py --check` validates duplicate source IDs and URLs,
 required fields, placeholder text, canonical URL shape, arXiv `/abs/` URLs,
 lock-file consistency, and local-path leakage before any metadata fetch. Root
@@ -565,21 +571,21 @@ image assumptions. Generated change contracts now ask for current
 primary-source evidence for platform-impacting changes. The primary-source
 review checked Python version status, GitHub hosted runner labels, and the
 GitHub runner-images Windows VS2026 migration notice.
-Current robust-mode verification passes: 6 focused blueprint tests, 6 focused
-verify run-mode tests, focused GitHub Action tests, focused generated
-verify-evidence coverage, focused verify report-persistence tests, focused
-verify-evidence gate tests, focused Action sync tests, full unit discovery
-with 202 tests, compile, JSON parse, pin check, research source check,
-`verify --json` plan/run/report smokes, Action verify report smokes,
-blueprint JSON/apply smokes, self-audit `100/100`, local-path scan, and diff
-hygiene. `./init.sh` and `pwsh -NoProfile -File ./init.ps1` both pass with 202
-tests, pin check, research source check, and self-audit `100/100`. `sync
---check` returns the expected warning for local workflow and instruction review
-surfaces without blockers or generated drift.
-The next highest-value product slice is optional generated workflow integration
-for the Action sync preflight. Update only explicitly requested workflow
-scaffolds, keep manual triggers and review-required comments, and do not make
-verify-evidence gating the default.
+Current robust-mode verification passes: focused generated workflow and CLI
+warning tests, focused GitHub Action tests, focused generated verify-evidence
+coverage, focused verify report-persistence tests, focused verify-evidence gate
+tests, focused Action sync tests, full unit discovery with 202 tests, compile,
+JSON/YAML validation, pin check, research source check, rendered optional
+workflow audit and pin smoke, expected-warning sync JSON smoke, self-audit
+`100/100`, changed-file local-path scan, and diff hygiene. `./init.sh` and
+`pwsh -NoProfile -File ./init.ps1` both pass with 202 tests, pin check,
+research source check, and self-audit `100/100`. `sync --check` returns the
+expected warning for local workflow and instruction review surfaces without
+blockers or generated drift.
+The robust-mode backlog item for generated workflow sync preflight is closed.
+The next highest-value slice is release prep: review the current diff, run the
+release checklist, rebuild the isolated package smoke, and decide whether to
+trigger manual macOS and Windows platform CI.
 Existing eval guidance comes from the Harness Forge, Meta-Harness, Code as
 Agent Harness catalog, and arXiv harness-eval reviews; those sources are mined
 only for product ideas and are not copied into generated target-repo defaults.

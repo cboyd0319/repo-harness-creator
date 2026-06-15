@@ -234,6 +234,9 @@ class GenerateAuditTests(unittest.TestCase):
             self_heal = (root / ".github/workflows/harness-self-heal.yml").read_text(
                 encoding="utf-8"
             )
+            manifest = json.loads(
+                (root / "docs/harness/manifest.json").read_text(encoding="utf-8")
+            )
             written = {
                 str(write.path.resolve().relative_to(resolved_root))
                 for write in writes
@@ -245,8 +248,23 @@ class GenerateAuditTests(unittest.TestCase):
         self.assertIn("workflow_dispatch", ci)
         self.assertIn("cancel-in-progress: true", ci)
         self.assertIn("persist-credentials: false", ci)
+        self.assertNotIn("schedule:", ci)
+        self.assertIn("REVIEW REQUIRED: verify evidence gating is off by default", ci)
+        self.assertIn("name: Read-only sync preflight", ci)
+        self.assertIn("continue-on-error: true", ci)
+        self.assertIn("command: sync", ci)
+        self.assertIn('require-verify-evidence: "false"', ci)
+        self.assertIn("sync-exit-code", ci)
+        self.assertIn("steps.sync.outputs['sync-exit-code'] == '2'", ci)
+        self.assertLess(ci.index("command: sync"), ci.index("command: audit"))
         self.assertIn("contents: write", self_heal)
         self.assertIn('agent-file: "AGENTS.md"', self_heal)
+        ci_required_snippets = manifest["requiredHarnessSnippets"][
+            ".github/workflows/harnessforge.yml"
+        ]
+        self.assertIn("command: sync", ci_required_snippets)
+        self.assertIn("require-verify-evidence", ci_required_snippets)
+        self.assertIn("Read-only sync preflight", ci_required_snippets)
         git_add_line = next(
             line.strip()
             for line in self_heal.replace(" \\\n            ", " ").splitlines()

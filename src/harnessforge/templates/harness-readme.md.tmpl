@@ -52,6 +52,9 @@ corrections. Existing files are preserved unless `--force` is passed.
 Optional workflow scaffolds are project-owned generated files. They are separate
 from the published HarnessForge Action runtime and from HarnessForge's live
 repository maintenance workflows.
+When the optional CI scaffold is generated, it runs a read-only `command: sync`
+preflight before audit. Verify-evidence gating is off by default, warning
+verdicts are advisory, and blocked readiness stops the workflow.
 
 Run `./init.sh --no-env` or `.\init.ps1 -NoEnv` when checks should run without
 common AI, cloud, or GitHub credentials in the process environment.

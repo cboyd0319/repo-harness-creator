@@ -410,18 +410,38 @@ maintenance loop.
   running target commands or writing generated harness files. It also accepts
   non-executed `sync-command` overrides when detection cannot infer the
   project-owned readiness command.
+- Integrated that sync preflight into the optional generated CI workflow
+  scaffold. The scaffold is still manual-only, runs `command: sync` before
+  audit, records `docs/harness/evidence/sync-preflight.json`, keeps
+  `require-verify-evidence: "false"` by default, treats warning verdicts as
+  advisory, and stops only when readiness is blocked. Generated and root docs
+  now call out that boundary, and generation-time warnings make the default
+  verify-evidence policy visible.
 
 ## Recommended Next Step
 
-Continue the robust-mode buildout before returning to release prep. The next
-highest-value slice is optional generated workflow integration for the Action
-sync preflight: update only the explicitly requested workflow scaffolds, keep
-manual triggers and review-required comments, and do not make verify-evidence
-gating the default.
+The robust-mode backlog item for generated workflow sync preflight is closed.
+Return to release prep with a fresh release-candidate pass: review the current
+diff, run the release checklist, rebuild the isolated package smoke, and decide
+whether to trigger manual macOS and Windows platform CI.
 Push local commits only at an explicit batch/release boundary or user request.
 
 ## Verification Evidence
 
+- `PYTHONPATH=src:. python3 -m unittest
+  tests.test_generate_audit.GenerateAuditTests.test_optional_workflow_scaffolds_are_explicit
+  tests.test_cli.CliTests.test_init_can_scaffold_optional_workflows` first
+  failed because the optional generated CI workflow had no sync preflight and
+  CLI output did not explain the default sync or verify-evidence policy, then
+  passed after updating the workflow template, manifest snippets, and
+  generation warnings. `PYTHONPATH=src:. python3 -m unittest tests.test_generate_audit
+  tests.test_cli` passed with 97 tests. Full unit discovery first caught a
+  docs boundary wording regression, then passed with 202 tests after restoring
+  `project-owned generated files`. `python3 -m compileall src tests scripts`,
+  pin check, research source check, JSON/YAML validation, rendered optional
+  workflow audit and pin smoke, expected-warning sync JSON smoke,
+  `git diff --check`, changed-file local-path scan, self-audit `100/100`,
+  `./init.sh`, and `pwsh -NoProfile -File ./init.ps1` passed with 202 tests.
 - `PYTHONPATH=src:. python3 -m unittest
   tests.test_github_action.GitHubActionTests.test_action_manifest_and_docs_expose_sync_preflight
   tests.test_github_action.GitHubActionTests.test_action_sync_writes_readiness_report_and_outputs

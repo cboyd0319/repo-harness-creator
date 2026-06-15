@@ -708,6 +708,10 @@ def _workflow_warnings(
         "Optional workflow scaffold review required:",
         "  - replace cboyd0319/harnessforge@<reviewed-commit-sha> before relying on it",
         "  - review workflow permissions, triggers, branch, and pull-request behavior",
+        "  - CI sync preflight warnings are advisory by default; blocked "
+        "readiness still stops the workflow",
+        "  - verify evidence gating is off by default until the project stores "
+        "reviewed run-mode evidence",
     )
 
 

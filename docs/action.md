@@ -152,7 +152,11 @@ Optional workflow scaffolds are off by default:
 ```
 
 Review and pin the generated workflows before relying on them. The scaffolded
-workflows use manual triggers by default to avoid surprise CI cost. They are
+workflows use manual triggers by default to avoid surprise CI cost. The CI
+scaffold runs `command: sync` before audit, records
+`docs/harness/evidence/sync-preflight.json`, keeps
+`require-verify-evidence: "false"` by default, treats warning verdicts as
+advisory, and stops only when readiness is blocked. Generated workflows are
 project-owned generated files, not the live HarnessForge repository workflow
 and not behavior embedded in the composite Action runtime.
 

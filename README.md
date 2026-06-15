@@ -390,9 +390,13 @@ harnessforge init --target /path/to/repo --with-ci-workflow
 harnessforge init --target /path/to/repo --with-self-heal-workflow
 ```
 
-Those workflows use manual triggers and placeholder Action pins. Review their
+Those workflows use manual triggers and placeholder Action pins. The CI
+scaffold runs a read-only `command: sync` preflight before audit, treats
+warning verdicts as advisory by default, and stops only when readiness is
+blocked. `require-verify-evidence` stays `"false"` until the project has
+reviewed run-mode verify evidence under `docs/harness/evidence/`. Review
 permissions, triggers, branches, credential surfaces, and full-length commit
-SHAs before relying on them.
+SHAs before relying on the generated workflow.
 
 ## Generated Files
 

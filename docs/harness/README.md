@@ -93,6 +93,9 @@ repositories. Keep it wired to the Python library instead of duplicating logic
 in shell.
 The Action also exposes `command: sync` as a read-only readiness preflight with
 the same exit codes as the CLI and optional `require-verify-evidence` gating.
+The optional generated CI workflow scaffold uses that sync preflight before
+audit, keeps verify-evidence gating off by default, treats warning verdicts as
+advisory, and stops only when readiness is blocked.
 
 Run `./init.sh --no-env` or `.\init.ps1 -NoEnv` when checks should run without
 common AI, cloud, or GitHub credentials in the process environment.
