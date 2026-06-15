@@ -14,8 +14,7 @@ from .redact import redact_local_paths
 SCHEMA_VERSION = "harnessforge.session.v1"
 STATE_FILES = (
     "feature_list.json",
-    "progress.md",
-    "session-handoff.md",
+    "current-state.md",
     "docs/plans/active/status.md",
     "docs/plans/index.json",
 )

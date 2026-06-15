@@ -27,7 +27,7 @@ highest-return repair target.
 | Instructions | `{{agent_file}}`, platform routers |
 | Tools | `init.sh`, `init.ps1`, optional owner tools |
 | Environment | manifests, component inventory, dependency policy |
-| State | `feature_list.json`, `progress.md`, `session-handoff.md`, roadmap |
+| State | `feature_list.json`, `current-state.md`, roadmap |
 | Feedback | verification matrix, sensor registry, evidence log |
 
 ## Effective Agent Boundary
@@ -60,7 +60,7 @@ workflow permissions, and evaluator loops. Changing any of these changes effecti
 2. During the first agent session after generation, use
    `first-agent-task.md` to deepen the harness before unrelated feature work.
    Record the outcome in `docs/harness/evidence/first-agent-review.json`.
-3. Read `feature_list.json`, `progress.md`, and relevant project docs.
+3. Read `feature_list.json`, `current-state.md`, and relevant project docs.
 4. Check `roadmap.md` when selecting, deferring, or reshaping backlog,
    release-prep, or product-scope work.
 5. Use `change-contract.md` for non-trivial work.
@@ -68,7 +68,8 @@ workflow permissions, and evaluator loops. Changing any of these changes effecti
 7. Run the relevant checks from `verification-matrix.md`.
 8. Review `sensor-registry.md` when adding, deleting, or promoting checks.
 9. Use `clean-state-checklist.md` before ending non-trivial sessions.
-10. Record evidence, blockers, skipped checks, and next steps.
+10. Update only the state file that owns the changed fact; do not update
+    state files as a routine bundle.
 11. Update this harness when repeated failures show a missing guide or sensor.
 
 ## Assessment And Updates

@@ -365,9 +365,8 @@ Implemented behavior:
 
 Surface impact:
 
-- Local repo harness: primary owner; reduces updates to `progress.md`,
-  `session-handoff.md`, manifest snippets, evidence logs, and overlapping
-  harness docs.
+- Local repo harness: primary owner; reduces updates to `current-state.md`,
+  manifest snippets, evidence logs, and overlapping harness docs.
 - Generated harness: apply only if the pattern improves target repos without
   hiding important review obligations.
 - CLI/runtime: initial `report` output now summarizes docs fan-out routing
@@ -379,9 +378,8 @@ Surface impact:
   duplicate fact reporting, Action/CLI fan-out enforcement, and organized
   harness layout; avoid adding tests for every prose copy.
 
-Latest local startup compaction replaced append-only root state logs with
-current-state snapshots, reducing `progress.md` and `session-handoff.md` from
-2,557 combined lines to 153 combined lines while self-audit stays `100/100`.
+Latest state consolidation replaces split root progress and handoff logs with
+one `current-state.md` restart file while self-audit stays `100/100`.
 Local and generated startup routes now read compact state first and open
 heavier README, harness README, roadmap, and component-inventory docs only when
 the task touches those surfaces.

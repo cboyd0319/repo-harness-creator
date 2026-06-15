@@ -222,8 +222,7 @@ def _template_specs(
                 harness_path("feature_list_schema"),
                 False,
             ),
-            ("progress.md.tmpl", "progress.md", False),
-            ("session-handoff.md.tmpl", "session-handoff.md", False),
+            ("current-state.md.tmpl", "current-state.md", False),
             ("check-pins.py.tmpl", "scripts/check_pins.py", True),
             ("harness-readme.md.tmpl", harness_path("readme"), False),
             (
@@ -1624,7 +1623,7 @@ Startup path:
 
 1. Confirm the working directory.
 2. Read `{agent_file}` and `docs/harness/README.md`.
-3. Read `feature_list.json`, `progress.md`, and `session-handoff.md`.
+3. Read `feature_list.json` and `current-state.md`.
 4. Check `docs/harness/state/roadmap.md` before selecting, deferring, or reshaping
    backlog, release-prep, or product-scope work.
 5. Check `docs/harness/boundaries/component-inventory.md` before changing component
@@ -1649,7 +1648,8 @@ Implementation discipline:
 - Record the ceiling and upgrade path for intentional simplifications.
 
 Definition Of Done: behavior is implemented, relevant checks ran, skipped checks
-have a reason and risk, and durable state is updated.
+have a reason and risk, and only the state file that owns a changed fact is
+updated.
 
 Testing instructions: reject stubbed, assertion-free, or shortcut tests that do
 not prove the changed behavior.
@@ -1658,8 +1658,10 @@ Detected project context:
 
 {project_context_markdown}
 
-End of Session: update `progress.md` and `session-handoff.md` with current
-state, verification evidence, blockers, and the recommended next step.
+End of Session: update `current-state.md` only when current objective,
+verification state, blockers, touched surfaces, or next step materially change.
+Use `docs/harness/evidence/evidence-log.md` only for meaningful verification
+evidence that should be preserved.
 <!-- HarnessForge Quality Addendum: end -->"""
     if relative_path == "CLAUDE.md":
         return f"""<!-- HarnessForge Quality Addendum: start -->
@@ -1856,8 +1858,7 @@ def _manifest_content(
         HARNESS_SKILL_PATH,
         HARNESS_SKILL_REFERENCE_PATH,
         "feature_list.json",
-        "progress.md",
-        "session-handoff.md",
+        "current-state.md",
         "scripts/check_pins.py",
         "docs/harness/README.md",
         "docs/harness/authoritative-facts.md",
@@ -1901,7 +1902,7 @@ def _manifest_content(
             "intentional simplification",
             "Definition Of Done",
             "feature_list.json",
-            "progress.md",
+            "current-state.md",
             "roadmap",
             HARNESS_SKILL_PATH,
             "repo-local zero-install playbook",
@@ -1918,11 +1919,18 @@ def _manifest_content(
         HARNESS_SKILL_REFERENCE_PATH: [
             agent_file,
             "feature_list.json",
+            "current-state.md",
             "first-agent-task.md",
             "verification-matrix.md",
             "sensor-registry.md",
             "evidence-log.md",
             "HarnessForge CLI and Action outputs as advisory",
+        ],
+        "current-state.md": [
+            "Current State",
+            "State Contract",
+            "Trusted Verification",
+            "Next Step",
         ],
         ".github/copilot-instructions.md": [
             "source of truth",
@@ -1972,6 +1980,7 @@ def _manifest_content(
             "runtime and process observability",
             "Do not overwrite project-owned instructions",
             "Do not run target commands",
+            "current-state.md",
         ],
         "docs/harness/evidence/first-agent-review.json": [
             "harnessforge.firstAgentReview.v1",
@@ -1996,8 +2005,7 @@ def _manifest_content(
             "Surfaces In Scope",
             "Execution Gate",
             "Done Or Retire When",
-            "progress.md",
-            "session-handoff.md",
+            "current-state.md",
         ],
         "docs/harness/boundaries/change-contract.md": [
             "Problem",
@@ -2152,6 +2160,7 @@ def _manifest_content(
             "project checkpoints",
             "push",
             "intentionally vulnerable",
+            "current-state.md",
         ],
         "docs/harness/research/research-inbox.md": [
             "Research Inbox",

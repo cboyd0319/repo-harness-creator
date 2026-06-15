@@ -18,8 +18,7 @@ product changes.
 Startup path:
 
 1. Confirm the working directory.
-2. Read this file, `progress.md`, `session-handoff.md`, and
-   `feature_list.json`.
+2. Read this file, `current-state.md`, and `feature_list.json`.
 3. Read `README.md` only for public docs, install/usage, CLI behavior, or
    product-positioning changes.
 4. Read `docs/harness/README.md` and
@@ -132,12 +131,13 @@ Rules:
 - Definition Of Done: behavior is implemented, focused verification ran,
   generated files and docs match the CLI, self-audit stays above threshold, and
   skipped OS-specific checks are recorded with risk.
-- State file discipline: do not update `feature_list.json`, `progress.md`,
-  `session-handoff.md`, and the evidence log as a routine bundle.
+- End of Session: do not recreate separate root `progress.md` or
+  `session-handoff.md`; use `current-state.md` for current objective and
+  restart context. Do not update `feature_list.json`, `current-state.md`, and
+  the evidence log as a routine bundle.
   `feature_list.json` changes only for feature state or major durable product
-  evidence. `progress.md` changes only when the active objective, verified
-  state, or next step materially changes. `session-handoff.md` changes only at
-  a pause, handoff, context reset, or major restart boundary.
+  evidence. `current-state.md` changes only when the active objective,
+  verified state, blockers, touched surfaces, or next step materially changes.
   `docs/harness/evidence/evidence-log.md` changes only for meaningful
   verification evidence. Use `docs/harness/state/clean-state-checklist.md`
   before ending non-trivial work.

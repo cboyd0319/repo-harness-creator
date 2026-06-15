@@ -62,8 +62,8 @@ route the change through `change-contract.md` and `verification-matrix.md`.
 - `docs/capabilities.md`: user-facing capability, generated-file, boundary,
   and security guide.
 - `docs/roadmap.md`: accepted product roadmap and backlog boundary. Keep it in
-  sync with `progress.md`, `session-handoff.md`, and the harness sensor
-  registry when work is accepted, deferred, or completed.
+  sync with `current-state.md` and the harness sensor registry when work is
+  accepted, deferred, or completed.
 
 ## Product Boundary Inventory
 

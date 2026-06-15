@@ -80,7 +80,7 @@ The default generated harness includes:
 | --- | --- |
 | Agent instructions | `AGENTS.md`, `CLAUDE.md`, `GEMINI.md`, `.github/copilot-instructions.md` |
 | Repo skill | `.agents/skills/harness/SKILL.md` |
-| Project state | `feature_list.json`, `progress.md`, `session-handoff.md` |
+| Project state | `feature_list.json`, `current-state.md` |
 | Local checks | `init.sh`, `init.ps1`, `scripts/check_pins.py` |
 | Harness root | `docs/harness/README.md`, `authoritative-facts.md`, `manifest.json` |
 | Boundaries | `docs/harness/boundaries/component-inventory.md`, `change-contract.md`, `security-boundary-map.md`, `feature-privacy-labels.json` |

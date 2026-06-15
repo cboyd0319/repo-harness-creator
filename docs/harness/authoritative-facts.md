@@ -36,7 +36,7 @@ surfaces listed in the routing table when the change affects them.
 | Generated target content | `src/harnessforge/templates/` and generator tests | Update public docs only when user-visible generated behavior changes. |
 | Audit scoring and report interpretation | `src/harnessforge/audit.py`, `src/harnessforge/report.py`, and tests | Keep scoring caveats in `docs/capabilities.md` and `docs/usage.md` short. |
 | Accepted roadmap and backlog boundary | `docs/roadmap.md` | Reference from state files instead of duplicating full lists. |
-| Current work state and evidence | `feature_list.json`, `progress.md`, `session-handoff.md`, `docs/harness/evidence/evidence-log.md` | Use the specific file that owns the fact. Do not update all four as a routine bundle. |
+| Current work state and evidence | `feature_list.json`, `current-state.md`, `docs/harness/evidence/evidence-log.md` | Use the specific file that owns the fact. Do not update state files as a routine bundle. |
 | Verification commands and recurring gates | `docs/harness/feedback/verification-matrix.md`, `docs/harness/feedback/sensor-registry.md`, root entrypoints | Update only when a command, owner, or gate changes. |
 | Research source allowlist and review evidence | `docs/harness/research/research-sources.json`, `docs/harness/research/research-sources.lock.json`, `docs/harness/research/sources.md` | Do not paste source catalogs into other docs. |
 
@@ -62,10 +62,9 @@ Do not update state files as a bundle.
 - `feature_list.json`: update only for feature status transitions, active
   objective changes, or major product evidence that must survive beyond the
   current session.
-- `progress.md`: update only when the active objective, current verified state,
-  blockers, or next recommended step materially changes.
-- `session-handoff.md`: update only before a pause, context reset, ownership
-  handoff, or when restart instructions materially change.
+- `current-state.md`: update only when the active objective, current verified
+  state, blockers, touched surfaces, or next recommended step materially
+  changes.
 - `docs/harness/evidence/evidence-log.md`: update only after meaningful
   verification, release evidence, audit evidence, or source review that should
   be preserved. Do not log every focused test rerun.

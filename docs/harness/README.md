@@ -32,7 +32,7 @@ one of these makes the harness incomplete.
 | Instructions | `AGENTS.md` plus short platform routers | Does the agent see purpose, stack, first-run commands, hard constraints, and links to detail? |
 | Tools | Local shell entrypoints, HarnessForge commands, Action wiring | Can the agent do useful work with least privilege instead of either blanket-disabled shell access or unrestricted access? |
 | Environment | `pyproject.toml`, CI matrix, component inventory, dependency policy | Are versions, dependencies, setup facts, and reproducible environment choices self-describing? |
-| State | `feature_list.json`, `progress.md`, `session-handoff.md`, `docs/roadmap.md` | Can a new session see what is done, in progress, blocked, and next? |
+| State | `feature_list.json`, `current-state.md`, `docs/roadmap.md` | Can a new session see what is done, in progress, blocked, and next? |
 | Feedback | Tests, verification matrix, sensor registry, evidence log, local checks | Are verification commands explicit, runnable, and prioritized before broader process? |
 
 Treat feedback as the highest-return subsystem. When agent output is weak, fix
@@ -54,18 +54,18 @@ with scope, verification, and rollback.
 | Instructions | `AGENTS.md`, `CLAUDE.md`, `GEMINI.md`, `.github/copilot-instructions.md` | Startup path, hard requirements, smallest-correct-change discipline, verification, and platform routing |
 | Tools | `harnessforge`, `action.yml`, `init.sh`, `init.ps1`, `scripts/check_pins.py` | Creation, audit, update, CI action, local checks, and pin enforcement |
 | Environment | `pyproject.toml`, CI matrix, `component-inventory.md`, `dependency-change-policy.md` | Python, OS, package, component, and Action support contract |
-| State | `feature_list.json`, `progress.md`, `evidence-log.md`, `docs/roadmap.md`, `authoritative-facts.md` | Current objective, accepted roadmap, evidence, docs routing, and restart state |
+| State | `feature_list.json`, `current-state.md`, `evidence-log.md`, `docs/roadmap.md`, `authoritative-facts.md` | Feature state, current objective, evidence, docs routing, and restart state |
 | Feedback | tests, self-audit, CI, `first-agent-task.md`, `verification-matrix.md`, `sensor-registry.md`, `evaluator-rubric.md`, `verify-json-contract.md`, `effectiveness-eval-contract.md`, research refresh | First-agent harness improvement, deterministic quality checks, sensor ownership, machine-readable verification output, benchmark-claim boundaries, and source drift signal |
 | Research | `sources.md`, `research-sources.json`, `source-record.schema.json`, `source-record-example.json` | Fixed research allowlist, source provenance, and project-owned source records |
 | Scope | `docs/harness/boundaries/change-contract.md`, `security-boundary-map.md`, `feature-privacy-labels.json` | Acceptance, rollback, security, and data-flow discipline |
-| Lifecycle | `session-handoff.md`, `clean-state-checklist.md`, `quality-document.md`, `release-controls.md`, `self-healing.md`, entropy control | Restart, roadmap freshness, release readiness, recurring maintenance, and reviewed automation |
+| Lifecycle | `current-state.md`, `clean-state-checklist.md`, `quality-document.md`, `release-controls.md`, `self-healing.md`, entropy control | Restart, roadmap freshness, release readiness, recurring maintenance, and reviewed automation |
 
 ## Operating Loop
 
 1. Read `AGENTS.md`.
 2. Use `first-agent-task.md` when a newly generated harness needs its first
    repo-specific improvement pass.
-3. Check `feature_list.json`, `progress.md`, and `session-handoff.md`.
+3. Check `feature_list.json` and `current-state.md`.
 4. Check `docs/roadmap.md` when selecting, deferring, or reshaping backlog,
    release-prep, or product-scope work.
 5. Check `authoritative-facts.md` before updating more than one durable doc or
@@ -81,8 +81,8 @@ with scope, verification, and rollback.
    source ledger or source-doc changes.
 13. Use `clean-state-checklist.md` before ending non-trivial sessions.
 14. Update only the state file that owns the changed fact; do not update
-    `feature_list.json`, `progress.md`, `session-handoff.md`, and the evidence
-    log as a routine bundle.
+    `feature_list.json`, `current-state.md`, and the evidence log as a routine
+    bundle.
 
 ## Assessment And Updates
 

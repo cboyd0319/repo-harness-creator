@@ -64,7 +64,7 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git switch -c "$branch"
-          git add docs/harness src/harnessforge/templates AGENTS.md CLAUDE.md GEMINI.md .github/copilot-instructions.md progress.md session-handoff.md feature_list.json pins.toml init.sh init.ps1
+          git add docs/harness src/harnessforge/templates AGENTS.md CLAUDE.md GEMINI.md .github/copilot-instructions.md current-state.md feature_list.json pins.toml init.sh init.ps1
           git commit -m "docs(harness): refresh self-healing research"
           git push --set-upstream origin "$branch"
           gh pr create \

@@ -79,7 +79,7 @@ defaults, and CI automation separate.
 | How is the repo organized? | component inventory, architecture docs, module docs | REVIEW REQUIRED |
 | How does it start? | init entrypoint, package scripts, dev docs | REVIEW REQUIRED |
 | How is it verified? | verification matrix, sensor registry, CI docs | REVIEW REQUIRED |
-| What work is current? | progress, handoff, feature list, roadmap, issue tracker | REVIEW REQUIRED |
+| What work is current? | current state, feature list, roadmap, issue tracker | REVIEW REQUIRED |
 
 ## Instruction Rule Lifecycle
 
@@ -111,7 +111,7 @@ Track cleanup, docs drift, stale generated content, duplication, and verificatio
 
 | Failure Mode | First Artifact To Check |
 | --- | --- |
-| Cold-start confusion or weak handoff | `progress.md`, `session-handoff.md` |
+| Cold-start confusion or weak handoff | `current-state.md` |
 | Scope sprawl or overbuilt solution | `feature_list.json`, this roadmap, change contract |
 | Premature completion or missing runtime signal | `verification-matrix.md`, `sensor-registry.md`, evidence log |
 | Fragile startup or knowledge visibility gap | generated init entrypoint, fresh-session test, module docs |
@@ -128,7 +128,8 @@ Track cleanup, docs drift, stale generated content, duplication, and verificatio
 - Do not promote speculative features, workflows, dependencies, or cleanup
   unless named.
 - Move completed behavior into durable docs, tests, schemas, templates, or code.
-- Update `progress.md` and `session-handoff.md` when roadmap state changes.
+- Update `current-state.md` only when roadmap changes materially alter the
+  active objective, blockers, touched surfaces, or next step.
 - Preserve existing project-owned planning systems by linking to them.
 - If localized docs exist, identify the source-of-truth locale before editing.
 - Keep sensor and validation messages actionable for agents.

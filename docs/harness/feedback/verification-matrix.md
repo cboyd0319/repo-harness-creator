@@ -95,8 +95,8 @@ When recording runnable evidence:
 
 ## When Checks Cannot Run
 
-Record the command, reason, risk, and next best check in `progress.md` or
-`session-handoff.md`.
+Record the command, reason, risk, and next best check in `current-state.md`
+when the current restart state changes.
 
 If remote CI is intentionally skipped to control cost, record the local checks
 that replaced it and the remaining platform risk.

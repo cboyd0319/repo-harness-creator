@@ -55,8 +55,9 @@ writes need stronger review evidence.
 - Reject unsafe defaults such as broad write permissions, `shell=True`,
   disabled TLS validation, path traversal tolerance, or permissive fallback
   behavior.
-- Update `docs/harness/evidence-log.md`, `progress.md`, and
-  `session-handoff.md` when a security boundary or durable decision changes.
+- Update `docs/harness/evidence/evidence-log.md` when meaningful verification
+  or source-review evidence must be preserved. Update `current-state.md` only
+  when the current objective, blockers, touched surfaces, or next step changes.
 
 ## Developer Certificate Of Origin
 

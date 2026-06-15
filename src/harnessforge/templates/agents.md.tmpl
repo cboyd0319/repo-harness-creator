@@ -24,8 +24,7 @@ Detected project context:
 Startup path:
 
 1. Confirm the working directory.
-2. Read this file, `feature_list.json`, `progress.md`, and
-   `session-handoff.md`.
+2. Read this file, `feature_list.json`, and `current-state.md`.
 3. Read `docs/harness/README.md` only when the task changes or reviews the
    repo harness, generated docs, verification routing, or maintenance policy.
 4. Check `docs/harness/state/roadmap.md` before backlog, release-prep, or
@@ -92,12 +91,15 @@ logic needs one focused runnable check.
 - Add or update focused tests for changed behavior when practical.
 - Reject stubbed, assertion-free, or shortcut tests; prefer fail-first tests
   when practical.
-- Record skipped checks with reason and risk in durable state.
+- Record skipped checks with reason and risk in `current-state.md` when the
+  current restart state changes.
 - Definition Of Done: target behavior or documentation change is complete,
   acceptance criteria are satisfied, relevant checks ran, and the next session
   can restart from the harness files.
-- End of Session: update `progress.md` and `session-handoff.md` with current
-  state, verification evidence, blockers, and the recommended next step. Use
+- End of Session: update `current-state.md` only when current objective,
+  verification state, blockers, touched surfaces, or next step materially
+  change. Use `docs/harness/evidence/evidence-log.md` only for meaningful
+  verification evidence that should be preserved. Use
   `docs/harness/state/clean-state-checklist.md` before claiming the session is
   complete.
 

@@ -808,8 +808,7 @@ class GenerateAuditTests(unittest.TestCase):
         root_relative_refs = (
             "AGENTS.md",
             "feature_list.json",
-            "progress.md",
-            "session-handoff.md",
+            "current-state.md",
             "docs/harness/README.md",
             "docs/harness/authoritative-facts.md",
             "docs/harness/feedback/verification-matrix.md",
@@ -820,8 +819,7 @@ class GenerateAuditTests(unittest.TestCase):
 
         self.assertIn("../../../AGENTS.md", skill_reference)
         self.assertIn("../../../feature_list.json", skill_reference)
-        self.assertIn("../../../progress.md", skill_reference)
-        self.assertIn("../../../session-handoff.md", skill_reference)
+        self.assertIn("../../../current-state.md", skill_reference)
         self.assertIn("../../../docs/harness/README.md", skill_reference)
         self.assertIn("../../../docs/harness/authoritative-facts.md", skill_reference)
         self.assertIn(
@@ -868,8 +866,7 @@ class GenerateAuditTests(unittest.TestCase):
         self.assertIn("Failure-Mode Map", roadmap)
         self.assertIn("source-of-truth locale", roadmap)
         self.assertIn("agent-oriented", roadmap)
-        self.assertIn("progress.md", roadmap)
-        self.assertIn("session-handoff.md", roadmap)
+        self.assertIn("current-state.md", roadmap)
 
     def test_generated_quality_docs_track_clean_state_and_evidence_layers(
         self,
@@ -1724,8 +1721,7 @@ class GenerateAuditTests(unittest.TestCase):
             root = Path(tmp)
             create_harness(root)
             (root / "feature_list.json").unlink()
-            (root / "progress.md").unlink()
-            (root / "session-handoff.md").unlink()
+            (root / "current-state.md").unlink()
 
             result = audit_target(root)
 

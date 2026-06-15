@@ -252,8 +252,7 @@ def _load_known_files(root: Path, manifest: dict[str, Any]) -> dict[str, str]:
         ".devcontainer/devcontainer.json",
         "feature_list.json",
         "feature-list.json",
-        "progress.md",
-        "session-handoff.md",
+        "current-state.md",
         "init.sh",
         "init.ps1",
         "scripts/check_pins.py",
@@ -863,7 +862,11 @@ def _instruction_checks(
         _contains(instruction, ("Startup", "Before writing code"), "Startup path is documented"),
         _contains(instruction, ("Definition Of Done", "Definition of Done", "done only when"), "Definition of done is explicit"),
         _contains(instruction, ("init.sh", "init.ps1", "Verification"), "Verification route is discoverable"),
-        _contains(instruction, ("feature_list.json", "progress.md"), "State files are routed from instructions"),
+        _contains(
+            instruction,
+            ("feature_list.json", "current-state.md"),
+            "State files are routed from instructions",
+        ),
         _spec_routing_check(instruction, spec_report),
         _check(_line_count(instruction) <= 300 if instruction else False, "Instruction file is short enough to act as a map", f"{_line_count(instruction)} lines"),
     ]
@@ -1053,17 +1056,24 @@ def _runner_handling_check(
 def _state_checks(files: dict[str, str]) -> list[CheckResult]:
     feature = files.get("feature_list.json") or files.get("feature-list.json") or ""
     privacy = first_existing_text(files, "feature_privacy_labels")
-    progress = files.get("progress.md", "")
-    handoff = files.get("session-handoff.md", "")
+    current_state = files.get("current-state.md", "")
     return [
         _check(bool(feature), "Feature state file exists"),
         _check(_valid_feature_list(feature), "Feature state JSON has usable feature records"),
         _check(_feature_list_has_gates(feature), "Feature records include behavior, verification, state, and evidence"),
         _check(_feature_list_has_one_active(feature), "Feature state allows at most one active item"),
         _check(_valid_privacy_labels(privacy), "Feature privacy labels are machine-readable"),
-        _check(bool(progress), "Progress file exists"),
-        _contains_all(progress, ("Last Updated", "Current Objective", "Recommended Next Step"), "Progress file supports restart"),
-        _contains_all(handoff or progress, ("Blockers", "Files", "Next Session"), "Handoff captures blockers, files, and next step"),
+        _check(bool(current_state), "Current state file exists"),
+        _contains_all(
+            current_state,
+            ("Last Updated", "Current Objective", "Next Step"),
+            "Current state supports restart",
+        ),
+        _contains_all(
+            current_state,
+            ("Blockers", "Touched Surfaces", "Trusted Verification"),
+            "Current state captures blockers, touched surfaces, and verification",
+        ),
     ]
 
 
@@ -1222,7 +1232,7 @@ def _top_level_harness_layout_failures(root: Path) -> list[str]:
 def _lifecycle_checks(
     files: dict[str, str], manifest: dict[str, Any]
 ) -> list[CheckResult]:
-    handoff = files.get("session-handoff.md", "")
+    current_state = files.get("current-state.md", "")
     instructions = _instruction_text(files, manifest)
     clean_state_path = first_existing_key(files, "clean_state_checklist")
     entropy_path = first_existing_key(files, "entropy_control")
@@ -1238,8 +1248,7 @@ def _lifecycle_checks(
             "GEMINI.md",
             ".github/copilot-instructions.md",
             "README.md",
-            "progress.md",
-            "session-handoff.md",
+            "current-state.md",
             "docs/harness/README.md",
             clean_state_path,
             entropy_path,
@@ -1259,7 +1268,7 @@ def _lifecycle_checks(
         else ("Roadmap", "Surface Impact Checklist", "Suggested Build Order")
     )
     return [
-        _check(bool(handoff), "Session handoff file exists"),
+        _check(bool(current_state), "Current state file exists"),
         _contains(instructions, ("End Of Session", "End of Session", "Before ending"), "End-of-session routine is documented"),
         _contains(lifecycle_text, ("restart", "restartable", "Next Session"), "Clean restart path is documented"),
         _check(bool(first_agent_path), "First-agent harness improvement task exists"),

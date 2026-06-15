@@ -32,7 +32,7 @@ table says are affected.
 | Components and source-of-truth docs | Component inventory | Link or summarize. |
 | Verification commands and sensors | Verification matrix, sensor registry | Do not repeat every command everywhere. |
 | Generated ownership and drift | Manifest | Use reports, not hand-maintained file lists. |
-| Current work state and evidence | Feature list, progress, handoff, evidence log | Keep compact; avoid raw logs. |
+| Current work state and evidence | `feature_list.json`, `current-state.md`, evidence log | Use the specific file that owns the fact. Do not update state files as a bundle. |
 | Security, privacy, permissions, cost | Security boundary map and privacy labels | Reference only the relevant boundary. |
 | Roadmap and accepted backlog | Harness roadmap | Do not duplicate backlog lists. |
 
@@ -40,7 +40,7 @@ table says are affected.
 
 | Change Type | Required Docs/State Updates | Usually Not Needed |
 | --- | --- | --- |
-| Small internal fix | `progress.md` or no durable doc if state already covers it | README, manifest, roadmap |
+| Small internal fix | No durable doc update unless the active objective or next step changes | README, manifest, roadmap, state bundle |
 | CLI flag, JSON, or exit code | Usage docs, command tests, verification matrix if checks change | Broad harness README rewrite |
 | Generated artifact | Template, manifest metadata, generated-content tests | Unrelated state files |
 | Existing instruction enhancement | Canonical instruction file or enhance plan output, plus tests | Generated templates unless defaults change |
@@ -48,7 +48,21 @@ table says are affected.
 | Audit or report scoring | Audit/report tests and short scoring docs | README unless positioning changes |
 | Platform, dependency, workflow, pin | Pin policy, manifest/platform metadata, pin evidence | Roadmap unless scope changes |
 | Research or source policy | Source ledger, source records, research check evidence | CLI docs unless behavior changes |
-| Release evidence | Release controls, evidence log, progress or handoff | Generated templates unless guidance changes |
+| Release evidence | Release controls when the process changes, evidence log when evidence must be preserved | Generated templates unless guidance changes; state files unless stopping, handing off, or changing objective |
+
+## State File Write Thresholds
+
+Do not update state files as a bundle.
+
+- `feature_list.json`: update only for feature status transitions, active
+  objective changes, or major product evidence that must survive beyond the
+  current session.
+- `current-state.md`: update only when the active objective, current verified
+  state, blockers, touched surfaces, or next recommended step materially
+  changes.
+- `docs/harness/evidence/evidence-log.md`: update only after meaningful
+  verification, release evidence, audit evidence, or source review that should
+  be preserved. Do not log every focused test rerun.
 
 ## Fan-Out Budgets
 

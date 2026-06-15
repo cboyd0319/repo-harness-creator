@@ -82,5 +82,4 @@ Do not add these to normal generated harness output:
 ## Next Use
 
 Use this file only as a research outcome summary. For implementation order,
-status, and release decisions, use `docs/roadmap.md`, `progress.md`, and
-`session-handoff.md`.
+status, and release decisions, use `docs/roadmap.md` and `current-state.md`.

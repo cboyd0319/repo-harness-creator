@@ -698,8 +698,9 @@ class CliTests(unittest.TestCase):
         self.assertEqual(payload["harnessAudit"]["overall"], 100)
         state = {item["path"]: item["present"] for item in payload["stateFiles"]}
         self.assertTrue(state["feature_list.json"])
-        self.assertTrue(state["progress.md"])
-        self.assertTrue(state["session-handoff.md"])
+        self.assertTrue(state["current-state.md"])
+        self.assertNotIn("progress.md", state)
+        self.assertNotIn("session-handoff.md", state)
         self.assertIn("docs/harness/evidence/evidence-log.md", state)
         self.assertIn("git", payload)
 

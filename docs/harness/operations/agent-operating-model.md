@@ -5,7 +5,7 @@ Agents in this repo should work as maintainers of a CLI product.
 ## Start
 
 - Read `AGENTS.md`, `README.md`, and this harness directory.
-- Identify the current objective from `feature_list.json` and `progress.md`.
+- Identify the current objective from `feature_list.json` and `current-state.md`.
 - Choose verification before editing.
 
 ## During Work
@@ -36,8 +36,7 @@ Agents in this repo should work as maintainers of a CLI product.
   them from untrusted branches or generated updates.
 - Treat checked-in harness files as shared project memory. Treat platform
   auto-memory and local instruction files as personal state; promote only
-  stable, reviewed facts into `progress.md`, `session-handoff.md`, or harness
-  docs.
+  stable, reviewed facts into `current-state.md` or the owning harness doc.
 - Do not auto-fix intentionally vulnerable training, demo, or fixture code
   unless the user explicitly requests remediation for that scope.
 - Use local verification for normal checkpoints. Keep pushes and remote PR

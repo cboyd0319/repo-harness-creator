@@ -53,8 +53,7 @@ SECTION_MARKERS = {
         "non-negotiable",
     ),
     "state": (
-        "progress.md",
-        "session-handoff.md",
+        "current-state.md",
         "handoff",
         "state",
         "roadmap",
