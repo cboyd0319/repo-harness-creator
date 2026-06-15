@@ -116,6 +116,32 @@ The safest first benchmark shape is usually:
 This favors modest claims with reproducible evidence over broad agent-quality
 marketing.
 
+## Machine-Readable Evidence
+
+The evidence schema lives at
+[effectiveness-evidence.schema.json](effectiveness-evidence.schema.json). A
+representative non-claim example lives at
+[effectiveness-evidence-example.json](effectiveness-evidence-example.json).
+
+The schema is intentionally a review contract, not an eval runner. It records:
+
+- the exact claim and whether the result is promoted, rejected, deferred, or
+  still inconclusive;
+- the target, candidate snapshot, baseline snapshot, changed harness surfaces,
+  and control arm;
+- the held-out task set, contamination controls, replay type, feedback
+  channels, runtime budget, workspace contract, adapter contract, and
+  reproduction command;
+- candidate-sensitive primary metrics, worst-case quality, do-no-harm floors,
+  and cost dimensions;
+- trajectory and permission-boundary review;
+- result artifacts, reviewer metadata, rollback notes, and human approval.
+
+Keeping this separate from `verify --json` preserves a hard boundary:
+verification can prove project checks were planned or run, while effectiveness
+evidence must prove that the candidate harness changed real task outcomes under
+a fair comparison.
+
 ## Source-Mined Design Notes
 
 Recent harness papers and the Code as Agent Harness paper catalog point toward

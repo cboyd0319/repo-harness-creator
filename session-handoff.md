@@ -47,7 +47,11 @@ and the required AGENTS instruction format.
 - `tests/test_detect.py`
 - `tests/test_generate_audit.py`
 - `tests/test_refresh_research.py`
+- `tests/test_verify_contract.py`
 - `tests/test_pins.py`
+- `docs/harness/effectiveness-eval-contract.md`
+- `docs/harness/effectiveness-evidence.schema.json`
+- `docs/harness/effectiveness-evidence-example.json`
 - `docs/harness/evaluator-rubric.md`
 - `docs/harness/evidence-log.md`
 - `docs/harness/sources.md`
@@ -479,18 +483,25 @@ and the required AGENTS instruction format.
 ## Next Session
 
 The P1 backlog from the remaining-ideas research pass is implemented. The
-latest release-prep slice added a no-network research source hygiene gate:
-`scripts/refresh_research.py --check` validates duplicate source IDs and URLs,
-required fields, placeholder text, canonical URL shape, arXiv `/abs/` URLs,
-lock-file consistency, and local-path leakage before any metadata fetch. Root
-POSIX and PowerShell entrypoints now run that gate after pin checks.
-Current verification passes: focused refresh and entrypoint tests,
+latest release-prep slices added a no-network research source hygiene gate and
+a machine-readable effectiveness evidence contract. `scripts/refresh_research.py
+--check` validates duplicate source IDs and URLs, required fields, placeholder
+text, canonical URL shape, arXiv `/abs/` URLs, lock-file consistency, and
+local-path leakage before any metadata fetch. Root POSIX and PowerShell
+entrypoints now run that gate after pin checks.
+`effectiveness-evidence.schema.json` and
+`effectiveness-evidence-example.json` define the local review shape for
+harness-effectiveness claims: claim scope, baseline/candidate snapshots,
+held-out task controls, replay type, feedback channels, runtime/workspace/
+adapter contracts, candidate-sensitive metrics, worst-case quality, cost,
+safety review, result artifacts, rollback, and human approval. This is local
+release-prep guidance, not generated target-repo content.
+Current verification passes: focused contract, refresh, and entrypoint tests,
 `scripts/refresh_research.py --root . --check`, POSIX and PowerShell
-entrypoints with 165 tests, pin check, and self-audit `100/100`.
+entrypoints with 166 tests, pin check, and self-audit `100/100`.
 Continue release prep by deciding whether any P2 item is required before a
-public Action release. The strongest remaining bounded item is turning the
-effectiveness-eval guidance into a small machine-readable evidence schema and
-example payload. Source-verified platform adapters are the next strongest P2.
+public Action release. Source-verified platform adapters are the strongest
+remaining P2 item.
 Existing eval guidance comes from the Harness Forge, Meta-Harness, Code as
 Agent Harness catalog, and arXiv harness-eval reviews; those sources are mined
 only for product ideas and are not copied into generated target-repo defaults.

@@ -264,3 +264,9 @@ project-owned docs instead of machine-specific absolute paths.
   side effect. The gate checks duplicate source IDs and URLs, required source
   fields, placeholder text, local-path leakage, canonical source URL shape,
   arXiv `/abs/` links, and lock-file consistency before any network fetch.
+- Effectiveness eval guidance now has a machine-readable evidence schema and
+  example payload. The schema keeps harness-effectiveness claims separate from
+  structural audit and project verification by requiring baseline/candidate
+  snapshots, held-out task controls, replay type, feedback channels, runtime
+  and adapter contracts, candidate-sensitive metrics, worst-case quality,
+  trajectory safety, result artifacts, rollback, and human approval.

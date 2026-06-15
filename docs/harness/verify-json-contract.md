@@ -44,8 +44,10 @@ Non-goals for the first implementation:
 explicit run mode, whether those checks passed. It is not by itself evidence
 that a generated harness improves real agent effectiveness.
 
-Any future benchmark or real-agent eval report should stay separate from this
-contract unless it can state:
+Benchmark and real-agent eval reports stay separate from this contract. Use
+`effectiveness-eval-contract.md` and
+`effectiveness-evidence.schema.json` for that evidence. Any eval report should
+state:
 
 - the candidate harness surface under evaluation;
 - the baseline and control arm;

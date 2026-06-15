@@ -1,0 +1,162 @@
+{
+  "schemaVersion": "harnessforge.effectivenessEvidence.v1",
+  "claim": {
+    "id": "example-context-budget-claim",
+    "summary": "Example only: candidate preserves task quality while reducing context overhead.",
+    "scope": "Instruction-router and readiness guidance changes for a generated harness.",
+    "verdict": "inconclusive"
+  },
+  "target": {
+    "name": "demo",
+    "root": null
+  },
+  "candidate": {
+    "id": "candidate-context-budget-v1",
+    "description": "Candidate harness with explicit context-budget review guidance.",
+    "changedSurfaces": [
+      "mechanism",
+      "environment"
+    ],
+    "snapshot": {
+      "snapshotId": "candidate-context-budget-v1",
+      "artifactRefs": [
+        "AGENTS.md",
+        "docs/harness/effectiveness-eval-contract.md"
+      ]
+    }
+  },
+  "baseline": {
+    "id": "baseline-generated-harness-v1",
+    "description": "Baseline generated harness before the candidate guidance change.",
+    "changedSurfaces": [],
+    "snapshot": {
+      "snapshotId": "baseline-generated-harness-v1",
+      "artifactRefs": [
+        "AGENTS.md",
+        "docs/harness/effectiveness-eval-contract.md"
+      ]
+    }
+  },
+  "evaluation": {
+    "id": "example-heldout-readiness-eval",
+    "replayType": "live",
+    "feedbackChannels": [
+      "test",
+      "trajectory"
+    ],
+    "taskSet": {
+      "id": "heldout-readiness-smoke",
+      "description": "Example held-out repo tasks not used to design the candidate.",
+      "sampleCount": 12,
+      "heldOut": true,
+      "contaminationControls": [
+        "Candidate author did not inspect held-out task prompts before final run.",
+        "Prompt and fixture identifiers are stored separately from candidate artifacts."
+      ]
+    },
+    "runtimeBudget": {
+      "wallClockSeconds": 1800,
+      "modelCalls": 60,
+      "tokens": 200000,
+      "toolCalls": 120,
+      "retries": 1
+    },
+    "workspaceContract": {
+      "state": "Fresh checkout with repo-owned generated harness artifacts applied.",
+      "dependencies": "Dependencies installed through repo-owned setup commands only.",
+      "networkAccess": "Disabled except for documented package-manager caches.",
+      "cleanup": "Discard workspace after run and preserve only redacted result artifacts.",
+      "scoringEntrypoint": "python -m unittest discover -s tests"
+    },
+    "adapterContract": {
+      "normalization": "Same model policy, tool permissions, timeout, and prompt wrapper for baseline and candidate.",
+      "agents": [
+        "codex-cli"
+      ],
+      "modelPolicy": "Use the same supported default model for both arms."
+    },
+    "reproductionCommand": "python scripts/run_effectiveness_eval.py --config evals/context-budget.json"
+  },
+  "metrics": {
+    "primary": {
+      "name": "task_success_rate",
+      "candidateSensitive": true,
+      "direction": "higher_is_better",
+      "baselineValue": 0.67,
+      "candidateValue": 0.75,
+      "unit": "rate"
+    },
+    "worstCase": {
+      "name": "lowest_task_score",
+      "candidateSensitive": true,
+      "direction": "higher_is_better",
+      "baselineValue": 0.4,
+      "candidateValue": 0.5,
+      "unit": "score"
+    },
+    "doNoHarmFloor": {
+      "metric": "lowest_task_score",
+      "minimum": 0.4,
+      "met": true
+    },
+    "secondary": [
+      {
+        "name": "invalid_action_count",
+        "candidateSensitive": true,
+        "direction": "lower_is_better",
+        "baselineValue": 3,
+        "candidateValue": 1,
+        "unit": "count"
+      }
+    ]
+  },
+  "safety": {
+    "trajectoryReviewed": true,
+    "permissionBoundaryReviewed": true,
+    "violations": []
+  },
+  "cost": {
+    "optimized": false,
+    "dimensions": [
+      {
+        "name": "tokens",
+        "unit": "tokens",
+        "baselineValue": 120000,
+        "candidateValue": 118000
+      },
+      {
+        "name": "tool_calls",
+        "unit": "count",
+        "baselineValue": 72,
+        "candidateValue": 70
+      }
+    ]
+  },
+  "evidence": {
+    "resultArtifacts": [
+      {
+        "path": "evals/results/context-budget-example.json",
+        "kind": "result-log",
+        "redacted": true
+      },
+      {
+        "path": "evals/results/context-budget-review.md",
+        "kind": "review-note",
+        "redacted": true
+      }
+    ],
+    "reviewedBy": [
+      "maintainer"
+    ],
+    "reviewedAt": "2026-06-15T00:00:00Z",
+    "notes": [
+      "Example payload only. It is not a real benchmark result.",
+      "Promotion remains false until a target maintainer reviews real evidence."
+    ]
+  },
+  "promotion": {
+    "status": "proposal",
+    "humanApproved": false,
+    "rollback": "Revert the candidate diff and restore the baseline harness artifact set."
+  }
+}

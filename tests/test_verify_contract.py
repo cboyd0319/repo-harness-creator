@@ -53,6 +53,59 @@ class VerifyContractTests(unittest.TestCase):
         self.assertIn("Feedback Channels", contract)
         self.assertIn("convergence rule", contract)
         self.assertIn("canonical URLs", contract)
+        self.assertIn("effectiveness-evidence.schema.json", contract)
+        self.assertIn("effectiveness-evidence-example.json", contract)
+
+    def test_effectiveness_evidence_schema_and_example_define_claim_contract(
+        self,
+    ) -> None:
+        schema = json.loads(
+            (
+                REPO_ROOT
+                / "docs"
+                / "harness"
+                / "effectiveness-evidence.schema.json"
+            ).read_text(encoding="utf-8")
+        )
+        example = json.loads(
+            (
+                REPO_ROOT
+                / "docs"
+                / "harness"
+                / "effectiveness-evidence-example.json"
+            ).read_text(encoding="utf-8")
+        )
+
+        self.assertEqual(
+            schema["$id"],
+            "https://harnessforge.dev/schemas/effectiveness-evidence.v1",
+        )
+        self.assertEqual(
+            example["schemaVersion"], "harnessforge.effectivenessEvidence.v1"
+        )
+        for field in (
+            "claim",
+            "target",
+            "candidate",
+            "baseline",
+            "evaluation",
+            "metrics",
+            "safety",
+            "cost",
+            "evidence",
+            "promotion",
+        ):
+            self.assertIn(field, schema["required"])
+            self.assertIn(field, example)
+        self.assertTrue(example["evaluation"]["taskSet"]["heldOut"])
+        self.assertIn(
+            example["evaluation"]["replayType"],
+            schema["$defs"]["replayType"]["enum"],
+        )
+        self.assertIn("trajectory", example["evaluation"]["feedbackChannels"])
+        self.assertTrue(example["metrics"]["primary"]["candidateSensitive"])
+        self.assertIn("worstCase", example["metrics"])
+        self.assertFalse(example["promotion"]["humanApproved"])
 
 
 if __name__ == "__main__":

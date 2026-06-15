@@ -75,7 +75,9 @@ receive tool or runner access.
 Effectiveness inventory reports visible eval specs, benchmark files, scorer
 scripts, result logs, and frontier files as review surfaces before anyone
 claims a harness improves agent performance. It is a static inventory only.
-Use `effectiveness-eval-contract.md` for the evidence boundary.
+Use `effectiveness-eval-contract.md` for the evidence boundary, with
+`effectiveness-evidence.schema.json` and
+`effectiveness-evidence-example.json` for the machine-readable claim shape.
 
 The GitHub Action in `action.yml` exposes the same behavior to other
 repositories. Keep it wired to the Python library instead of duplicating logic

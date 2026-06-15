@@ -359,10 +359,10 @@ maintenance loop.
 ## Recommended Next Step
 
 The P1 backlog from the remaining-ideas research pass is implemented. The
-source-ledger hygiene gate is now part of local verification. Continue release
-prep by deciding whether any P2 item is required before a public Action
-release, with a machine-readable effectiveness-evidence schema and
-source-verified platform adapters as the strongest remaining candidates.
+source-ledger hygiene gate and machine-readable effectiveness-evidence schema
+are now part of local release-prep guidance. Continue release prep by deciding
+whether any remaining P2 item is required before a public Action release, with
+source-verified platform adapters as the strongest remaining candidate.
 Push local commits only at an explicit batch/release boundary or user request.
 Remaining product decisions before a first public Action release: whether to
 add component-directed monorepo verification commands, path/package exclusions
@@ -458,6 +458,20 @@ blocking.
 - Current source-ledger hygiene checks pass: focused refresh and entrypoint
   tests, `scripts/refresh_research.py --root . --check`, full POSIX and
   PowerShell entrypoints with 165 tests, pin check, and self-audit `100/100`.
+- Added local `effectiveness-evidence.schema.json` and
+  `effectiveness-evidence-example.json` as the machine-readable evidence shape
+  for harness-effectiveness claims. The schema records claim scope,
+  baseline/candidate snapshots, held-out task controls, replay type, feedback
+  channels, runtime/workspace/adapter contracts, candidate-sensitive metrics,
+  worst-case quality, cost, trajectory and permission-boundary review,
+  artifacts, rollback, and human approval. It is local release-prep guidance,
+  not generated target-repo content.
+- Current effectiveness-evidence contract tests pass:
+  `PYTHONPATH=src:. python3 -m unittest tests.test_verify_contract`.
+- Full local verification for the effectiveness-evidence slice passes with
+  166 tests through direct unit discovery, POSIX entrypoint, and PowerShell
+  entrypoint. JSON validation, compile, research source check, exact local-path
+  scan, diff hygiene, and self-audit `100/100` also passed.
 - The user-supplied Meta-Harness PDF was unavailable to local text extractors,
   so the same paper was reviewed via arXiv HTML. `docs/harness/verify-json-contract.md`
   now records that benchmark/eval claims need candidate-sensitive metrics,
