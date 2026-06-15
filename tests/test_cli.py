@@ -798,6 +798,30 @@ class CliTests(unittest.TestCase):
         self.assertIn("macosOnly", manifest["supportedPlatforms"])
         self.assertNotIn("init.ps1", manifest["requiredFiles"])
 
+    def test_init_records_platform_source_review_metadata(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            with contextlib.redirect_stdout(io.StringIO()):
+                code = main(["init", "--target", str(root)])
+
+            manifest = json.loads(
+                (root / "docs/harness/manifest.json").read_text(encoding="utf-8")
+            )
+            change_contract = (
+                root / "docs/harness/change-contract.md"
+            ).read_text(encoding="utf-8")
+
+        self.assertEqual(code, 0)
+        review = manifest["platformSourceReview"]
+        self.assertEqual(review["lastReviewed"], "2026-06-15")
+        self.assertTrue(review["reviewRequiredBeforePlatformChange"])
+        source_ids = {source["id"] for source in review["sources"]}
+        self.assertIn("python-devguide-versions", source_ids)
+        self.assertIn("github-actions-hosted-runners", source_ids)
+        self.assertIn("github-runner-images-windows-vs2026", source_ids)
+        self.assertIn("current primary-source evidence", change_contract)
+        self.assertIn("runner labels", change_contract)
+
     def test_update_drift_report_detects_modified_generated_file(self) -> None:
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp)

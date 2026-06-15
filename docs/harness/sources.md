@@ -270,3 +270,11 @@ project-owned docs instead of machine-specific absolute paths.
   snapshots, held-out task controls, replay type, feedback channels, runtime
   and adapter contracts, candidate-sensitive metrics, worst-case quality,
   trajectory safety, result artifacts, rollback, and human approval.
+- Platform contract source review on 2026-06-15 checked current primary
+  sources before touching generated platform guidance. Python's developer guide
+  lists Python 3.13 and 3.14 as supported bugfix branches. GitHub's hosted
+  runner reference lists `ubuntu-22.04`, `macos-15`, `windows-2025`, and
+  `windows-2025-vs2026` labels. The actions/runner-images Windows migration
+  notice records the June 8-15, 2026 migration window for `windows-2025` to
+  the Visual Studio 2026 image. Generated manifests now carry this as review
+  metadata, not a freshness guarantee.

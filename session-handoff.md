@@ -42,8 +42,11 @@ and the required AGENTS instruction format.
 - `src/harnessforge/templates/claude.md.tmpl`
 - `src/harnessforge/templates/gemini.md.tmpl`
 - `src/harnessforge/templates/copilot-instructions.md.tmpl`
+- `src/harnessforge/templates/change-contract.md.tmpl`
 - `src/harnessforge/templates/component-inventory.md.tmpl`
 - `src/harnessforge/templates/research-sources.json.tmpl`
+- `src/harnessforge/templates/sources.md.tmpl`
+- `tests/test_cli.py`
 - `tests/test_detect.py`
 - `tests/test_generate_audit.py`
 - `tests/test_refresh_research.py`
@@ -52,8 +55,10 @@ and the required AGENTS instruction format.
 - `docs/harness/effectiveness-eval-contract.md`
 - `docs/harness/effectiveness-evidence.schema.json`
 - `docs/harness/effectiveness-evidence-example.json`
+- `docs/harness/change-contract.md`
 - `docs/harness/evaluator-rubric.md`
 - `docs/harness/evidence-log.md`
+- `docs/harness/manifest.json`
 - `docs/harness/sources.md`
 - `docs/harness/verification-matrix.md`
 - `docs/harness/reference-mining-notes.md`
@@ -483,12 +488,13 @@ and the required AGENTS instruction format.
 ## Next Session
 
 The P1 backlog from the remaining-ideas research pass is implemented. The
-latest release-prep slices added a no-network research source hygiene gate and
-a machine-readable effectiveness evidence contract. `scripts/refresh_research.py
---check` validates duplicate source IDs and URLs, required fields, placeholder
-text, canonical URL shape, arXiv `/abs/` URLs, lock-file consistency, and
-local-path leakage before any metadata fetch. Root POSIX and PowerShell
-entrypoints now run that gate after pin checks.
+latest release-prep slices added a no-network research source hygiene gate, a
+machine-readable effectiveness evidence contract, and source-reviewed platform
+adapter metadata. `scripts/refresh_research.py --check` validates duplicate
+source IDs and URLs, required fields, placeholder text, canonical URL shape,
+arXiv `/abs/` URLs, lock-file consistency, and local-path leakage before any
+metadata fetch. Root POSIX and PowerShell entrypoints now run that gate after
+pin checks.
 `effectiveness-evidence.schema.json` and
 `effectiveness-evidence-example.json` define the local review shape for
 harness-effectiveness claims: claim scope, baseline/candidate snapshots,
@@ -496,12 +502,20 @@ held-out task controls, replay type, feedback channels, runtime/workspace/
 adapter contracts, candidate-sensitive metrics, worst-case quality, cost,
 safety review, result artifacts, rollback, and human approval. This is local
 release-prep guidance, not generated target-repo content.
-Current verification passes: focused contract, refresh, and entrypoint tests,
-`scripts/refresh_research.py --root . --check`, POSIX and PowerShell
-entrypoints with 166 tests, pin check, and self-audit `100/100`.
+Generated manifests now include `platformSourceReview` metadata with the
+2026-06-15 review date, source IDs, source URLs, and a review-required flag
+before changing platform floors, interpreter versions, runner labels, or CI
+image assumptions. Generated change contracts now ask for current
+primary-source evidence for platform-impacting changes. The primary-source
+review checked Python version status, GitHub hosted runner labels, and the
+GitHub runner-images Windows VS2026 migration notice.
+Current verification passes: focused contract, generator, audit, refresh, and
+entrypoint tests, `scripts/refresh_research.py --root . --check`, POSIX and
+PowerShell entrypoints with 167 tests, pin check, and self-audit `100/100`.
 Continue release prep by deciding whether any P2 item is required before a
-public Action release. Source-verified platform adapters are the strongest
-remaining P2 item.
+public Action release. The strongest remaining release-prep items are manual
+macOS/Windows platform CI, the `v1` Action tag, and release-time
+SBOM/provenance gates.
 Existing eval guidance comes from the Harness Forge, Meta-Harness, Code as
 Agent Harness catalog, and arXiv harness-eval reviews; those sources are mined
 only for product ideas and are not copied into generated target-repo defaults.

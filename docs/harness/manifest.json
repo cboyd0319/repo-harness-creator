@@ -1,6 +1,28 @@
 {
   "version": 1,
   "generatedBy": "harnessforge",
+  "platformSourceReview": {
+    "lastReviewed": "2026-06-15",
+    "reviewRequiredBeforePlatformChange": true,
+    "sources": [
+      {
+        "id": "python-devguide-versions",
+        "url": "https://devguide.python.org/versions/",
+        "evidence": "Python 3.13 and 3.14 are supported bugfix branches."
+      },
+      {
+        "id": "github-actions-hosted-runners",
+        "url": "https://docs.github.com/en/actions/reference/runners/github-hosted-runners",
+        "evidence": "GitHub documents ubuntu-22.04, macos-15, windows-2025, and windows-2025-vs2026 hosted-runner labels."
+      },
+      {
+        "id": "github-runner-images-windows-vs2026",
+        "url": "https://github.com/actions/runner-images/issues/14017",
+        "evidence": "GitHub announced the June 8-15, 2026 migration of windows-2025 to the Visual Studio 2026 image."
+      }
+    ],
+    "note": "Recheck current primary sources before changing platform floors, interpreter versions, runner labels, or CI image assumptions."
+  },
   "requiredFiles": [
     "AGENTS.md",
     "CLAUDE.md",
@@ -123,7 +145,9 @@
     "docs/harness/change-contract.md": [
       "Acceptance Criteria",
       "Verification",
-      "Rollback"
+      "Rollback",
+      "current primary-source evidence",
+      "runner labels"
     ],
     "docs/harness/verification-matrix.md": [
       "Change Type",

@@ -24,6 +24,30 @@ REVIEW_REQUIRED_FILES = (
     "docs/harness/quality-document.md",
     "docs/harness/release-controls.md",
 )
+PLATFORM_SOURCE_REVIEW_DATE = "2026-06-15"
+PLATFORM_SOURCE_REVIEW = (
+    {
+        "id": "python-devguide-versions",
+        "url": "https://devguide.python.org/versions/",
+        "evidence": "Python 3.13 and 3.14 are supported bugfix branches.",
+    },
+    {
+        "id": "github-actions-hosted-runners",
+        "url": "https://docs.github.com/en/actions/reference/runners/github-hosted-runners",
+        "evidence": (
+            "GitHub documents ubuntu-22.04, macos-15, windows-2025, "
+            "and windows-2025-vs2026 hosted-runner labels."
+        ),
+    },
+    {
+        "id": "github-runner-images-windows-vs2026",
+        "url": "https://github.com/actions/runner-images/issues/14017",
+        "evidence": (
+            "GitHub announced the June 8-15, 2026 migration of "
+            "windows-2025 to the Visual Studio 2026 image."
+        ),
+    },
+)
 
 
 def create_harness(
@@ -338,6 +362,7 @@ def _template_context(
         "agent_file_yaml": json.dumps(agent_file),
         "platform_contract": platform_contract,
         "platform_contract_summary": str(platform["summary"]),
+        "platform_source_review_markdown": _platform_source_review_markdown(),
         "project_name": project_name or profile.name,
         "detected_stack": profile.stack,
         "languages": ", ".join(profile.languages),
@@ -385,6 +410,17 @@ def _verification_entrypoints_markdown(platform_contract: str) -> str:
             "```"
         )
     return "\n\n".join(blocks)
+
+
+def _platform_source_review_markdown() -> str:
+    source_ids = ", ".join(source["id"] for source in PLATFORM_SOURCE_REVIEW)
+    return (
+        f"- Last HarnessForge platform source review: {PLATFORM_SOURCE_REVIEW_DATE}.\n"
+        "- Before changing platform floors, interpreter versions, runner labels, "
+        "or CI image assumptions, record current primary-source evidence and "
+        "the review date in `docs/harness/evidence-log.md`.\n"
+        f"- Recheck source IDs: {source_ids}."
+    )
 
 
 def _self_heal_verify_command(platform_contract: str) -> str:
@@ -1032,6 +1068,8 @@ def _manifest_content(
             "Acceptance Criteria",
             "Verification",
             "Rollback",
+            "current primary-source evidence",
+            "runner labels",
         ],
         "docs/harness/verification-matrix.md": [
             "Change Type",
@@ -1218,6 +1256,17 @@ def _manifest_content(
         "detectedStack": profile.stack,
         "platformContract": platform_contract,
         "supportedPlatforms": platform["supported"],
+        "platformSourceReview": {
+            "lastReviewed": PLATFORM_SOURCE_REVIEW_DATE,
+            "reviewRequiredBeforePlatformChange": True,
+            "sources": [dict(source) for source in PLATFORM_SOURCE_REVIEW],
+            "note": (
+                "This records sources HarnessForge reviewed when generating "
+                "platform guidance. Recheck current primary sources before "
+                "changing platform floors, interpreter versions, runner "
+                "labels, or CI image assumptions."
+            ),
+        },
         "requiredFiles": required_files,
         "requiredHarnessSnippets": required_snippets,
         "generatedFiles": generated_files or {},

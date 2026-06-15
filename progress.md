@@ -362,7 +362,8 @@ The P1 backlog from the remaining-ideas research pass is implemented. The
 source-ledger hygiene gate and machine-readable effectiveness-evidence schema
 are now part of local release-prep guidance. Continue release prep by deciding
 whether any remaining P2 item is required before a public Action release, with
-source-verified platform adapters as the strongest remaining candidate.
+manual macOS/Windows platform CI, the `v1` Action tag, and release-time
+SBOM/provenance gates as the strongest remaining candidates.
 Push local commits only at an explicit batch/release boundary or user request.
 Remaining product decisions before a first public Action release: whether to
 add component-directed monorepo verification commands, path/package exclusions
@@ -472,6 +473,19 @@ blocking.
   166 tests through direct unit discovery, POSIX entrypoint, and PowerShell
   entrypoint. JSON validation, compile, research source check, exact local-path
   scan, diff hygiene, and self-audit `100/100` also passed.
+- Added source-reviewed platform adapter metadata. Generated manifests now
+  include `platformSourceReview` with review date, source IDs, source URLs, and
+  a review-required flag before changing platform floors, interpreter versions,
+  runner labels, or CI image assumptions. Generated change contracts now ask
+  for current primary-source evidence for platform-impacting changes.
+- Platform source review on 2026-06-15 checked Python's supported-version
+  status, GitHub hosted runner labels, and the GitHub runner-images Windows
+  VS2026 migration notice before changing generated platform guidance.
+- Full local verification for the source-verified platform adapter slice
+  passes with 167 tests through direct unit discovery, POSIX entrypoint, and
+  PowerShell entrypoint. JSON validation, compile, pin check, research source
+  check, exact local-path scan, diff hygiene, and self-audit `100/100` also
+  passed.
 - The user-supplied Meta-Harness PDF was unavailable to local text extractors,
   so the same paper was reviewed via arXiv HTML. `docs/harness/verify-json-contract.md`
   now records that benchmark/eval claims need candidate-sensitive metrics,
