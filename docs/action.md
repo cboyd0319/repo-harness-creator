@@ -239,6 +239,13 @@ traversal outside the target repository are rejected.
 Report path outputs use forward slashes on every runner so workflow consumers
 can handle them consistently across Windows and POSIX jobs.
 
+When `GITHUB_STEP_SUMMARY` is available, the Action writes a concise Markdown
+summary. `command: report` summarizes readiness, audit score, drift, docs
+fan-out, verify evidence, effectiveness evidence, instruction quality,
+first-agent lifecycle, repo-map component/source counts, and SBOM file count.
+`command: sync` includes readiness, warning, review-required, runnable-check,
+instruction-quality, and first-agent lifecycle counts.
+
 ## Version Pinning
 
 For production workflows, pin this Action and all other third-party Actions to a

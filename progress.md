@@ -30,6 +30,11 @@ generated harness effectiveness, product-boundary enforcement, or verification.
 
 ## Latest Work
 
+- Polished GitHub Action step summaries. `command: report` now shows a compact
+  signal table for readiness, score, drift, docs fan-out, verify/effectiveness
+  evidence, instruction quality, first-agent lifecycle, repo-map counts, and
+  SBOM count. `command: sync` now shows warning, review-required,
+  runnable-check, instruction-quality, first-agent, and verify-evidence status.
 - Added compact repo-map output to `harnessforge index --json` and unified
   report. The map records primary languages, components, source-of-truth docs,
   manifest kinds, entrypoints, boundary examples, verification commands,
@@ -85,11 +90,11 @@ generated harness effectiveness, product-boundary enforcement, or verification.
 
 ## Verification
 
-Latest repo-map/SBOM verification:
+Latest Action summary verification:
 
-- `PYTHONPATH=src:. python3 -m unittest discover -s tests`
-- `PYTHONPATH=src:. python3 -m unittest tests.test_cli tests.test_generate_audit`
 - `PYTHONPATH=src:. python3 -m unittest tests.test_github_action`
+- `PYTHONPATH=src:. python3 -m unittest discover -s tests`
+- `PYTHONPATH=src:. python3 -m compileall -q src tests`
 - fresh generated-target `harnessforge audit --min-score 85`
 - HarnessForge `harnessforge audit --target . --min-score 85`
 - `PYTHONPATH=src:. python3 -m harnessforge index --target . --json`
@@ -99,12 +104,12 @@ Latest repo-map/SBOM verification:
 - HarnessForge `git diff --check`
 - local-path scan
 
-Results: 251 unit tests passed, focused CLI tests passed with 82 tests, Action
-tests passed with 21 tests, generated/audit tests passed with 56 tests, compile
-passed, fresh generated-target audit was `100/100`, HarnessForge self-audit was
-`100/100`, index/report JSON smokes emitted `harnessforge.repoMap.v1`, local
-`AGENTS.md` is 998 words, JSON validation passed, local-path scan found only
-intentional redaction fixtures and regexes, and diff hygiene passed.
+Results: focused Action tests passed with 21 tests, 251 unit tests passed,
+compile passed, fresh generated-target audit was `100/100`, HarnessForge
+self-audit was `100/100`, index/report JSON smokes emitted
+`harnessforge.repoMap.v1`, local `AGENTS.md` is 998 words, JSON validation
+passed, local-path scan found only intentional redaction fixtures and regexes,
+and diff hygiene passed.
 
 Earlier optimization verification also included:
 
@@ -122,7 +127,6 @@ Earlier optimization verification also included:
 Continue accepted pre-release backlog before release prep:
 
 - optional SBOM adapter design if needed
-- Action summary polish
 - `release-check`
 - harness maturity levels
 - expanded policy presets

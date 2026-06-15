@@ -654,14 +654,21 @@ provenance, freshness, confidence, and risks.
 
 ### Action Summary Polish
 
+Status: implemented for report and sync summaries.
+
 Improve the composite GitHub Action user experience.
 
-Candidate behavior:
+Implemented behavior:
 
-- richer `$GITHUB_STEP_SUMMARY` output for audit, sync, verify, and report;
-- concise blocked-readiness annotations;
-- clear distinction between advisory warnings and failing blockers;
-- linked JSON or Markdown report paths when users request reports;
+- richer `$GITHUB_STEP_SUMMARY` output for `command: report`, including
+  readiness, score, drift, docs fan-out, verify evidence, effectiveness,
+  instruction quality, first-agent lifecycle, repo-map counts, and SBOM count;
+- richer `command: sync` summary with readiness, warning, review-required,
+  runnable-check, instruction-quality, first-agent, and verify-evidence status;
+- existing audit and verify summaries remain concise and table-oriented.
+
+Remaining polish:
+
 - examples for artifact upload without making upload a default requirement.
 
 ### Release Evidence Automation

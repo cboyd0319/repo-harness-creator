@@ -231,6 +231,10 @@ class GitHubActionTests(unittest.TestCase):
         self.assertIn("# HarnessForge Report", markdown)
         self.assertIn("HarnessForge Report", summary_text)
         self.assertIn("Docs fan-out verdict", summary_text)
+        self.assertIn("Instruction quality", summary_text)
+        self.assertIn("First-agent lifecycle", summary_text)
+        self.assertIn("Repo map", summary_text)
+        self.assertIn("SBOM files", summary_text)
 
     def test_action_sync_writes_readiness_report_and_outputs(self) -> None:
         with tempfile.TemporaryDirectory() as tmp:
@@ -277,6 +281,8 @@ class GitHubActionTests(unittest.TestCase):
         self.assertEqual(outputs["verify-verdict"], "")
         self.assertFalse((root / "AGENTS.md").exists())
         self.assertIn("HarnessForge Sync", summary_text)
+        self.assertIn("Instruction quality", summary_text)
+        self.assertIn("First-agent lifecycle", summary_text)
 
     def test_action_sync_verify_evidence_gate_blocks_missing_evidence(self) -> None:
         with tempfile.TemporaryDirectory() as tmp:

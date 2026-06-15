@@ -334,6 +334,11 @@ def _sync_summary_markdown(report: Any, exit_code: int) -> str:
     lines = [
         f"- Verdict: `{report.verdict}`",
         f"- Exit code: `{exit_code}`",
+        f"- Warnings: `{len(report.warnings)}`",
+        f"- Review-required surfaces: `{len(report.review_required)}`",
+        f"- Runnable checks: `{len(report.runnable_checks)}`",
+        f"- Instruction quality: `{report.instruction_quality.status}`",
+        f"- First-agent lifecycle: `{report.first_agent_lifecycle.lifecycle_status}`",
         f"- Verify evidence required: `{str(report.verify_evidence_required).lower()}`",
     ]
     if report.blocked_reasons:
@@ -369,14 +374,20 @@ def _verify_summary_markdown(report: Any) -> str:
 def _report_summary_markdown(payload: dict[str, Any]) -> str:
     latest_verify = payload["verifyEvidence"]["latest"]
     verify_status = latest_verify["verdict"] if latest_verify else "missing"
+    repo_map = payload["index"]["repoMap"]["summary"]
     lines = [
-        f"- Readiness: `{payload['readiness']['verdict']}`",
-        f"- Audit score: `{payload['audit']['overall']}/100`",
-        f"- Generated drift: `{payload['drift']['summary']['actionable']}` actionable",
-        f"- Docs fan-out: `{payload['docsFanout']['diff']['classification']}`",
-        f"- Docs fan-out verdict: `{payload['docsFanout']['contract']['verdict']}`",
-        f"- Verify evidence: `{verify_status}`",
-        f"- Effectiveness: `{payload['effectiveness']['verdict']}`",
+        "| Signal | Value |",
+        "| --- | --- |",
+        f"| Readiness | `{payload['readiness']['verdict']}` |",
+        f"| Audit score | `{payload['audit']['overall']}/100` |",
+        f"| Generated drift | `{payload['drift']['summary']['actionable']}` actionable |",
+        f"| Docs fan-out verdict | `{payload['docsFanout']['contract']['verdict']}` ({payload['docsFanout']['diff']['classification']}) |",
+        f"| Verify evidence | `{verify_status}` |",
+        f"| Effectiveness | `{payload['effectiveness']['verdict']}` |",
+        f"| Instruction quality | `{payload['instructionQuality']['summary']['status']}` |",
+        f"| First-agent lifecycle | `{payload['firstAgentTask']['lifecycle']['status']}` |",
+        f"| Repo map | `{repo_map['componentCount']}` components, `{repo_map['sourceOfTruthCount']}` source docs |",
+        f"| SBOM files | `{repo_map['sbomCount']}` |",
     ]
     if payload["nextActions"]:
         lines.extend(["", "Next actions:"])

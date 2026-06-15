@@ -9,6 +9,12 @@ generated harness quality, product boundaries, and verification evidence intact.
 
 ## What Changed
 
+- GitHub Action summaries are polished for report and sync. `command: report`
+  now writes a compact signal table with readiness, score, drift, docs
+  fan-out, verify/effectiveness evidence, instruction quality, first-agent
+  lifecycle, repo-map counts, and SBOM count. `command: sync` now includes
+  warning, review-required, runnable-check, instruction-quality, first-agent,
+  and verify-evidence status.
 - Compact repo maps are implemented in `index --json` and unified report. The
   map records primary languages, components, source-of-truth docs, manifest
   kinds, entrypoints, boundary examples, verification commands,
@@ -78,6 +84,7 @@ generated harness quality, product boundaries, and verification evidence intact.
 - `src/harnessforge/audit.py`
 - `src/harnessforge/generate.py`
 - `src/harnessforge/first_agent.py`
+- `src/harnessforge/github_action.py`
 - `src/harnessforge/harness_paths.py`
 - `src/harnessforge/indexer.py`
 - `src/harnessforge/instruction_quality.py`
@@ -86,6 +93,7 @@ generated harness quality, product boundaries, and verification evidence intact.
 - `tests/test_generate_audit.py`
 - `tests/test_cli.py`
 - `tests/test_github_action.py`
+- `docs/action.md`
 - `AGENTS.md`
 - `docs/harness/manifest.json`
 - `docs/harness/README.md`
@@ -152,6 +160,6 @@ Rerun focused tests after any further template or scoring edit.
 ## Next Session
 
 If the user wants more backlog work, continue with instruction-quality and
-signal-to-noise task-class guidance, optional SBOM adapter design, Action
-summary polish, or `release-check`. If the user asks to checkpoint, commit the
-current slice first.
+signal-to-noise task-class guidance, optional SBOM adapter design,
+`release-check`, harness maturity levels, or expanded policy presets. If the
+user asks to checkpoint, commit the current slice first.
