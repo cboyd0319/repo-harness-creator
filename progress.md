@@ -301,12 +301,21 @@ maintenance loop.
   blockers, next actions, detected source-of-truth docs, runnable checks,
   generated drift, and review-required governance surfaces without running
   target repository commands or writing files.
+- Reviewed additional spec-driven-development sources: the GitHub Spec Kit
+  launch article, the supplied local Spec Kit checkout, Fowler's SDD tools
+  article, and specdriven.ai. Accepted ideas for the next source-of-truth
+  audit: detect `.specify` systems, active feature metadata, spec lifecycle
+  conventions, global context versus feature-scoped specs, unresolved
+  clarification markers, incomplete requirement checklists, missing plan/task
+  artifacts, and weak spec-to-task traceability. Rejected default installation
+  of Spec Kit, `.specify`, agent slash commands, presets, extensions,
+  catalogs, or workflow engines into arbitrary target repos.
 
 ## Recommended Next Step
 
 Continue the P0 remaining-ideas backlog in this order: source-of-truth spec
-sync audit, `sync --check`, then a design-only issue or doc for `verify
---json`. Push local commits only at an explicit
+sync audit with Spec Kit-style SDD coverage, `sync --check`, then a
+design-only issue or doc for `verify --json`. Push local commits only at an explicit
 batch/release boundary or user request. Remaining product decisions before a
 first public Action release: whether to add component-directed monorepo
 verification commands, path/package exclusions for intentionally vulnerable

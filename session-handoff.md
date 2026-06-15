@@ -61,8 +61,8 @@ and the required AGENTS instruction format.
   first P0 item: read-only `inspect --readiness --json`, including static
   verdicts, blockers, warnings, next actions, source-of-truth signals,
   runnable checks, generated drift, and governance review surfaces. Remaining
-  P0 candidates: source-of-truth spec sync audit, `sync --check`, and a
-  design-only `verify --json` contract. P1 candidates:
+  P0 candidates: source-of-truth spec sync audit with Spec Kit-style SDD
+  coverage, `sync --check`, and a design-only `verify --json` contract. P1 candidates:
   workflow/work-item inventory, context-budget and duplication audit,
   permission/governance inventory, and guided first-run UX. P2 candidates:
   opt-in blueprints, real-agent evals, source-verified platform adapters, and
@@ -83,6 +83,15 @@ and the required AGENTS instruction format.
   diff hygiene, and a read-only readiness smoke against this repo. Readiness is
   warning-only because existing local instruction files need review; there are
   no readiness blockers.
+- Current SDD research supplement reviewed the GitHub Spec Kit article, the
+  supplied local Spec Kit checkout, Fowler's SDD tools article, and
+  specdriven.ai. Accepted generic ideas: detect `.specify/`, active feature
+  metadata, spec lifecycle conventions, global context versus feature-scoped
+  artifacts, unresolved clarification markers, incomplete requirement
+  checklists, missing plan/task artifacts, and weak spec-to-task traceability.
+  Keep the boundary: HarnessForge should detect and route existing SDD systems,
+  not install Spec Kit, `.specify`, agent slash commands, presets, extensions,
+  catalogs, or workflow engines by default.
 - Current expanded reference-repo quality batch ran shadow generation and
   content review against agent-governance-toolkit, apple-container,
   Bluepeak-AI, JobSentinel, nhl-betting-analytics, persona, RunHaven,
@@ -412,9 +421,9 @@ and the required AGENTS instruction format.
 
 ## Next Session
 
-Continue the P0 remaining-ideas backlog: source-of-truth spec sync audit,
-`sync --check`, then a design-only `verify --json` contract. Push local commits
-only at an explicit batch/release
+Continue the P0 remaining-ideas backlog: source-of-truth spec sync audit with
+Spec Kit-style SDD coverage, `sync --check`, then a design-only `verify --json`
+contract. Push local commits only at an explicit batch/release
 boundary or user request. Remaining product decisions before public release:
 component-directed monorepo verification commands, path/package exclusions for
 intentionally vulnerable training repos, Maven/Gradle dependency pin parsing,

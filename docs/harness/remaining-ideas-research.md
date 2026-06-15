@@ -4,7 +4,8 @@ Reviewed: 2026-06-15 UTC.
 
 Scope: local `awman`, `aspec`, and `maki`; the public
 `jcaiagent7143-ui/harnessforge`; OpenAI, Martin Fowler, LangChain,
-OpenHarness, Walking Labs, and current harness-engineering research sources.
+OpenHarness, Walking Labs, spec-driven-development sources, and current
+harness-engineering research sources.
 
 This note is repo-local product research. It is not generated into target
 repositories. No AGY review was used for this pass.
@@ -252,6 +253,91 @@ Sources:
 - https://www.anthropic.com/engineering/claude-code-auto-mode
 - https://www.anthropic.com/engineering/claude-code-best-practices
 
+### Spec-Driven Development Sources
+
+The GitHub Spec Kit launch article frames the workflow as four reviewed phases:
+specify, plan, tasks, and implement. The useful HarnessForge signal is the
+explicit checkpoint between each phase, plus the emphasis that tasks should be
+small, reviewable, and independently testable. The article also raises
+organization-scale questions that matter for HarnessForge: managing many spec
+files, diffing implementations, and keeping specs usable rather than tedious.
+
+The local Spec Kit checkout adds concrete repo patterns:
+
+- `.specify/memory/constitution.md` is persistent project context.
+- `.specify/feature.json` identifies the active feature directory without
+  relying on branch naming.
+- `specs/<feature>/spec.md`, `plan.md`, `tasks.md`, `research.md`,
+  `data-model.md`, `quickstart.md`, `contracts/`, and `checklists/` form a
+  feature-scoped artifact set.
+- `spec.md` separates user intent from implementation details, with
+  acceptance scenarios, functional requirements, measurable success criteria,
+  edge cases, assumptions, and explicit clarification markers.
+- `plan.md` contains a constitution check, technical context, structure
+  decision, and complexity tracking.
+- `tasks.md` groups implementation by independently testable user stories and
+  uses stable task IDs, parallel markers, story labels, file paths, and
+  dependency sections.
+- `checklist` treats checklist items as "unit tests for English": requirements
+  quality checks, not implementation tests.
+- `analyze` is a read-only cross-artifact consistency report across spec,
+  plan, tasks, and constitution.
+- The built-in workflow uses human review gates between specify, plan, and
+  tasks before implementation.
+
+Fowler's SDD article adds two important cautions. First, spec-driven
+development has at least three lifecycle levels: spec-first, spec-anchored,
+and spec-as-source. Repos may use only one of these, and HarnessForge should
+not infer stronger semantics than the repo documents. Second, there is a real
+risk that SDD tools create too many files, review burden, and ambiguous
+responsibility for product analysis. HarnessForge should surface that risk as
+quality/readiness evidence rather than amplify it with generated defaults.
+
+The specdriven.ai methodology reinforces a six-phase shape: constitution,
+specify, clarify, plan, tasks, and implement/iterate. Its strongest fit for
+HarnessForge is the static audit vocabulary: source-of-truth, clarification,
+technical blueprint, atomic tasks, embedded acceptance criteria, and human
+review checkpoints.
+
+HarnessForge implications:
+
+- Detect Spec Kit and similar SDD layouts as existing source-of-truth systems:
+  `.specify/`, `.specify/memory/constitution.md`, `.specify/feature.json`,
+  `specs/<feature>/spec.md`, `plan.md`, `tasks.md`, `checklists/`, and
+  `contracts/`.
+- Report the active feature directory from `.specify/feature.json` when
+  present, validating that it stays inside the repo and that referenced
+  artifacts exist.
+- Classify likely artifact roles: global context, feature spec, plan, task
+  list, quality checklist, research notes, data model, contracts, and
+  quickstart.
+- Add read-only quality signals for unresolved `[NEEDS CLARIFICATION]`
+  markers, incomplete requirement checklists, missing plan/tasks after a spec,
+  missing trace IDs, and tasks without file paths.
+- Distinguish general repo memory/context from feature-scoped specs in
+  generated or enhanced instruction routing.
+- Ask maintainers to declare the spec lifecycle model when possible:
+  spec-first, spec-anchored, spec-as-source, flow-back, flow-forward, or
+  living spec.
+
+What HarnessForge should not adopt by default:
+
+- Installing Spec Kit, `.specify`, slash commands, agent integrations,
+  workflow YAML, catalogs, presets, extensions, or agent context markers into
+  arbitrary target repos.
+- Treating any one SDD folder structure as mandatory.
+- Claiming specs are executable or authoritative unless the target repo
+  explicitly declares that convention.
+- Running AI workflows or target repo commands during static inspect, audit,
+  or readiness reporting.
+
+Sources:
+
+- https://github.blog/ai-and-ml/generative-ai/spec-driven-development-with-ai-get-started-with-a-new-open-source-toolkit/
+- local Spec Kit checkout supplied by the user
+- https://martinfowler.com/articles/exploring-gen-ai/sdd-3-tools.html
+- https://specdriven.ai/
+
 ## Ranked Backlog
 
 ### P0: Next Implementation Candidates
@@ -263,7 +349,12 @@ Sources:
    - Must stay read-only and avoid running target repo commands.
 
 2. Add source-of-truth spec sync detection.
-   - Detect likely spec roots and work-item templates.
+   - Detect likely spec roots, `.specify` systems, active feature metadata,
+     and work-item templates.
+   - Identify global context versus feature-scoped spec artifacts.
+   - Report unresolved clarification markers, incomplete requirement
+     checklists, missing plan/task artifacts, and missing traceability as
+     static quality signals.
    - Report whether generated/enhanced instruction files route agents to those
      roots.
    - Add audit findings for missing routing when specs exist.
@@ -301,6 +392,8 @@ Sources:
    - A `quickstart` or `wizard` command can explain what will be generated,
      which files will be preserved, what review placeholders remain, and which
      command proves readiness.
+   - Include detected spec-system next steps when `.specify`, `specs/`, or
+     work-item systems already exist.
 
 ### P2: Longer-Term Opt-Ins
 
@@ -336,6 +429,8 @@ HarnessForge generator behavior:
   repos.
 - Creating autonomous setup, teardown, self-heal, push, or PR workflows by
   default.
+- Installing Spec Kit, `.specify`, agent slash commands, presets, extensions,
+  catalogs, or workflow engines by default.
 - Treating structural audit scores as proof of real agent effectiveness.
 - Falling back silently from a requested platform or runtime contract to a
   weaker one.
