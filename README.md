@@ -70,6 +70,9 @@ effectiveness still needs representative task runs and human review.
 - Detects repository shape, stacks, package managers, verification commands,
   monorepo markers, source-of-truth docs, Spec Kit-style SDD surfaces,
   ASPEC-style folders, work-item templates, and workflow control surfaces.
+- Provides a read-only guided first-run summary that explains detected context,
+  readiness, preserved files, planned generated files, review placeholders, and
+  next commands.
 - Generates a compact harness with agent entrypoints, project state files,
   local verification scripts, security boundaries, evidence docs, lifecycle
   docs, and a manifest.
@@ -132,7 +135,17 @@ PYTHONPATH=src python -m harnessforge --help
 
 ## Quick Start
 
-The normal flow is inspect, check readiness, preview, generate, audit:
+The normal flow is guide, inspect as needed, preview, generate, audit:
+
+Run the guided first-run summary before writing anything:
+
+```bash
+harnessforge quickstart --target /path/to/repo
+```
+
+It reports detected project context, readiness, source-of-truth systems,
+preserved existing files, planned generated files, generated review
+placeholders, and the safest next commands.
 
 Inspect a repository before writing anything:
 
@@ -380,6 +393,7 @@ input, output, and command mode.
 
 | Command | Purpose |
 | --- | --- |
+| `harnessforge quickstart` | Guide the first safe run without writing files |
 | `harnessforge inspect` | Show detected project profile or readiness without writing files |
 | `harnessforge sync --check` | Run a read-only CI preflight with readiness exit codes |
 | `harnessforge init` | Create missing harness artifacts |

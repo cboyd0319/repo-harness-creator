@@ -264,6 +264,88 @@ class CliTests(unittest.TestCase):
         self.assertTrue(any("environment" in item for item in payload["reviewRequired"]))
         self.assertTrue(any("hook" in item for item in payload["reviewRequired"]))
 
+    def test_quickstart_guides_first_run_without_writing(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            (root / "pyproject.toml").write_text(
+                "[project]\nname='demo'\n",
+                encoding="utf-8",
+            )
+            (root / "tests").mkdir()
+            (root / "tests" / "test_demo.py").write_text("", encoding="utf-8")
+            (root / "AGENTS.md").write_text(
+                "# Existing\n\nProject-owned instructions.\n",
+                encoding="utf-8",
+            )
+            (root / "specs" / "001-demo").mkdir(parents=True)
+            (root / "specs" / "001-demo" / "spec.md").write_text(
+                "# Demo Spec\n",
+                encoding="utf-8",
+            )
+            (root / ".mcp.json").write_text("{}\n", encoding="utf-8")
+            stdout = io.StringIO()
+            with contextlib.redirect_stdout(stdout):
+                code = main(["quickstart", "--target", str(root)])
+
+            output = stdout.getvalue()
+            agents = (root / "AGENTS.md").read_text(encoding="utf-8")
+            manifest_exists = (root / "docs" / "harness" / "manifest.json").exists()
+
+        self.assertEqual(code, 0)
+        self.assertEqual(agents, "# Existing\n\nProject-owned instructions.\n")
+        self.assertFalse(manifest_exists)
+        self.assertIn(f"Quickstart for {root.name}", output)
+        self.assertIn("Detected stack: python", output)
+        self.assertIn("Readiness: warning", output)
+        self.assertIn("Source of truth:", output)
+        self.assertIn("Existing files preserved:", output)
+        self.assertIn("AGENTS.md", output)
+        self.assertIn("Files HarnessForge would create:", output)
+        self.assertIn("docs/harness/manifest.json", output)
+        self.assertIn("Generated files needing project review:", output)
+        self.assertIn("docs/harness/change-contract.md", output)
+        self.assertIn("Review required:", output)
+        self.assertIn("MCP configuration detected", output)
+        self.assertIn("Next commands:", output)
+        self.assertIn("harnessforge init --target <repo> --dry-run", output)
+        self.assertIn("harnessforge sync --check --target <repo>", output)
+
+    def test_quickstart_reports_blocked_missing_verification_without_writing(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            (root / "README.md").write_text("# Notes\n", encoding="utf-8")
+            stdout = io.StringIO()
+            with contextlib.redirect_stdout(stdout):
+                code = main(["quickstart", "--target", str(root)])
+
+            output = stdout.getvalue()
+            agents_exists = (root / "AGENTS.md").exists()
+
+        self.assertEqual(code, 0)
+        self.assertFalse(agents_exists)
+        self.assertIn("Readiness: blocked", output)
+        self.assertIn("Blocked reasons:", output)
+        self.assertIn("No project verification check detected.", output)
+        self.assertIn("--command", output)
+
+    def test_quickstart_guides_existing_harness_to_audit_and_sync(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            with contextlib.redirect_stdout(io.StringIO()):
+                init_code = main(["init", "--target", str(root)])
+            stdout = io.StringIO()
+            with contextlib.redirect_stdout(stdout):
+                quickstart_code = main(["quickstart", "--target", str(root)])
+
+            output = stdout.getvalue()
+
+        self.assertEqual(init_code, 0)
+        self.assertEqual(quickstart_code, 0)
+        self.assertIn("Existing files preserved:", output)
+        self.assertNotIn("harnessforge init --target <repo>", output)
+        self.assertIn("harnessforge audit --target <repo> --min-score 85", output)
+        self.assertIn("harnessforge sync --check --target <repo>", output)
+
     def test_inspect_readiness_warns_for_specs_and_governance_surfaces(self) -> None:
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp)

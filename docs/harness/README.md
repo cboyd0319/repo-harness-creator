@@ -43,10 +43,15 @@ agent sessions.
 Use:
 
 ```bash
+harnessforge quickstart --target .
 harnessforge audit --target .
 harnessforge update --target .
 harnessforge sync --check --target . --json
 ```
+
+`quickstart` is a read-only guided first-run view. It composes detection,
+readiness, dry-run generation planning, preserved-file reporting, review
+placeholder reporting, and next commands without writing files.
 
 `update` reports recommended safe corrections unless `--apply` is passed.
 Existing files are skipped unless `--force` is passed.

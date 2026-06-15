@@ -398,12 +398,15 @@ Sources:
      settings, hooks, devcontainers, sandbox configs, Copilot setup workflows,
      and environment files/templates.
 
-8. Add first-run guided UX.
+8. Implemented: add first-run guided UX.
    - A `quickstart` or `wizard` command can explain what will be generated,
      which files will be preserved, what review placeholders remain, and which
      command proves readiness.
    - Include detected spec-system next steps when `.specify`, `specs/`, or
      work-item systems already exist.
+   - `harnessforge quickstart` is read-only and composes detected context,
+     readiness, dry-run generation planning, preserved-file reporting, review
+     placeholders, and next commands.
 
 ### P2: Longer-Term Opt-Ins
 
@@ -448,6 +451,7 @@ HarnessForge generator behavior:
 
 ## Suggested Next Step
 
-Move to the next P1 backlog item: guided first-run UX. That
-keeps improving user experience without expanding the generator's default write
-surface.
+The P1 backlog from this research pass is implemented. Next, use release prep
+to decide whether any P2 idea is needed before a public Action release, with
+measured real-agent evals and source-verified adapter work as the strongest
+remaining candidates.

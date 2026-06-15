@@ -9,7 +9,7 @@ from . import __version__
 from .audit import audit_target, audit_to_dict, format_audit, render_html_report
 from .detect import detect_project
 from .doctor import doctor_json, doctor_report, format_doctor
-from .generate import PLATFORM_CONTRACTS, create_harness
+from .generate import PLATFORM_CONTRACTS, REVIEW_REQUIRED_FILES, create_harness
 from .models import DriftResult, ProjectProfile, WriteResult
 from .readiness import (
     ReadinessReport,
@@ -66,6 +66,27 @@ def build_parser() -> argparse.ArgumentParser:
     inspect.add_argument("--readiness", action="store_true")
     inspect.add_argument("--json", action="store_true")
     inspect.set_defaults(func=_inspect)
+
+    quickstart = subparsers.add_parser(
+        "quickstart",
+        help="guide a first HarnessForge run without writing files",
+    )
+    quickstart.add_argument("--target", type=Path, default=Path.cwd())
+    quickstart.add_argument("--agent-file", default="AGENTS.md")
+    quickstart.add_argument(
+        "--platform-contract",
+        choices=PLATFORM_CONTRACTS,
+        default="cross-platform",
+    )
+    quickstart.add_argument("--package-manager")
+    quickstart.add_argument("--command", dest="commands", action="append", default=[])
+    quickstart.add_argument("--project-name")
+    quickstart.add_argument(
+        "--enhance-existing",
+        action="store_true",
+        help="preview instruction-file enhancement instead of preserving existing routers",
+    )
+    quickstart.set_defaults(func=_quickstart)
 
     init = subparsers.add_parser("init", help="create missing harness artifacts")
     init.add_argument("--target", type=Path, default=Path.cwd())
@@ -194,6 +215,23 @@ def _inspect(args: argparse.Namespace) -> int:
             print(f"  - {component}")
     else:
         print("  - none detected")
+    return 0
+
+
+def _quickstart(args: argparse.Namespace) -> int:
+    profile, writes = create_harness(
+        args.target,
+        agent_file=args.agent_file,
+        force=False,
+        enhance_existing=args.enhance_existing,
+        dry_run=True,
+        package_manager=args.package_manager,
+        commands=tuple(args.commands),
+        project_name=args.project_name,
+        platform_contract=args.platform_contract,
+    )
+    report = inspect_readiness(profile)
+    print(_format_quickstart(profile, report, writes))
     return 0
 
 
@@ -347,6 +385,108 @@ def _format_sync_check(report: ReadinessReport) -> str:
     return f"Sync check: {report.verdict}\n\n{format_readiness(report)}"
 
 
+def _format_quickstart(
+    profile: ProjectProfile,
+    report: ReadinessReport,
+    writes: tuple[WriteResult, ...],
+) -> str:
+    would_create = tuple(
+        _relative(result.path, profile.root)
+        for result in writes
+        if result.status == "would_write"
+    )
+    would_enhance = tuple(
+        _relative(result.path, profile.root)
+        for result in writes
+        if result.status == "would_enhance"
+    )
+    preserved = tuple(
+        _relative(result.path, profile.root)
+        for result in writes
+        if result.status == "skipped"
+    )
+    planned_paths = set(would_create) | set(would_enhance)
+    review_placeholders = tuple(
+        path for path in REVIEW_REQUIRED_FILES if path in planned_paths
+    )
+    has_planned_writes = bool(planned_paths)
+
+    lines = [
+        f"Quickstart for {profile.name}",
+        "",
+        "Detected project:",
+        f"  - Detected stack: {profile.stack}",
+        f"  - Languages: {_list_or_none(profile.languages)}",
+        f"  - Package managers: {_list_or_none(profile.package_managers)}",
+        f"  - Components: {_list_or_none(profile.components)}",
+        "",
+        f"Readiness: {report.verdict}",
+        "",
+    ]
+    _append_cli_section(lines, "Blocked reasons", report.blocked_reasons)
+    _append_cli_section(lines, "Warnings", report.warnings)
+    _append_cli_section(lines, "Source of truth", report.source_of_truth)
+    _append_cli_section(lines, "Runnable checks", report.runnable_checks)
+    _append_cli_section(lines, "Existing files preserved", preserved)
+    _append_cli_section(lines, "Files HarnessForge would enhance", would_enhance)
+    _append_cli_section(lines, "Files HarnessForge would create", would_create)
+    _append_cli_section(
+        lines,
+        "Generated files needing project review",
+        review_placeholders,
+    )
+    _append_cli_section(lines, "Review required", report.review_required)
+    _append_cli_section(
+        lines,
+        "Next actions",
+        _quickstart_next_actions(report, has_planned_writes),
+    )
+    _append_cli_section(
+        lines,
+        "Next commands",
+        _quickstart_commands(report, has_planned_writes),
+    )
+    return "\n".join(lines).rstrip()
+
+
+def _quickstart_next_actions(
+    report: ReadinessReport, has_planned_writes: bool
+) -> tuple[str, ...]:
+    if has_planned_writes:
+        return report.next_actions
+    return tuple(
+        action
+        for action in report.next_actions
+        if not action.startswith("Run harnessforge init ")
+    )
+
+
+def _quickstart_commands(
+    report: ReadinessReport, has_planned_writes: bool
+) -> tuple[str, ...]:
+    if report.verdict == "blocked":
+        return (
+            "harnessforge inspect --target <repo> --readiness",
+            'harnessforge inspect --target <repo> --readiness --command "<check command>"',
+            'harnessforge sync --check --target <repo> --command "<check command>"',
+        )
+    commands = []
+    if has_planned_writes:
+        commands.extend(
+            [
+                "harnessforge init --target <repo> --dry-run",
+                "harnessforge init --target <repo>",
+            ]
+        )
+    commands.extend(
+        [
+            "harnessforge audit --target <repo> --min-score 85",
+            "harnessforge sync --check --target <repo>",
+        ]
+    )
+    return tuple(commands)
+
+
 def _profile_to_dict(profile: ProjectProfile) -> dict[str, object]:
     return {
         "name": profile.name,
@@ -363,6 +503,15 @@ def _profile_to_dict(profile: ProjectProfile) -> dict[str, object]:
 
 def _list_or_none(values: tuple[str, ...]) -> str:
     return ", ".join(values) if values else "none detected"
+
+
+def _append_cli_section(lines: list[str], title: str, values: tuple[str, ...]) -> None:
+    if not values:
+        return
+    lines.append(f"{title}:")
+    for value in values:
+        lines.append(f"  - {value}")
+    lines.append("")
 
 
 def _relative(path: Path, root: Path) -> str:

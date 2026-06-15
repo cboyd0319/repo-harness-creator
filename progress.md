@@ -343,10 +343,17 @@ maintenance loop.
   hooks, devcontainers, sandbox configs, agent setup workflows, and environment
   files or templates as review surfaces without reading or exposing secret
   values.
+- Added read-only guided first-run UX with `harnessforge quickstart`. The
+  command composes detected project context, readiness, dry-run generation
+  planning, preserved-file reporting, generated review placeholders,
+  review-required surfaces, and next commands without writing files.
 
 ## Recommended Next Step
 
-Continue with the next P1 backlog item: guided first-run UX.
+The P1 backlog from the remaining-ideas research pass is implemented. Continue
+release prep by deciding whether any P2 item is required before a public Action
+release, with measured real-agent evals and source-verified platform adapters
+as the strongest remaining candidates.
 Push local commits only at an explicit batch/release boundary or user request.
 Remaining product decisions before a first public Action release: whether to
 add component-directed monorepo verification commands, path/package exclusions
@@ -406,6 +413,12 @@ blocking.
   code `1` after adding governance inventory. This repo has no governance
   inventory items; warning state still comes from workflow and existing local
   instruction review items.
+- `PYTHONPATH=src:. python3 -m unittest discover -s tests` passed with
+  160 tests, `PYTHONPATH=src:. python3 -m compileall src tests scripts`
+  passed, `PYTHONPATH=src:. python3 scripts/check_pins.py --root .` passed,
+  `PYTHONPATH=src:. python3 -m harnessforge audit --target . --min-score 85`
+  passed with self-audit `100/100`, and `PYTHONPATH=src:. python3 -m
+  harnessforge quickstart --target .` passed after adding guided first-run UX.
 - `PYTHONPATH=src:. python3 -m unittest discover -s tests` passed with
   148 tests, and `PYTHONPATH=src:. python3 -m compileall src tests scripts`
   passed after adding source-of-truth spec sync detection.

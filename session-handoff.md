@@ -72,8 +72,9 @@ and the required AGENTS instruction format.
   tests. Implemented the first P1 item: read-only workflow and work-item
   inventory in readiness. Implemented the second P1 item: context-budget and
   duplicate-instruction detection in readiness. Implemented the third P1 item:
-  permission/governance inventory in readiness. Remaining P1 candidate: guided
-  first-run UX.
+  permission/governance inventory in readiness. Implemented the final P1 item:
+  guided first-run UX with `harnessforge quickstart`. The P1 backlog from this
+  research pass is implemented.
   P2 candidates: opt-in blueprints, real-agent evals, source-verified platform
   adapters, and sandbox/container readiness. Rejected defaults remain large
   skill/memory trees, platform permission config, LLM-assisted init,
@@ -88,7 +89,7 @@ and the required AGENTS instruction format.
   repo-local control planes, but it does not generate sibling-repo
   instructions, personal tool mandates, large skill trees, blueprints, MCP
   setup, or extra agent adapters by default. Current verification passes full
-  unit discovery with 157 tests, compile, pin check, self-audit `100/100`,
+  unit discovery with 160 tests, compile, pin check, self-audit `100/100`,
   diff hygiene, a read-only readiness smoke, and `sync --check` smoke against
   this repo. Readiness and sync check are warning-only because existing local
   instruction files and the two repo-local GitHub workflow definitions need
@@ -133,6 +134,10 @@ and the required AGENTS instruction format.
   `governanceInventory`, reporting MCP configs, agent settings, hooks,
   devcontainers, sandbox configs, agent setup workflows, and env
   files/templates without reading or exposing secret values.
+- Current guided first-run UX is read-only. `harnessforge quickstart` composes
+  detection, readiness, dry-run generation planning, preserved-file reporting,
+  generated review placeholders, review-required surfaces, and next commands
+  without writing target files.
 - Current expanded reference-repo quality batch ran shadow generation and
   content review against agent-governance-toolkit, apple-container,
   Bluepeak-AI, JobSentinel, nhl-betting-analytics, persona, RunHaven,
@@ -462,7 +467,9 @@ and the required AGENTS instruction format.
 
 ## Next Session
 
-Continue with the next P1 backlog item: guided first-run UX.
+The P1 backlog from the remaining-ideas research pass is implemented. Continue
+release prep by deciding whether any P2 item is required before a public Action
+release.
 Push local commits only at an explicit batch/release boundary or user request.
 Remaining product decisions before public release: component-directed monorepo
 verification commands, path/package exclusions for intentionally vulnerable
