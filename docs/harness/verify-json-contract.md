@@ -38,6 +38,28 @@ Non-goals for the first implementation:
 - No harness scoring. Use `audit --json` for that.
 - No readiness/drift exit-code behavior. Use `sync --check` for that.
 
+## Benchmark And Eval Boundary
+
+`verify --json` reports whether project checks are planned or, in a future
+explicit run mode, whether those checks passed. It is not by itself evidence
+that a generated harness improves real agent effectiveness.
+
+Any future benchmark or real-agent eval report should stay separate from this
+contract unless it can state:
+
+- the candidate harness surface under evaluation;
+- the baseline and control arm;
+- a metric that changes for quality reasons when the candidate changes;
+- the held-out split or contamination controls;
+- worst-case quality, not only average quality;
+- any do-no-harm quality floor used while optimizing cost, tokens, latency, or
+  tool calls;
+- whether the eval is a live run, counterfactual replay, or frozen replay.
+
+Frozen replay that cannot change quality when the candidate changes must not be
+used as evidence of harness effectiveness. At most, it can support a narrower
+cost or context-budget claim.
+
 ## Planned Commands
 
 Initial plan-only shape:

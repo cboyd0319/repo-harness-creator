@@ -138,6 +138,15 @@ and the required AGENTS instruction format.
   detection, readiness, dry-run generation planning, preserved-file reporting,
   generated review placeholders, review-required surfaces, and next commands
   without writing target files.
+- Current local Harness Forge and Meta-Harness paper review was done without
+  AGY against the local Harness Forge sibling repo and the user-supplied paper
+  PDF. Accepted ideas are eval discipline rather than generated files:
+  candidate-sensitive quality metrics, full-history queryable logs,
+  frozen-replay avoidance, held-out validation, anti-leakage, do-no-harm
+  quality floors, worst-case quality tracking, validation-before-expensive-eval,
+  and explicit skill/plugin/installer governance inventory. The review also
+  extended `governanceInventory` to detect agent skills, agent plugin
+  manifests, and root installer scripts.
 - Current expanded reference-repo quality batch ran shadow generation and
   content review against agent-governance-toolkit, apple-container,
   Bluepeak-AI, JobSentinel, nhl-betting-analytics, persona, RunHaven,
@@ -469,7 +478,10 @@ and the required AGENTS instruction format.
 
 The P1 backlog from the remaining-ideas research pass is implemented. Continue
 release prep by deciding whether any P2 item is required before a public Action
-release.
+release. The strongest remaining P2 item is measured real-agent or
+harness-quality eval guidance, now informed by the Harness Forge and
+Meta-Harness paper review's frozen-replay, full-history log, validation, and
+candidate-sensitive scorer guardrails.
 Push local commits only at an explicit batch/release boundary or user request.
 Remaining product decisions before public release: component-directed monorepo
 verification commands, path/package exclusions for intentionally vulnerable

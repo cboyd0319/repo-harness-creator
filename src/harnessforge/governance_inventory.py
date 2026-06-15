@@ -25,6 +25,20 @@ AGENT_SETUP_WORKFLOWS = (
     ".github/workflows/copilot-setup-steps.yaml",
 )
 
+AGENT_PLUGIN_MANIFESTS = {
+    ".claude-plugin/marketplace.json",
+    ".codex-plugin/plugin.json",
+}
+
+ROOT_INSTALLER_SCRIPTS = {
+    "bootstrap.ps1",
+    "bootstrap.sh",
+    "install.ps1",
+    "install.sh",
+    "setup.ps1",
+    "setup.sh",
+}
+
 HOOK_CONFIGS = {
     ".pre-commit-config.yaml",
     ".pre-commit-config.yml",
@@ -157,6 +171,36 @@ def _governance_item(file: str) -> GovernanceItem | None:
                 f"GitHub agent setup workflow detected at {file}; review before agent use.",
             ),
         )
+    if file in AGENT_PLUGIN_MANIFESTS:
+        return GovernanceItem(
+            path=file,
+            category="agent-plugin",
+            surfaces=("agent-distribution", "platform-installation"),
+            review_required=(
+                f"agent plugin manifest detected at {file}; review distributed "
+                "skills, commands, and installation scope.",
+            ),
+        )
+    if _is_agent_skill(file):
+        return GovernanceItem(
+            path=file,
+            category="agent-skill",
+            surfaces=("instruction-surface", "agent-capability"),
+            review_required=(
+                f"agent skill detected at {file}; review trigger scope and "
+                "tool expectations before agent use.",
+            ),
+        )
+    if _is_root_installer_script(file):
+        return GovernanceItem(
+            path=file,
+            category="installer-script",
+            surfaces=("local-installation", "external-write", "dependency-setup"),
+            review_required=(
+                f"installer script detected at {file}; review filesystem writes "
+                "and dependency setup before running.",
+            ),
+        )
     if _is_hook(file):
         return GovernanceItem(
             path=file,
@@ -233,6 +277,23 @@ def _is_hook(file: str) -> bool:
     if len(parts) >= 2 and tuple(parts[:2]) in AGENT_HOOK_DIRS:
         return True
     return bool(parts) and parts[0] in HOOK_DIRS and path.name.lower() in HOOK_NAMES
+
+
+def _is_agent_skill(file: str) -> bool:
+    path = Path(file)
+    parts = path.parts
+    return path.name == "SKILL.md" and (
+        len(parts) >= 3
+        and (
+            parts[0] == "skills"
+            or parts[:2] in {(".claude", "skills"), (".codex", "skills")}
+        )
+    )
+
+
+def _is_root_installer_script(file: str) -> bool:
+    path = Path(file)
+    return len(path.parts) == 1 and path.name.lower() in ROOT_INSTALLER_SCRIPTS
 
 
 def _is_env_template(file: str) -> bool:

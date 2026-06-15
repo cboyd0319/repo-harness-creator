@@ -1,6 +1,6 @@
 # Harness Sources
 
-Reviewed: 2026-06-14 UTC.
+Reviewed: 2026-06-15 UTC.
 
 This file records the source basis for this repo. Refresh before major harness,
 packaging, CI, or platform support changes.
@@ -41,6 +41,7 @@ packaging, CI, or platform support changes.
 | "AI Harness Engineering: A Runtime Substrate for Foundation-Model Software Agents" | Task state, observability, verification, permissions, entropy auditing, and episode evidence |
 | "Observability-Driven Automatic Evolution of Coding-Agent Harnesses" | Observability and feedback-driven harness correction loop |
 | "Code as Agent Harness" | Executable, verifiable, stateful agent harness direction |
+| Lee et al., "Meta-Harness: End-to-End Optimization of Model Harnesses" | Candidate-sensitive harness evaluation, full-history traces, queryable run logs, held-out validation, Pareto quality/cost frontiers, and frozen-replay overclaim boundaries |
 | VS Code, "The Coding Harness Behind GitHub Copilot in VS Code" | Editor-harness responsibilities and Copilot feedback-loop framing |
 | HumanLayer, "Harness Engineering for Coding Agents" | Harness as coding-agent configuration surface and skill/prompt/tooling practice |
 | GitHub Docs, "About the repository README file" | README purpose, expected content, relative links, and keeping deep docs outside the landing page |
@@ -231,3 +232,8 @@ project-owned docs instead of machine-specific absolute paths.
   App telemetry headers, model routing rules, public wiki mapping, file-size
   budgets, pre-commit lockfile hooks, and credential-backup test wrappers remain
   project-specific opt-ins.
+- Local Harness Forge and the Meta-Harness paper reinforced that real
+  harness-effectiveness claims need candidate-sensitive metrics, held-out
+  validation, anti-leakage checks, worst-case quality, do-no-harm floors, and
+  queryable run logs. Imported controls are limited to eval guidance and
+  advisory detection of skill, plugin, and installer surfaces.

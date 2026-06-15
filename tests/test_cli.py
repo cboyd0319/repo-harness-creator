@@ -188,6 +188,11 @@ class CliTests(unittest.TestCase):
             (root / "tests").mkdir()
             (root / "tests" / "test_demo.py").write_text("", encoding="utf-8")
             (root / ".mcp.json").write_text("{}\n", encoding="utf-8")
+            (root / ".claude-plugin").mkdir()
+            (root / ".claude-plugin" / "marketplace.json").write_text(
+                "{}\n",
+                encoding="utf-8",
+            )
             (root / ".claude").mkdir()
             (root / ".claude" / "settings.json").write_text("{}\n", encoding="utf-8")
             (root / ".codex").mkdir()
@@ -227,6 +232,15 @@ class CliTests(unittest.TestCase):
                 "API_TOKEN=secret\n",
                 encoding="utf-8",
             )
+            (root / "skills" / "meta-harness").mkdir(parents=True)
+            (root / "skills" / "meta-harness" / "SKILL.md").write_text(
+                "---\nname: meta-harness\n---\n",
+                encoding="utf-8",
+            )
+            (root / "install.sh").write_text(
+                "#!/usr/bin/env bash\n",
+                encoding="utf-8",
+            )
             (root / ".github" / "workflows").mkdir(parents=True)
             (root / ".github" / "workflows" / "copilot-setup-steps.yml").write_text(
                 "name: setup\n",
@@ -258,11 +272,20 @@ class CliTests(unittest.TestCase):
         self.assertEqual(inventory[".husky/pre-commit"]["category"], "hook")
         self.assertEqual(inventory[".pre-commit-config.yaml"]["category"], "hook")
         self.assertEqual(inventory[".env.local"]["category"], "environment-local")
+        self.assertEqual(
+            inventory[".claude-plugin/marketplace.json"]["category"],
+            "agent-plugin",
+        )
+        self.assertEqual(inventory["skills/meta-harness/SKILL.md"]["category"], "agent-skill")
+        self.assertEqual(inventory["install.sh"]["category"], "installer-script")
         self.assertTrue(any("governance inventory" in item for item in payload["warnings"]))
         self.assertTrue(any("MCP" in item for item in payload["reviewRequired"]))
         self.assertTrue(any("devcontainer" in item for item in payload["reviewRequired"]))
         self.assertTrue(any("environment" in item for item in payload["reviewRequired"]))
         self.assertTrue(any("hook" in item for item in payload["reviewRequired"]))
+        self.assertTrue(any("skill" in item for item in payload["reviewRequired"]))
+        self.assertTrue(any("plugin" in item for item in payload["reviewRequired"]))
+        self.assertTrue(any("installer" in item for item in payload["reviewRequired"]))
 
     def test_quickstart_guides_first_run_without_writing(self) -> None:
         with tempfile.TemporaryDirectory() as tmp:

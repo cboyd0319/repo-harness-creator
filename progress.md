@@ -347,6 +347,14 @@ maintenance loop.
   command composes detected project context, readiness, dry-run generation
   planning, preserved-file reporting, generated review placeholders,
   review-required surfaces, and next commands without writing files.
+- Mined the local Harness Forge sibling repo and the user-supplied
+  Meta-Harness paper PDF without AGY. Accepted transferable ideas around
+  candidate-sensitive harness evals, full-history queryable logs,
+  frozen-replay avoidance, do-no-harm quality floors, held-out validation,
+  worst-case quality tracking, validation-before-expensive-eval, and explicit
+  skill/plugin/installer governance surfaces. Extended `governanceInventory`
+  to report agent skills, agent plugin manifests, and root installer scripts
+  as advisory review-required surfaces.
 
 ## Recommended Next Step
 
@@ -419,6 +427,18 @@ blocking.
   `PYTHONPATH=src:. python3 -m harnessforge audit --target . --min-score 85`
   passed with self-audit `100/100`, and `PYTHONPATH=src:. python3 -m
   harnessforge quickstart --target .` passed after adding guided first-run UX.
+- `PYTHONPATH=src:. python3 -m unittest tests.test_cli.CliTests.test_inspect_readiness_reports_governance_inventory`
+  passed after extending governance inventory for agent skills, plugin
+  manifests, and installer scripts. A read-only readiness smoke against
+  the local Harness Forge sibling repo now reports warning with
+  `.claude-plugin/marketplace.json`, `skills/meta-harness/SKILL.md`, and
+  `install.sh` in `governanceInventory` instead of incorrectly reporting
+  clean ready.
+- The user-supplied Meta-Harness PDF was unavailable to local text extractors,
+  so the same paper was reviewed via arXiv HTML. `docs/harness/verify-json-contract.md`
+  now records that benchmark/eval claims need candidate-sensitive metrics,
+  held-out or contamination controls, worst-case quality, do-no-harm floors,
+  and frozen-replay disclosure.
 - `PYTHONPATH=src:. python3 -m unittest discover -s tests` passed with
   148 tests, and `PYTHONPATH=src:. python3 -m compileall src tests scripts`
   passed after adding source-of-truth spec sync detection.

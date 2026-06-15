@@ -232,9 +232,9 @@ instructions so teams can keep router files compact and avoid wasting agent
 context on duplicated guidance.
 
 Governance inventory is advisory as well. It reports MCP configs, agent
-settings, hooks, devcontainers, sandbox configs, agent setup workflows, and
-environment template or local env files as review surfaces without reading or
-exposing secret values.
+settings, agent skills, agent plugin manifests, installer scripts, hooks,
+devcontainers, sandbox configs, agent setup workflows, and environment template
+or local env files as review surfaces without reading or exposing secret values.
 
 ## Planned Verify JSON Contract
 

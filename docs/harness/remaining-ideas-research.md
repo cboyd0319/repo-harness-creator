@@ -136,6 +136,67 @@ What HarnessForge should not adopt by default:
 - Project-specific Rust coding rules from Maki.
 - AI-use disclosure language or Maki's personal contribution workflow.
 
+### Harness Forge And Meta-Harness
+
+Useful ideas:
+
+- Harness quality can be measured as a search problem over the code around a
+  fixed model: memory, retrieval, context assembly, summarization, prompt
+  templates, and tool-selection logic.
+- The most reusable pattern is the five-block evaluation setup: one swappable
+  candidate interface, a cheap deterministic scorer, a held-out corpus split,
+  a proposer prior, and a persistent run log/frontier.
+- The "frozen replay" failure mode is directly relevant to HarnessForge's
+  benchmark ambitions. If a candidate cannot change the quality score, the
+  benchmark is only optimizing cost and should not be used as effectiveness
+  evidence.
+- Quality should often be a hard do-no-harm floor while cost, context size, or
+  latency is minimized. This is a stronger first benchmark shape than a broad
+  "maximize agent quality" claim.
+- Worst-case quality per record matters. Averages can hide one catastrophic
+  failure, so real-agent or harness-quality evals should track both mean and
+  minimum quality.
+- Full-history logs matter for harness search. The proposer needs queryable
+  access to prior code, scores, and execution traces rather than only scalar
+  scores or short summaries.
+- Short trial runs are useful for debugging the skill or proposer instructions
+  before spending budget on a full search.
+- Proposed harness candidates should pass lightweight validation, such as
+  import/instantiate/smoke checks, before expensive evaluation.
+- Evaluation should run outside the proposer and write machine-readable
+  artifacts that simple tools can search, diff, and summarize.
+- Path-based detection should recognize agent skill directories, plugin
+  manifests, and installer scripts as governance surfaces. A read-only
+  HarnessForge pass against this repo originally missed those surfaces and
+  incorrectly reported `ready`.
+
+What HarnessForge should adopt:
+
+- Add frozen-replay, held-out split, anti-leakage, proxy-fidelity, and
+  do-no-harm-floor language to any future real-agent eval guidance.
+- Treat deterministic project/harness eval commands as product assets and
+  surface them in readiness when they are discoverable.
+- Keep benchmark evidence separate from structural audit scores, and require
+  candidate-sensitive metrics before claiming harness effectiveness.
+- Report agent skill, agent plugin, and installer-script surfaces in
+  `governanceInventory`.
+
+What HarnessForge should not adopt by default:
+
+- A Claude-only skill runtime, native Workflow search loop, proposer agents, or
+  Pareto optimizer.
+- Installing skills, plugin manifests, or proposer-prior files into arbitrary
+  target repos.
+- `curl | bash` installation as the default HarnessForge onboarding path.
+- Auto-promoting generated or evolved candidates without human review and
+  held-out validation.
+
+Sources:
+
+- local Harness Forge sibling repo supplied by the user
+- user-supplied local Meta-Harness paper PDF
+- arXiv HTML for `2603.28052v1`
+
 ## Public Source Findings
 
 ### OpenAI Harness Engineering
@@ -395,8 +456,9 @@ Sources:
      setup workflows, devcontainers, and sandbox configs.
    - Mark these as review-required security surfaces.
    - Readiness JSON now reports `governanceInventory` for MCP configs, agent
-     settings, hooks, devcontainers, sandbox configs, Copilot setup workflows,
-     and environment files/templates.
+     settings, agent skills, agent plugin manifests, installer scripts, hooks,
+     devcontainers, sandbox configs, Copilot setup workflows, and environment
+     files/templates.
 
 8. Implemented: add first-run guided UX.
    - A `quickstart` or `wizard` command can explain what will be generated,
@@ -419,6 +481,9 @@ Sources:
     - Use fixed task prompts, isolated workspaces, control versus harness arms,
       mechanical scoring, defect evidence, and caveats.
     - Store reproduction commands and reject marketing claims from tiny samples.
+    - Include frozen-replay checks, candidate-sensitive quality metrics,
+      held-out splits, anti-leakage rules, worst-case quality, and
+      do-no-harm-floor cost optimization before promoting any benchmark claim.
 
 11. Add agent-platform adapters only after current source verification.
     - Cursor, Windsurf, Continue, Aider, Claude skills/subagents, Copilot MCP,
