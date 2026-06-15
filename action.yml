@@ -51,10 +51,6 @@ inputs:
     description: Also scaffold the optional manual HarnessForge CI workflow for init or update.
     required: false
     default: "false"
-  with-self-heal-workflow:
-    description: Also scaffold the optional manual self-heal pull-request workflow for init or update.
-    required: false
-    default: "false"
   verify-run:
     description: Execute verification checks when command is verify. Default verify mode is read-only plan mode.
     required: false
@@ -149,7 +145,6 @@ runs:
         INPUT_AGENT_FILE: ${{ inputs.agent-file }}
         INPUT_PLATFORM_CONTRACT: ${{ inputs.platform-contract }}
         INPUT_WITH_CI_WORKFLOW: ${{ inputs.with-ci-workflow }}
-        INPUT_WITH_SELF_HEAL_WORKFLOW: ${{ inputs.with-self-heal-workflow }}
         INPUT_VERIFY_RUN: ${{ inputs.verify-run }}
         INPUT_VERIFY_COMMAND: ${{ inputs.verify-command }}
         INPUT_VERIFY_TIMEOUT_SECONDS: ${{ inputs.verify-timeout-seconds }}

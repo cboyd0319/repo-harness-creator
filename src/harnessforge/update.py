@@ -18,7 +18,6 @@ def plan_or_apply_update(
     enhance_existing: bool = False,
     agent_file: str = "AGENTS.md",
     with_ci_workflow: bool = False,
-    with_self_heal_workflow: bool = False,
     platform_contract: str = "cross-platform",
 ) -> tuple[AuditResult, ProjectProfile | None, tuple[WriteResult, ...]]:
     before = audit_target(target)
@@ -31,7 +30,6 @@ def plan_or_apply_update(
         force=force,
         enhance_existing=enhance_existing,
         with_ci_workflow=with_ci_workflow,
-        with_self_heal_workflow=with_self_heal_workflow,
         platform_contract=platform_contract,
         update_generated_paths=update_generated_paths if not force else frozenset(),
     )

@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 import json
-import shlex
 import subprocess
 import sys
 import tempfile
@@ -224,6 +223,7 @@ class GenerateAuditTests(unittest.TestCase):
 
             self.assertFalse((root / ".github/workflows/harnessforge.yml").exists())
             self.assertFalse((root / ".github/workflows/harness-self-heal.yml").exists())
+            self.assertFalse((root / "docs/harness/self-healing.md").exists())
 
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp)
@@ -231,12 +231,8 @@ class GenerateAuditTests(unittest.TestCase):
             _, writes = create_harness(
                 root,
                 with_ci_workflow=True,
-                with_self_heal_workflow=True,
             )
             ci = (root / ".github/workflows/harnessforge.yml").read_text(
-                encoding="utf-8"
-            )
-            self_heal = (root / ".github/workflows/harness-self-heal.yml").read_text(
                 encoding="utf-8"
             )
             manifest = json.loads(
@@ -247,9 +243,17 @@ class GenerateAuditTests(unittest.TestCase):
                 for write in writes
                 if write.status == "written"
             }
+            self_heal_workflow_exists = (
+                root / ".github/workflows/harness-self-heal.yml"
+            ).exists()
+            self_healing_doc_exists = (
+                root / "docs/harness/self-healing.md"
+            ).exists()
 
         self.assertIn(".github/workflows/harnessforge.yml", written)
-        self.assertIn(".github/workflows/harness-self-heal.yml", written)
+        self.assertNotIn(".github/workflows/harness-self-heal.yml", written)
+        self.assertFalse(self_heal_workflow_exists)
+        self.assertFalse(self_healing_doc_exists)
         self.assertIn("workflow_dispatch", ci)
         self.assertIn("cancel-in-progress: true", ci)
         self.assertIn("persist-credentials: false", ci)
@@ -262,92 +266,22 @@ class GenerateAuditTests(unittest.TestCase):
         self.assertIn("sync-exit-code", ci)
         self.assertIn("steps.sync.outputs['sync-exit-code'] == '2'", ci)
         self.assertLess(ci.index("command: sync"), ci.index("command: audit"))
-        self.assertIn("contents: write", self_heal)
-        self.assertIn('agent-file: "AGENTS.md"', self_heal)
         ci_required_snippets = manifest["requiredHarnessSnippets"][
             ".github/workflows/harnessforge.yml"
         ]
         self.assertIn("command: sync", ci_required_snippets)
         self.assertIn("require-verify-evidence", ci_required_snippets)
         self.assertIn("Read-only sync preflight", ci_required_snippets)
-        git_add_line = next(
-            line.strip()
-            for line in self_heal.replace(" \\\n            ", " ").splitlines()
-            if line.strip().startswith("git add ")
+        self.assertNotIn(".github/workflows/harness-self-heal.yml", manifest["requiredFiles"])
+        self.assertNotIn("docs/harness/self-healing.md", manifest["requiredFiles"])
+        self.assertNotIn(
+            ".github/workflows/harness-self-heal.yml",
+            manifest["requiredHarnessSnippets"],
         )
-        staged_paths = shlex.split(git_add_line)[3:]
-        for path in (
-            "AGENTS.md",
-            "CLAUDE.md",
-            "GEMINI.md",
-            ".github/copilot-instructions.md",
-            "docs/harness",
-        ):
-            with self.subTest(path=path):
-                self.assertIn(path, staged_paths)
-        self.assertIn("git add --", git_add_line)
-        self.assertIn("gh pr create", self_heal)
-        self.assertNotIn("schedule:", self_heal)
-        self.assertNotIn("refresh_research.py", self_heal)
-
-    def test_self_heal_workflow_respects_custom_agent_file(self) -> None:
-        cases = (
-            ("PROJECT_AGENTS.md", ("CLAUDE.md", "GEMINI.md"), ("AGENTS.md",)),
-            ("GEMINI.md", ("CLAUDE.md",), ("AGENTS.md",)),
+        self.assertNotIn(
+            "docs/harness/self-healing.md",
+            manifest["requiredHarnessSnippets"],
         )
-        for agent_file, expected_paths, absent_paths in cases:
-            with self.subTest(agent_file=agent_file):
-                with tempfile.TemporaryDirectory() as tmp:
-                    root = Path(tmp)
-                    create_harness(
-                        root,
-                        agent_file=agent_file,
-                        with_self_heal_workflow=True,
-                    )
-                    self_heal = (
-                        root / ".github/workflows/harness-self-heal.yml"
-                    ).read_text(encoding="utf-8")
-
-                normalized = self_heal.replace(" \\\n            ", " ")
-                git_add_line = next(
-                    line.strip()
-                    for line in normalized.splitlines()
-                    if line.strip().startswith("git add ")
-                )
-                staged_paths = shlex.split(git_add_line)[3:]
-
-                self.assertIn(f"agent-file: \"{agent_file}\"", self_heal)
-                self.assertIn(agent_file, staged_paths)
-                self.assertIn(".github/copilot-instructions.md", staged_paths)
-                for path in expected_paths:
-                    self.assertIn(path, staged_paths)
-                for path in absent_paths:
-                    self.assertNotIn(path, staged_paths)
-
-    def test_self_heal_workflow_respects_platform_contract(self) -> None:
-        with tempfile.TemporaryDirectory() as tmp:
-            root = Path(tmp)
-            create_harness(
-                root,
-                platform_contract="windows-only",
-                with_self_heal_workflow=True,
-            )
-            self_heal = (root / ".github/workflows/harness-self-heal.yml").read_text(
-                encoding="utf-8"
-            )
-
-        normalized = self_heal.replace(" \\\n            ", " ")
-        git_add_line = next(
-            line.strip()
-            for line in normalized.splitlines()
-            if line.strip().startswith("git add ")
-        )
-        staged_paths = shlex.split(git_add_line)[3:]
-
-        self.assertIn("pwsh -NoProfile -File ./init.ps1", self_heal)
-        self.assertNotIn("./init.sh", self_heal)
-        self.assertIn("init.ps1", staged_paths)
-        self.assertNotIn("init.sh", staged_paths)
 
     def test_generated_docs_separate_workflow_and_action_surfaces(self) -> None:
         with tempfile.TemporaryDirectory() as tmp:
@@ -355,12 +289,8 @@ class GenerateAuditTests(unittest.TestCase):
             create_harness(
                 root,
                 with_ci_workflow=True,
-                with_self_heal_workflow=True,
             )
-            self_heal_workflow = (
-                root / ".github/workflows/harness-self-heal.yml"
-            ).read_text(encoding="utf-8")
-            self_healing = (root / "docs/harness/self-healing.md").read_text(
+            ci = (root / ".github/workflows/harnessforge.yml").read_text(
                 encoding="utf-8"
             )
             security = (root / "docs/harness/security-boundary-map.md").read_text(
@@ -371,14 +301,9 @@ class GenerateAuditTests(unittest.TestCase):
                 (root / "docs/harness/manifest.json").read_text(encoding="utf-8")
             )
 
-        self.assertNotIn("schedule:", self_heal_workflow)
-        self.assertNotIn("cron:", self_heal_workflow)
-        self.assertNotIn("refresh_research.py", self_heal_workflow)
-        self.assertIn("## Workflow Boundary", self_healing)
-        self.assertIn("published HarnessForge Action", self_healing)
-        self.assertIn("Live HarnessForge repository workflow", self_healing)
-        self.assertIn("does not schedule jobs", self_healing)
-        self.assertIn("Do not copy that behavior", self_healing)
+        self.assertNotIn("schedule:", ci)
+        self.assertNotIn("cron:", ci)
+        self.assertNotIn("refresh_research.py", ci)
         self.assertIn("Workflow surfaces", security)
         self.assertIn("published HarnessForge composite Action", security)
         self.assertIn("does not schedule, commit, push, or open pull requests", security)
@@ -393,10 +318,8 @@ class GenerateAuditTests(unittest.TestCase):
         self.assertIn("controlled-variable exclusion tests", readme)
         self.assertIn("failure records and attribution", readme)
         self.assertIn("project-owned generated files", readme)
-        self.assertIn(
-            "Workflow Boundary",
-            manifest["requiredHarnessSnippets"]["docs/harness/self-healing.md"],
-        )
+        self.assertNotIn("self-healing.md", readme)
+        self.assertNotIn("docs/harness/self-healing.md", manifest["requiredFiles"])
         self.assertIn(
             "Workflow surfaces",
             manifest["requiredHarnessSnippets"][
@@ -410,7 +333,6 @@ class GenerateAuditTests(unittest.TestCase):
             create_harness(
                 root,
                 with_ci_workflow=True,
-                with_self_heal_workflow=True,
             )
 
             generated_text = "\n".join(
@@ -421,6 +343,7 @@ class GenerateAuditTests(unittest.TestCase):
             sources = (root / "docs/harness/sources.md").read_text(encoding="utf-8")
 
         self.assertNotRegex(generated_text, r"(?i)\blocal commits?\b")
+        self.assertNotRegex(generated_text, r"(?i)\bself-heal(?:ing)?\b")
         self.assertNotIn("Local production harness patterns", generated_text)
         self.assertIn("Reviewed production harness patterns", sources)
         self.assertIn("project checkpoints", generated_text)
@@ -853,6 +776,64 @@ class GenerateAuditTests(unittest.TestCase):
             "docs/architecture.md",
         )
         self.assertIn("REVIEW REQUIRED", json.dumps(example))
+
+    def test_audit_penalizes_old_generated_harness_quality_contract(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            create_harness(root, commands=("python -m compileall .",))
+            for relative_path in (
+                "docs/harness/first-agent-task.md",
+                "docs/harness/roadmap.md",
+                "docs/harness/sensor-registry.md",
+            ):
+                (root / relative_path).unlink()
+            manifest_path = root / "docs/harness/manifest.json"
+            manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+            manifest.pop("platformContract", None)
+            manifest.pop("supportedPlatforms", None)
+            manifest.pop("generatedFiles", None)
+            manifest_path.write_text(json.dumps(manifest, indent=2), encoding="utf-8")
+
+            result = audit_target(root)
+            checks = {
+                check.message: check.passed
+                for domain in result.domains
+                for check in domain.checks
+            }
+
+        self.assertLess(result.overall, 100)
+        self.assertFalse(checks["Platform contract metadata is present"])
+        self.assertFalse(checks["Generated-file ownership metadata is present"])
+        self.assertFalse(checks["Sensor registry exists"])
+        self.assertFalse(checks["First-agent harness improvement task exists"])
+        self.assertFalse(checks["Harness roadmap exists"])
+
+    def test_audit_flags_generated_target_repo_local_self_healing_leak(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            create_harness(root, commands=("python -m compileall .",))
+            leaked = root / "docs/harness/self-healing.md"
+            leaked.write_text("# Self-Healing Harness Loop\n", encoding="utf-8")
+            manifest_path = root / "docs/harness/manifest.json"
+            manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+            manifest["requiredFiles"].append("docs/harness/self-healing.md")
+            manifest["requiredHarnessSnippets"][
+                "docs/harness/self-healing.md"
+            ] = ["Self-Healing Harness Loop", "with-self-heal-workflow"]
+            manifest_path.write_text(json.dumps(manifest, indent=2), encoding="utf-8")
+
+            result = audit_target(root)
+            scope = next(domain for domain in result.domains if domain.name == "scope")
+            boundary = next(
+                check
+                for check in scope.checks
+                if check.message
+                == "Generated target harness excludes HarnessForge repo-local self-healing"
+            )
+
+        self.assertLess(result.overall, 100)
+        self.assertFalse(boundary.passed)
+        self.assertIn("docs/harness/self-healing.md", boundary.detail)
 
     def test_missing_verification_placeholder_blocks_generated_init(self) -> None:
         with tempfile.TemporaryDirectory() as tmp:
@@ -1368,7 +1349,6 @@ class GenerateAuditTests(unittest.TestCase):
             "docs/harness/verification-matrix.md",
             "docs/harness/security-boundary-map.md",
             "docs/harness/release-controls.md",
-            "docs/harness/self-healing.md",
             "docs/harness/first-agent-task.md",
             "docs/harness/agent-operating-model.md",
             "docs/harness/entropy-control.md",

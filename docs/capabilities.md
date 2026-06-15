@@ -28,7 +28,7 @@ boundaries it preserves. See [Usage](usage.md) for commands and
 - Can append a reviewed HarnessForge quality addendum to existing instruction
   files with `--enhance-existing`, including smallest-correct-change discipline
   for assumptions, scope, dependencies, and verification.
-- Can produce an `--enhance-existing --dry-run --json` review plan that parses
+- Can produce a read-only `harnessforge enhance --json` review plan that parses
   existing instruction sections, reports canonical section coverage, proposes
   review-required section/finding cleanup edits with placeholder patch
   previews, and flags duplicate guidance, local absolute paths, user-specific
@@ -42,6 +42,8 @@ boundaries it preserves. See [Usage](usage.md) for commands and
 - Provides explicit blueprint mode for richer project operating models. Built-in
   packs cover agentic applications, spec-driven projects, web services,
   data/ML, security-sensitive repos, and workflow automation.
+- Provides an offline public-repo fixture corpus for generated-content quality
+  and detection regression checks without cloning public repositories.
 - Provides a composite GitHub Action for audit, init, update, sync, verify,
   report, and doctor workflows.
 
@@ -55,12 +57,15 @@ boundaries it preserves. See [Usage](usage.md) for commands and
   repositories.
 - It does not apply richer blueprint guidance during normal `init`. Blueprints
   are explicit opt-ins and land in a separate review area.
-- It does not create autonomous push, PR, self-heal, setup, or teardown
-  workflows unless optional workflow scaffolds are explicitly requested.
+- It does not generate target-repo self-healing, setup, teardown, push, or PR
+  automation. The only optional generated workflow scaffold is the manual
+  HarnessForge CI scaffold.
 - It does not run target repository commands during `inspect`, `index`,
   `effectiveness`, `session`, `report`, `sync --check`, `audit`,
   `update --drift-report`, or default `verify`. Use `verify --run` when
   command execution is explicitly wanted.
+- It does not clone public repositories or use network access during the
+  offline `corpus` quality gate.
 - It does not use structural scores as proof of real task performance.
 
 ## Generated Files
@@ -77,7 +82,7 @@ The default generated harness includes:
 | Security and privacy | `security-boundary-map.md`, `feature-privacy-labels.json` |
 | Evidence and quality | `evidence-log.md`, `quality-document.md`, `release-controls.md`, `evaluator-rubric.md` |
 | Research | `sources.md`, `research-sources.json`, `research-inbox.md`, `source-record.schema.json`, `source-record-example.json` |
-| Lifecycle | `self-healing.md`, `entropy-control.md`, `clean-state-checklist.md` |
+| Lifecycle | `entropy-control.md`, `clean-state-checklist.md` |
 
 Each generated file is recorded in `docs/harness/manifest.json` with ownership
 metadata and hashes. Project-owned existing files are tracked separately so
@@ -96,8 +101,8 @@ default posture is intentionally restrictive. See [../SECURITY.md](../SECURITY.m
 for vulnerability reporting, scope, and severity guidance.
 
 - Normal `init`, `inspect`, `index`, `effectiveness`, `session`, `report`,
-  `sync --check`, `audit`, `update`, and `doctor` commands use the Python
-  standard library and do not install runtime dependencies.
+  `enhance`, `sync --check`, `audit`, `update`, and `doctor` commands use the
+  Python standard library and do not install runtime dependencies.
 - Existing files are preserved unless `--force` is explicitly supplied.
 - `--enhance-existing` appends reviewed instruction addenda without replacing
   existing project text.

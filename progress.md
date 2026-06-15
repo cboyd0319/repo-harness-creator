@@ -127,6 +127,10 @@ maintenance loop.
   mandate replacement, verification-conflict replacement, duplicate
   consolidation, bloated instruction extraction, and unreadable-file review.
   HarnessForge still does not apply cleanup previews automatically.
+- Added the dedicated read-only `harnessforge enhance` command surface.
+  Existing instruction review no longer requires discovering
+  `init --enhance-existing --dry-run --json`; `enhance --json` emits the same
+  target-relative plan with no command execution and no writes.
 - Re-ran a deeper read-only comparison against `agent-governance-toolkit`.
   Accepted the small, durable pieces that fit this repo now: contribution
   policy, PR template, stronger security scope, `.gitignore` hygiene, and
@@ -570,12 +574,11 @@ maintenance loop.
 Continue accepted roadmap work before release prep. The release boundary is now
 explicitly deferred until the pre-release buildout in `docs/roadmap.md` is
 completed or intentionally deferred with owner, evidence, and risk recorded.
-The next implementation candidates are the dedicated `enhance` or `review`
-command surface, golden public-repo fixture corpus, first-agent task lifecycle
-evidence, report expansion, instruction-quality and signal-to-noise reporting,
-compact repo maps and SBOM detection or adapter design, Action summary polish,
-`release-check`, harness maturity levels, expanded policy presets, and
-interactive quickstart/init UX.
+The next implementation candidates are the golden public-repo fixture corpus,
+first-agent task lifecycle evidence, report expansion, instruction-quality and
+signal-to-noise reporting, compact repo maps and SBOM detection or adapter
+design, Action summary polish, `release-check`, harness maturity levels,
+expanded policy presets, and interactive quickstart/init UX.
 Push local commits only at an explicit batch/release boundary or user request.
 
 ## Verification Evidence
@@ -1526,3 +1529,39 @@ Push local commits only at an explicit batch/release boundary or user request.
   so they are handled as product changes with scope, verification, and rollback.
 - Focused verification passed: `PYTHONPATH=src:. python3 -m unittest
   tests.test_generate_audit` with 52 tests.
+
+## Latest Pass: Product Boundary And Scoring Contract
+
+- Removed target-repo self-healing from the generated HarnessForge surface.
+  Generated target harnesses no longer create `docs/harness/self-healing.md` or
+  `.github/workflows/harness-self-heal.yml`; HarnessForge repo-local
+  self-healing remains only in this repository.
+- Tightened audit scoring so generated target harnesses must include current
+  generated-file ownership metadata, platform-contract metadata, first-agent
+  lifecycle docs, roadmap and sensor lifecycle docs, verify/effectiveness
+  evidence guidance, sibling-checkout avoidance, and explicit exclusion of
+  HarnessForge repo-local self-healing.
+- Added the offline `harnessforge corpus` quality gate over pinned
+  public-repo-shaped fixtures. It checks detection, stack-specific generated
+  context, generated-content hygiene, local-path/template-token safeguards, and
+  audit quality without cloning repos, using network access, executing target
+  commands, or writing outside temporary roots.
+- Added the accepted Harness Maintenance Optimization backlog item to
+  `docs/roadmap.md`: reduce routine doc fan-out by defining authoritative fact
+  owners, change-to-doc routing, generated summaries, and report/audit checks
+  for stale duplicated facts.
+- Re-evaluated the RunHaven target repo with the corrected boundary. Removed
+  its generated self-healing doc and manifest references,
+  replaced active self-healing wording with reviewed maintenance/automation
+  language, added current generated-file metadata, and reran HarnessForge audit
+  at `100/100`. The report is warning-only for expected workflow/governance
+  review surfaces.
+- Verification passed: full `PYTHONPATH=src:. python3 -m unittest discover -s
+  tests` with 242 tests; `PYTHONPATH=src:. python3 -m compileall src tests
+  scripts`; `PYTHONPATH=src:. python3 scripts/check_pins.py --root .`;
+  `PYTHONPATH=src:. python3 scripts/refresh_research.py --root . --check`;
+  JSON validation for `feature_list.json` and `docs/harness/manifest.json`;
+  `PYTHONPATH=src:. python3 -m harnessforge audit --target . --min-score 85`
+  with self-audit `100/100`; `PYTHONPATH=src:. python3 -m harnessforge corpus
+  --min-score 90 --json`; generated-target boundary smoke with no self-heal,
+  local path, sibling-checkout, or AGY mandate matches; and `git diff --check`.

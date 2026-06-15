@@ -75,9 +75,6 @@ def run_from_env(env: Mapping[str, str]) -> int:
             force=_bool_input(env.get("INPUT_FORCE", "false")),
             enhance_existing=_bool_input(env.get("INPUT_ENHANCE_EXISTING", "false")),
             with_ci_workflow=_bool_input(env.get("INPUT_WITH_CI_WORKFLOW", "false")),
-            with_self_heal_workflow=_bool_input(
-                env.get("INPUT_WITH_SELF_HEAL_WORKFLOW", "false")
-            ),
             platform_contract=env.get("INPUT_PLATFORM_CONTRACT", "cross-platform"),
         )
         changed_files = sum(
@@ -93,9 +90,6 @@ def run_from_env(env: Mapping[str, str]) -> int:
             enhance_existing=_bool_input(env.get("INPUT_ENHANCE_EXISTING", "false")),
             agent_file=env.get("INPUT_AGENT_FILE", "AGENTS.md"),
             with_ci_workflow=_bool_input(env.get("INPUT_WITH_CI_WORKFLOW", "false")),
-            with_self_heal_workflow=_bool_input(
-                env.get("INPUT_WITH_SELF_HEAL_WORKFLOW", "false")
-            ),
             platform_contract=env.get("INPUT_PLATFORM_CONTRACT", "cross-platform"),
         )
         changed_files = sum(

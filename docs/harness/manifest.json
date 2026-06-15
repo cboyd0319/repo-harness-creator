@@ -1,6 +1,13 @@
 {
   "version": 1,
   "generatedBy": "harnessforge",
+  "platformContract": "cross-platform",
+  "supportedPlatforms": {
+    "python": "3.13+",
+    "macOS": "15+",
+    "windows": "11+",
+    "linux": "Ubuntu 22.04+ floor; other modern distributions are best effort"
+  },
   "platformSourceReview": {
     "lastReviewed": "2026-06-15",
     "reviewRequiredBeforePlatformChange": true,
@@ -93,7 +100,6 @@
       "harnessforge.github_action",
       "platform-contract",
       "with-ci-workflow",
-      "with-self-heal-workflow",
       "markdown-report",
       "report-command"
     ],
@@ -149,6 +155,7 @@
       "harnessforge audit",
       "harnessforge report",
       "harnessforge update",
+      "corpus",
       "GitHub Action"
     ],
     "docs/action.md": [
@@ -160,7 +167,6 @@
       "Version Pinning",
       "platform-contract",
       "with-ci-workflow",
-      "with-self-heal-workflow",
       "command: report",
       "report-markdown"
     ],
@@ -176,12 +182,14 @@
       "Unified Report",
       "Readiness And Sync",
       "Verify Project Checks",
+      "Public Repo Quality Corpus",
       "Generation Boundary",
       "Command Reference"
     ],
     "docs/capabilities.md": [
       "Core Capabilities",
       "Default Boundaries",
+      "offline public-repo fixture corpus",
       "report",
       "Generated Files",
       "Security Model",
@@ -196,6 +204,7 @@
       "SBOM-Aware Indexing",
       "Feature-State Gate And Scope Surface",
       "Instruction Lifecycle And SNR Review",
+      "Harness Maintenance Optimization",
       "Runtime And Process Observability",
       "Better `--enhance-existing` Mode",
       "Golden Public-Repo Fixture Corpus",
@@ -215,7 +224,8 @@
       "harnessforge index",
       "harnessforge effectiveness",
       "harnessforge report",
-      "enhance-existing --dry-run --json",
+      "harnessforge enhance",
+      "harnessforge corpus",
       "self-healing workflow"
     ],
     "docs/harness/change-contract.md": [
@@ -266,6 +276,8 @@
       "Detected Routing Markers",
       "Detected Components",
       "Routing Rules",
+      "Assessment scoring",
+      "generated target harness must not",
       "roadmap"
     ],
     "docs/harness/dependency-change-policy.md": [

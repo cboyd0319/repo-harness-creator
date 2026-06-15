@@ -255,6 +255,8 @@ Use `--enhance-existing` when an existing instruction file should keep its
 project text but receive a reviewed HarnessForge quality addendum:
 
 ```bash
+harnessforge enhance --target /path/to/repo
+harnessforge enhance --target /path/to/repo --json
 harnessforge init --target /path/to/repo --enhance-existing --dry-run --json
 harnessforge init --target /path/to/repo --enhance-existing
 ```
@@ -268,20 +270,23 @@ local absolute paths, user-specific tool mandates, and verification conflicts
 before any project-owned instruction file is changed. Patch previews are
 review-only and are not applied automatically.
 
+Use `enhance` for the review-only command surface. It reports the same existing
+instruction plan without writing files. Use `init --enhance-existing` only when
+you are ready to append the reviewed HarnessForge quality addendum.
+
 Use `--force` only after reviewing the target diff:
 
 ```bash
 harnessforge init --target /path/to/repo --force
 ```
 
-Optional workflow scaffolds are off by default:
+The optional CI workflow scaffold is off by default:
 
 ```bash
 harnessforge init --target /path/to/repo --with-ci-workflow
-harnessforge init --target /path/to/repo --with-self-heal-workflow
 ```
 
-Those workflows use manual triggers and placeholder Action pins. The CI
+The generated workflow uses a manual trigger and placeholder Action pin. The CI
 scaffold runs a read-only `command: sync` preflight before audit, treats
 warning verdicts as advisory by default, and stops only when readiness is
 blocked. `require-verify-evidence` stays `"false"` until the project has
@@ -313,6 +318,22 @@ The audit returns:
 The score covers instructions, tools, environment, state, feedback, scope, and
 lifecycle controls. Treat it as a harness quality signal, not as a substitute
 for code review, security review, or real agent task evaluation.
+
+## Public Repo Quality Corpus
+
+Run the offline generated-content quality corpus:
+
+```bash
+harnessforge corpus
+harnessforge corpus --json
+harnessforge corpus --min-score 90
+```
+
+`corpus` uses temporary fixtures modeled on pinned popular public repositories
+to test detection, stack-specific context, generated content hygiene, audit
+quality, and local-path/template-token safeguards. It does not clone
+repositories, use network access, run target commands, or write outside the
+temporary fixture root.
 
 ## Update And Drift
 
@@ -348,10 +369,12 @@ alone unless `--force` is supplied.
 | `harnessforge effectiveness` | Assess stored real-agent effectiveness evidence without running benchmarks |
 | `harnessforge session` | Show a read-only restart snapshot with git, readiness, audit, and state-file status |
 | `harnessforge report` | Compose readiness, audit, drift, index, and evidence into one read-only report |
+| `harnessforge enhance` | Review existing instruction files without writing files |
 | `harnessforge plan` | Map changed files to a read-only verification plan |
 | `harnessforge sync --check` | Run a read-only CI preflight with readiness exit codes |
 | `harnessforge verify` | Report planned project checks, or run them explicitly with `--run` |
 | `harnessforge blueprint` | List, inspect, or apply optional review-required operating-model overlays |
+| `harnessforge corpus` | Run the offline public-repo generated-content quality corpus |
 | `harnessforge init` | Create missing harness artifacts |
 | `harnessforge audit` | Score an existing repo harness |
 | `harnessforge update` | Plan or apply safe missing-file corrections, or report generated drift |

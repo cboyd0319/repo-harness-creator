@@ -147,6 +147,8 @@ def detect_project(
             "Pipfile",
             "package.json",
             "pnpm-workspace.yaml",
+            "tsconfig.json",
+            "tsconfig.node.json",
             "turbo.json",
             "turbo.jsonc",
             "nx.json",
@@ -673,18 +675,8 @@ def _primary_stack(
         return "node"
     if pyproject and _root_python_runtime_project(file_set, pyproject):
         return "python"
-    if _nested_component_count(file_set) >= 2 and languages != {"terraform"}:
-        return "monorepo"
-    if _looks_like_docs_site(file_set):
-        return "docs"
-    if _looks_like_structured_docs_repo(file_set, languages):
-        return "docs"
-    if {"pyproject.toml", "requirements.txt", "setup.py"} & file_set:
-        return "python"
     if {"go.mod", "go.work"} & file_set:
         return "go"
-    if "Cargo.toml" in file_set:
-        return "rust"
     if {"pom.xml", "build.gradle", "build.gradle.kts"} & file_set:
         return "java"
     if any(
@@ -693,10 +685,18 @@ def _primary_stack(
         for file in file_set
     ):
         return "dotnet"
+    if _nested_component_count(file_set) >= 2 and languages != {"terraform"}:
+        return "monorepo"
+    if _looks_like_docs_site(file_set):
+        return "docs"
+    if _looks_like_structured_docs_repo(file_set, languages):
+        return "docs"
     if "composer.json" in file_set:
         return "php"
     if "Gemfile" in file_set:
         return "ruby"
+    if {"pyproject.toml", "requirements.txt", "setup.py"} & file_set:
+        return "python"
     priority = [
         ("python", "python"),
         ("go", "go"),
@@ -707,6 +707,7 @@ def _primary_stack(
         ("php", "php"),
         ("ruby", "ruby"),
         ("terraform", "terraform"),
+        ("cpp", "cpp"),
         ("docs", "docs"),
         ("shell", "shell"),
     ]

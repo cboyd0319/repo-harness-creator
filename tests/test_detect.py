@@ -101,7 +101,7 @@ class DetectProjectTests(unittest.TestCase):
         self.assertIn("npm", profile.package_managers)
         self.assertIn("maven", profile.package_managers)
 
-    def test_root_maven_command_survives_monorepo_classification(self) -> None:
+    def test_root_maven_project_keeps_java_stack_with_nested_components(self) -> None:
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp)
             (root / "pom.xml").write_text("<project />\n", encoding="utf-8")
@@ -118,8 +118,9 @@ class DetectProjectTests(unittest.TestCase):
 
             profile = detect_project(root)
 
-        self.assertEqual(profile.stack, "monorepo")
+        self.assertEqual(profile.stack, "java")
         self.assertIn("mvn test", profile.verification_commands)
+        self.assertIn("multiple nested component manifests", profile.workspace_markers)
 
     def test_docs_research_repo_with_non_code_assets_detects_as_docs(self) -> None:
         with tempfile.TemporaryDirectory() as tmp:

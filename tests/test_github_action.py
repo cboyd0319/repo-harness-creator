@@ -459,7 +459,6 @@ class GitHubActionTests(unittest.TestCase):
                 "INPUT_COMMAND": "init",
                 "INPUT_TARGET": str(root),
                 "INPUT_WITH_CI_WORKFLOW": "true",
-                "INPUT_WITH_SELF_HEAL_WORKFLOW": "true",
             }
 
             with contextlib.redirect_stdout(io.StringIO()):
@@ -472,7 +471,7 @@ class GitHubActionTests(unittest.TestCase):
 
         self.assertEqual(code, 0)
         self.assertTrue(ci_exists)
-        self.assertTrue(self_heal_exists)
+        self.assertFalse(self_heal_exists)
 
     def test_action_init_can_enhance_existing_instruction_files(self) -> None:
         with tempfile.TemporaryDirectory() as tmp:

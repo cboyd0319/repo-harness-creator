@@ -32,9 +32,6 @@ decisions.
 
 The current pre-release buildout includes:
 
-- a dedicated `enhance` or `review` command surface so users do not have to
-  discover existing-instruction review through
-  `init --enhance-existing --dry-run --json`;
 - golden public-repo fixture corpus and generated-artifact quality scorer;
 - first-agent task lifecycle evidence;
 - report expansion for repo-map summaries, policy preset status, and release
@@ -63,7 +60,7 @@ implementation starts.
 | CLI runtime | Does this add or change a `harnessforge` command, flag, JSON contract, exit code, report, or default behavior? |
 | Existing project files | Could this modify or enhance project-owned `AGENTS.md`, `CLAUDE.md`, `GEMINI.md`, Copilot instructions, specs, workflows, or docs? |
 | GitHub Action | Should the composite Action expose the same behavior, inputs, outputs, reports, or summaries? |
-| Optional workflow scaffolds | Should generated CI or self-heal scaffolds change, and must that remain opt-in? |
+| Optional workflow scaffolds | Should the generated manual CI scaffold change, and must it remain opt-in? |
 | Tests and fixture corpus | Which generated snapshots, public-repo fixtures, contract tests, and real-repo quality checks prove this behavior? |
 | Release/package surface | Does this affect packaging, tags, SBOM/provenance, isolated install smoke, or release evidence? |
 | Research and source ledger | Does this need current primary-source evidence, fixed allowlist updates, or a new source-record shape? |
@@ -133,7 +130,7 @@ Use this gate for accepted roadmap items before implementation starts:
 
 This applies to local HarnessForge harness work, generated target harness
 content, CLI/runtime features, existing project-file enhancement modes,
-GitHub Action behavior, optional workflow scaffolds, docs, and release
+GitHub Action behavior, the optional CI scaffold, docs, and release
 automation. If a surface is out of scope, say so before editing.
 
 ## Task-List Patterns To Adopt
@@ -311,6 +308,57 @@ Candidate behavior:
 This belongs primarily in `--enhance-existing`, `report`, and generated
 roadmap/first-agent guidance.
 
+### Harness Maintenance Optimization
+
+Reduce the doc and harness-update fan-out for small HarnessForge changes.
+
+Status: accepted backlog item.
+
+Problem:
+
+- tiny code, template, or wording changes currently require updates across
+  several local harness docs, state files, manifests, and evidence logs;
+- that overhead can erase the intended token and time savings of having a
+  harness;
+- duplicated boundary and status text increases drift risk because one surface
+  inevitably goes stale.
+
+Candidate behavior:
+
+- define which files are authoritative for each class of fact, and make other
+  docs link or summarize instead of duplicating;
+- add an authoritative fact map for product boundaries, CLI command surfaces,
+  generated-file contracts, Action behavior, release evidence, and local
+  harness state;
+- add a lightweight change-to-docs routing table so agents know which harness
+  docs actually need updates for code, template, Action, audit, release, or
+  research changes;
+- prefer generated summaries, reports, or manifest-derived checks over manual
+  repeated prose when the information is mechanical;
+- teach audit/report to flag stale or missing canonical updates without
+  requiring every small change to touch every harness file;
+- set a maximum expected docs fan-out for routine changes, with explicit
+  exceptions for release, security, platform, boundary, and generated-contract
+  changes.
+
+Surface impact:
+
+- Local repo harness: primary owner; should reduce updates to `progress.md`,
+  `session-handoff.md`, manifest snippets, evidence logs, and overlapping
+  harness docs.
+- Generated harness: apply only if the pattern improves target repos without
+  hiding important review obligations.
+- CLI/runtime: possible report/audit support for stale duplicated facts and
+  source-of-truth routing.
+- GitHub Action: no direct behavior unless report output gains a docs-fanout
+  summary.
+- Tests and fixtures: add regression coverage only for canonical routing or
+  generated summary behavior, not for every prose copy.
+
+Done or retire when routine non-release changes have one obvious canonical
+state/evidence update path, and the harness no longer requires broad manual doc
+edits for low-risk changes.
+
 ### Runtime And Process Observability
 
 Add stronger guidance and reporting around observability that helps agents
@@ -380,6 +428,10 @@ instruction findings, local absolute path findings, user-specific tool mandate
 findings, and verification-conflict findings before any instruction file is
 changed. Patch previews are review-only and are not applied automatically.
 
+Dedicated surface: `harnessforge enhance --target <repo>` and
+`harnessforge enhance --target <repo> --json` now expose the same read-only
+review plan without making users discover it through `init`.
+
 Candidate behavior:
 
 - extend section parsing beyond the current Markdown-heading pass;
@@ -412,7 +464,7 @@ Useful prompts:
 - target repo and platform contract;
 - primary agent instruction file;
 - preserve existing files or write to a HarnessForge-specific agent file;
-- generated optional workflow scaffold;
+- optional generated CI scaffold;
 - verify evidence policy;
 - policy preset or blueprint;
 - report output path.
@@ -516,17 +568,17 @@ coverage before they become recommended defaults.
 
 ## Suggested Build Order
 
-1. Expand `harnessforge report` with repo-map, policy preset, and release
+1. Keep the pinned public-repo quality corpus and generated-artifact scorer
+   green as quality and detection gates evolve.
+2. Expand `harnessforge report` with repo-map, policy preset, and release
    evidence fields as those surfaces land.
-2. Design and implement the improved `--enhance-existing` plan.
-3. Add evidence-gated feature-state and instruction-quality reporting to the
-   generated-harness quality scorer.
-4. Build the pinned public-repo quality corpus and generated-artifact scorer.
-5. Add compact repo maps from `index`, then SBOM detection and optional SBOM
+3. Add evidence-gated feature-state and deeper instruction-quality reporting
+   to the generated-harness quality scorer.
+4. Add compact repo maps from `index`, then SBOM detection and optional SBOM
    adapter design.
-6. Improve GitHub Action summaries and release evidence automation.
-7. Add maturity levels and expanded policy presets.
-8. Design the interactive quickstart/init UX once the underlying decisions are
+5. Improve GitHub Action summaries and release evidence automation.
+6. Add maturity levels and expanded policy presets.
+7. Design the interactive quickstart/init UX once the underlying decisions are
    stable.
 
 ## Rejected Defaults

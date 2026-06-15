@@ -111,7 +111,6 @@ def create_harness(
     commands: tuple[str, ...] = (),
     project_name: str | None = None,
     with_ci_workflow: bool = False,
-    with_self_heal_workflow: bool = False,
     platform_contract: str = "cross-platform",
     update_generated_paths: frozenset[str] = frozenset(),
 ) -> tuple[ProjectProfile, tuple[WriteResult, ...]]:
@@ -131,7 +130,6 @@ def create_harness(
     specs = _template_specs(
         agent_file,
         with_ci_workflow=with_ci_workflow,
-        with_self_heal_workflow=with_self_heal_workflow,
         platform_contract=platform_contract,
     )
     _validate_destinations(profile.root, tuple(spec[1] for spec in specs))
@@ -154,7 +152,6 @@ def create_harness(
                 profile,
                 agent_file,
                 with_ci_workflow=with_ci_workflow,
-                with_self_heal_workflow=with_self_heal_workflow,
                 platform_contract=platform_contract,
                 generated_files=generated_files,
             )
@@ -194,7 +191,6 @@ def _template_specs(
     agent_file: str,
     *,
     with_ci_workflow: bool = False,
-    with_self_heal_workflow: bool = False,
     platform_contract: str = "cross-platform",
 ) -> tuple[tuple[str, str, bool], ...]:
     platform = _platform_contract_data(platform_contract)
@@ -252,7 +248,6 @@ def _template_specs(
             ("evaluator-rubric.md.tmpl", "docs/harness/evaluator-rubric.md", False),
             ("quality-document.md.tmpl", "docs/harness/quality-document.md", False),
             ("release-controls.md.tmpl", "docs/harness/release-controls.md", False),
-            ("self-healing.md.tmpl", "docs/harness/self-healing.md", False),
             (
                 "source-record.schema.json.tmpl",
                 "docs/harness/source-record.schema.json",
@@ -293,40 +288,7 @@ def _template_specs(
     specs[insert_at:insert_at] = entrypoint_specs
     if with_ci_workflow:
         specs.append(("ci-workflow.yml.tmpl", ".github/workflows/harnessforge.yml", False))
-    if with_self_heal_workflow:
-        specs.append(
-            (
-                "self-heal-workflow.yml.tmpl",
-                ".github/workflows/harness-self-heal.yml",
-                False,
-            )
-        )
     return tuple(specs)
-
-
-def _self_heal_git_add_paths(agent_file: str, platform_contract: str) -> str:
-    platform = _platform_contract_data(platform_contract)
-    paths = [agent_file]
-    if agent_file != "CLAUDE.md":
-        paths.append("CLAUDE.md")
-    if agent_file != "GEMINI.md":
-        paths.append("GEMINI.md")
-    paths.extend(
-        [
-            ".github/copilot-instructions.md",
-            "feature_list.json",
-            "progress.md",
-            "session-handoff.md",
-            "scripts/check_pins.py",
-            "docs/harness",
-            ".github/workflows/harness-self-heal.yml",
-        ]
-    )
-    if platform["requires_posix"]:
-        paths.insert(-3, "init.sh")
-    if platform["requires_powershell"]:
-        paths.insert(-3, "init.ps1")
-    return " \\\n            ".join(shlex.quote(path) for path in paths)
 
 
 def _validate_platform_contract(platform_contract: str) -> str:
@@ -435,10 +397,6 @@ def _template_context(
         "package_managers": ", ".join(profile.package_managers) or "none detected",
         "runtime_files": ", ".join(profile.runtime_files) or "none detected",
         "project_context_markdown": _project_context_markdown(profile),
-        "self_heal_git_add_paths": _self_heal_git_add_paths(
-            agent_file, platform_contract
-        ),
-        "self_heal_verify_command": _self_heal_verify_command(platform_contract),
         "components_markdown": _components_markdown(profile),
         "workspace_markers_markdown": _workspace_markers_markdown(
             profile.workspace_markers
@@ -488,13 +446,6 @@ def _platform_source_review_markdown() -> str:
         "the review date in `docs/harness/evidence-log.md`.\n"
         f"- Recheck source IDs: {source_ids}."
     )
-
-
-def _self_heal_verify_command(platform_contract: str) -> str:
-    platform = _platform_contract_data(platform_contract)
-    if platform["requires_posix"]:
-        return "./init.sh"
-    return "pwsh -NoProfile -File ./init.ps1"
 
 
 def _agent_file_usage_note(agent_file: str) -> str:
@@ -1872,7 +1823,6 @@ def _manifest_content(
     agent_file: str,
     *,
     with_ci_workflow: bool = False,
-    with_self_heal_workflow: bool = False,
     platform_contract: str = "cross-platform",
     generated_files: dict[str, dict[str, object]] | None = None,
 ) -> str:
@@ -1901,7 +1851,6 @@ def _manifest_content(
         "docs/harness/evaluator-rubric.md",
         "docs/harness/quality-document.md",
         "docs/harness/release-controls.md",
-        "docs/harness/self-healing.md",
         "docs/harness/source-record.schema.json",
         "docs/harness/source-record-example.json",
         "docs/harness/research-sources.json",
@@ -1956,7 +1905,7 @@ def _manifest_content(
             "harnessforge effectiveness",
             "harnessforge session",
             "harnessforge report",
-            "enhance-existing --dry-run --json",
+            "harnessforge enhance",
             "harnessforge plan",
         ],
         "docs/harness/first-agent-task.md": [
@@ -2114,16 +2063,6 @@ def _manifest_content(
             "Rollback",
             "real-agent effectiveness",
         ],
-        "docs/harness/self-healing.md": [
-            "Self-healing must be reviewable",
-            "fixed allowlist",
-            "prompt injection",
-            "invisible Unicode",
-            "Workflow Boundary",
-            "HarnessForge Action",
-            "Safe Loop",
-            "Promotion Rule",
-        ],
         "docs/harness/source-record.schema.json": [
             "HarnessForge Project Source Record",
             "targetRelativePath",
@@ -2217,19 +2156,6 @@ def _manifest_content(
             "command: sync",
             "require-verify-evidence",
             "sync-exit-code",
-        ]
-    if with_self_heal_workflow:
-        required_files.append(".github/workflows/harness-self-heal.yml")
-        required_snippets[".github/workflows/harness-self-heal.yml"] = [
-            "workflow_dispatch",
-            "contents: write",
-            "pull-requests: write",
-            "apply",
-            "agent-file:",
-            agent_file,
-            "git add --",
-            ".github/copilot-instructions.md",
-            "gh pr create",
         ]
     manifest = {
         "version": 1,

@@ -34,7 +34,7 @@ practice change over time.
   surfacing, simplicity first, surgical changes, and goal-driven verification
 - AI Harness Engineering runtime substrate and observability papers
 - Reviewed production harness patterns for dependency pinning, security boundary
-  maps, privacy labels, evidence logs, and reviewed self-healing loops
+  maps, privacy labels, evidence logs, and reviewed maintenance loops
 
 ## Local Adaptation
 
@@ -82,8 +82,8 @@ practice change over time.
   checkpoint, release point, or user request.
 - Keep committed harness docs and reports free of machine-local absolute paths
   unless the user explicitly requests that exact path.
-- Use reviewed self-healing pull requests instead of silent default-branch
-  mutation.
+- Use reviewed maintenance pull requests instead of silent default-branch
+  mutation when the project explicitly owns that automation.
 - Treat structural scores as guidance, not proof of real task success.
 - Keep platform-specific agent instruction files as short routers to the
   canonical checked-in instruction file. Ignore local override files and treat

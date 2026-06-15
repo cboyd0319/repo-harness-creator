@@ -105,6 +105,12 @@ Preview generated files:
 harnessforge init --target /path/to/repo --dry-run
 ```
 
+Review existing instruction files without writing:
+
+```bash
+harnessforge enhance --target /path/to/repo
+```
+
 Create missing harness files:
 
 ```bash
@@ -123,9 +129,10 @@ Create one review artifact:
 harnessforge report --target /path/to/repo --markdown-report docs/harness/evidence/report.md
 ```
 
-See [Usage](docs/usage.md) for readiness checks, repo indexing, verification
-plans, unified reports, explicit verify runs, `harnessforge update` drift
-workflows, blueprints, and CI preflight.
+See [Usage](docs/usage.md) for readiness checks, repo indexing,
+existing-instruction review, verification plans, unified reports, explicit
+verify runs, `harnessforge update` drift workflows, blueprints, and CI
+preflight.
 
 ## Core Surfaces
 
@@ -136,10 +143,12 @@ workflows, blueprints, and CI preflight.
 | `index` | Read-only structural map for large existing repos |
 | `session` | Restart snapshot with git, readiness, audit, and state-file status |
 | `report` | Unified read-only harness status report with optional JSON and Markdown outputs |
+| `enhance` | Review existing instruction files without writing files |
 | `plan` | Diff-aware verification planning without command execution |
 | `sync --check` | CI-oriented readiness preflight with stable exit codes |
 | `verify` | Planned project checks by default, explicit execution with `--run` |
 | `blueprint` | Optional review-required operating-model overlays |
+| `corpus` | Offline public-repo fixture quality gate for generated content |
 | `init` | Create missing harness artifacts |
 | `audit` | Score an existing repo harness |
 | `update` | Plan or apply safe missing-file corrections and report drift |
@@ -154,7 +163,8 @@ Run `harnessforge <command> --help` for command-specific options.
   project commands, or create autonomous workflows.
 - User-specific research mandates, local tool preferences, MCP configs, memory
   trees, and platform permission files are not generated into target repos.
-- Optional blueprints and workflow scaffolds are explicit opt-ins.
+- Optional blueprints and the generated CI workflow scaffold are explicit
+  opt-ins.
 - Structural audit scores are not treated as real-agent performance evidence.
 
 See [Capabilities](docs/capabilities.md) for the full generated-file inventory,

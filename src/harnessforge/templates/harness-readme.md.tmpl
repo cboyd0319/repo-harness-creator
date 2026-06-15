@@ -50,7 +50,7 @@ with scope, verification, and rollback.
 | Feedback | `verification-matrix.md`, `sensor-registry.md`, `evaluator-rubric.md`, local checks | Deterministic signals, ownership, and lifecycle before claiming completion |
 | Research | `sources.md`, `research-sources.json`, `source-record.schema.json`, `source-record-example.json` | Fixed research allowlist, reviewed provenance, and project-owned source records |
 | Scope | `change-contract.md`, `security-boundary-map.md`, `feature-privacy-labels.json` | Problem, non-goals, acceptance, rollback, and data boundaries |
-| Lifecycle | `session-handoff.md`, `clean-state-checklist.md`, `quality-document.md`, `release-controls.md`, `self-healing.md`, `entropy-control.md` | Restart, roadmap freshness, release readiness, and recurring harness upkeep |
+| Lifecycle | `session-handoff.md`, `clean-state-checklist.md`, `quality-document.md`, `release-controls.md`, `entropy-control.md` | Restart, roadmap freshness, release readiness, and recurring harness upkeep |
 
 ## Operating Loop
 
@@ -119,19 +119,24 @@ intentionally deferred, and when release-prep scope changes.
 
 Run `harnessforge update --target . --apply` only when you want safe missing-file
 corrections. Existing files are preserved unless `--force` is passed.
+Treat generated files as project-owned generated files after review; use the
+manifest and drift report to distinguish template-owned changes from local
+project edits.
 
 Before enhancing project-owned instruction files, run
-`harnessforge init --target . --enhance-existing --dry-run --json`. The plan
-reports proposed addendum writes, canonical section coverage,
-review-required section/finding cleanup edits, placeholder patch previews, and
-findings for duplicate instructions, local absolute paths, user-specific tool
-mandates, and verification conflicts before files are changed. Patch previews
-are review-only and are not applied automatically.
+`harnessforge enhance --target .` or
+`harnessforge enhance --target . --json`. The plan reports proposed addendum
+writes, canonical section coverage, review-required section/finding cleanup
+edits, placeholder patch previews, and findings for duplicate instructions,
+local absolute paths, user-specific tool mandates, and verification conflicts
+before files are changed. Patch previews are review-only and are not applied
+automatically. Use `harnessforge init --target . --enhance-existing` only when
+you are ready to append the reviewed HarnessForge quality addendum.
 
-Optional workflow scaffolds are project-owned generated files. They are separate
-from the published HarnessForge Action runtime and from HarnessForge's live
-repository maintenance workflows.
-When the optional CI scaffold is generated, it runs a read-only `command: sync`
+The optional CI workflow scaffold is a project-owned generated file. It is
+separate from the published HarnessForge Action runtime and from HarnessForge's
+live repository maintenance workflows.
+When that scaffold is generated, it runs a read-only `command: sync`
 preflight before audit. Verify-evidence gating is off by default, warning
 verdicts are advisory, and blocked readiness stops the workflow.
 

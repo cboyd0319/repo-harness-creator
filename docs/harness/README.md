@@ -82,7 +82,9 @@ harnessforge index --target . --max-files 20000 --json
 harnessforge effectiveness --target . --json
 harnessforge session --target .
 harnessforge report --target .
+harnessforge enhance --target .
 harnessforge plan --target . --since HEAD
+harnessforge corpus --min-score 90
 harnessforge audit --target .
 harnessforge update --target .
 harnessforge sync --check --target . --json
@@ -118,6 +120,13 @@ effectiveness evidence, first-agent task status, and platform contract without
 running target commands. Use `--json-report` or `--markdown-report` with a
 target-relative path to persist review evidence.
 
+`corpus` is an offline generated-content quality gate. It creates temporary
+fixtures modeled on pinned popular public repositories, runs detection,
+generation, indexing, and audit against those fixtures, and reports whether
+stack-specific context, generated content, local-path hygiene, and quality
+checks stay above the current threshold. It does not clone repositories, use
+network access, execute target commands, or write outside the temporary root.
+
 `plan` is a read-only diff-aware verification planner. It uses `git diff` to
 map changed files to detected or explicit project verification checks, but it
 does not run those checks.
@@ -126,12 +135,14 @@ does not run those checks.
 Existing files are skipped unless `--force` is passed.
 
 Before enhancing project-owned instruction files, run
-`harnessforge init --target . --enhance-existing --dry-run --json`. The plan
-reports proposed addendum writes, canonical section coverage,
-review-required section/finding cleanup edits, placeholder patch previews, and
-findings for duplicate instructions, local absolute paths, user-specific tool
-mandates, and verification conflicts before files are changed. Patch previews
-are review-only and are not applied automatically.
+`harnessforge enhance --target .` or
+`harnessforge enhance --target . --json`. The plan reports proposed addendum
+writes, canonical section coverage, review-required section/finding cleanup
+edits, placeholder patch previews, and findings for duplicate instructions,
+local absolute paths, user-specific tool mandates, and verification conflicts
+before files are changed. Patch previews are review-only and are not applied
+automatically. Use `harnessforge init --target . --enhance-existing` only when
+you are ready to append the reviewed HarnessForge quality addendum.
 
 `verify --json` defaults to read-only plan mode and is documented in
 `verify-json-contract.md`, with schema and example artifacts beside it. It
@@ -204,7 +215,7 @@ there is a reviewable change.
 
 That scheduled workflow is HarnessForge-maintainer automation for this
 repository. It is separate from the published composite Action and from the
-manual workflow scaffolds generated into target repositories.
+optional CI scaffold generated into target repositories.
 
 ## When To Add Harness
 

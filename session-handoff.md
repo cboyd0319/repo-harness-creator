@@ -182,7 +182,9 @@ and advanced product modes.
   conflicts, duplicate guidance, bloated instruction files, and unreadable
   files. Proposed edits include sanitized placeholder patch previews and
   patch-preview counts. HarnessForge does not write project-owned cleanup edits
-  automatically.
+  automatically. The dedicated read-only `harnessforge enhance` command now
+  exposes that review plan directly, with text and JSON output, no command
+  execution, and no writes.
 - Current sensor registry implementation adds a review-required generated
   `docs/harness/sensor-registry.md`, manifest required-file and snippet
   coverage, generated ownership metadata, and live harness ownership/source/
@@ -812,13 +814,38 @@ instruction files, shell/file tools, git access, filesystem scope, startup
 scripts, verification commands, stop hooks, lint/sensor checks, workflow
 permissions, and evaluator loops as harness pieces that change effective agent
 behavior. Focused generator/audit tests passed with 52 tests.
+Product boundaries have now been tightened again after the RunHaven
+self-healing leak. Generated target harnesses must not include
+`docs/harness/self-healing.md`, `.github/workflows/harness-self-heal.yml`,
+`with-self-heal-workflow`, scheduled research refresh, sibling HarnessForge
+checkout commands, local path preferences, or repo-local AGY/Antigravity
+mandates. HarnessForge repo-local self-healing remains only in this repository.
+Audit scoring now checks the current quality contract: generated-file
+ownership metadata, platform metadata, first-agent lifecycle, roadmap and
+sensor lifecycle, verify/effectiveness evidence guidance, stale sibling
+checkout avoidance, and generated-vs-local self-healing boundaries. The
+offline `harnessforge corpus` command is implemented and green for pinned
+public-repo-shaped fixtures.
+RunHaven was rechecked with the corrected rules. Its generated self-healing doc
+was deleted, manifest references were removed, active docs were generalized to
+reviewed maintenance/automation wording, generated-file metadata was added, and
+HarnessForge audit now returns `100/100`. `harnessforge report` is warning-only
+for expected workflow/governance review surfaces.
+Harness Maintenance Optimization is accepted in `docs/roadmap.md`: reduce
+routine harness-doc fan-out by defining authoritative fact owners, change-to-doc
+routing, generated summaries, and audit/report drift checks for stale duplicated
+facts.
+Latest verification passed full unit discovery with 242 tests, compile, pin
+check, research source check, manifest and feature JSON validation, self-audit
+`100/100`, public corpus JSON gate, generated-target boundary smoke, RunHaven
+audit `100/100`, RunHaven manifest JSON validation, and diff hygiene.
 Push local commits only at an explicit batch/release boundary or user request.
 Release prep is intentionally deferred. Continue accepted roadmap work before
 release gates, package publishing, or Action tag decisions. The pre-release
-buildout now includes a dedicated `enhance` or `review` command surface, golden
-public-repo fixture corpus, first-agent task lifecycle evidence, report
-expansion, instruction-quality and signal-to-noise reporting, compact repo maps
-and SBOM detection or adapter design, Action summary polish, `release-check`,
-harness maturity levels, expanded policy presets, and interactive
-quickstart/init UX. Return to release prep only after those items are completed
-or explicitly deferred with owner, evidence, and risk recorded.
+buildout now includes the golden public-repo fixture corpus, first-agent task
+lifecycle evidence, report expansion, instruction-quality and signal-to-noise
+reporting, compact repo maps and SBOM detection or adapter design, Action
+summary polish, `release-check`, harness maturity levels, expanded policy
+presets, and interactive quickstart/init UX. Return to release prep only after
+those items are completed or explicitly deferred with owner, evidence, and risk
+recorded.

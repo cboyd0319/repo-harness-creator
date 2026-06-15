@@ -2342,7 +2342,6 @@ class CliTests(unittest.TestCase):
                         "--target",
                         str(root),
                         "--with-ci-workflow",
-                        "--with-self-heal-workflow",
                     ]
                 )
 
@@ -2353,7 +2352,7 @@ class CliTests(unittest.TestCase):
 
         self.assertEqual(code, 0)
         self.assertTrue(ci_exists)
-        self.assertTrue(self_heal_exists)
+        self.assertFalse(self_heal_exists)
         self.assertIn("Optional workflow scaffold review required", stdout.getvalue())
         self.assertIn("<reviewed-commit-sha>", stdout.getvalue())
         self.assertIn("permissions", stdout.getvalue())
@@ -2780,6 +2779,105 @@ class CliTests(unittest.TestCase):
                 for preview in previews.values()
             )
         )
+
+    def test_enhance_json_reports_existing_instruction_plan_without_writes(
+        self,
+    ) -> None:
+        repeated = (
+            "Always inspect the project-owned verification docs before changing "
+            "shared behavior or accepting generated guidance."
+        )
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            marker = root / "ran.txt"
+            command = _python_command(
+                "from pathlib import Path; Path('ran.txt').write_text('ran')"
+            )
+            (root / "pyproject.toml").write_text(
+                "[project]\nname='demo'\n",
+                encoding="utf-8",
+            )
+            (root / "AGENTS.md").write_text(
+                "# Existing\n\n"
+                "## Build\n\n"
+                "Use /Users/person/private/repo for local scripts.\n\n"
+                "You must use Antigravity and agy for research.\n\n"
+                "Never run tests in this repository.\n\n"
+                f"{repeated}\n",
+                encoding="utf-8",
+            )
+            (root / "CLAUDE.md").write_text(
+                "# Claude\n\n"
+                f"{repeated}\n",
+                encoding="utf-8",
+            )
+
+            stdout = io.StringIO()
+            with contextlib.redirect_stdout(stdout):
+                code = main(
+                    [
+                        "enhance",
+                        "--target",
+                        str(root),
+                        "--json",
+                        "--command",
+                        command,
+                    ]
+                )
+            raw = stdout.getvalue()
+            payload = json.loads(raw)
+            marker_exists = marker.exists()
+
+        agents = {
+            item["path"]: item
+            for item in payload["enhanceExistingPlan"]["files"]
+        }["AGENTS.md"]
+
+        self.assertEqual(code, 0)
+        self.assertFalse(marker_exists)
+        self.assertNotIn(str(root), raw)
+        self.assertNotIn("/Users/person", raw)
+        self.assertEqual(payload["schemaVersion"], "harnessforge.enhanceCommand.v1")
+        self.assertEqual(payload["mode"], "review")
+        self.assertEqual(payload["target"]["root"], None)
+        self.assertFalse(payload["execution"]["commandsExecuted"])
+        self.assertFalse(payload["execution"]["writesPerformed"])
+        self.assertEqual(
+            payload["enhanceExistingPlan"]["schemaVersion"],
+            "harnessforge.enhanceExistingPlan.v1",
+        )
+        self.assertIn("patchPreviews", payload["enhanceExistingPlan"]["summary"])
+        self.assertIn("local_absolute_path", {item["type"] for item in agents["findings"]})
+
+    def test_enhance_text_summarizes_existing_instruction_plan(
+        self,
+    ) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            (root / "pyproject.toml").write_text(
+                "[project]\nname='demo'\n",
+                encoding="utf-8",
+            )
+            (root / "AGENTS.md").write_text(
+                "# Existing\n\n"
+                "## Build\n\n"
+                "Never run tests in this repository.\n",
+                encoding="utf-8",
+            )
+
+            stdout = io.StringIO()
+            with contextlib.redirect_stdout(stdout):
+                code = main(["enhance", "--target", str(root)])
+            output = stdout.getvalue()
+
+        self.assertEqual(code, 0)
+        self.assertIn("Enhance review for ", output)
+        self.assertIn("Mode: review only", output)
+        self.assertIn("Files reviewed: 1", output)
+        self.assertIn("AGENTS.md", output)
+        self.assertIn("verification_conflict", output)
+        self.assertIn("add_missing_section", output)
+        self.assertIn("No files were changed.", output)
 
     def test_audit_requires_explicit_override_for_local_absolute_paths(self) -> None:
         with tempfile.TemporaryDirectory() as tmp:

@@ -65,6 +65,22 @@ route the change through `change-contract.md` and `verification-matrix.md`.
   sync with `progress.md`, `session-handoff.md`, and the harness sensor
   registry when work is accepted, deferred, or completed.
 
+## Product Boundary Inventory
+
+Keep these surfaces separate before changing templates, Action inputs, workflow
+files, or audit scoring.
+
+| Surface | HarnessForge Repo-Local | Generated Target Harness | Published GitHub Action |
+| --- | --- | --- | --- |
+| Agent instructions | `AGENTS.md`, `CLAUDE.md`, `GEMINI.md`, and Copilot routing may describe this repo's exact release, research, and verification workflow. | Generated root instructions must stay portable, project-owned, and free of user-specific local tool mandates, sibling checkout paths, and HarnessForge maintenance preferences. | The Action does not read this repo's local agent instructions as policy for callers. |
+| Harness docs | `docs/harness/` can contain HarnessForge-specific research, release, self-healing, evidence, and backlog docs. | Generated `docs/harness/` contains generic operating docs, first-agent task, roadmap, sensors, evidence, source records, platform metadata, and security boundaries. It must not include HarnessForge-only self-healing docs. | The Action may write generated docs only for `init` or applied `update` inside the caller's `target`. |
+| Workflows | `.github/workflows/ci.yml` and `.github/workflows/harness-self-heal.yml` are HarnessForge maintainer automation. Self-healing is repo-local here. | The only optional generated workflow is the manual HarnessForge CI scaffold. Target generation must not create self-heal, setup, teardown, branch-push, or pull-request automation. | The composite Action is input-driven. It does not schedule jobs, refresh research, create branches, commit, push, or open pull requests. |
+| Research refresh | `scripts/refresh_research.py`, `research-sources.lock.json`, and `research-inbox.md` support this repo's fixed-allowlist research maintenance. | Generated research files are project-owned review scaffolds. They may describe how to run a reviewed fixed-allowlist refresh, but no scheduled refresh is generated. | The Action does not refresh research. |
+| Generated ownership and drift | This repo tracks product code, templates, and local harness docs as project-owned maintenance surfaces. | Generated target manifests must include ownership metadata, content hashes, template hashes, platform contract metadata, review-required placeholders, and drift report inputs. | Action reports should expose target-relative generated drift and never depend on this repo's working tree. |
+| Platform contracts | This repo supports Python 3.13+, macOS 15+, Windows 11+, and Ubuntu 22.04+ unless a component says otherwise. | Generated target harnesses record the selected `platformContract`, supported platforms, and primary-source review date. Unsupported platform scripts are omitted. | The Action passes the selected platform contract to generation and reporting, but does not broaden target support. |
+| Assessment scoring | This repo's self-audit must enforce the current product boundary, including local-only self-healing, generated ownership metadata, platform contracts, first-agent lifecycle, verify/effectiveness evidence slots, and stale local-path command detection. | A generated target harness must not score as complete if it contains HarnessForge repo-local self-healing, sibling-checkout commands, missing generated-file metadata, missing platform metadata, or no first-agent/roadmap/sensor lifecycle. Structural score still does not prove real-agent effectiveness. | Action summaries and reports should surface the same audit/readiness/evidence boundaries without treating Action success as a real-agent performance claim. |
+| Optional overlays | Product blueprints and internal roadmap docs can evolve in this repo. | Blueprints are explicit opt-ins and land in review-required areas separate from normal `init`. | The Action may invoke explicit commands only from inputs. |
+
 ## Manual Additions
 
 - `src/harnessforge/blueprints.py`: optional blueprint registry and safe
@@ -76,6 +92,9 @@ route the change through `change-contract.md` and `verification-matrix.md`.
 - `src/harnessforge/indexer.py`: read-only structural repo indexer used by the
   CLI to summarize file classes, languages, manifests, components,
   source-of-truth signals, and review-required placeholders without writes.
+- `src/harnessforge/public_repo_corpus.py`: offline public-repo fixture corpus
+  used by `harnessforge corpus` to test detection and generated-content quality
+  against pinned popular open-source repository shapes without network access.
 - `src/harnessforge/effectiveness.py`: read-only effectiveness evidence
   assessor used by the CLI to validate stored benchmark or real-agent evidence
   without running benchmarks or producing unsupported performance scores.

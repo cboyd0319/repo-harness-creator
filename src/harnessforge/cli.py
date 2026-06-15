@@ -30,6 +30,10 @@ from .generate import (
 from .indexer import build_index_report, format_index_report
 from .models import DriftResult, ProjectProfile, WriteResult
 from .planner import build_diff_plan, diff_plan_to_dict, format_diff_plan
+from .public_repo_corpus import (
+    build_public_repo_corpus_report,
+    format_public_repo_corpus_report,
+)
 from .readiness import (
     ReadinessReport,
     format_readiness,
@@ -146,6 +150,30 @@ def build_parser() -> argparse.ArgumentParser:
     )
     quickstart.set_defaults(func=_quickstart)
 
+    corpus = subparsers.add_parser(
+        "corpus",
+        help="run the offline public-repo fixture quality corpus",
+    )
+    corpus.add_argument("--json", action="store_true")
+    corpus.add_argument(
+        "--min-score",
+        type=int,
+        default=0,
+        help="minimum acceptable fixture quality score",
+    )
+    corpus.set_defaults(func=_corpus)
+
+    enhance = subparsers.add_parser(
+        "enhance",
+        help="review existing instruction files without writing files",
+    )
+    enhance.add_argument("--target", type=Path, default=Path.cwd())
+    enhance.add_argument("--agent-file", default="AGENTS.md")
+    enhance.add_argument("--package-manager")
+    enhance.add_argument("--command", dest="commands", action="append", default=[])
+    enhance.add_argument("--json", action="store_true")
+    enhance.set_defaults(func=_enhance)
+
     init = subparsers.add_parser("init", help="create missing harness artifacts")
     init.add_argument("--target", type=Path, default=Path.cwd())
     init.add_argument("--agent-file", default="AGENTS.md")
@@ -161,11 +189,6 @@ def build_parser() -> argparse.ArgumentParser:
         "--with-ci-workflow",
         action="store_true",
         help="also scaffold a manual HarnessForge CI workflow",
-    )
-    init.add_argument(
-        "--with-self-heal-workflow",
-        action="store_true",
-        help="also scaffold a manual self-heal pull-request workflow",
     )
     init.add_argument("--force", action="store_true")
     init.add_argument(
@@ -205,11 +228,6 @@ def build_parser() -> argparse.ArgumentParser:
         "--with-ci-workflow",
         action="store_true",
         help="include the optional manual HarnessForge CI workflow",
-    )
-    update.add_argument(
-        "--with-self-heal-workflow",
-        action="store_true",
-        help="include the optional manual self-heal pull-request workflow",
     )
     update.add_argument("--apply", action="store_true")
     update.add_argument("--force", action="store_true")
@@ -450,6 +468,126 @@ def _quickstart(args: argparse.Namespace) -> int:
     return 0
 
 
+def _corpus(args: argparse.Namespace) -> int:
+    payload = build_public_repo_corpus_report()
+    if args.json:
+        print(json.dumps(payload, indent=2))
+    else:
+        print(format_public_repo_corpus_report(payload), end="")
+    minimum = int(payload["summary"]["minimumScore"])
+    return 1 if args.min_score and minimum < args.min_score else 0
+
+
+def _enhance(args: argparse.Namespace) -> int:
+    profile = detect_project(
+        args.target,
+        explicit_package_manager=args.package_manager,
+        explicit_commands=tuple(args.commands),
+    )
+    plan = build_enhance_existing_plan(profile, agent_file=args.agent_file)
+    payload = _enhance_command_to_dict(profile, plan)
+    if args.json:
+        print(json.dumps(payload, indent=2))
+    else:
+        print(_format_enhance_plan(profile, plan))
+    return 0
+
+
+def _enhance_command_to_dict(
+    profile: ProjectProfile,
+    plan: dict[str, object],
+) -> dict[str, object]:
+    return {
+        "schemaVersion": "harnessforge.enhanceCommand.v1",
+        "mode": "review",
+        "target": {
+            "name": profile.name,
+            "root": None,
+        },
+        "detectedStack": profile.stack,
+        "execution": {
+            "commandsExecuted": False,
+            "writesPerformed": False,
+        },
+        "verificationCommands": list(profile.verification_commands),
+        "enhanceExistingPlan": plan,
+    }
+
+
+def _format_enhance_plan(
+    profile: ProjectProfile,
+    plan: dict[str, object],
+) -> str:
+    summary = plan.get("summary", {})
+    files = plan.get("files", [])
+    lines = [
+        f"Enhance review for {profile.name}",
+        "Mode: review only",
+        f"Detected stack: {profile.stack}",
+        f"Files reviewed: {_summary_value(summary, 'files')}",
+        f"Would enhance: {_summary_value(summary, 'wouldEnhance')}",
+        f"Review findings: {_summary_value(summary, 'reviewFindings')}",
+        f"Proposed edits: {_summary_value(summary, 'proposedEdits')}",
+        f"Patch previews: {_summary_value(summary, 'patchPreviews')}",
+        "No files were changed.",
+    ]
+    if not files:
+        lines.append("No existing instruction files were found.")
+        return "\n".join(lines)
+    lines.append("")
+    lines.append("Files:")
+    file_items = files if isinstance(files, list) else []
+    for item in file_items:
+        if not isinstance(item, dict):
+            continue
+        lines.extend(_format_enhance_file(item))
+    return "\n".join(lines)
+
+
+def _summary_value(summary: object, key: str) -> object:
+    if isinstance(summary, dict):
+        return summary.get(key, 0)
+    return 0
+
+
+def _format_enhance_file(item: dict[str, object]) -> list[str]:
+    path = item.get("path", "<unknown>")
+    status = item.get("status", "unknown")
+    lines = [f"  - {path}: {status}"]
+    coverage = item.get("sectionCoverage", {})
+    if isinstance(coverage, dict):
+        missing = coverage.get("missing", [])
+        if missing:
+            lines.append(f"    missing sections: {_join_values(missing)}")
+    findings = item.get("findings", [])
+    if isinstance(findings, list) and findings:
+        lines.append(
+            "    findings: "
+            + ", ".join(
+                str(finding.get("type", "unknown"))
+                for finding in findings
+                if isinstance(finding, dict)
+            )
+        )
+    proposed = item.get("proposedEdits", [])
+    if isinstance(proposed, list) and proposed:
+        lines.append(
+            "    proposed edits: "
+            + ", ".join(
+                str(edit.get("action", "unknown"))
+                for edit in proposed
+                if isinstance(edit, dict)
+            )
+        )
+    return lines
+
+
+def _join_values(values: object) -> str:
+    if isinstance(values, list):
+        return ", ".join(str(value) for value in values)
+    return str(values)
+
+
 def _init(args: argparse.Namespace) -> int:
     if args.json and not args.dry_run:
         raise ValueError("init --json currently requires --dry-run")
@@ -463,7 +601,6 @@ def _init(args: argparse.Namespace) -> int:
         commands=tuple(args.commands),
         project_name=args.project_name,
         with_ci_workflow=args.with_ci_workflow,
-        with_self_heal_workflow=args.with_self_heal_workflow,
         platform_contract=args.platform_contract,
     )
     if args.json:
@@ -486,7 +623,7 @@ def _init(args: argparse.Namespace) -> int:
         print(f"{result.status.upper()} {relative}{suffix}")
     for warning in _preserved_file_warnings(results, profile.root):
         print(warning)
-    for warning in _workflow_warnings(args.with_ci_workflow, args.with_self_heal_workflow):
+    for warning in _workflow_warnings(args.with_ci_workflow):
         print(warning)
     return 0
 
@@ -572,7 +709,6 @@ def _update(args: argparse.Namespace) -> int:
         enhance_existing=args.enhance_existing,
         agent_file=args.agent_file,
         with_ci_workflow=args.with_ci_workflow,
-        with_self_heal_workflow=args.with_self_heal_workflow,
         platform_contract=args.platform_contract,
     )
     if args.json:
@@ -602,7 +738,7 @@ def _update(args: argparse.Namespace) -> int:
         print(f"  - {write.status.upper()} {_relative(write.path, profile.root)}{suffix}")
     for warning in _preserved_file_warnings(writes, profile.root):
         print(warning)
-    for warning in _workflow_warnings(args.with_ci_workflow, args.with_self_heal_workflow):
+    for warning in _workflow_warnings(args.with_ci_workflow):
         print(warning)
     return 0
 
@@ -939,10 +1075,8 @@ def _drift_to_dict(item: DriftResult) -> dict[str, str]:
     }
 
 
-def _workflow_warnings(
-    with_ci_workflow: bool, with_self_heal_workflow: bool
-) -> tuple[str, ...]:
-    if not (with_ci_workflow or with_self_heal_workflow):
+def _workflow_warnings(with_ci_workflow: bool) -> tuple[str, ...]:
+    if not with_ci_workflow:
         return ()
     return (
         "Optional workflow scaffold review required:",

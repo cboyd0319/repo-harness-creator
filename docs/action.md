@@ -166,24 +166,26 @@ Existing files are preserved. Set `force: "true"` only when overwriting
 generated harness files is intentional.
 Set `enhance-existing: "true"` when existing instruction files should preserve
 their project text but receive a reviewed HarnessForge quality addendum.
+Generated harness files are project-owned generated files after review; use the
+manifest and drift report to distinguish template-owned changes from local
+project edits.
 
-Optional workflow scaffolds are off by default:
+The optional CI workflow scaffold is off by default:
 
 ```yaml
 - uses: cboyd0319/harnessforge@<reviewed-commit-sha> # v1
   with:
     command: init
     with-ci-workflow: "true"
-    with-self-heal-workflow: "true"
 ```
 
-Review and pin the generated workflows before relying on them. The scaffolded
-workflows use manual triggers by default to avoid surprise CI cost. The CI
+Review and pin the generated workflow before relying on it. The scaffolded
+workflow uses a manual trigger by default to avoid surprise CI cost. The CI
 scaffold runs `command: sync` before audit, records
 `docs/harness/evidence/sync-preflight.json`, keeps
 `require-verify-evidence: "false"` by default, treats warning verdicts as
-advisory, and stops only when readiness is blocked. Generated workflows are
-project-owned generated files, not the live HarnessForge repository workflow
+advisory, and stops only when readiness is blocked. The generated workflow is
+a project-owned generated file, not the live HarnessForge repository workflow
 and not behavior embedded in the composite Action runtime.
 
 ## Inputs
@@ -201,7 +203,6 @@ and not behavior embedded in the composite Action runtime.
 | `agent-file` | `AGENTS.md` | Root instruction file to generate |
 | `platform-contract` | `cross-platform` | Generated harness platform contract: `cross-platform`, `macos-only`, `windows-only`, or `linux-only` |
 | `with-ci-workflow` | `false` | Include optional manual HarnessForge CI workflow scaffolding during `init` or applied `update` |
-| `with-self-heal-workflow` | `false` | Include optional manual self-heal pull-request workflow scaffolding during `init` or applied `update` |
 | `verify-run` | `false` | Execute checks when `command` is `verify`; default verify mode is read-only plan mode |
 | `verify-command` | empty | Optional newline-separated repo-owned verification commands for `command: verify` |
 | `verify-timeout-seconds` | `300` | Per-command timeout when `command` is `verify` and `verify-run` is `true` |

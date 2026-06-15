@@ -66,6 +66,7 @@ def audit_target(
             "scope",
             _scope_checks(
                 files,
+                manifest,
                 local_path_failures,
                 allow_local_absolute_paths=allow_local_absolute_paths,
             ),
@@ -252,8 +253,10 @@ def _load_known_files(root: Path, manifest: dict[str, Any]) -> dict[str, str]:
         ".github/workflows/harness-self-heal.yml",
         "docs/harness/README.md",
         "docs/harness/first-agent-task.md",
+        "docs/harness/roadmap.md",
         "docs/harness/change-contract.md",
         "docs/harness/verification-matrix.md",
+        "docs/harness/sensor-registry.md",
         "docs/harness/component-inventory.md",
         "docs/harness/dependency-change-policy.md",
         "docs/harness/security-boundary-map.md",
@@ -510,6 +513,118 @@ def _manifest_failures(root: Path, manifest: dict[str, Any]) -> list[str]:
                 if isinstance(snippet, str) and snippet not in text:
                     failures.append(f"Missing required snippet in {file_name}: {snippet}")
     return failures
+
+
+def _manifest_platform_metadata_check(manifest: dict[str, Any]) -> CheckResult:
+    if not manifest:
+        return _check(False, "Platform contract metadata is present")
+    contract = manifest.get("platformContract")
+    supported = manifest.get("supportedPlatforms")
+    passed = (
+        isinstance(contract, str)
+        and bool(contract.strip())
+        and isinstance(supported, dict)
+        and bool(supported)
+    )
+    return _check(
+        passed,
+        "Platform contract metadata is present",
+        str(contract) if isinstance(contract, str) else "",
+    )
+
+
+def _generated_file_metadata_check(manifest: dict[str, Any]) -> CheckResult:
+    if not _is_generated_target_manifest(manifest):
+        return _check(
+            True,
+            "Generated-file ownership metadata is present",
+            "not a generated target manifest",
+        )
+    generated_files = manifest.get("generatedFiles")
+    if not isinstance(generated_files, dict) or not generated_files:
+        return _check(False, "Generated-file ownership metadata is present")
+    required = ("ownership", "writeStatus", "contentSha256", "templateSha256")
+    missing: list[str] = []
+    for path_text, metadata in generated_files.items():
+        if not isinstance(path_text, str) or not isinstance(metadata, dict):
+            missing.append(str(path_text))
+            continue
+        for key in required:
+            if path_text == "docs/harness/manifest.json" and key == "contentSha256":
+                continue
+            value = metadata.get(key)
+            if not isinstance(value, str) or not value:
+                missing.append(f"{path_text}:{key}")
+                break
+        else:
+            for key in ("contentSha256", "templateSha256"):
+                if path_text == "docs/harness/manifest.json" and key == "contentSha256":
+                    continue
+                value = str(metadata[key])
+                if not re.fullmatch(r"[0-9a-f]{64}", value):
+                    missing.append(f"{path_text}:{key}")
+                    break
+    return _check(
+        not missing,
+        "Generated-file ownership metadata is present",
+        "; ".join(missing[:3]),
+    )
+
+
+def _generated_target_boundary_check(
+    files: dict[str, str], manifest: dict[str, Any]
+) -> CheckResult:
+    if not _is_generated_target_manifest(manifest):
+        return _check(
+            True,
+            "Generated target harness excludes HarnessForge repo-local self-healing",
+            "not a generated target manifest",
+        )
+    manifest_paths = _manifest_path_set(manifest)
+    leaked = sorted(
+        path
+        for path in manifest_paths
+        if path
+        in {
+            "docs/harness/self-healing.md",
+            ".github/workflows/harness-self-heal.yml",
+        }
+    )
+    if "docs/harness/self-healing.md" in files:
+        leaked.append("docs/harness/self-healing.md")
+    if ".github/workflows/harness-self-heal.yml" in files:
+        leaked.append(".github/workflows/harness-self-heal.yml")
+    manifest_text = json.dumps(manifest, sort_keys=True)
+    if "with-self-heal-workflow" in manifest_text:
+        leaked.append("with-self-heal-workflow")
+    return _check(
+        not leaked,
+        "Generated target harness excludes HarnessForge repo-local self-healing",
+        "; ".join(dict.fromkeys(leaked)),
+    )
+
+
+def _is_generated_target_manifest(manifest: dict[str, Any]) -> bool:
+    generator = manifest.get("generator")
+    return (
+        isinstance(generator, dict)
+        and str(generator.get("name", "")).strip().lower() == "harnessforge"
+    )
+
+
+def _manifest_path_set(manifest: dict[str, Any]) -> set[str]:
+    paths: set[str] = set()
+    for key in ("requiredFiles", "reviewRequired"):
+        value = manifest.get(key)
+        if isinstance(value, list):
+            paths.update(item for item in value if isinstance(item, str))
+    snippets = manifest.get("requiredHarnessSnippets")
+    if isinstance(snippets, dict):
+        paths.update(key for key in snippets if isinstance(key, str))
+    generated_files = manifest.get("generatedFiles")
+    if isinstance(generated_files, dict):
+        paths.update(key for key in generated_files if isinstance(key, str))
+    return paths
 
 
 def _local_markdown_link_failures(root: Path, files: dict[str, str]) -> list[str]:
@@ -828,6 +943,8 @@ def _environment_checks(
         _runner_handling_check(environment_text, platform_contract),
         _check("docs/harness/component-inventory.md" in files, "Component inventory exists"),
         _check("docs/harness/manifest.json" in files, "Machine-readable harness manifest exists"),
+        _manifest_platform_metadata_check(manifest),
+        _generated_file_metadata_check(manifest),
     ]
 
 
@@ -934,9 +1051,21 @@ def _feedback_checks(files: dict[str, str], link_failures: list[str]) -> list[Ch
             "Runnable verification command is present",
         ),
         _check("docs/harness/verification-matrix.md" in files, "Verification matrix exists"),
+        _check("docs/harness/sensor-registry.md" in files, "Sensor registry exists"),
         _check("docs/harness/evidence-log.md" in files, "Evidence log exists"),
         _check("docs/harness/evaluator-rubric.md" in files, "Evaluator rubric exists for output review"),
         _contains(all_text, ("Verification Evidence", "Evidence", "command output"), "Evidence recording is requested"),
+        _contains(all_text, ("harnessforge report", "report --target"), "Unified report command is documented"),
+        _contains_all(
+            all_text,
+            ("harnessforge verify", "--json-report"),
+            "Verify evidence capture is documented",
+        ),
+        _contains(
+            all_text,
+            ("real-agent effectiveness", "effectiveness evidence"),
+            "Effectiveness evidence boundary is documented",
+        ),
         _contains(all_text, ("audit", "assess", "score"), "Regular assessment loop is documented"),
         _contains(
             all_text,
@@ -960,6 +1089,7 @@ def _feedback_checks(files: dict[str, str], link_failures: list[str]) -> list[Ch
 
 def _scope_checks(
     files: dict[str, str],
+    manifest: dict[str, Any],
     local_path_failures: list[str],
     *,
     allow_local_absolute_paths: bool,
@@ -1007,6 +1137,12 @@ def _scope_checks(
             "Durable harness text avoids local absolute paths",
             local_path_detail,
         ),
+        _check(
+            "../HarnessForge" not in all_text
+            and "PYTHONPATH=../HarnessForge" not in all_text,
+            "Harness commands do not depend on a sibling HarnessForge checkout",
+        ),
+        _generated_target_boundary_check(files, manifest),
         _contains(contract, ("Problem", "Scope", "Non-goals"), "Change contract captures scope"),
         _contains(contract, ("Acceptance Criteria", "Acceptance criteria"), "Acceptance criteria are explicit"),
         _contains_all(contract, ("Verification", "Rollback"), "Verification and rollback are captured"),
@@ -1033,14 +1169,37 @@ def _lifecycle_checks(
             "docs/harness/clean-state-checklist.md",
             "docs/harness/entropy-control.md",
             "docs/harness/quality-document.md",
-            "docs/harness/self-healing.md",
             "docs/harness/research-inbox.md",
         )
+    )
+    generated_target = _is_generated_target_manifest(manifest)
+    roadmap_path = (
+        "docs/harness/roadmap.md"
+        if generated_target or "docs/harness/roadmap.md" in files
+        else "docs/roadmap.md"
+    )
+    roadmap_text = files.get(roadmap_path, "")
+    roadmap_snippets = (
+        ("Harness Roadmap", "Status Lifecycle", "Roadmap Items")
+        if roadmap_path == "docs/harness/roadmap.md"
+        else ("Roadmap", "Surface Impact Checklist", "Suggested Build Order")
     )
     return [
         _check(bool(handoff), "Session handoff file exists"),
         _contains(instructions, ("End Of Session", "End of Session", "Before ending"), "End-of-session routine is documented"),
         _contains(lifecycle_text, ("restart", "restartable", "Next Session"), "Clean restart path is documented"),
+        _check("docs/harness/first-agent-task.md" in files, "First-agent harness improvement task exists"),
+        _contains_all(
+            files.get("docs/harness/first-agent-task.md", ""),
+            ("First-Agent", "REVIEW REQUIRED", "verification matrix"),
+            "First-agent task is review-oriented",
+        ),
+        _check(bool(roadmap_text), "Harness roadmap exists"),
+        _contains_all(
+            roadmap_text,
+            roadmap_snippets,
+            "Harness roadmap tracks lifecycle status",
+        ),
         _check("docs/harness/clean-state-checklist.md" in files, "Clean-state checklist exists"),
         _check("docs/harness/quality-document.md" in files, "Quality document exists for periodic reassessment"),
         _contains_all(
@@ -1048,7 +1207,6 @@ def _lifecycle_checks(
             ("Release Controls", "SBOM", "provenance", "Rollback"),
             "Release controls are documented",
         ),
-        _check("docs/harness/self-healing.md" in files, "Self-healing loop is documented"),
         _check("docs/harness/research-sources.json" in files, "Research source list exists"),
         _check("docs/harness/entropy-control.md" in files, "Harness drift or entropy control doc exists"),
         _contains(lifecycle_text, ("update", "correction", "regular assessment", "audit"), "Ongoing update loop is documented"),

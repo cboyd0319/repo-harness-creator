@@ -231,10 +231,10 @@ project-owned docs instead of machine-specific absolute paths.
   verification, source provenance, and links to deeper harness docs.
 - Deeper Walking Labs resource, project, and harness-creator skill review
   reinforced generated-harness quality gates, initializer baseline commits,
-  explicit optional workflow scaffolds, structural benchmark caveats, release
+  explicit optional CI scaffolds, structural benchmark caveats, release
   evidence, and release rollback controls. The imported controls are local and
   reviewable: generated pin checking, generated release controls, optional
-  manual workflow scaffolds, manifest drift tests, and a generated-harness
+  manual CI scaffolds, manifest drift tests, and a generated-harness
   `100/100` quality gate.
 - The Walking Labs learn-harness-engineering public repository carries higher
   weight than sibling-project examples for generic harness pattern decisions.
