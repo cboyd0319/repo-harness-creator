@@ -264,6 +264,40 @@ class CliTests(unittest.TestCase):
         self.assertIn("verify-old.json: passed", output)
         self.assertIn("stale", output)
 
+    def test_inspect_readiness_can_require_verify_evidence(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            (root / "pyproject.toml").write_text(
+                "[project]\nname='demo'\n",
+                encoding="utf-8",
+            )
+            (root / "tests").mkdir()
+            (root / "tests" / "test_demo.py").write_text("", encoding="utf-8")
+            stdout = io.StringIO()
+            with contextlib.redirect_stdout(stdout):
+                code = main(
+                    [
+                        "inspect",
+                        "--target",
+                        str(root),
+                        "--readiness",
+                        "--json",
+                        "--require-verify-evidence",
+                    ]
+                )
+
+            payload = json.loads(stdout.getvalue())
+
+        self.assertEqual(code, 0)
+        self.assertEqual(payload["verdict"], "blocked")
+        self.assertTrue(payload["verifyEvidenceRequired"])
+        self.assertTrue(
+            any(
+                "No stored verify evidence report" in item
+                for item in payload["blockedReasons"]
+            )
+        )
+
     def test_inspect_readiness_reports_config_precedence(self) -> None:
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp)
@@ -893,6 +927,166 @@ class CliTests(unittest.TestCase):
             "python -m unittest discover",
             payload["readiness"]["runnableChecks"],
         )
+
+    def test_sync_check_verify_evidence_gate_passes_with_current_run_report(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            (root / "pyproject.toml").write_text(
+                "[project]\nname='demo'\n",
+                encoding="utf-8",
+            )
+            (root / "tests").mkdir()
+            (root / "tests" / "test_demo.py").write_text("", encoding="utf-8")
+            _write_verify_report(
+                root,
+                "docs/harness/evidence/verify-current.json",
+                verdict="passed",
+                mode="run",
+            )
+            stdout = io.StringIO()
+            with contextlib.redirect_stdout(stdout):
+                code = main(
+                    [
+                        "sync",
+                        "--check",
+                        "--target",
+                        str(root),
+                        "--json",
+                        "--require-verify-evidence",
+                    ]
+                )
+
+            payload = json.loads(stdout.getvalue())
+
+        self.assertEqual(code, 0)
+        self.assertEqual(payload["verdict"], "ready")
+        self.assertEqual(payload["exitCode"], 0)
+        self.assertTrue(payload["readiness"]["verifyEvidenceRequired"])
+        self.assertEqual(payload["readiness"]["blockedReasons"], [])
+        self.assertEqual(
+            payload["readiness"]["verifyEvidence"]["latest"]["path"],
+            "docs/harness/evidence/verify-current.json",
+        )
+
+    def test_sync_check_verify_evidence_gate_blocks_bad_reports(self) -> None:
+        def prepare_failed(root: Path) -> None:
+            _write_verify_report(
+                root,
+                "docs/harness/evidence/verify-failed.json",
+                verdict="failed",
+            )
+
+        def prepare_blocked(root: Path) -> None:
+            _write_verify_report(
+                root,
+                "docs/harness/evidence/verify-blocked.json",
+                verdict="blocked",
+                summary={
+                    "total": 1,
+                    "planned": 0,
+                    "skipped": 0,
+                    "blocked": 1,
+                    "passed": 0,
+                    "failed": 0,
+                    "timedOut": 0,
+                    "errors": 0,
+                },
+            )
+
+        def prepare_plan(root: Path) -> None:
+            _write_verify_report(
+                root,
+                "docs/harness/evidence/verify-plan.json",
+                verdict="planned",
+                mode="plan",
+                summary={
+                    "total": 1,
+                    "planned": 1,
+                    "skipped": 0,
+                    "blocked": 0,
+                    "passed": 0,
+                    "failed": 0,
+                    "timedOut": 0,
+                    "errors": 0,
+                },
+            )
+
+        def prepare_timed_out(root: Path) -> None:
+            _write_verify_report(
+                root,
+                "docs/harness/evidence/verify-timeout.json",
+                verdict="passed",
+                summary={
+                    "total": 1,
+                    "planned": 0,
+                    "skipped": 0,
+                    "blocked": 0,
+                    "passed": 0,
+                    "failed": 0,
+                    "timedOut": 1,
+                    "errors": 0,
+                },
+            )
+
+        def prepare_stale(root: Path) -> None:
+            report = _write_verify_report(
+                root,
+                "docs/harness/evidence/verify-stale.json",
+                verdict="passed",
+            )
+            os.utime(report, (0, 0))
+
+        def prepare_invalid(root: Path) -> None:
+            _write_verify_report(
+                root,
+                "docs/harness/evidence/verify-passed.json",
+                verdict="passed",
+            )
+            (root / "docs/harness/evidence/verify-invalid.json").write_text(
+                "{not json",
+                encoding="utf-8",
+            )
+
+        cases = (
+            ("failed", prepare_failed, "verdict is failed"),
+            ("blocked", prepare_blocked, "verdict is blocked"),
+            ("plan", prepare_plan, "run-mode verify evidence is required"),
+            ("timed_out", prepare_timed_out, "timed_out checks"),
+            ("stale", prepare_stale, "stale"),
+            ("invalid", prepare_invalid, "invalid"),
+        )
+        for name, prepare, needle in cases:
+            with self.subTest(name=name), tempfile.TemporaryDirectory() as tmp:
+                root = Path(tmp)
+                (root / "pyproject.toml").write_text(
+                    "[project]\nname='demo'\n",
+                    encoding="utf-8",
+                )
+                (root / "tests").mkdir()
+                (root / "tests" / "test_demo.py").write_text("", encoding="utf-8")
+                prepare(root)
+                stdout = io.StringIO()
+                with contextlib.redirect_stdout(stdout):
+                    code = main(
+                        [
+                            "sync",
+                            "--check",
+                            "--target",
+                            str(root),
+                            "--json",
+                            "--require-verify-evidence",
+                        ]
+                    )
+
+                payload = json.loads(stdout.getvalue())
+
+            self.assertEqual(code, 2)
+            self.assertEqual(payload["verdict"], "blocked")
+            self.assertEqual(payload["exitCode"], 2)
+            self.assertTrue(payload["readiness"]["verifyEvidenceRequired"])
+            self.assertTrue(
+                any(needle in item for item in payload["readiness"]["blockedReasons"])
+            )
 
     def test_sync_check_exits_warning_for_generated_drift(self) -> None:
         with tempfile.TemporaryDirectory() as tmp:

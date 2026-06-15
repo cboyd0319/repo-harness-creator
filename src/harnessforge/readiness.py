@@ -32,6 +32,7 @@ from .update import build_drift_report
 from .verify_evidence import (
     VerifyEvidenceReport,
     analyze_verify_evidence,
+    verify_evidence_gate_blockers,
     verify_evidence_report_to_dict,
 )
 from .workflow_inventory import (
@@ -74,9 +75,12 @@ class ReadinessReport:
     governance_inventory: tuple[GovernanceItem, ...]
     effectiveness_inventory: tuple[EffectivenessItem, ...]
     verify_evidence: VerifyEvidenceReport
+    verify_evidence_required: bool
 
 
-def inspect_readiness(profile: ProjectProfile) -> ReadinessReport:
+def inspect_readiness(
+    profile: ProjectProfile, *, require_verify_evidence: bool = False
+) -> ReadinessReport:
     file_set = set(profile.files)
     drift = build_drift_report(profile.root)
     ownership = _generated_ownership(profile.root)
@@ -133,6 +137,14 @@ def inspect_readiness(profile: ProjectProfile) -> ReadinessReport:
     warnings.extend(governance_inventory.warnings)
     warnings.extend(effectiveness_inventory.warnings)
     warnings.extend(verify_evidence.warnings)
+    if require_verify_evidence:
+        verify_evidence_blockers = verify_evidence_gate_blockers(verify_evidence)
+        blocked.extend(verify_evidence_blockers)
+        if verify_evidence_blockers:
+            next_actions.append(
+                "Run harnessforge verify --target <repo> --run --json-report "
+                "docs/harness/evidence/verify-<date>.json before release gating."
+            )
     if source_of_truth:
         next_actions.append(
             "Review detected source-of-truth docs before enhancing or generating "
@@ -200,6 +212,7 @@ def inspect_readiness(profile: ProjectProfile) -> ReadinessReport:
         governance_inventory=governance_inventory.items,
         effectiveness_inventory=effectiveness_inventory.items,
         verify_evidence=verify_evidence,
+        verify_evidence_required=require_verify_evidence,
     )
 
 
@@ -230,6 +243,7 @@ def readiness_to_dict(report: ReadinessReport) -> dict[str, Any]:
             for item in report.effectiveness_inventory
         ],
         "verifyEvidence": verify_evidence_report_to_dict(report.verify_evidence),
+        "verifyEvidenceRequired": report.verify_evidence_required,
     }
 
 

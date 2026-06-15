@@ -173,6 +173,7 @@ Run the CI-oriented sync preflight:
 ```bash
 harnessforge sync --check --target /path/to/repo
 harnessforge sync --check --target /path/to/repo --json
+harnessforge sync --check --target /path/to/repo --require-verify-evidence
 ```
 
 Report planned project verification checks without running them:
@@ -284,6 +285,11 @@ Verify evidence inventory is advisory. It detects target-contained
 `docs/harness/evidence/verify*.json` reports, identifies the latest report,
 flags invalid, failed, blocked, timed-out, or stale evidence, and keeps that
 separate from structural `audit` scoring and real-agent effectiveness claims.
+Use `--require-verify-evidence` with `inspect --readiness` or `sync --check`
+to turn this into an explicit release gate. Gate mode requires at least one
+valid stored run-mode report, blocks on any invalid verify report, and requires
+the latest valid report to be fresh, passed, and free of failed, blocked,
+timed-out, or error summary counts.
 
 ## Effectiveness Eval Contract
 

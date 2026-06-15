@@ -535,6 +535,11 @@ Readiness and sync now include advisory `verifyEvidence` inventory for
 target-contained `docs/harness/evidence/verify*.json` reports. It surfaces the
 latest report, schema validity, stale reports, failed or blocked verdicts, and
 timed-out checks without turning stored evidence into a hard gate by default.
+`inspect --readiness --require-verify-evidence` and
+`sync --check --require-verify-evidence` now make that inventory an explicit
+release gate. Gate mode blocks when stored evidence is missing, invalid, stale,
+plan-mode, failed, blocked, timed out, or has error counts. Default readiness
+and sync behavior remains advisory.
 `scripts/refresh_research.py --check` validates duplicate source IDs and URLs,
 required fields, placeholder text, canonical URL shape, arXiv `/abs/` URLs,
 lock-file consistency, and local-path leakage before any metadata fetch. Root
@@ -555,18 +560,19 @@ review checked Python version status, GitHub hosted runner labels, and the
 GitHub runner-images Windows VS2026 migration notice.
 Current robust-mode verification passes: 6 focused blueprint tests, 6 focused
 verify run-mode tests, 15 focused GitHub Action tests, focused generated
-verify-evidence coverage, focused verify report-persistence tests, full unit
-discovery with 195 tests, compile, JSON parse, pin check, research source
+verify-evidence coverage, focused verify report-persistence tests, focused
+verify-evidence gate tests, full unit discovery with 198 tests, compile, JSON
+parse, pin check, research source
 check, `verify --json` plan/run/report smokes, Action verify report smokes,
 blueprint JSON/apply smokes, self-audit `100/100`, local-path scan, and diff
-hygiene. `./init.sh` and `pwsh -NoProfile -File ./init.ps1` both pass with 195
+hygiene. `./init.sh` and `pwsh -NoProfile -File ./init.ps1` both pass with 198
 tests, pin check, research source check, and self-audit `100/100`. `sync
 --check` returns the expected warning for local workflow and instruction review
 surfaces without blockers or generated drift.
-The next highest-value product slice is optional release-gate mode for stored
-verify evidence: let users explicitly fail readiness or sync when latest verify
-evidence is missing, stale, invalid, failed, blocked, or timed out. Keep the
-default read-only/advisory behavior unchanged.
+The next highest-value product slice is a read-only composite Action
+sync/preflight mode that exposes readiness verdicts and the optional
+verify-evidence gate to CI while keeping Action behavior input-driven,
+target-contained, and separate from generated target workflows.
 Existing eval guidance comes from the Harness Forge, Meta-Harness, Code as
 Agent Harness catalog, and arXiv harness-eval reviews; those sources are mined
 only for product ideas and are not copied into generated target-repo defaults.

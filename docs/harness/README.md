@@ -76,6 +76,10 @@ Verify evidence inventory reports target-contained
 `docs/harness/evidence/verify*.json` files, latest verdicts, invalid schemas,
 failed or blocked outcomes, timed-out checks, and stale reports as advisory
 readiness signals.
+Use `--require-verify-evidence` with `inspect --readiness` or `sync --check`
+when release preflight should block unless stored verify evidence is valid,
+fresh, run-mode, passed, and free of failed, blocked, timed-out, or error
+summary counts.
 
 Effectiveness inventory reports visible eval specs, benchmark files, scorer
 scripts, result logs, and frontier files as review surfaces before anyone

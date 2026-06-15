@@ -398,18 +398,37 @@ maintenance loop.
   validity, stale evidence, failed or blocked verdicts, and timed-out checks.
   These signals warn by default but do not become release gates unless a target
   repo opts into that policy later.
+- Added optional stored verify evidence release gating. `inspect --readiness
+  --require-verify-evidence` and `sync --check --require-verify-evidence`
+  block when stored evidence is missing, invalid, stale, plan-mode, failed,
+  blocked, timed out, or has error counts. The default advisory behavior is
+  unchanged.
 
 ## Recommended Next Step
 
 Continue the robust-mode buildout before returning to release prep. The next
-highest-value slice is optional release-gate mode for stored verify evidence:
-let users explicitly fail readiness or sync when latest verify evidence is
-missing, stale, invalid, failed, blocked, or timed out. Keep the default
-read-only/advisory behavior unchanged.
+highest-value slice is a read-only composite Action sync/preflight mode that
+exposes the same readiness verdicts and optional verify-evidence gate to CI.
+Keep the Action input-driven and target-contained, and do not add generated
+workflow behavior as part of that Action change.
 Push local commits only at an explicit batch/release boundary or user request.
 
 ## Verification Evidence
 
+- `PYTHONPATH=src:. python3 -m unittest
+  tests.test_cli.CliTests.test_inspect_readiness_can_require_verify_evidence
+  tests.test_cli.CliTests.test_sync_check_verify_evidence_gate_passes_with_current_run_report
+  tests.test_cli.CliTests.test_sync_check_verify_evidence_gate_blocks_bad_reports`
+  first failed because `--require-verify-evidence` was not recognized, then
+  passed after adding the CLI flag, readiness option, and stored-evidence gate
+  blockers. Adjacent readiness and sync tests passed. Targeted compile passed
+  for `src/harnessforge/cli.py`, `src/harnessforge/readiness.py`,
+  `src/harnessforge/verify_evidence.py`, and `tests/test_cli.py`. Full unit
+  discovery passed with 198 tests. `python3 -m compileall src tests scripts`,
+  JSON parsing, pin check, research source check, self-audit `100/100`, sync
+  JSON smoke, `git diff --check`, and the exact local-path scan passed.
+  `./init.sh` and `pwsh -NoProfile -File ./init.ps1` both passed with 198
+  tests, pin check, research source check, and self-audit `100/100`.
 - `PYTHONPATH=src:. python3 -m unittest
   tests.test_cli.CliTests.test_inspect_readiness_json_reports_ready_without_writing
   tests.test_cli.CliTests.test_inspect_readiness_reports_stored_verify_evidence

@@ -85,6 +85,55 @@ def verify_evidence_report_to_dict(report: VerifyEvidenceReport) -> dict[str, An
     }
 
 
+def verify_evidence_gate_blockers(report: VerifyEvidenceReport) -> tuple[str, ...]:
+    blockers: list[str] = []
+    if not report.reports:
+        blockers.append("No stored verify evidence report found.")
+        return tuple(blockers)
+
+    for item in report.reports:
+        if not item.schema_valid:
+            blockers.append(f"Stored verify evidence report {item.path} is invalid.")
+
+    latest = report.latest
+    if latest is None:
+        blockers.append("No valid stored verify evidence report found.")
+        return tuple(_dedupe(blockers))
+
+    if "stale" in latest.issues:
+        blockers.append(
+            f"Latest verify evidence report {latest.path} is stale "
+            f"({latest.age_days} days old)."
+        )
+    if latest.mode != "run":
+        blockers.append(
+            f"Latest verify evidence report {latest.path} is {latest.mode or 'unknown'} "
+            "mode; run-mode verify evidence is required."
+        )
+    if latest.verdict != "passed":
+        blockers.append(
+            f"Latest verify evidence report {latest.path} verdict is "
+            f"{latest.verdict or 'missing'}."
+        )
+    if _summary_count(latest, "blocked"):
+        blockers.append(
+            f"Latest verify evidence report {latest.path} includes blocked checks."
+        )
+    if _summary_count(latest, "failed"):
+        blockers.append(
+            f"Latest verify evidence report {latest.path} includes failed checks."
+        )
+    if _summary_count(latest, "timedOut"):
+        blockers.append(
+            f"Latest verify evidence report {latest.path} includes timed_out checks."
+        )
+    if _summary_count(latest, "errors"):
+        blockers.append(
+            f"Latest verify evidence report {latest.path} includes error checks."
+        )
+    return tuple(_dedupe(blockers))
+
+
 def verify_evidence_item_to_dict(item: VerifyEvidenceItem) -> dict[str, Any]:
     return {
         "path": item.path,
@@ -203,6 +252,11 @@ def _file_age(path: Path) -> tuple[str, int, bool]:
 
 def _sort_timestamp(item: VerifyEvidenceItem) -> str:
     return item.recorded_at or item.updated_at
+
+
+def _summary_count(item: VerifyEvidenceItem, key: str) -> int:
+    value = item.summary.get(key, 0)
+    return value if isinstance(value, int) and value > 0 else 0
 
 
 def _format_timestamp(value: datetime) -> str:

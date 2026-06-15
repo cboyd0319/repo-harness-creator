@@ -79,6 +79,11 @@ def build_parser() -> argparse.ArgumentParser:
     inspect.add_argument("--package-manager")
     inspect.add_argument("--command", dest="commands", action="append", default=[])
     inspect.add_argument("--readiness", action="store_true")
+    inspect.add_argument(
+        "--require-verify-evidence",
+        action="store_true",
+        help="block readiness unless stored run-mode verify evidence is current and passed",
+    )
     inspect.add_argument("--json", action="store_true")
     inspect.set_defaults(func=_inspect)
 
@@ -186,6 +191,11 @@ def build_parser() -> argparse.ArgumentParser:
     )
     sync.add_argument("--package-manager")
     sync.add_argument("--command", dest="commands", action="append", default=[])
+    sync.add_argument(
+        "--require-verify-evidence",
+        action="store_true",
+        help="block sync unless stored run-mode verify evidence is current and passed",
+    )
     sync.add_argument("--json", action="store_true")
     sync.set_defaults(func=_sync)
 
@@ -255,13 +265,18 @@ def build_parser() -> argparse.ArgumentParser:
 
 
 def _inspect(args: argparse.Namespace) -> int:
+    if args.require_verify_evidence and not args.readiness:
+        raise ValueError("--require-verify-evidence requires --readiness")
     profile = detect_project(
         args.target,
         explicit_package_manager=args.package_manager,
         explicit_commands=tuple(args.commands),
     )
     if args.readiness:
-        report = inspect_readiness(profile)
+        report = inspect_readiness(
+            profile,
+            require_verify_evidence=args.require_verify_evidence,
+        )
         if args.json:
             print(json.dumps(readiness_to_dict(report), indent=2))
         else:
@@ -423,7 +438,10 @@ def _sync(args: argparse.Namespace) -> int:
         explicit_package_manager=args.package_manager,
         explicit_commands=tuple(args.commands),
     )
-    report = inspect_readiness(profile)
+    report = inspect_readiness(
+        profile,
+        require_verify_evidence=args.require_verify_evidence,
+    )
     exit_code = SYNC_EXIT_CODES.get(report.verdict, 2)
     if args.json:
         print(json.dumps(_sync_check_to_dict(report, exit_code), indent=2))

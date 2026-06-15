@@ -94,6 +94,12 @@ latest verdict, schema validity, stale reports, failed or blocked outcomes, and
 timed-out checks without turning stored evidence into a hard release gate by
 default.
 
+Call `inspect --readiness --require-verify-evidence` or
+`sync --check --require-verify-evidence` when stored verify evidence should be
+a hard gate. Gate mode requires at least one valid stored report, blocks on any
+invalid verify report, and requires the latest valid report to be run-mode,
+fresh, passed, and free of failed, blocked, timed-out, or error summary counts.
+
 ## Exit Codes
 
 Plan mode exit codes are about whether the report could be produced:
