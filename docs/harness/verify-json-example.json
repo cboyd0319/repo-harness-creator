@@ -1,0 +1,49 @@
+{
+  "schemaVersion": "harnessforge.verify.v1",
+  "target": {
+    "name": "demo",
+    "root": null
+  },
+  "mode": "plan",
+  "verdict": "planned",
+  "platform": {
+    "os": "darwin",
+    "python": "3.14.6",
+    "runner": "local"
+  },
+  "execution": {
+    "commandsExecuted": false,
+    "startedAt": null,
+    "endedAt": null,
+    "durationMs": null
+  },
+  "summary": {
+    "total": 1,
+    "planned": 1,
+    "skipped": 0,
+    "blocked": 0,
+    "passed": 0,
+    "failed": 0,
+    "timedOut": 0,
+    "errors": 0
+  },
+  "checks": [
+    {
+      "id": "project.detected.0",
+      "label": "Detected project verification",
+      "command": "python -m unittest discover",
+      "source": "detected",
+      "workingDirectory": ".",
+      "required": true,
+      "status": "planned",
+      "exitCode": null,
+      "durationMs": null,
+      "message": "Plan mode only. Command execution requires explicit run mode.",
+      "stdoutPreview": null,
+      "stderrPreview": null
+    }
+  ],
+  "blockedReasons": [],
+  "warnings": [],
+  "artifacts": []
+}

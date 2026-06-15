@@ -203,6 +203,20 @@ unresolved clarification markers, incomplete requirement checklists, missing
 plan/task artifacts, weak FR/SC traceability, tasks without explicit file
 paths, and workflow surfaces that need review.
 
+## Planned Verify JSON Contract
+
+HarnessForge has a proposed `verify --json` report contract for project check
+results. The contract is documented before command execution is implemented so
+the schema, safety boundary, and CI semantics can be reviewed independently.
+
+See [docs/harness/verify-json-contract.md](docs/harness/verify-json-contract.md),
+[docs/harness/verify-json.schema.json](docs/harness/verify-json.schema.json),
+and [docs/harness/verify-json-example.json](docs/harness/verify-json-example.json).
+
+The intended default mode is plan-only: report detected checks and their
+sources without running target repository commands. Future execution must be
+explicit opt-in.
+
 ## Generation Boundary
 
 `init` creates missing HarnessForge-owned files. It preserves existing project

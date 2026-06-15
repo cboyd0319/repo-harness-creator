@@ -85,7 +85,7 @@ and the required AGENTS instruction format.
   repo-local control planes, but it does not generate sibling-repo
   instructions, personal tool mandates, large skill trees, blueprints, MCP
   setup, or extra agent adapters by default. Current verification passes full
-  unit discovery with 152 tests, compile, pin check, self-audit `100/100`,
+  unit discovery with 154 tests, compile, pin check, self-audit `100/100`,
   diff hygiene, a read-only readiness smoke, and `sync --check` smoke against
   this repo. Readiness and sync check are warning-only because existing local
   instruction files need review; there are no readiness blockers.
@@ -110,6 +110,10 @@ and the required AGENTS instruction format.
   from the outside: value proposition first, then at-a-glance outcomes,
   differentiators, boundaries, quickstart, readiness/sync, generated files,
   audit/update, Action use, security, and verification.
+- Current `verify --json` work is design-only. It adds
+  `docs/harness/verify-json-contract.md`, `verify-json.schema.json`, and
+  `verify-json-example.json`, plus contract fixture tests. It does not add a
+  CLI command or command execution semantics.
 - Current expanded reference-repo quality batch ran shadow generation and
   content review against agent-governance-toolkit, apple-container,
   Bluepeak-AI, JobSentinel, nhl-betting-analytics, persona, RunHaven,
@@ -439,10 +443,10 @@ and the required AGENTS instruction format.
 
 ## Next Session
 
-Continue the P0 remaining-ideas backlog with a design-only `verify --json`
-contract. Push local commits only at an explicit batch/release boundary or user
-request. Remaining product decisions before public release:
-component-directed monorepo verification commands, path/package exclusions for
-intentionally vulnerable training repos, Maven/Gradle dependency pin parsing,
-selective update semantics for generated-owned files, manual macOS/Windows
-platform CI, `v1` Action tag, and release-time SBOM/provenance gates.
+Continue with the P1 backlog, starting with workflow and work-item inventory.
+Push local commits only at an explicit batch/release boundary or user request.
+Remaining product decisions before public release: component-directed monorepo
+verification commands, path/package exclusions for intentionally vulnerable
+training repos, Maven/Gradle dependency pin parsing, selective update semantics
+for generated-owned files, manual macOS/Windows platform CI, `v1` Action tag,
+and release-time SBOM/provenance gates.

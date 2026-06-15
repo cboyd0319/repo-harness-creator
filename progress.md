@@ -325,18 +325,22 @@ maintenance loop.
   project is different, and organize usage around inspect, readiness, sync,
   generation boundaries, generated files, audit, update/drift, GitHub Action
   use, security, and verification.
+- Added the design-only `verify --json` contract: a markdown contract, JSON
+  schema, and example payload under `docs/harness/`. The contract separates
+  project verification reporting from harness scoring and keeps default mode
+  plan-only with no target command execution.
 
 ## Recommended Next Step
 
-Continue the P0 remaining-ideas backlog with a design-only issue or doc for
-`verify --json`. Push local commits only at an explicit batch/release boundary
-or user request. Remaining product decisions before a first public Action
-release: whether to add component-directed monorepo verification commands,
-path/package exclusions for intentionally vulnerable training repos,
-Maven/Gradle dependency pin parsing, and selective update semantics for
-generated-owned files. Then run the manual macOS/Windows platform CI check and
-decide whether to cut a `v1` Action tag and which release-time SBOM/provenance
-controls should become blocking.
+Continue with the P1 backlog, starting with workflow and work-item inventory.
+Push local commits only at an explicit batch/release boundary or user request.
+Remaining product decisions before a first public Action release: whether to
+add component-directed monorepo verification commands, path/package exclusions
+for intentionally vulnerable training repos, Maven/Gradle dependency pin
+parsing, and selective update semantics for generated-owned files. Then run
+the manual macOS/Windows platform CI check and decide whether to cut a `v1`
+Action tag and which release-time SBOM/provenance controls should become
+blocking.
 
 ## Verification Evidence
 
@@ -353,6 +357,14 @@ controls should become blocking.
   python3 -m harnessforge audit --target . --min-score 85`, and `git diff
   --check` passed after the README reorganization and `sync --check` slice.
   Self-audit stayed `100/100`.
+- `PYTHONPATH=src:. python3 -m unittest tests.test_verify_contract` passed
+  after adding the `verify --json` contract, schema, and example payload.
+- `PYTHONPATH=src:. python3 -m unittest discover -s tests` passed with
+  154 tests, `PYTHONPATH=src:. python3 -m compileall src tests scripts`
+  passed, `PYTHONPATH=src:. python3 scripts/check_pins.py --root .` passed,
+  `PYTHONPATH=src:. python3 -m harnessforge audit --target . --min-score 85`
+  passed with self-audit `100/100`, and `git diff --check` passed after the
+  `verify --json` contract slice.
 - `PYTHONPATH=src:. python3 -m unittest discover -s tests` passed with
   148 tests, and `PYTHONPATH=src:. python3 -m compileall src tests scripts`
   passed after adding source-of-truth spec sync detection.

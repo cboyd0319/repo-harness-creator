@@ -21,7 +21,7 @@ agent sessions.
 | Tools | `harnessforge`, `action.yml`, `init.sh`, `init.ps1`, `scripts/check_pins.py` | Creation, audit, update, CI action, local checks, and pin enforcement |
 | Environment | `pyproject.toml`, CI matrix, `component-inventory.md`, `dependency-change-policy.md` | Python, OS, package, component, and Action support contract |
 | State | `feature_list.json`, `progress.md`, `evidence-log.md` | Current objective, evidence, and restart state |
-| Feedback | tests, self-audit, CI, `evaluator-rubric.md`, research refresh | Deterministic quality checks and source drift signal |
+| Feedback | tests, self-audit, CI, `evaluator-rubric.md`, `verify-json-contract.md`, research refresh | Deterministic quality checks, planned machine-readable verification output, and source drift signal |
 | Scope | `docs/harness/change-contract.md`, `security-boundary-map.md`, `feature-privacy-labels.json` | Acceptance, rollback, security, and data-flow discipline |
 | Lifecycle | `session-handoff.md`, `clean-state-checklist.md`, `quality-document.md`, `release-controls.md`, `self-healing.md`, entropy control | Restart, release readiness, recurring maintenance, and reviewed automation |
 
@@ -45,10 +45,15 @@ Use:
 ```bash
 harnessforge audit --target .
 harnessforge update --target .
+harnessforge sync --check --target . --json
 ```
 
 `update` reports recommended safe corrections unless `--apply` is passed.
 Existing files are skipped unless `--force` is passed.
+
+The planned `verify --json` contract is documented in
+`verify-json-contract.md`, with schema and example artifacts beside it. The
+contract is plan-only until explicit command execution is implemented.
 
 The GitHub Action in `action.yml` exposes the same behavior to other
 repositories. Keep it wired to the Python library instead of duplicating logic

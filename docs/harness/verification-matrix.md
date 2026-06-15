@@ -13,6 +13,7 @@ Windows remote checks are manual `workflow_dispatch` platform checks.
 | Generator or templates | Generator tests, temporary repo integration test, self-audit |
 | Component detection or monorepo routing | Detector tests, generated manifest test, and self-audit |
 | Scoring rules | Positive and negative audit tests |
+| JSON report contract docs | Contract fixture tests, JSON parse, self-audit, and link review |
 | Platform handling | Doctor tests or CI on the affected OS |
 | Docs only | Self-audit and link/source review when URLs changed |
 | Agent-generated tests | Review test intent before implementation, reject stubbed or assertion-free tests, and confirm new tests fail before the fix when practical |

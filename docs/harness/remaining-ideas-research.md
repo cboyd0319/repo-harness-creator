@@ -365,12 +365,13 @@ Sources:
    - Returns CI-oriented exit codes: ready `0`, warning `1`, blocked `2`.
    - No write semantics and no target command execution.
 
-4. Design `verify --json` separately from `audit --json`.
+4. Implemented: design `verify --json` separately from `audit --json`.
    - `audit` scores harness structure.
    - `verify` should report project check results with stable statuses,
      durations, messages, and exit codes.
    - Default should be plan/static mode unless the user explicitly allows
      command execution.
+   - Contract doc, schema, and example payload now exist under `docs/harness/`.
 
 ### P1: Important After P0
 
@@ -442,9 +443,6 @@ HarnessForge generator behavior:
 
 ## Suggested Next Step
 
-Implement P0 in this order:
-
-1. design-only issue/doc for `verify --json`
-
-This sequence improves user experience immediately without expanding the
-generator's default write surface.
+Move to the P1 backlog, starting with workflow and work-item inventory. That
+keeps improving user experience without expanding the generator's default write
+surface.
