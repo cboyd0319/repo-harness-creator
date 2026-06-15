@@ -11,11 +11,11 @@ project manual.
 
 - [Project README](../README.md)
 - [Harness engineering](../docs/harness/README.md)
-- [Change contract](../docs/harness/change-contract.md)
-- [Verification matrix](../docs/harness/verification-matrix.md)
-- [Dependency change policy](../docs/harness/dependency-change-policy.md)
-- [Security boundary map](../docs/harness/security-boundary-map.md)
-- [Component inventory](../docs/harness/component-inventory.md)
+- [Change contract](../docs/harness/boundaries/change-contract.md)
+- [Verification matrix](../docs/harness/feedback/verification-matrix.md)
+- [Dependency change policy](../docs/harness/boundaries/dependency-change-policy.md)
+- [Security boundary map](../docs/harness/boundaries/security-boundary-map.md)
+- [Component inventory](../docs/harness/boundaries/component-inventory.md)
 
 ## Core Rules
 

@@ -133,9 +133,14 @@ class GitHubActionTests(unittest.TestCase):
         self.assertIn("markdown-report", action)
         self.assertIn("report-command", action)
         self.assertIn("report-max-files", action)
+        self.assertIn("report-since", action)
+        self.assertIn("require-docs-fanout-budget", action)
+        self.assertIn("docs-fanout-verdict", action)
         self.assertIn("report-markdown", action)
         self.assertIn("Unified Harness Report", docs)
         self.assertIn("report-markdown", docs)
+        self.assertIn("report-since", docs)
+        self.assertIn("require-docs-fanout-budget", docs)
 
     def test_action_audit_writes_outputs_and_reports(self) -> None:
         with tempfile.TemporaryDirectory() as tmp:
@@ -191,6 +196,7 @@ class GitHubActionTests(unittest.TestCase):
                 "INPUT_REPORT_COMMAND": _python_command(
                     "from pathlib import Path; Path('marker.txt').write_text('ran')"
                 ),
+                "INPUT_REPORT_SINCE": "HEAD",
                 "INPUT_JSON_REPORT": "reports/report.json",
                 "INPUT_MARKDOWN_REPORT": "reports/report.md",
                 "GITHUB_OUTPUT": str(output),
@@ -211,16 +217,20 @@ class GitHubActionTests(unittest.TestCase):
         self.assertEqual(payload["schemaVersion"], "harnessforge.report.v1")
         self.assertEqual(payload["execution"]["commandsExecuted"], False)
         self.assertEqual(payload["readiness"]["verdict"], "ready")
+        self.assertEqual(payload["docsFanout"]["diff"]["status"], "unavailable")
+        self.assertEqual(payload["docsFanout"]["contract"]["verdict"], "warning")
         self.assertEqual(outputs["overall-score"], "100")
         self.assertEqual(outputs["report-json"], "reports/report.json")
         self.assertEqual(outputs["report-markdown"], "reports/report.md")
         self.assertEqual(outputs["report-html"], "")
         self.assertEqual(outputs["changed-files"], "0")
         self.assertEqual(outputs["readiness-verdict"], "ready")
+        self.assertEqual(outputs["docs-fanout-verdict"], "warning")
         self.assertFalse((root / "ran.txt").exists())
         self.assertFalse((root / "marker.txt").exists())
         self.assertIn("# HarnessForge Report", markdown)
         self.assertIn("HarnessForge Report", summary_text)
+        self.assertIn("Docs fan-out verdict", summary_text)
 
     def test_action_sync_writes_readiness_report_and_outputs(self) -> None:
         with tempfile.TemporaryDirectory() as tmp:

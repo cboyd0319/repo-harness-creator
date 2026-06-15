@@ -7,6 +7,7 @@ from typing import Any
 
 from .audit import AuditResult, audit_target
 from .detect import detect_project
+from .harness_paths import existing_harness_path
 from .readiness import ReadinessReport, inspect_readiness
 from .redact import redact_local_paths
 
@@ -17,8 +18,8 @@ STATE_FILES = (
     "session-handoff.md",
     "docs/plans/active/status.md",
     "docs/plans/index.json",
-    "docs/harness/evidence-log.md",
 )
+STATE_FILE_HARNESS_KEYS = ("evidence_log",)
 
 
 @dataclass(frozen=True)
@@ -56,10 +57,7 @@ def build_session_report(target: Path) -> SessionReport:
         git=_git_snapshot(root),
         readiness=readiness,
         audit=audit,
-        state_files=tuple(
-            StateFileSnapshot(path=relative, present=(root / relative).exists())
-            for relative in STATE_FILES
-        ),
+        state_files=_state_file_snapshots(root),
     )
 
 
@@ -147,6 +145,19 @@ def _has_harness_surface(root: Path) -> bool:
             "docs/harness/README.md",
         )
     )
+
+
+def _state_file_snapshots(root: Path) -> tuple[StateFileSnapshot, ...]:
+    snapshots = [
+        StateFileSnapshot(path=relative, present=(root / relative).exists())
+        for relative in STATE_FILES
+    ]
+    for key in STATE_FILE_HARNESS_KEYS:
+        relative = existing_harness_path(root, key)
+        snapshots.append(
+            StateFileSnapshot(path=relative, present=(root / relative).exists())
+        )
+    return tuple(snapshots)
 
 
 def _git_snapshot(root: Path) -> GitSnapshot:

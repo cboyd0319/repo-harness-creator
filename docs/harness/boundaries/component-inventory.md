@@ -70,6 +70,23 @@ route the change through `change-contract.md` and `verification-matrix.md`.
 Keep these surfaces separate before changing templates, Action inputs, workflow
 files, or audit scoring.
 
+## Pre-Release Compatibility Policy
+
+HarnessForge has not been deployed and has no external users. Treat the current
+work as pre-release product shaping.
+
+- Do not keep compatibility shims, legacy generated layouts, old report
+  schemas, stale manifest formats, or prior Action/CLI behavior only because
+  they existed earlier in this repository.
+- Prefer one clean current contract for generated target harnesses, CLI output,
+  Action behavior, scoring, and docs.
+- Preserve compatibility only when a maintainer explicitly declares a release
+  boundary or when a local fixture/reference repo needs a temporary bridge for
+  current evaluation. Temporary bridges must be named as temporary and removed
+  when the current layout or contract is adopted.
+- Existing HarnessForge repo-local docs may differ from generated target docs;
+  that is a product-boundary distinction, not a backward-compatibility promise.
+
 | Surface | HarnessForge Repo-Local | Generated Target Harness | Published GitHub Action |
 | --- | --- | --- | --- |
 | Agent instructions | `AGENTS.md`, `CLAUDE.md`, `GEMINI.md`, and Copilot routing may describe this repo's exact release, research, and verification workflow. | Generated root instructions must stay portable, project-owned, and free of user-specific local tool mandates, sibling checkout paths, and HarnessForge maintenance preferences. | The Action does not read this repo's local agent instructions as policy for callers. |
@@ -102,15 +119,15 @@ files, or audit scoring.
   CLI and composite Action. It combines readiness, audit, drift, index,
   verify evidence, effectiveness evidence, first-agent status, and platform
   contract without running target commands.
-- `docs/harness/sensor-registry.md`: review-required ownership, source,
+- `docs/harness/feedback/sensor-registry.md`: review-required ownership, source,
   purpose, and retirement record for checks and recurring gates.
-- `docs/harness/source-record.schema.json`: generated schema for project-owned
+- `docs/harness/research/source-record.schema.json`: generated schema for project-owned
   source provenance records, separate from the fixed research allowlist.
-- `docs/harness/source-record-example.json`: review-required starter record for
+- `docs/harness/research/source-record-example.json`: review-required starter record for
   project-owned source provenance.
-- `docs/harness/large-codebase-indexing-research.md`: repo-local research note
+- `docs/harness/research/large-codebase-indexing-research.md`: repo-local research note
   for large existing repo analysis and future `harnessforge index` design.
-- `docs/harness/first-agent-task.md`: generated first-agent harness improvement
+- `docs/harness/state/first-agent-task.md`: generated first-agent harness improvement
   task that asks the first agent in a newly harnessed repo to deepen component,
   verification, source-of-truth, evidence, and security guidance.
 - `src/harnessforge/sync.py`: shared read-only sync preflight payload and exit

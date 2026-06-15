@@ -25,7 +25,7 @@ recoverable, or preserve source evidence a maintainer will need.
 ## Evidence Rules
 
 - Keep command names and pass/fail status in `progress.md`, active plans, or
-  `docs/harness/evidence-log.md`.
+  `docs/harness/evidence/evidence-log.md`.
 - Keep screenshots and raw logs out of git unless visual or forensic proof is
   required and sanitized.
 - Never preserve secrets, tokens, raw credentials, or workstation-local absolute

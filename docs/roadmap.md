@@ -4,7 +4,7 @@ Last reviewed: 2026-06-15 UTC.
 
 This roadmap captures accepted product improvements that should be considered
 after the current docs update and before, during, or after release prep. It is
-separate from `docs/harness/remaining-ideas-research.md`, which records the
+separate from `docs/harness/research/remaining-ideas-research.md`, which records the
 research trail and rejected defaults.
 
 ## Product Direction
@@ -29,6 +29,13 @@ The main boundary remains unchanged:
 Release prep is intentionally deferred. Keep building the accepted roadmap
 items before returning to release gates, package publishing, or Action tag
 decisions.
+
+HarnessForge is still alpha/pre-release, has not been deployed, and has no
+external users. Accepted backlog work should optimize for the clean current
+product contract instead of preserving earlier generated layouts, report
+schemas, manifest formats, CLI outputs, Action behavior, or docs as backward
+compatibility promises. Add a shim only when a maintainer declares a release
+boundary or records a temporary evaluation bridge with removal criteria.
 
 The current pre-release buildout includes:
 
@@ -158,7 +165,7 @@ HarnessForge roadmap and generated task-list guidance.
 | Intentional simplification notes | Known ceilings and upgrade paths should be recorded when a simplified implementation is accepted, without weakening security, accessibility, data-loss handling, platform parity, or explicit requirements. |
 
 These patterns should shape both local HarnessForge planning and generated
-`docs/harness/roadmap.md` guidance. They do not require copying any sibling
+`docs/harness/state/roadmap.md` guidance. They do not require copying any sibling
 repo's docs or process wholesale.
 
 ## Accepted Improvements
@@ -247,7 +254,7 @@ Optional behavior can add an explicit SBOM adapter later. That adapter should:
 
 ### First-Agent Task Lifecycle
 
-Generated harnesses now include `docs/harness/first-agent-task.md`. Add a
+Generated harnesses now include `docs/harness/state/first-agent-task.md`. Add a
 lifecycle around that task so projects can tell whether the first deep harness
 review happened.
 
@@ -312,53 +319,164 @@ roadmap/first-agent guidance.
 
 Reduce the doc and harness-update fan-out for small HarnessForge changes.
 
-Status: initial local slice implemented. Remaining work is report/audit
-automation for duplicate fact detection and diff-based docs fan-out summaries.
+Status: implemented for the current pre-release contract.
 
 Problem:
 
-- tiny code, template, or wording changes currently require updates across
+- tiny code, template, or wording changes previously required updates across
   several local harness docs, state files, manifests, and evidence logs;
 - that overhead can erase the intended token and time savings of having a
   harness;
 - duplicated boundary and status text increases drift risk because one surface
   inevitably goes stale.
 
-Candidate behavior:
+Implemented behavior:
 
-- define which files are authoritative for each class of fact, and make other
+- defines which files are authoritative for each class of fact, and makes other
   docs link or summarize instead of duplicating;
-- add an authoritative fact map for product boundaries, CLI command surfaces,
+- adds an authoritative fact map for product boundaries, CLI command surfaces,
   generated-file contracts, Action behavior, release evidence, and local
   harness state;
-- add a lightweight change-to-docs routing table so agents know which harness
+- adds a lightweight change-to-docs routing table so agents know which harness
   docs actually need updates for code, template, Action, audit, release, or
   research changes;
-- prefer generated summaries, reports, or manifest-derived checks over manual
+- prefers generated summaries, reports, or manifest-derived checks over manual
   repeated prose when the information is mechanical;
-- teach audit/report to flag stale or missing canonical updates without
+- teaches audit/report to flag stale or missing canonical updates without
   requiring every small change to touch every harness file;
-- set a maximum expected docs fan-out for routine changes, with explicit
+- sets a maximum expected docs fan-out for routine changes, with explicit
   exceptions for release, security, platform, boundary, and generated-contract
   changes.
 
 Surface impact:
 
-- Local repo harness: primary owner; should reduce updates to `progress.md`,
+- Local repo harness: primary owner; reduces updates to `progress.md`,
   `session-handoff.md`, manifest snippets, evidence logs, and overlapping
   harness docs.
 - Generated harness: apply only if the pattern improves target repos without
   hiding important review obligations.
 - CLI/runtime: initial `report` output now summarizes docs fan-out routing
-  status from `docs/harness/authoritative-facts.md`.
-- GitHub Action: report mode inherits the docs fan-out summary when callers run
-  `command: report`; no separate Action-specific behavior yet.
-- Tests and fixtures: add regression coverage only for canonical routing or
-  generated summary behavior, not for every prose copy.
+  status from `docs/harness/authoritative-facts.md`, reports duplicate durable
+  fact blocks, and can block with `--require-docs-fanout-budget`.
+- GitHub Action: report mode inherits the docs fan-out summary and can fail
+  with `require-docs-fanout-budget: "true"`.
+- Tests and fixtures: regression coverage exists for canonical routing,
+  duplicate fact reporting, Action/CLI fan-out enforcement, and organized
+  harness layout; avoid adding tests for every prose copy.
 
-Done or retire when routine non-release changes have one obvious canonical
-state/evidence update path, and the harness no longer requires broad manual doc
-edits for low-risk changes.
+Done condition met for the current pre-release contract. Reopen only if a
+routine low-risk change again needs broad manual doc/state edits.
+
+### Generated Harness Skill Fallback
+
+Status: implemented for the current generated-harness contract.
+
+Generated target harness docs should not imply HarnessForge is the canonical
+status source for a repository. Repository-owned docs and state are canonical by
+default. The HarnessForge GitHub Action can become a repo's recurring harness
+quality/check surface only when the repo owner explicitly adopts it.
+
+Candidate behavior:
+
+- make generated harnesses usable by contributors who only have the repository
+  checkout and normal project tooling; do not assume `harnessforge` is
+  installed after the initial generation; implemented with generated
+  `.agents/skills/harness/SKILL.md`;
+- review generated `README.md`, `verification-matrix.md`,
+  `sensor-registry.md`, `quality-document.md`, and related planning docs for
+  wording that makes HarnessForge sound required or canonical;
+- downgrade generated HarnessForge references to advisory guidance unless the
+  owner opts into the GitHub Action or an explicit command workflow they run;
+  implemented for generated target docs;
+- render `.agents/skills/harness/SKILL.md` plus compact reference routing so
+  agents can learn how to maintain and improve the repo harness without
+  treating HarnessForge itself as the project source of truth; implemented;
+- reference that skill from generated `AGENTS.md` as a review-required helper
+  for harness-maintenance tasks, not as a general startup mandate; implemented;
+- organize generated `docs/harness/` into purpose-based subdirectories while
+  keeping `README.md`, `authoritative-facts.md`, and `manifest.json` at the
+  top level; implemented for new generated target harnesses;
+- keep the skill target-owned, portable, and free of repo-local preferences,
+  local paths, MCP config, personal tool mandates, or autonomous workflow
+  assumptions; implemented and covered by generated-content tests;
+- prefer repo-native verification scripts, checked-in instructions, and
+  structured target-owned state over generated docs that tell every
+  contributor to install or run HarnessForge;
+- keep future generated-doc consolidation behind quality evidence instead of
+  deleting review-required safety surfaces blindly;
+- test the result against real generated target repos, including RunHaven-style
+  evaluations that inspect content quality instead of only structural score.
+
+Latest optimization evidence:
+
+- Generated target harness root clutter drops to 3 top-level files under
+  `docs/harness/`: `README.md`, `authoritative-facts.md`, and `manifest.json`.
+- RunHaven's current flat harness has 29 top-level files under `docs/harness/`,
+  which made manual review harder.
+- The generated file count is currently 37 because the zero-install repo skill
+  adds one file. Further token/file-write savings should come from deliberate
+  consolidation of overlapping lifecycle/status docs, not from deleting
+  review-required safety surfaces blindly.
+- A rendered target with a real verification command audited at `100/100`, had
+  zero stale flat-path references, and generated `AGENTS.md` stayed at 140
+  lines.
+
+Surface impact:
+
+- Local repo harness: track the boundary and quality evidence only.
+- Generated harness: main surface; may add a target-owned agent skill and
+  update generated docs/AGENTS routing.
+- CLI/runtime: generator templates, ownership metadata, audit/report wording
+  checks, and public corpus expectations.
+- Existing project files: preserve owner text; `--enhance-existing` should
+  propose review-only guidance rather than claiming HarnessForge authority.
+- GitHub Action: remains explicit opt-in for recurring HarnessForge checks.
+- Tests and fixtures: add rendered-content quality assertions for canonicality,
+  advisory wording, skill references, and no local preferences.
+
+Done condition met for the current generated-harness contract: generated docs
+distinguish project-owned canonical state from optional HarnessForge checks,
+and generated targets include a compact target-owned maintenance skill.
+Reopen only if quality passes show recurring confusion or unnecessary generated
+file churn.
+
+### Repo-Local Harness Layout Convergence
+
+Status: implemented.
+
+This repo's own `docs/harness/` directory now uses the organized
+layout generated into target repositories: top-level `README.md`,
+`authoritative-facts.md`, and `manifest.json`, with supporting files grouped
+under focused `boundaries/`, `feedback/`, `state/`, `evidence/`, `research/`,
+`operations/`, `release/`, and `schemas/` directories.
+
+Implemented behavior:
+
+- moved HarnessForge repo-local harness docs into the deployed directory shape
+  instead of relying on a repo-local flat layout;
+- updated local manifests, links, snippets, sensors, report paths, state docs,
+  and tests in one coordinated pass;
+- removed the repo-local path bridge once this repo's harness shape matched the
+  generated target shape;
+- kept HarnessForge-only files such as self-healing docs clearly repo-local and
+  out of generated target harnesses;
+- added audit coverage so flat top-level harness docs fail the organized
+  layout check.
+
+Surface impact:
+
+- Local repo harness: main surface; reorganizes this repo's own
+  `docs/harness/` shape.
+- Generated harness: should not change except for tests proving the shape is
+  still the deployed contract.
+- CLI/runtime: removed the repo-local path bridge.
+- GitHub Action: no behavior change unless report paths or summaries reference
+  local harness docs.
+- Tests and fixtures: update snippet, link, audit, report, and corpus coverage.
+
+Done condition met: this repo's local harness uses the same organized
+`docs/harness/` shape generated into target repositories, and the runtime path
+bridge has been removed.
 
 ### Runtime And Process Observability
 
@@ -569,17 +687,19 @@ coverage before they become recommended defaults.
 
 ## Suggested Build Order
 
-1. Keep the pinned public-repo quality corpus and generated-artifact scorer
+1. Keep the generated target wording advisory unless the repo owner opts into
+   the Action, and continue quality passes against real repositories.
+2. Keep the pinned public-repo quality corpus and generated-artifact scorer
    green as quality and detection gates evolve.
-2. Expand `harnessforge report` with repo-map, policy preset, and release
+3. Expand `harnessforge report` with repo-map, policy preset, and release
    evidence fields as those surfaces land.
-3. Add evidence-gated feature-state and deeper instruction-quality reporting
+4. Add evidence-gated feature-state and deeper instruction-quality reporting
    to the generated-harness quality scorer.
-4. Add compact repo maps from `index`, then SBOM detection and optional SBOM
+5. Add compact repo maps from `index`, then SBOM detection and optional SBOM
    adapter design.
-5. Improve GitHub Action summaries and release evidence automation.
-6. Add maturity levels and expanded policy presets.
-7. Design the interactive quickstart/init UX once the underlying decisions are
+6. Improve GitHub Action summaries and release evidence automation.
+7. Add maturity levels and expanded policy presets.
+8. Design the interactive quickstart/init UX once the underlying decisions are
    stable.
 
 ## Rejected Defaults

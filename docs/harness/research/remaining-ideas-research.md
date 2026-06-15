@@ -57,7 +57,7 @@ benchmarks or creating synthetic performance scores.
 | Session snapshot | JobSentinel `harness:session`, Bluepeak-AI and JobSentinel state docs | Implemented as read-only `harnessforge session` | Must not write files or run target checks |
 | Diff-aware verification planner | JobSentinel `harness:plan -- --since` | Implemented as read-only `harnessforge plan --since` | Uses detected or explicit project checks; command execution remains explicit through `verify --run` |
 | Source-record schema | Bluepeak-AI structured provenance records | Implemented as generated schema plus review-required example | Keep separate from HarnessForge's own fixed research allowlist |
-| First-agent harness improvement instruction | Real-repo quality passes and generated-harness review gaps | Implemented as generated `docs/harness/first-agent-task.md` plus canonical instruction routing | Must not impose repo-local preferences, overwrite project-owned instructions, or bypass review/verification |
+| First-agent harness improvement instruction | Real-repo quality passes and generated-harness review gaps | Implemented as generated `docs/harness/state/first-agent-task.md` plus canonical instruction routing | Must not impose repo-local preferences, overwrite project-owned instructions, or bypass review/verification |
 
 ## New Backlog: Large-Codebase Analysis And Indexing
 
@@ -167,7 +167,7 @@ Boundary:
 
 ## Implemented Sensor Registry
 
-Generated harnesses now include `docs/harness/sensor-registry.md` as a
+Generated harnesses now include `docs/harness/feedback/sensor-registry.md` as a
 review-required artifact. It seeds detected verification commands, requires the
 project to review owner, source, purpose, retirement condition, and review
 cadence, and states that configured sensors do not prove real-agent
@@ -183,8 +183,8 @@ Boundary:
 
 ## Implemented Source-Record Schema
 
-Generated harnesses now include `docs/harness/source-record.schema.json` and
-`docs/harness/source-record-example.json`. The schema gives projects a
+Generated harnesses now include `docs/harness/research/source-record.schema.json` and
+`docs/harness/research/source-record-example.json`. The schema gives projects a
 structured way to record source owner, purpose, trust boundary, review status,
 claims, limitations, usage, and retirement condition for project-curated
 provenance records.
@@ -834,7 +834,7 @@ Sources:
      as review-required until a maintainer accepts them.
    - Implemented as a short generated startup-path section in the canonical
      agent instruction file plus dedicated
-     `docs/harness/first-agent-task.md`, with the task marked
+     `docs/harness/state/first-agent-task.md`, with the task marked
      review-required in generated manifests.
 
 ### P2: Closed Or Deferred Before Release Prep

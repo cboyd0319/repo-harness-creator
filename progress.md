@@ -24,7 +24,7 @@ maintenance loop.
   persona, and pi-harness. Added dependency pin policy, SHA-pinned Actions,
   pin enforcement, security boundary mapping, privacy labels, self-healing
   research refresh, component inventory, and personal-machine path hardening.
-- Reconciled the source ledger against JobSentinel `docs/harness/sources.md`
+- Reconciled the source ledger against JobSentinel `docs/harness/research/sources.md`
   and refreshed 32 machine-readable research sources.
 - Completed a README-design research pass across GitHub Docs, The Turing Way,
   OpenSSF Scorecard, and widely used open-source README examples. Reworked the
@@ -93,7 +93,7 @@ maintenance loop.
 - Updated the scheduled self-healing workflow so it stages generated root
   harness files along with `docs/harness` and source templates, preventing
   unstaged root updates from causing empty commits or incomplete pull requests.
-- Generated harnesses now include `docs/harness/first-agent-task.md` plus a
+- Generated harnesses now include `docs/harness/state/first-agent-task.md` plus a
   canonical instruction pointer so the first agent session in a newly harnessed
   repo can deepen the generated harness using repo-specific analysis,
   readiness signals, verification guidance, evidence, and security boundaries.
@@ -331,7 +331,7 @@ maintenance loop.
   LLM-assisted init, and extra agent adapter files until they are explicit
   opt-ins with current source evidence.
 - Completed the remaining-ideas research pass without AGY. The ranked backlog
-  is now in `docs/harness/remaining-ideas-research.md`. Highest-value next
+  is now in `docs/harness/research/remaining-ideas-research.md`. Highest-value next
   ideas are read-only readiness reporting, source-of-truth spec sync checks, a
   project verification JSON contract separate from harness audit, a `sync
   --check` drift alias, workflow/work-item inventory, context-budget and
@@ -473,13 +473,13 @@ maintenance loop.
   them to detected or explicit project verification checks, and reports
   matched files, unmatched files, and reasons without running target commands.
 - Added a generated review-required sensor registry. Generated harnesses now
-  include `docs/harness/sensor-registry.md`, generated manifests mark it as
+  include `docs/harness/feedback/sensor-registry.md`, generated manifests mark it as
   required and review-required with generated ownership metadata, and the live
   harness tracks owner, source, purpose, retirement condition, and review
   cadence for recurring checks.
 - Added generated project source-record schema support. Generated harnesses now
-  include `docs/harness/source-record.schema.json` and review-required
-  `docs/harness/source-record-example.json`, keeping project-curated
+  include `docs/harness/research/source-record.schema.json` and review-required
+  `docs/harness/research/source-record-example.json`, keeping project-curated
   provenance records separate from the fixed HarnessForge research allowlist.
 - Completed the first large-codebase analysis and indexing research pass and
   implemented read-only `harnessforge index --target . --json` structural
@@ -544,7 +544,7 @@ maintenance loop.
   harness: required by the manifest, included in audit known files, listed in
   the component inventory, routed from harness operations, and registered as a
   recurring sensor with review cadence. Generated target harnesses now also
-  include review-required `docs/harness/roadmap.md`, route startup and harness
+  include review-required `docs/harness/state/roadmap.md`, route startup and harness
   operations to it, register it in the generated sensor registry, and require
   each roadmap item to classify the affected surface before implementation:
   local harness, generated harness, CLI/runtime, existing project files, GitHub
@@ -636,7 +636,7 @@ Push local commits only at an explicit batch/release boundary or user request.
   sources for Zoekt, Sourcebot, Livegrep, Hound, OpenGrok, Universal Ctags,
   Tree-sitter, ast-grep, Aider repo maps, SCIP, LSIF, Kythe, Glean, Stack
   Graphs, CodeQL, and Semgrep. Findings are recorded in
-  `docs/harness/large-codebase-indexing-research.md`; product direction is a
+  `docs/harness/research/large-codebase-indexing-research.md`; product direction is a
   no-dependency structural index command before any optional external adapter.
 - `PYTHONPATH=src:. python3 -m unittest
   tests.test_cli.CliTests.test_index_json_reports_structural_repo_map_without_writing`
@@ -748,7 +748,7 @@ Push local commits only at an explicit batch/release boundary or user request.
   `null`, no command execution, no writes, and a blocked verdict because this
   repo has no real stored effectiveness reports.
 - `PYTHONPATH=src:. python3 -m harnessforge effectiveness --target .
-  --evidence docs/harness/effectiveness-evidence-example.json --json` returned
+  --evidence docs/harness/feedback/effectiveness-evidence-example.json --json` returned
   an inconclusive verdict for the example proposal without treating it as
   promoted evidence.
 - `./init.sh` passed with doctor, compile, 214 tests, pin check, research
@@ -769,7 +769,7 @@ Push local commits only at an explicit batch/release boundary or user request.
 - `PYTHONPATH=src:. python3 -m unittest
   tests.test_generate_audit.GenerateAuditTests.test_generated_sensor_registry_requires_project_review`
   first failed because generated harnesses did not include
-  `docs/harness/sensor-registry.md`, then passed after adding the
+  `docs/harness/feedback/sensor-registry.md`, then passed after adding the
   review-required template, manifest registration, and sensor row rendering.
   `PYTHONPATH=src:. python3 -m unittest tests.test_generate_audit` passed with
   44 tests. Full unit discovery and both POSIX/PowerShell entrypoints passed
@@ -1016,7 +1016,7 @@ Push local commits only at an explicit batch/release boundary or user request.
   check, exact local-path scan, diff hygiene, and self-audit `100/100` also
   passed.
 - The user-supplied Meta-Harness PDF was unavailable to local text extractors,
-  so the same paper was reviewed via arXiv HTML. `docs/harness/verify-json-contract.md`
+  so the same paper was reviewed via arXiv HTML. `docs/harness/feedback/verify-json-contract.md`
   now records that benchmark/eval claims need candidate-sensitive metrics,
   held-out or contamination controls, worst-case quality, do-no-harm floors,
   and frozen-replay disclosure.
@@ -1455,7 +1455,7 @@ Push local commits only at an explicit batch/release boundary or user request.
   completion evidence ladders, agent-oriented repair messages, runtime plus
   process observability, clean-state dimensions, benchmark/task evidence, and
   harness simplification.
-- Updated `docs/roadmap.md`, `docs/harness/sources.md`, generated roadmap and
+- Updated `docs/roadmap.md`, `docs/harness/research/sources.md`, generated roadmap and
   first-agent templates, verification matrix, sensor registry, evaluator
   rubric, quality document, and manifest snippet expectations.
 - Focused verification passed: `PYTHONPATH=src:. python3 -m unittest
@@ -1533,7 +1533,7 @@ Push local commits only at an explicit batch/release boundary or user request.
 ## Latest Pass: Product Boundary And Scoring Contract
 
 - Removed target-repo self-healing from the generated HarnessForge surface.
-  Generated target harnesses no longer create `docs/harness/self-healing.md` or
+  Generated target harnesses no longer create `docs/harness/operations/self-healing.md` or
   `.github/workflows/harness-self-heal.yml`; HarnessForge repo-local
   self-healing remains only in this repository.
 - Tightened audit scoring so generated target harnesses must include current
@@ -1580,10 +1580,58 @@ Push local commits only at an explicit batch/release boundary or user request.
   harnesses now include a review-required `docs/harness/authoritative-facts.md`,
   `harnessforge report` summarizes docs fan-out routing status, and the corpus
   gate checks the new generated map for unrendered tokens and local paths.
-- Verification passed: focused generator/CLI/corpus tests with 132 tests; full
-  unit discovery with 243 tests; compile; pin check; research source check;
-  manifest and feature JSON validation; self-audit `100/100`; corpus JSON gate
-  at 13 fixtures with minimum score `100`; local report smoke showing map
-  `present` and 12/12 covered surfaces; generated-target smoke showing map
-  `pending_review` and 12/12 covered surfaces; local-path scan; and
-  `git diff --check`.
+- Added a deferred roadmap item for a generated harness skill fallback after
+  optimization/token-savings work. The item captures that generated docs should
+  not make HarnessForge canonical by default; the GitHub Action is the opt-in
+  recurring HarnessForge check, while a possible target-owned
+  `.agents/skills/harness` skill could teach agents how to improve the harness
+  without imposing repo-local preferences.
+- Added `harnessforge report --since <ref>` and Action `report-since` to
+  classify changed files by product-boundary surface and warn when a change
+  exceeds the docs fan-out budget. The report also summarizes duplicated
+  durable Markdown fact blocks so repeated prose can be routed to the
+  authoritative map.
+- Updated generated target docs to prefer repo-owned verification commands and
+  treat HarnessForge CLI checks as optional owner/operator checks, not a
+  contributor prerequisite after initial generation.
+- Reviewed RunHaven commit `bb516cd` as a quality signal for generated harness
+  improvements. The commit mainly corrected HarnessForge-as-canonical wording,
+  first-agent task retirement, stale lifecycle/status docs, privacy labels,
+  and advisory sensor/verification language.
+- New generated target harnesses now organize `docs/harness/` into focused
+  subdirectories for boundaries, feedback, state, evidence, research,
+  operations, release, and schemas while keeping only `README.md`,
+  `authoritative-facts.md`, and `manifest.json` at the top level.
+- New generated target harnesses now include review-required
+  `.agents/skills/harness/SKILL.md` and route generated `AGENTS.md` to it for
+  harness-maintenance tasks. This is the zero-install contributor path: repo
+  docs, state, checks, and maintainer decisions remain authoritative while
+  HarnessForge CLI/Action usage stays optional unless a repo owner adopts it.
+- Audit, report, session, and corpus code now use the organized generated
+  harness layout as the target-repo and repo-local contract. This repo's
+  `docs/harness/` files now match the organized deployed shape, and the
+  repo-local path bridge was removed.
+- Root README now has an alpha/pre-release warning under the badges.
+  HarnessForge has not been deployed and has no external users, so pre-release
+  work should prefer the clean current product contract over backward
+  compatibility shims unless maintainers declare a release boundary.
+- Completed repo-local harness layout convergence: this repo's own
+  `docs/harness/` shape now matches the organized generated target harness
+  shape, and audit rejects flat top-level harness docs.
+- Added enforceable docs fan-out gating through `harnessforge report --since
+  <ref> --require-docs-fanout-budget` and Action
+  `require-docs-fanout-budget`.
+- Optimization/file-write eval: a rendered target with a real verification
+  command generated 37 files, 26 `docs/harness` files, 3 top-level
+  `docs/harness` files, 85,766 Markdown bytes, 35 review markers, no stale
+  flat-path references, `AGENTS.md` at 140 lines, and audit `100/100`.
+  RunHaven's current flat harness has 29 top-level `docs/harness` files.
+- Verification passed: focused generator/CLI/Action/research/verify-contract
+  tests; full unit discovery with 245 tests; compile; pin check; research
+  source check; manifest, privacy-label, and feature JSON validation;
+  self-audit `100/100`; `harnessforge report --target . --since HEAD --json`
+  with duplicate durable fact blocks at `0`; required docs fan-out probe
+  returning exit `2` only for the expected broad `exception_review`; rendered
+  generated-layout smoke with only 3 top-level `docs/harness` files, repo skill
+  present, audit `100/100`, and no generated self-healing file; stale flat-path
+  scan; and `git diff --check`.

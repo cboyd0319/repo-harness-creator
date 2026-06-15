@@ -10,16 +10,16 @@ surfaces listed in the routing table when the change affects them.
 
 | Boundary Type | Default Owner |
 | --- | --- |
-| Local repo harness | `docs/harness/README.md`, `docs/harness/component-inventory.md` |
+| Local repo harness | `docs/harness/README.md`, `docs/harness/boundaries/component-inventory.md` |
 | Generated target harness | `src/harnessforge/templates/`, `src/harnessforge/generate.py`, generated manifest metadata |
 | CLI/runtime behavior | `src/harnessforge/cli.py`, command modules, focused CLI tests |
 | Existing project files | `harnessforge enhance`, generated addenda, and project-owned instruction files |
 | GitHub Action | `action.yml`, `src/harnessforge/github_action.py`, `docs/action.md` |
 | Optional workflow scaffolds | Generated CI workflow template and manifest ownership metadata |
 | Tests and fixture corpus | `tests/`, `src/harnessforge/public_repo_corpus.py` |
-| Release/package surface | `docs/harness/release-controls.md`, package metadata, release evidence |
-| Research and source ledger | `docs/harness/research-sources.json`, lock file, `docs/harness/sources.md` |
-| Security and privacy | `docs/harness/security-boundary-map.md`, `feature-privacy-labels.json` |
+| Release/package surface | `docs/harness/release/release-controls.md`, package metadata, release evidence |
+| Research and source ledger | `docs/harness/research/research-sources.json`, lock file, `docs/harness/research/sources.md` |
+| Security and privacy | `docs/harness/boundaries/security-boundary-map.md`, `feature-privacy-labels.json` |
 | Platform contracts | `docs/harness/manifest.json`, platform source review metadata |
 | Docs and UX | README, usage, capabilities, Action docs, and this routing map |
 
@@ -27,16 +27,18 @@ surfaces listed in the routing table when the change affects them.
 
 | Fact Class | Authoritative Owner | Other Surfaces Should |
 | --- | --- | --- |
-| Product boundary between HarnessForge local harness, generated target harnesses, and GitHub Action | `docs/harness/component-inventory.md` | Link or summarize only the relevant boundary. |
+| Product boundary between HarnessForge local harness, generated target harnesses, and GitHub Action | `docs/harness/boundaries/component-inventory.md` | Link or summarize only the relevant boundary. |
+| Pre-release compatibility and breaking-change policy | `docs/harness/boundaries/component-inventory.md`, `docs/harness/boundaries/change-contract.md` | Do not add migration docs or shims unless a release boundary is declared. |
+| Repo-local versus generated `docs/harness/` layout | `docs/roadmap.md`, `docs/harness/boundaries/component-inventory.md` | Keep the local and generated organized layouts aligned; do not add repo-local flat docs back under `docs/harness/`. |
 | CLI command behavior, flags, exit codes, and JSON contracts | `src/harnessforge/cli.py`, command modules, and focused tests | Summarize user-facing behavior in `docs/usage.md` when it changes. |
 | GitHub Action inputs, outputs, and command modes | `action.yml`, `src/harnessforge/github_action.py`, and Action tests | Summarize in `docs/action.md` only. |
 | Generated file list, required snippets, and local self-audit contract | `docs/harness/manifest.json` | Avoid duplicating snippet lists elsewhere. |
 | Generated target content | `src/harnessforge/templates/` and generator tests | Update public docs only when user-visible generated behavior changes. |
 | Audit scoring and report interpretation | `src/harnessforge/audit.py`, `src/harnessforge/report.py`, and tests | Keep scoring caveats in `docs/capabilities.md` and `docs/usage.md` short. |
 | Accepted roadmap and backlog boundary | `docs/roadmap.md` | Reference from state files instead of duplicating full lists. |
-| Current work state and evidence | `feature_list.json`, `progress.md`, `session-handoff.md`, `docs/harness/evidence-log.md` | Keep entries compact and avoid raw logs. |
-| Verification commands and recurring gates | `docs/harness/verification-matrix.md`, `docs/harness/sensor-registry.md`, root entrypoints | Update only when a command, owner, or gate changes. |
-| Research source allowlist and review evidence | `docs/harness/research-sources.json`, `docs/harness/research-sources.lock.json`, `docs/harness/sources.md` | Do not paste source catalogs into other docs. |
+| Current work state and evidence | `feature_list.json`, `progress.md`, `session-handoff.md`, `docs/harness/evidence/evidence-log.md` | Keep entries compact and avoid raw logs. |
+| Verification commands and recurring gates | `docs/harness/feedback/verification-matrix.md`, `docs/harness/feedback/sensor-registry.md`, root entrypoints | Update only when a command, owner, or gate changes. |
+| Research source allowlist and review evidence | `docs/harness/research/research-sources.json`, `docs/harness/research/research-sources.lock.json`, `docs/harness/research/sources.md` | Do not paste source catalogs into other docs. |
 
 ## Change-To-Docs Routing
 
@@ -45,12 +47,13 @@ surfaces listed in the routing table when the change affects them.
 | Small internal code fix with no CLI, generated output, Action, scoring, platform, security, or release impact | `progress.md` or no durable doc update if already covered by the active state | README, public docs, manifest snippets, roadmap |
 | CLI command, flag, JSON, or exit-code change | `docs/usage.md`, command tests, `docs/harness/manifest.json` only if required snippets change | `docs/capabilities.md` unless capability changes |
 | Generated target artifact change | Template, generator tests, `docs/capabilities.md` generated-file list if user-visible, `docs/harness/manifest.json` for local snippet coverage | Broad README rewrite |
-| Product boundary change | `docs/harness/component-inventory.md`, focused tests, relevant public doc | Repeating the full boundary in every doc |
+| Product boundary change | `docs/harness/boundaries/component-inventory.md`, focused tests, relevant public doc | Repeating the full boundary in every doc |
+| Breaking generated, CLI, report, Action, or docs contract before release | `docs/harness/boundaries/component-inventory.md`, `docs/harness/boundaries/change-contract.md`, focused tests, relevant public doc | Backward-compatibility migration docs unless a release boundary exists |
 | GitHub Action behavior change | `action.yml`, `docs/action.md`, Action tests, pin check if dependencies/actions change | Generated target docs unless Action output changes generated guidance |
 | Audit/report scoring change | `docs/capabilities.md` or `docs/usage.md` if user-visible, scoring/report tests, `docs/harness/manifest.json` only for snippet contract | README unless positioning changes |
-| Platform, dependency, workflow, or pin change | `docs/harness/dependency-change-policy.md`, `pins.toml`, `scripts/check_pins.py`, relevant workflow/docs | Roadmap unless it changes accepted scope |
-| Research source or source policy change | `docs/harness/sources.md`, `docs/harness/research-sources.json`, lock file, research check | CLI docs unless command behavior changes |
-| Release-prep evidence change | `docs/harness/release-controls.md`, `docs/harness/evidence-log.md`, `progress.md`, `session-handoff.md` | Generated templates unless release guidance changes |
+| Platform, dependency, workflow, or pin change | `docs/harness/boundaries/dependency-change-policy.md`, `pins.toml`, `scripts/check_pins.py`, relevant workflow/docs | Roadmap unless it changes accepted scope |
+| Research source or source policy change | `docs/harness/research/sources.md`, `docs/harness/research/research-sources.json`, lock file, research check | CLI docs unless command behavior changes |
+| Release-prep evidence change | `docs/harness/release/release-controls.md`, `docs/harness/evidence/evidence-log.md`, `progress.md`, `session-handoff.md` | Generated templates unless release guidance changes |
 
 ## Fan-Out Budgets
 
@@ -81,6 +84,8 @@ Broader updates are expected for:
 
 Self-audit must ensure this map exists for the HarnessForge product repo.
 `harnessforge report` should summarize whether this map is present, reviewed,
-and manifest-tracked for target repos. Future report work should summarize
-likely docs fan-out from the diff by using this routing table and should flag
-stale duplicate facts instead of requiring manual prose updates everywhere.
+and manifest-tracked for target repos. `harnessforge report --since <ref>`
+summarizes likely docs fan-out from the diff and flags stale duplicate facts
+instead of requiring manual prose updates everywhere. Add
+`--require-docs-fanout-budget` when over-budget fan-out or duplicate durable
+fact blocks should block the report.

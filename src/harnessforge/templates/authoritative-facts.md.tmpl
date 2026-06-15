@@ -10,16 +10,16 @@ table says are affected.
 
 | Boundary Type | Default Owner |
 | --- | --- |
-| Local repo harness | `docs/harness/README.md`, `docs/harness/component-inventory.md` |
+| Local repo harness | `docs/harness/README.md`, `docs/harness/boundaries/component-inventory.md` |
 | Generated harness files | `docs/harness/manifest.json` and generated ownership metadata |
-| CLI/runtime behavior | Project CLI source, command tests, and `docs/harness/verification-matrix.md` |
+| CLI/runtime behavior | Project CLI source, command tests, and `docs/harness/feedback/verification-matrix.md` |
 | Existing project files | Existing project docs and instruction files; HarnessForge should not take ownership silently |
-| GitHub Action or CI workflows | Project workflow files and `docs/harness/security-boundary-map.md` |
+| GitHub Action or CI workflows | Project workflow files and `docs/harness/boundaries/security-boundary-map.md` |
 | Optional workflow scaffolds | Generated workflow file plus manifest ownership metadata |
-| Tests and fixtures | Project test suite, `docs/harness/sensor-registry.md`, and verification evidence |
-| Release/package surface | `docs/harness/release-controls.md` |
-| Research and source records | `docs/harness/sources.md`, `research-sources.json`, and project source records |
-| Security and privacy | `docs/harness/security-boundary-map.md`, `feature-privacy-labels.json` |
+| Tests and fixtures | Project test suite, `docs/harness/feedback/sensor-registry.md`, and verification evidence |
+| Release/package surface | `docs/harness/release/release-controls.md` |
+| Research and source records | `docs/harness/research/sources.md`, `research-sources.json`, and project source records |
+| Security and privacy | `docs/harness/boundaries/security-boundary-map.md`, `feature-privacy-labels.json` |
 | Platform contracts | `docs/harness/manifest.json`, runtime manifests, and platform source evidence |
 | Docs and UX | User-facing docs plus this routing map |
 
@@ -29,12 +29,12 @@ table says are affected.
 | --- | --- | --- |
 | Project purpose, supported platforms, and runtime contract | Primary README, runtime manifests, and `docs/harness/manifest.json` | Summarize only the part needed for agent startup. |
 | Agent startup and non-negotiable constraints | Canonical agent instruction file | Route detail to harness docs instead of duplicating long rules. |
-| Component boundaries and source-of-truth docs | `docs/harness/component-inventory.md` | Link or summarize when needed. |
-| Verification commands and recurring gates | `docs/harness/verification-matrix.md`, `docs/harness/sensor-registry.md` | Do not repeat every command in every doc. |
+| Component boundaries and source-of-truth docs | `docs/harness/boundaries/component-inventory.md` | Link or summarize when needed. |
+| Verification commands and recurring gates | `docs/harness/feedback/verification-matrix.md`, `docs/harness/feedback/sensor-registry.md` | Do not repeat every command in every doc. |
 | Generated ownership and drift | `docs/harness/manifest.json` | Use reports instead of hand-maintained file lists. |
-| Current work state and evidence | `feature_list.json`, `progress.md`, `session-handoff.md`, `docs/harness/evidence-log.md` | Keep entries compact and avoid raw logs. |
-| Security, privacy, permissions, and cost boundaries | `docs/harness/security-boundary-map.md` and `feature-privacy-labels.json` | Reference the relevant boundary only. |
-| Roadmap and accepted backlog | `docs/harness/roadmap.md` | Do not duplicate full backlog lists elsewhere. |
+| Current work state and evidence | `feature_list.json`, `progress.md`, `session-handoff.md`, `docs/harness/evidence/evidence-log.md` | Keep entries compact and avoid raw logs. |
+| Security, privacy, permissions, and cost boundaries | `docs/harness/boundaries/security-boundary-map.md` and `feature-privacy-labels.json` | Reference the relevant boundary only. |
+| Roadmap and accepted backlog | `docs/harness/state/roadmap.md` | Do not duplicate full backlog lists elsewhere. |
 
 ## Change-To-Docs Routing
 

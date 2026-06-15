@@ -56,32 +56,32 @@
     "scripts/refresh_research.py",
     "docs/harness/README.md",
     "docs/harness/authoritative-facts.md",
-    "docs/harness/first-agent-task.md",
-    "docs/harness/change-contract.md",
-    "docs/harness/verification-matrix.md",
-    "docs/harness/sensor-registry.md",
-    "docs/harness/component-inventory.md",
-    "docs/harness/dependency-change-policy.md",
-    "docs/harness/security-boundary-map.md",
-    "docs/harness/feature-privacy-labels.json",
-    "docs/harness/evidence-log.md",
-    "docs/harness/clean-state-checklist.md",
-    "docs/harness/evaluator-rubric.md",
-    "docs/harness/quality-document.md",
-    "docs/harness/release-controls.md",
-    "docs/harness/self-healing.md",
-    "docs/harness/large-codebase-indexing-research.md",
+    "docs/harness/state/first-agent-task.md",
+    "docs/harness/boundaries/change-contract.md",
+    "docs/harness/feedback/verification-matrix.md",
+    "docs/harness/feedback/sensor-registry.md",
+    "docs/harness/boundaries/component-inventory.md",
+    "docs/harness/boundaries/dependency-change-policy.md",
+    "docs/harness/boundaries/security-boundary-map.md",
+    "docs/harness/boundaries/feature-privacy-labels.json",
+    "docs/harness/evidence/evidence-log.md",
+    "docs/harness/state/clean-state-checklist.md",
+    "docs/harness/feedback/evaluator-rubric.md",
+    "docs/harness/feedback/quality-document.md",
+    "docs/harness/release/release-controls.md",
+    "docs/harness/operations/self-healing.md",
+    "docs/harness/research/large-codebase-indexing-research.md",
     "docs/harness/manifest.json",
-    "docs/harness/sources.md",
-    "docs/harness/source-record.schema.json",
-    "docs/harness/source-record-example.json",
-    "docs/harness/research-sources.json",
-    "docs/harness/research-sources.lock.json",
-    "docs/harness/research-inbox.md",
-    "docs/harness/entropy-control.md",
-    "docs/harness/agent-operating-model.md",
-    "docs/harness/multi-agent-orchestration.md",
-    "docs/harness/feature-list.schema.json",
+    "docs/harness/research/sources.md",
+    "docs/harness/research/source-record.schema.json",
+    "docs/harness/research/source-record-example.json",
+    "docs/harness/research/research-sources.json",
+    "docs/harness/research/research-sources.lock.json",
+    "docs/harness/research/research-inbox.md",
+    "docs/harness/state/entropy-control.md",
+    "docs/harness/operations/agent-operating-model.md",
+    "docs/harness/operations/multi-agent-orchestration.md",
+    "docs/harness/schemas/feature-list.schema.json",
     "src/harnessforge/cli.py",
     "src/harnessforge/effectiveness.py",
     "src/harnessforge/github_action.py",
@@ -102,7 +102,9 @@
       "platform-contract",
       "with-ci-workflow",
       "markdown-report",
-      "report-command"
+      "report-command",
+      "require-docs-fanout-budget",
+      "docs-fanout-verdict"
     ],
     ".github/workflows/ci.yml": [
       "actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10",
@@ -151,6 +153,7 @@
     ],
     "README.md": [
       "docs/assets/logo.png",
+      "Alpha / pre-release",
       "Python 3.13",
       "harnessforge init",
       "harnessforge audit",
@@ -169,6 +172,8 @@
       "platform-contract",
       "with-ci-workflow",
       "command: report",
+      "report-since",
+      "require-docs-fanout-budget",
       "report-markdown"
     ],
     "docs/installation.md": [
@@ -182,6 +187,8 @@
       "Normal Flow",
       "Unified Report",
       "docs fan-out",
+      "report --target /path/to/repo --since",
+      "--require-docs-fanout-budget",
       "Readiness And Sync",
       "Verify Project Checks",
       "Public Repo Quality Corpus",
@@ -209,12 +216,14 @@
       "Feature-State Gate And Scope Surface",
       "Instruction Lifecycle And SNR Review",
       "Harness Maintenance Optimization",
+      "Repo-Local Harness Layout Convergence",
       "Runtime And Process Observability",
       "Better `--enhance-existing` Mode",
       "Golden Public-Repo Fixture Corpus",
       "Suggested Build Order"
     ],
     "docs/harness/README.md": [
+      "Pre-Release Product Contract",
       "Five Core Subsystems",
       "Effective Agent Boundary",
       "The model is the LLM",
@@ -236,26 +245,29 @@
     "docs/harness/authoritative-facts.md": [
       "Authoritative Facts And Docs Routing",
       "Boundary Types Covered",
+      "Pre-release compatibility",
       "Fact Owners",
       "Change-To-Docs Routing",
       "Fan-Out Budgets",
       "Audit And Report Expectations"
     ],
-    "docs/harness/change-contract.md": [
+    "docs/harness/boundaries/change-contract.md": [
       "Build Necessity Gate",
       "standard library",
       "intentional simplification",
       "Acceptance Criteria",
+      "Pre-Release Compatibility",
       "Verification",
       "Rollback",
       "current primary-source evidence",
       "runner labels"
     ],
-    "docs/harness/verification-matrix.md": [
+    "docs/harness/feedback/verification-matrix.md": [
       "Change Type",
       "Required Checks",
       "When Checks Cannot Run",
       "Verification Evidence Reports",
+      "repo-owned commands",
       "harnessforge plan --target . --since HEAD",
       "harnessforge report --target .",
       "harnessforge verify --target . --json --run",
@@ -269,7 +281,7 @@
       "intentionally vulnerable",
       "does not prove real-agent effectiveness"
     ],
-    "docs/harness/sensor-registry.md": [
+    "docs/harness/feedback/sensor-registry.md": [
       "Sensor Registry",
       "REVIEW REQUIRED",
       "roadmap",
@@ -278,13 +290,14 @@
       "Purpose",
       "Retire When",
       "Agent-Oriented Failure Feedback",
-      "harnessforge report",
+      "Optional `",
       "does not prove real-agent effectiveness"
     ],
-    "docs/harness/component-inventory.md": [
+    "docs/harness/boundaries/component-inventory.md": [
       "Component Inventory",
       "Effective Agent Boundary",
       "changes the effective agent",
+      "Pre-Release Compatibility Policy",
       "Detected Workspace Markers",
       "Detected Routing Markers",
       "Detected Components",
@@ -293,13 +306,13 @@
       "generated target harness must not",
       "roadmap"
     ],
-    "docs/harness/dependency-change-policy.md": [
+    "docs/harness/boundaries/dependency-change-policy.md": [
       "latest stable",
       "exact pins",
       "pins.toml",
       "GitHub Actions"
     ],
-    "docs/harness/security-boundary-map.md": [
+    "docs/harness/boundaries/security-boundary-map.md": [
       "Harness Surface Boundaries",
       "Access Boundaries",
       "Data Boundaries",
@@ -318,20 +331,19 @@
       "intentionally vulnerable",
       "Threat model"
     ],
-    "docs/harness/feature-privacy-labels.json": [
+    "docs/harness/boundaries/feature-privacy-labels.json": [
       "External AI optional",
       "Sensitive",
       "Public-data only"
     ],
-    "docs/harness/evidence-log.md": [
+    "docs/harness/evidence/evidence-log.md": [
       "Date",
       "Scope",
       "Command Or Review",
       "target-relative report path",
-      "harnessforge verify --target . --run --json-report",
       "failed, timed_out, or blocked"
     ],
-    "docs/harness/first-agent-task.md": [
+    "docs/harness/state/first-agent-task.md": [
       "First-Agent Harness Improvement Task",
       "REVIEW REQUIRED",
       "component inventory",
@@ -345,12 +357,12 @@
       "Do not overwrite project-owned instructions",
       "Do not run target commands"
     ],
-    "docs/harness/clean-state-checklist.md": [
+    "docs/harness/state/clean-state-checklist.md": [
       "Startup path",
       "Verification path",
       "Next Session"
     ],
-    "docs/harness/evaluator-rubric.md": [
+    "docs/harness/feedback/evaluator-rubric.md": [
       "Correctness",
       "Verification",
       "Handoff Readiness",
@@ -359,7 +371,7 @@
       "test integrity",
       "unnecessary abstractions"
     ],
-    "docs/harness/quality-document.md": [
+    "docs/harness/feedback/quality-document.md": [
       "Quality Document",
       "Domain Grades",
       "Harness Subsystem Health",
@@ -369,7 +381,7 @@
       "Benchmark Or Task Evidence",
       "Harness Simplification"
     ],
-    "docs/harness/release-controls.md": [
+    "docs/harness/release/release-controls.md": [
       "Release Controls",
       "--run --json-report",
       "owner, risk, and next action",
@@ -380,7 +392,7 @@
       "Rollback",
       "real-agent effectiveness"
     ],
-    "docs/harness/self-healing.md": [
+    "docs/harness/operations/self-healing.md": [
       "Self-healing must be reviewable",
       "fixed allowlist",
       "prompt injection",
@@ -390,27 +402,27 @@
       "Safe Loop",
       "Promotion Rule"
     ],
-    "docs/harness/large-codebase-indexing-research.md": [
+    "docs/harness/research/large-codebase-indexing-research.md": [
       "Large Codebase Analysis And Indexing Research",
       "harnessforge index --target . --json",
       "No single open source indexer",
       "No networked indexing service by default",
       "target-contained"
     ],
-    "docs/harness/source-record.schema.json": [
+    "docs/harness/research/source-record.schema.json": [
       "HarnessForge Project Source Record",
       "targetRelativePath",
       "machine-local absolute paths",
-      "docs/harness/research-sources.json",
+      "docs/harness/research/research-sources.json",
       "harnessUsage"
     ],
-    "docs/harness/source-record-example.json": [
+    "docs/harness/research/source-record-example.json": [
       "source-record-example",
       "REVIEW REQUIRED",
       "docs/architecture.md",
       "harnessUsage"
     ],
-    "docs/harness/research-sources.json": [
+    "docs/harness/research/research-sources.json": [
       "openai-harness-engineering",
       "github-actions-secure-use",
       "owasp-ai-agent-security-cheat-sheet",
@@ -430,7 +442,7 @@
       "github-actions-workflow-syntax",
       "terraform-standard-module-structure"
     ],
-    "docs/harness/agent-operating-model.md": [
+    "docs/harness/operations/agent-operating-model.md": [
       "Delegate",
       "Review",
       "Own",
@@ -445,17 +457,17 @@
       "push",
       "intentionally vulnerable"
     ],
-    "docs/harness/research-inbox.md": [
+    "docs/harness/research/research-inbox.md": [
       "Research Inbox",
       "review signals",
       "Promotion checklist"
     ],
-    "docs/harness/entropy-control.md": [
+    "docs/harness/state/entropy-control.md": [
       "Promotion Rules",
       "Evidence Rules",
       "Stop Conditions"
     ],
-    "docs/harness/feature-list.schema.json": [
+    "docs/harness/schemas/feature-list.schema.json": [
       "HarnessForge Feature List",
       "user_visible_behavior",
       "verification"

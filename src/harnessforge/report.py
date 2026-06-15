@@ -8,15 +8,17 @@ from typing import Any
 from .audit import audit_target, audit_to_dict
 from .detect import detect_project
 from .effectiveness import build_effectiveness_assessment
+from .harness_paths import existing_harness_path, harness_path
 from .indexer import build_index_report
+from .planner import DiffPlanReport, build_diff_plan
 from .readiness import inspect_readiness, readiness_to_dict
 from .reports import report_path, relative_to_target
 from .update import build_drift_report
 
 SCHEMA_VERSION = "harnessforge.report.v1"
-FIRST_AGENT_TASK = "docs/harness/first-agent-task.md"
-AUTHORITATIVE_FACTS = "docs/harness/authoritative-facts.md"
-MANIFEST = "docs/harness/manifest.json"
+FIRST_AGENT_TASK = harness_path("first_agent_task")
+AUTHORITATIVE_FACTS = harness_path("authoritative_facts")
+MANIFEST = harness_path("manifest")
 DOCS_FANOUT_SURFACES = (
     ("local_repo_harness", "Local repo harness"),
     ("generated_harness", "Generated harness files"),
@@ -31,6 +33,8 @@ DOCS_FANOUT_SURFACES = (
     ("platform_contracts", "Platform contracts"),
     ("docs_ux", "Docs and UX"),
 )
+DOCS_FACT_SCAN_LIMIT = 32
+MIN_DUPLICATE_FACT_CHARS = 120
 
 
 def build_report(
@@ -40,6 +44,8 @@ def build_report(
     explicit_commands: tuple[str, ...] = (),
     max_files: int = 4000,
     require_verify_evidence: bool = False,
+    require_docs_fanout_budget: bool = False,
+    since: str | None = None,
 ) -> dict[str, Any]:
     if max_files <= 0:
         raise ValueError("max-files must be greater than 0")
@@ -61,7 +67,17 @@ def build_report(
     audit_payload = audit_to_dict(audit)
     manifest = _read_manifest(profile.root)
     first_agent = _first_agent_task_status(profile.root)
-    docs_fanout = _docs_fanout_summary(profile.root, manifest)
+    diff_plan = (
+        build_diff_plan(profile, since=since, explicit_commands=explicit_commands)
+        if since
+        else None
+    )
+    docs_fanout = _docs_fanout_summary(
+        profile.root,
+        manifest,
+        diff_plan,
+        require_budget=require_docs_fanout_budget,
+    )
     payload = {
         "schemaVersion": SCHEMA_VERSION,
         "target": {
@@ -165,9 +181,13 @@ def format_report(payload: dict[str, Any]) -> str:
             "",
             "## Docs Fan-Out",
             "",
+            f"- Contract verdict: `{payload['docsFanout']['contract']['verdict']}`",
             f"- Routing map: `{payload['docsFanout']['authoritativeMap']['status']}`",
             f"- Covered surfaces: {payload['docsFanout']['coveredSurfaceCount']}/{payload['docsFanout']['surfaceCount']}",
             f"- Routine budget: {payload['docsFanout']['fanoutBudgets']['routine']}",
+            f"- Diff status: `{payload['docsFanout']['diff']['status']}`",
+            f"- Touched surfaces: {payload['docsFanout']['diff']['touchedSurfaceCount']}",
+            f"- Duplicate fact blocks: {payload['docsFanout']['duplicateFacts']['summary']['blocks']}",
             "",
             "## Next Actions",
             "",
@@ -265,7 +285,8 @@ def _effectiveness_summary(effectiveness: dict[str, Any]) -> dict[str, Any]:
 
 
 def _first_agent_task_status(root: Path) -> dict[str, Any]:
-    path = root / FIRST_AGENT_TASK
+    relative_path = existing_harness_path(root, "first_agent_task")
+    path = root / relative_path
     if not path.exists():
         return {
             "path": None,
@@ -276,13 +297,13 @@ def _first_agent_task_status(root: Path) -> dict[str, Any]:
         content = path.read_text(encoding="utf-8")
     except OSError:
         return {
-            "path": FIRST_AGENT_TASK,
+            "path": relative_path,
             "status": "unreadable",
             "reviewRequired": True,
         }
     review_required = "REVIEW REQUIRED" in content
     return {
-        "path": FIRST_AGENT_TASK,
+        "path": relative_path,
         "status": "pending_review" if review_required else "reviewed_or_retired",
         "reviewRequired": review_required,
     }
@@ -305,8 +326,15 @@ def _platform_summary(manifest: dict[str, Any]) -> dict[str, Any]:
     }
 
 
-def _docs_fanout_summary(root: Path, manifest: dict[str, Any]) -> dict[str, Any]:
-    path = root / AUTHORITATIVE_FACTS
+def _docs_fanout_summary(
+    root: Path,
+    manifest: dict[str, Any],
+    diff_plan: DiffPlanReport | None,
+    *,
+    require_budget: bool,
+) -> dict[str, Any]:
+    relative_path = existing_harness_path(root, "authoritative_facts")
+    path = root / relative_path
     present = path.exists()
     review_required = False
     if present:
@@ -315,14 +343,17 @@ def _docs_fanout_summary(root: Path, manifest: dict[str, Any]) -> dict[str, Any]
         except OSError:
             review_required = True
     manifest_paths = _manifest_paths(manifest)
-    generated_or_required = AUTHORITATIVE_FACTS in manifest_paths
+    generated_or_required = any(
+        path_text in manifest_paths
+        for path_text in {AUTHORITATIVE_FACTS, relative_path}
+    )
     covered = present and (generated_or_required or not manifest_paths)
     surfaces = [
         {
             "id": surface_id,
             "label": label,
             "covered": bool(covered),
-            "ownerMap": AUTHORITATIVE_FACTS if present else None,
+            "ownerMap": relative_path if present else None,
         }
         for surface_id, label in DOCS_FANOUT_SURFACES
     ]
@@ -339,9 +370,19 @@ def _docs_fanout_summary(root: Path, manifest: dict[str, Any]) -> dict[str, Any]
         warnings.append(
             "Authoritative facts map exists but is not tracked in the harness manifest."
         )
+    diff_summary = _docs_fanout_diff_summary(diff_plan)
+    warnings.extend(diff_summary["warnings"])
+    duplicate_facts = _duplicate_fact_summary(root, manifest)
+    warnings.extend(duplicate_facts["warnings"])
+    contract = _docs_fanout_contract(
+        required=require_budget,
+        diff_summary=diff_summary,
+        duplicate_facts=duplicate_facts,
+    )
     return {
+        "contract": contract,
         "authoritativeMap": {
-            "path": AUTHORITATIVE_FACTS,
+            "path": relative_path,
             "present": present,
             "reviewRequired": review_required,
             "manifestTracked": generated_or_required,
@@ -356,6 +397,8 @@ def _docs_fanout_summary(root: Path, manifest: dict[str, Any]) -> dict[str, Any]
         "surfaceCount": len(surfaces),
         "coveredSurfaceCount": sum(1 for surface in surfaces if surface["covered"]),
         "surfaces": surfaces,
+        "diff": diff_summary,
+        "duplicateFacts": duplicate_facts,
         "fanoutBudgets": {
             "routine": "0-1 durable doc/state updates",
             "userVisible": "1-3 durable doc/state updates",
@@ -363,6 +406,274 @@ def _docs_fanout_summary(root: Path, manifest: dict[str, Any]) -> dict[str, Any]
         },
         "warnings": warnings,
     }
+
+
+def _docs_fanout_contract(
+    *,
+    required: bool,
+    diff_summary: dict[str, Any],
+    duplicate_facts: dict[str, Any],
+) -> dict[str, Any]:
+    blocked: list[str] = []
+    if required:
+        if diff_summary["status"] == "not_requested":
+            blocked.append(
+                "Docs fan-out budget enforcement requires --since or report-since."
+            )
+        elif diff_summary["status"] == "unavailable":
+            blocked.extend(diff_summary["blockedReasons"])
+        elif diff_summary["classification"] == "exception_review":
+            blocked.append(
+                "Changed files touch more than three product boundary surfaces."
+            )
+        if duplicate_facts["summary"]["blocks"]:
+            blocked.append(
+                "Duplicate durable Markdown fact blocks are present."
+            )
+    if blocked:
+        verdict = "blocked"
+    elif required:
+        verdict = "passed"
+    elif (
+        diff_summary["warnings"]
+        or diff_summary["blockedReasons"]
+        or duplicate_facts["warnings"]
+    ):
+        verdict = "warning"
+    else:
+        verdict = "not_required"
+    return {
+        "required": required,
+        "verdict": verdict,
+        "blockedReasons": blocked,
+    }
+
+
+def _docs_fanout_diff_summary(diff_plan: DiffPlanReport | None) -> dict[str, Any]:
+    if diff_plan is None:
+        return {
+            "status": "not_requested",
+            "base": None,
+            "changedFileCount": 0,
+            "changedFiles": [],
+            "touchedSurfaceCount": 0,
+            "touchedSurfaceIds": [],
+            "files": [],
+            "classification": "unknown",
+            "recommendedBudget": "not estimated",
+            "blockedReasons": [],
+            "warnings": [],
+        }
+    if diff_plan.blocked_reasons:
+        return {
+            "status": "unavailable",
+            "base": diff_plan.base,
+            "changedFileCount": 0,
+            "changedFiles": [],
+            "touchedSurfaceCount": 0,
+            "touchedSurfaceIds": [],
+            "files": [],
+            "classification": "unknown",
+            "recommendedBudget": "not estimated",
+            "blockedReasons": list(diff_plan.blocked_reasons),
+            "warnings": list(diff_plan.warnings),
+        }
+    file_items = [
+        {
+            "path": path,
+            "surfaceIds": sorted(_surface_ids_for_file(path)),
+        }
+        for path in diff_plan.changed_files
+    ]
+    touched = sorted(
+        {
+            surface_id
+            for item in file_items
+            for surface_id in item["surfaceIds"]
+        }
+    )
+    classification, budget = _fanout_classification(len(touched))
+    warnings = list(diff_plan.warnings)
+    if len(touched) > 3:
+        warnings.append(
+            "Docs fan-out warning: changed files touch more than three product "
+            "boundary surfaces; review authoritative owners before updating docs."
+        )
+    return {
+        "status": "available" if diff_plan.changed_files else "no_changes",
+        "base": diff_plan.base,
+        "changedFileCount": len(diff_plan.changed_files),
+        "changedFiles": list(diff_plan.changed_files),
+        "touchedSurfaceCount": len(touched),
+        "touchedSurfaceIds": touched,
+        "files": file_items,
+        "classification": classification,
+        "recommendedBudget": budget,
+        "blockedReasons": [],
+        "warnings": warnings,
+    }
+
+
+def _surface_ids_for_file(path: str) -> set[str]:
+    normalized = path.replace("\\", "/")
+    lower = normalized.lower()
+    name = lower.rsplit("/", 1)[-1]
+    surfaces: set[str] = set()
+    if lower.startswith("docs/harness/") or lower.startswith(".agents/skills/harness/") or name in {
+        "agents.md",
+        "claude.md",
+        "gemini.md",
+    }:
+        surfaces.add("local_repo_harness")
+    if lower.startswith("src/harnessforge/templates/") or lower in {
+        "src/harnessforge/generate.py",
+        "src/harnessforge/public_repo_corpus.py",
+    }:
+        surfaces.add("generated_harness")
+    if lower.startswith("src/harnessforge/") or lower == "pyproject.toml":
+        surfaces.add("cli_runtime")
+    if lower.startswith(".github/workflows/") or lower in {
+        "action.yml",
+        "docs/action.md",
+        "src/harnessforge/github_action.py",
+    }:
+        surfaces.add("github_action_or_ci")
+    if lower.startswith(".github/workflows/") or (
+        lower.startswith("src/harnessforge/templates/") and "workflow" in lower
+    ):
+        surfaces.add("optional_workflow_scaffolds")
+    if lower.startswith("tests/") or lower.startswith("fixtures/"):
+        surfaces.add("tests_and_fixtures")
+    if lower in {
+        "readme.md",
+        "pyproject.toml",
+        "docs/installation.md",
+        "docs/capabilities.md",
+    } or "release" in lower:
+        surfaces.add("release_package")
+    if (
+        lower.startswith("docs/harness/research")
+        or lower in {
+            "docs/harness/research/sources.md",
+            "scripts/refresh_research.py",
+        }
+        or "source-record" in lower
+    ):
+        surfaces.add("research_sources")
+    if "security" in lower or "privacy" in lower:
+        surfaces.add("security_privacy")
+    if lower in {
+        "init.sh",
+        "init.ps1",
+        "docs/harness/manifest.json",
+    } or "platform" in lower:
+        surfaces.add("platform_contracts")
+    if lower.startswith("docs/") or lower == "readme.md":
+        surfaces.add("docs_ux")
+    if not surfaces:
+        surfaces.add("existing_project_files")
+    return surfaces
+
+
+def _fanout_classification(surface_count: int) -> tuple[str, str]:
+    if surface_count == 0:
+        return "no_changes", "0 durable doc/state updates"
+    if surface_count <= 1:
+        return "routine", "0-1 durable doc/state updates"
+    if surface_count <= 3:
+        return "user_visible", "1-3 durable doc/state updates"
+    return (
+        "exception_review",
+        "more than 3 only for boundary, platform, security, release, README, or generated-contract changes",
+    )
+
+
+def _duplicate_fact_summary(root: Path, manifest: dict[str, Any]) -> dict[str, Any]:
+    markdown_paths = _markdown_fact_paths(manifest)
+    texts: dict[str, str] = {}
+    for path_text in markdown_paths[:DOCS_FACT_SCAN_LIMIT]:
+        path = root / path_text
+        if not path.is_file():
+            continue
+        try:
+            texts[path_text] = path.read_text(encoding="utf-8")
+        except (OSError, UnicodeDecodeError):
+            continue
+    blocks: dict[str, set[str]] = {}
+    previews: dict[str, str] = {}
+    for path_text, text in texts.items():
+        for block, preview in _normalized_fact_blocks(text):
+            blocks.setdefault(block, set()).add(path_text)
+            previews.setdefault(block, preview)
+    duplicates = [
+        {
+            "paths": sorted(paths),
+            "pathCount": len(paths),
+            "preview": previews[block],
+        }
+        for block, paths in blocks.items()
+        if len(paths) > 1
+    ]
+    duplicates.sort(key=lambda item: (-item["pathCount"], item["preview"]))
+    warnings = (
+        [
+            "Duplicate fact warning: repeated durable docs text detected; route "
+            "one copy through docs/harness/authoritative-facts.md when practical."
+        ]
+        if duplicates
+        else []
+    )
+    return {
+        "summary": {
+            "scannedFiles": len(texts),
+            "blocks": len(duplicates),
+        },
+        "items": duplicates[:10],
+        "warnings": warnings,
+    }
+
+
+def _markdown_fact_paths(manifest: dict[str, Any]) -> list[str]:
+    paths = [
+        "README.md",
+        "AGENTS.md",
+        "CLAUDE.md",
+        "GEMINI.md",
+        ".github/copilot-instructions.md",
+    ]
+    for path in sorted(_manifest_paths(manifest)):
+        if path.lower().endswith(".md"):
+            paths.append(path)
+    return list(dict.fromkeys(paths))
+
+
+def _normalized_fact_blocks(text: str) -> list[tuple[str, str]]:
+    blocks: list[tuple[str, str]] = []
+    for paragraph in text.split("\n\n"):
+        lines = [
+            _normalize_fact_line(line)
+            for line in paragraph.splitlines()
+        ]
+        lines = [line for line in lines if line]
+        if not lines:
+            continue
+        normalized = " ".join(lines)
+        if len(normalized) < MIN_DUPLICATE_FACT_CHARS:
+            continue
+        preview = " ".join(line.strip() for line in paragraph.splitlines())[:160]
+        blocks.append((normalized, preview))
+    return blocks
+
+
+def _normalize_fact_line(line: str) -> str:
+    stripped = " ".join(line.strip().split())
+    if not stripped:
+        return ""
+    if stripped.startswith("#") or stripped in {"| --- | --- |", "| --- | --- | --- |"}:
+        return ""
+    if "REVIEW REQUIRED" in stripped:
+        return ""
+    return stripped.lower()
 
 
 def _manifest_paths(manifest: dict[str, Any]) -> set[str]:
@@ -410,7 +721,8 @@ def _next_actions(
     actions.extend(effectiveness["nextActions"])
     if first_agent["status"] == "pending_review":
         actions.append(
-            "Complete or retire docs/harness/first-agent-task.md after repo-specific harness review."
+            "Complete or retire "
+            f"{first_agent['path']} after repo-specific harness review."
         )
     if docs_fanout["authoritativeMap"]["status"] == "missing":
         actions.append(
@@ -418,8 +730,12 @@ def _next_actions(
         )
     elif docs_fanout["authoritativeMap"]["reviewRequired"]:
         actions.append(
-            "Review docs/harness/authoritative-facts.md and remove REVIEW REQUIRED markers when accepted."
+            "Review "
+            f"{docs_fanout['authoritativeMap']['path']} and remove REVIEW "
+            "REQUIRED markers when accepted."
         )
+    if docs_fanout["contract"]["blockedReasons"]:
+        actions.extend(docs_fanout["contract"]["blockedReasons"])
     return _dedupe(actions)
 
 

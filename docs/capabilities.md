@@ -76,14 +76,16 @@ The default generated harness includes:
 | Area | Key files |
 | --- | --- |
 | Agent instructions | `AGENTS.md`, `CLAUDE.md`, `GEMINI.md`, `.github/copilot-instructions.md` |
+| Repo skill | `.agents/skills/harness/SKILL.md` |
 | Project state | `feature_list.json`, `progress.md`, `session-handoff.md` |
 | Local checks | `init.sh`, `init.ps1`, `scripts/check_pins.py` |
-| Harness docs | `docs/harness/README.md`, `authoritative-facts.md`, `roadmap.md`, `verification-matrix.md`, `sensor-registry.md`, `change-contract.md` |
-| First-agent improvement | `docs/harness/first-agent-task.md` |
-| Security and privacy | `security-boundary-map.md`, `feature-privacy-labels.json` |
-| Evidence and quality | `evidence-log.md`, `quality-document.md`, `release-controls.md`, `evaluator-rubric.md` |
-| Research | `sources.md`, `research-sources.json`, `research-inbox.md`, `source-record.schema.json`, `source-record-example.json` |
-| Lifecycle | `entropy-control.md`, `clean-state-checklist.md` |
+| Harness root | `docs/harness/README.md`, `authoritative-facts.md`, `manifest.json` |
+| Boundaries | `docs/harness/boundaries/component-inventory.md`, `change-contract.md`, `security-boundary-map.md`, `feature-privacy-labels.json` |
+| Feedback | `docs/harness/feedback/verification-matrix.md`, `sensor-registry.md`, `quality-document.md`, `evaluator-rubric.md` |
+| State and lifecycle | `docs/harness/state/first-agent-task.md`, `roadmap.md`, `entropy-control.md`, `clean-state-checklist.md` |
+| Evidence | `docs/harness/evidence/evidence-log.md` |
+| Research | `docs/harness/research/sources.md`, `research-sources.json`, `research-inbox.md`, `source-record.schema.json`, `source-record-example.json` |
+| Release | `docs/harness/release/release-controls.md` |
 
 Each generated file is recorded in `docs/harness/manifest.json` with ownership
 metadata and hashes. Project-owned existing files are tracked separately so
@@ -132,7 +134,7 @@ for vulnerability reporting, scope, and severity guidance.
 Network access is limited to explicit research-refresh workflows and normal
 GitHub Actions setup behavior, not routine local harness generation. Research
 refresh reads only the checked-in fixed allowlist in
-`docs/harness/research-sources.json`; it does not search the web, discover
+`docs/harness/research/research-sources.json`; it does not search the web, discover
 latest research, or follow unreviewed source expansion. It accepts default-port
 HTTPS public-source URLs only; local files, credentials, localhost,
 private-address targets, private DNS resolutions, and unsafe redirects are
@@ -150,7 +152,7 @@ Static readiness can find eval surfaces. It cannot validate them. The
 `effectiveness` command assesses stored evidence only and does not run
 benchmarks or create a score when representative evidence is missing.
 
-See [harness/effectiveness-eval-contract.md](harness/effectiveness-eval-contract.md).
+See [harness/feedback/effectiveness-eval-contract.md](harness/feedback/effectiveness-eval-contract.md).
 
 ## Repo-Local Self-Healing
 
@@ -171,13 +173,14 @@ signals.
 
 Research sources are tracked in:
 
-- [harness/sources.md](harness/sources.md)
-- [harness/research-sources.json](harness/research-sources.json)
-- [harness/research-sources.lock.json](harness/research-sources.lock.json)
-- [harness/research-inbox.md](harness/research-inbox.md)
+- [harness/research/sources.md](harness/research/sources.md)
+- [harness/research/research-sources.json](harness/research/research-sources.json)
+- [harness/research/research-sources.lock.json](harness/research/research-sources.lock.json)
+- [harness/research/research-inbox.md](harness/research/research-inbox.md)
 
 Project-owned source records use
-[harness/source-record.schema.json](harness/source-record.schema.json) and
-[harness/source-record-example.json](harness/source-record-example.json). They
+[harness/research/source-record.schema.json](harness/research/source-record.schema.json)
+and
+[harness/research/source-record-example.json](harness/research/source-record-example.json). They
 are for curated project provenance and stay separate from the fixed
 HarnessForge research allowlist.

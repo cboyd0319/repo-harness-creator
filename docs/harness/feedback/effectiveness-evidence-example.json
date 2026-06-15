@@ -21,7 +21,7 @@
       "snapshotId": "candidate-context-budget-v1",
       "artifactRefs": [
         "AGENTS.md",
-        "docs/harness/effectiveness-eval-contract.md"
+        "docs/harness/feedback/effectiveness-eval-contract.md"
       ]
     }
   },
@@ -33,7 +33,7 @@
       "snapshotId": "baseline-generated-harness-v1",
       "artifactRefs": [
         "AGENTS.md",
-        "docs/harness/effectiveness-eval-contract.md"
+        "docs/harness/feedback/effectiveness-eval-contract.md"
       ]
     }
   },

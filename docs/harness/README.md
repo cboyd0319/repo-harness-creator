@@ -13,6 +13,15 @@ surfaces to any repository while staying honest about what the tool can prove.
 The CLI can score structure. Real effectiveness still requires representative
 agent sessions.
 
+## Pre-Release Product Contract
+
+HarnessForge is alpha/pre-release, has not been deployed, and has no external
+users. Prefer the clean current product contract over compatibility with
+earlier local generated outputs, report schemas, manifest formats, docs
+layouts, CLI shapes, or Action behavior. Add migration shims only after a
+maintainer declares a release boundary or records a temporary local evaluation
+bridge with removal criteria.
+
 ## Five Core Subsystems
 
 Harness = instructions + tools + environment + state + feedback. Missing any
@@ -48,7 +57,7 @@ with scope, verification, and rollback.
 | State | `feature_list.json`, `progress.md`, `evidence-log.md`, `docs/roadmap.md`, `authoritative-facts.md` | Current objective, accepted roadmap, evidence, docs routing, and restart state |
 | Feedback | tests, self-audit, CI, `first-agent-task.md`, `verification-matrix.md`, `sensor-registry.md`, `evaluator-rubric.md`, `verify-json-contract.md`, `effectiveness-eval-contract.md`, research refresh | First-agent harness improvement, deterministic quality checks, sensor ownership, machine-readable verification output, benchmark-claim boundaries, and source drift signal |
 | Research | `sources.md`, `research-sources.json`, `source-record.schema.json`, `source-record-example.json` | Fixed research allowlist, source provenance, and project-owned source records |
-| Scope | `docs/harness/change-contract.md`, `security-boundary-map.md`, `feature-privacy-labels.json` | Acceptance, rollback, security, and data-flow discipline |
+| Scope | `docs/harness/boundaries/change-contract.md`, `security-boundary-map.md`, `feature-privacy-labels.json` | Acceptance, rollback, security, and data-flow discipline |
 | Lifecycle | `session-handoff.md`, `clean-state-checklist.md`, `quality-document.md`, `release-controls.md`, `self-healing.md`, entropy control | Restart, roadmap freshness, release readiness, recurring maintenance, and reviewed automation |
 
 ## Operating Loop
@@ -208,8 +217,8 @@ bottleneck from failure records and attribution: unclear task, missing context,
 unreproducible environment, missing feedback, broken state, or tool access that
 is too narrow or too broad.
 
-Run `./init.sh --no-env` or `.\init.ps1 -NoEnv` when checks should run without
-common AI, cloud, or GitHub credentials in the process environment.
+Use the entrypoint no-env mode for credential-free local verification when
+reviewing trust-boundary changes.
 
 The scheduled self-healing workflow refreshes `research-inbox.md`, applies safe
 missing-file harness updates, verifies the repo, and opens a pull request when

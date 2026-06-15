@@ -1,0 +1,76 @@
+---
+name: harness
+description: Use when maintaining, reviewing, or improving this repository's agent harness without requiring HarnessForge to be installed.
+---
+
+# Harness Skill
+
+Status: REVIEW REQUIRED
+
+Use this skill when the task changes or reviews the repo harness: instruction
+files, generated harness docs, state files, verification routing, agent tools,
+CI/workflows, release controls, or evidence records.
+
+## Zero-Install Rule
+
+Contributors must be able to maintain this harness from repo files alone.
+HarnessForge CLI and the HarnessForge GitHub Action are optional owner tools,
+not contributor prerequisites and not the source of truth for project behavior.
+Use repo-owned commands, docs, tests, and maintainer decisions first.
+
+## Startup
+
+1. Read `{{agent_file}}`, `docs/harness/README.md`, and
+   `docs/harness/authoritative-facts.md`.
+2. Read `feature_list.json`, `progress.md`, and `session-handoff.md`.
+3. For harness-maintenance work, read the relevant focused files:
+   - `docs/harness/state/first-agent-task.md`
+   - `docs/harness/boundaries/component-inventory.md`
+   - `docs/harness/boundaries/change-contract.md`
+   - `docs/harness/feedback/verification-matrix.md`
+   - `docs/harness/feedback/sensor-registry.md`
+   - `docs/harness/evidence/evidence-log.md`
+   - `docs/harness/state/roadmap.md`
+
+## Operating Rules
+
+- Keep root instructions short. Route durable detail into focused harness docs.
+- Update the authoritative owner first, then only the routed surfaces that need
+  to change.
+- Do not require HarnessForge for ordinary contributor verification.
+- Do not promote HarnessForge report suggestions into project requirements
+  until repo-owned docs, tests, policy, or a maintainer accepts them.
+- Do not add machine-local paths, user-specific tool mandates, personal
+  preferences, autonomous repair workflows, credential rotation, pushes, or PRs
+  unless explicitly requested.
+- Preserve existing project-owned instruction files unless the maintainer asks
+  for enhancement or force behavior.
+- Treat structural scores as harness-health signals, not real-agent
+  effectiveness evidence.
+
+## Improvement Loop
+
+1. Confirm the current objective and changed surfaces.
+2. Inspect the real repo shape before editing generated placeholders.
+3. Prefer deleting stale guidance, merging duplicates, and tightening existing
+   checks before adding new docs.
+4. Make the smallest harness change that would prevent the observed miss.
+5. Run the repo-owned checks from the verification matrix.
+6. Record command names, pass/fail results, skipped checks, risk, and next step
+   in the evidence or handoff files.
+7. Retire first-agent or review-required placeholders after accepted guidance
+   has moved into durable docs, tests, policy, or state.
+
+## Optional Owner Tools
+
+Use these only when available and relevant:
+
+```bash
+harnessforge report --target .
+harnessforge plan --target . --since HEAD
+harnessforge audit --target . --min-score 85
+harnessforge update --target . --drift-report
+```
+
+Treat the output as advisory unless the repo owner has adopted HarnessForge or
+the HarnessForge Action as an explicit maintenance gate.

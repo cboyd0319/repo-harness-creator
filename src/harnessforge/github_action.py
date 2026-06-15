@@ -64,6 +64,7 @@ def run_from_env(env: Mapping[str, str]) -> int:
                 "verify-verdict": "",
                 "readiness-verdict": "",
                 "sync-exit-code": "",
+                "docs-fanout-verdict": "",
             }
         )
         return 0 if report["ok"] else 1
@@ -136,6 +137,7 @@ def run_from_env(env: Mapping[str, str]) -> int:
             "verify-verdict": "",
             "readiness-verdict": "",
             "sync-exit-code": "",
+            "docs-fanout-verdict": "",
         }
     )
     if fail_on_score and result.overall < min_score:
@@ -177,6 +179,7 @@ def _run_sync_command(
             "verify-verdict": "",
             "readiness-verdict": report.verdict,
             "sync-exit-code": str(exit_code),
+            "docs-fanout-verdict": "",
         },
     )
     return exit_code
@@ -224,6 +227,7 @@ def _run_verify_command(
             "verify-verdict": report.verdict,
             "readiness-verdict": "",
             "sync-exit-code": "",
+            "docs-fanout-verdict": "",
         },
     )
     if report.mode != "run":
@@ -254,8 +258,12 @@ def _run_report_command(
         target,
         explicit_commands=_commands_input(env.get("INPUT_REPORT_COMMAND", "")),
         max_files=max_files,
+        since=env.get("INPUT_REPORT_SINCE", "").strip() or None,
         require_verify_evidence=_bool_input(
             env.get("INPUT_REQUIRE_VERIFY_EVIDENCE", "false")
+        ),
+        require_docs_fanout_budget=_bool_input(
+            env.get("INPUT_REQUIRE_DOCS_FANOUT_BUDGET", "false")
         ),
     )
     json_path = write_json_payload(json_report, target, payload)
@@ -275,9 +283,10 @@ def _run_report_command(
             "verify-verdict": "",
             "readiness-verdict": payload["readiness"]["verdict"],
             "sync-exit-code": "",
+            "docs-fanout-verdict": payload["docsFanout"]["contract"]["verdict"],
         },
     )
-    return 0
+    return 2 if payload["docsFanout"]["contract"]["verdict"] == "blocked" else 0
 
 
 def _write_json_report(path_text: str, target: Path, result: Any) -> str:
@@ -364,6 +373,8 @@ def _report_summary_markdown(payload: dict[str, Any]) -> str:
         f"- Readiness: `{payload['readiness']['verdict']}`",
         f"- Audit score: `{payload['audit']['overall']}/100`",
         f"- Generated drift: `{payload['drift']['summary']['actionable']}` actionable",
+        f"- Docs fan-out: `{payload['docsFanout']['diff']['classification']}`",
+        f"- Docs fan-out verdict: `{payload['docsFanout']['contract']['verdict']}`",
         f"- Verify evidence: `{verify_status}`",
         f"- Effectiveness: `{payload['effectiveness']['verdict']}`",
     ]

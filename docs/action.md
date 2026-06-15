@@ -112,7 +112,10 @@ release-gate verify evidence blockers.
 Use `report-command` when detection cannot infer repo-owned verification
 commands. Report mode records those commands as readiness context but does not
 execute them. Use `report-max-files` to raise the bounded structural index
-scan limit for large repositories.
+scan limit for large repositories. Use `report-since` to add read-only
+docs fan-out analysis for changed files since a git ref. Use
+`require-docs-fanout-budget: "true"` when that analysis should fail the Action
+on over-budget fan-out or duplicated durable fact blocks.
 
 ## Verify Project Checks
 
@@ -210,6 +213,8 @@ and not behavior embedded in the composite Action runtime.
 | `sync-command` | empty | Optional newline-separated repo-owned readiness commands for `command: sync`; commands are not executed |
 | `report-command` | empty | Optional newline-separated repo-owned readiness commands for `command: report`; commands are not executed |
 | `report-max-files` | `4000` | Maximum number of files included in the `command: report` structural index summary |
+| `report-since` | empty | Optional git ref for `command: report` docs fan-out analysis; no target commands are executed |
+| `require-docs-fanout-budget` | `false` | Fail `command: report` when docs fan-out exceeds the budget or duplicate durable fact blocks are present |
 | `html-report` | empty | Optional target-relative HTML report path; POSIX and Windows absolute/rooted paths are rejected |
 | `json-report` | empty | Optional target-relative audit, sync, verify, or report JSON report path; POSIX and Windows absolute/rooted paths are rejected |
 | `markdown-report` | empty | Optional target-relative Markdown report path for `command: report`; POSIX and Windows absolute/rooted paths are rejected |

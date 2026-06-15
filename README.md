@@ -8,6 +8,12 @@
 [![Python 3.13+](https://img.shields.io/badge/python-3.13%2B-3776AB)](pyproject.toml)
 [![License: MIT](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
 
+> [!WARNING]
+> **Alpha / pre-release:** HarnessForge has not been deployed and has no
+> external users yet. CLI contracts, generated file layouts, report schemas,
+> GitHub Action behavior, and docs may change without backward-compatibility
+> guarantees until maintainers declare an explicit release boundary.
+
 Give AI coding agents a real repo harness, not just another prompt.
 
 HarnessForge creates the operating layer an agent needs before it can work well
@@ -84,14 +90,8 @@ effectiveness still needs representative task runs and human review.
 
 ## Quick Start
 
-Install from a clone:
-
-```bash
-git clone https://github.com/cboyd0319/harnessforge.git
-cd harnessforge
-python -m pip install --editable .
-harnessforge --help
-```
+Install from a clone, then run `harnessforge --help`. See
+[Installation](docs/installation.md) for exact setup commands.
 
 Run the guided first-run summary before writing anything:
 

@@ -19,9 +19,10 @@ systems, preserved existing files, planned generated files, generated review
 placeholders, and the safest next commands.
 
 After `init`, the generated canonical agent instruction routes the first agent
-session to `docs/harness/first-agent-task.md`. That review-required task asks
-the first agent to deepen the harness using repo-specific analysis before
-unrelated feature work.
+session to `docs/harness/state/first-agent-task.md` and the generated
+`.agents/skills/harness/SKILL.md` skill. Those review-required files give the
+agent a repo-local zero-install path for deepening the harness with
+repo-specific analysis before unrelated feature work.
 
 ## Inspect And Index
 
@@ -42,7 +43,7 @@ harnessforge index --target /path/to/repo --max-files 20000 --json
 The default index scans up to 4,000 files for fast first-pass analysis. Use
 `--max-files` for larger repositories. The JSON report also states when the
 bounded component inventory was truncated, so humans can add important omitted
-boundaries to `docs/harness/component-inventory.md`.
+boundaries to `docs/harness/boundaries/component-inventory.md`.
 
 ## Session And Planning
 
@@ -66,6 +67,7 @@ Compose the current read-only harness signals into one review artifact:
 
 ```bash
 harnessforge report --target /path/to/repo
+harnessforge report --target /path/to/repo --since HEAD
 harnessforge report --target /path/to/repo --json
 harnessforge report --target /path/to/repo --json-report docs/harness/evidence/report-YYYY-MM-DD.json
 harnessforge report --target /path/to/repo --markdown-report docs/harness/evidence/report-YYYY-MM-DD.md
@@ -81,7 +83,10 @@ and writes files only when a target-relative `--json-report` or
 Use `--require-verify-evidence` when the report should include release-gate
 verify evidence blockers. Use `--command` when detection cannot infer
 repo-owned verification commands; report mode records the command as readiness
-context but does not execute it.
+context but does not execute it. Use `--since` to add read-only docs fan-out
+analysis for changed files since a git ref. Add
+`--require-docs-fanout-budget` when an over-budget docs fan-out or duplicated
+durable fact block should return a blocking report status.
 
 ## Readiness And Sync
 
@@ -184,9 +189,10 @@ repository root, and applies a per-command timeout. Use `--json-report` with a
 target-relative path to write the same verify payload to a file without shell
 redirection.
 
-See [harness/verify-json-contract.md](harness/verify-json-contract.md),
-[harness/verify-json.schema.json](harness/verify-json.schema.json), and
-[harness/verify-json-example.json](harness/verify-json-example.json).
+See [harness/feedback/verify-json-contract.md](harness/feedback/verify-json-contract.md),
+[harness/feedback/verify-json.schema.json](harness/feedback/verify-json.schema.json),
+and
+[harness/feedback/verify-json-example.json](harness/feedback/verify-json-example.json).
 
 ## Effectiveness Evidence
 
@@ -204,7 +210,7 @@ target-relative `--evidence` path, and reports whether evidence is reviewable,
 inconclusive, not better, or blocked. It does not run benchmarks or create a
 score when representative evidence is missing.
 
-See [harness/effectiveness-eval-contract.md](harness/effectiveness-eval-contract.md).
+See [harness/feedback/effectiveness-eval-contract.md](harness/feedback/effectiveness-eval-contract.md).
 
 ## Blueprint Mode
 
@@ -295,9 +301,9 @@ reviewed run-mode verify evidence under `docs/harness/evidence/`. Review
 permissions, triggers, branches, credential surfaces, and full-length commit
 SHAs before relying on the generated workflow.
 
-Generated harnesses also include `docs/harness/first-agent-task.md`. Treat that
-file as a review-required first improvement pass for the target repo harness,
-not as automatic policy.
+Generated harnesses also include `docs/harness/state/first-agent-task.md` and
+`.agents/skills/harness/SKILL.md`. Treat them as review-required first
+improvement guidance for the target repo harness, not as automatic policy.
 
 ## Audit
 

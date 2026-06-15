@@ -42,9 +42,9 @@ LOCAL_ABSOLUTE_PATH_RE = re.compile(
 )
 PLACEHOLDER_HOSTS = {"example.com", "example.net", "example.org", "example.test"}
 SOURCE_LEDGER_DOCS = (
-    "docs/harness/sources.md",
-    "docs/harness/research-inbox.md",
-    "docs/harness/research-sources.lock.json",
+    "docs/harness/research/sources.md",
+    "docs/harness/research/research-inbox.md",
+    "docs/harness/research/research-sources.lock.json",
 )
 WITHHELD_ADVERSARIAL_METADATA = "[withheld: adversarial instruction pattern]"
 ADVERSARIAL_METADATA_PATTERNS = (
@@ -122,9 +122,9 @@ def main(argv: list[str] | None = None) -> int:
     args = parser.parse_args(argv)
 
     root = Path(args.root).resolve()
-    source_path = root / "docs/harness/research-sources.json"
-    lock_path = root / "docs/harness/research-sources.lock.json"
-    inbox_path = root / "docs/harness/research-inbox.md"
+    source_path = root / "docs/harness/research/research-sources.json"
+    lock_path = root / "docs/harness/research/research-sources.lock.json"
+    inbox_path = root / "docs/harness/research/research-inbox.md"
     data = json.loads(source_path.read_text(encoding="utf-8"))
     sources = data.get("sources", [])
     if not isinstance(sources, list) or not sources:
@@ -170,14 +170,14 @@ def validate_research_ledgers(root: Path, data: dict[str, Any]) -> list[str]:
     failures: list[str] = []
     sources = data.get("sources")
     if not isinstance(sources, list) or not sources:
-        return ["docs/harness/research-sources.json has no sources"]
+        return ["docs/harness/research/research-sources.json has no sources"]
 
     seen_ids: dict[str, int] = {}
     seen_urls: dict[str, int] = {}
     source_ids: list[str] = []
     source_urls: list[str] = []
     for index, source in enumerate(sources):
-        label = f"docs/harness/research-sources.json sources[{index}]"
+        label = f"docs/harness/research/research-sources.json sources[{index}]"
         if not isinstance(source, dict):
             failures.append(f"{label} must be an object")
             continue
@@ -276,7 +276,7 @@ def _source_url_syntax_error(url: str) -> str:
 def _validate_research_lock(
     root: Path, source_ids: list[str], source_urls: list[str]
 ) -> list[str]:
-    path = root / "docs/harness/research-sources.lock.json"
+    path = root / "docs/harness/research/research-sources.lock.json"
     if not path.exists():
         return []
     failures: list[str] = []

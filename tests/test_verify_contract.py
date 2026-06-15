@@ -11,7 +11,7 @@ REPO_ROOT = Path(__file__).resolve().parents[1]
 class VerifyContractTests(unittest.TestCase):
     def test_verify_contract_doc_records_no_execute_default(self) -> None:
         contract = (
-            REPO_ROOT / "docs" / "harness" / "verify-json-contract.md"
+            REPO_ROOT / "docs" / "harness" / "feedback" / "verify-json-contract.md"
         ).read_text(encoding="utf-8")
 
         self.assertIn("Default mode: plan", contract)
@@ -21,12 +21,20 @@ class VerifyContractTests(unittest.TestCase):
     def test_verify_schema_and_example_define_stable_contract(self) -> None:
         schema = json.loads(
             (
-                REPO_ROOT / "docs" / "harness" / "verify-json.schema.json"
+                REPO_ROOT
+                / "docs"
+                / "harness"
+                / "feedback"
+                / "verify-json.schema.json"
             ).read_text(encoding="utf-8")
         )
         example = json.loads(
             (
-                REPO_ROOT / "docs" / "harness" / "verify-json-example.json"
+                REPO_ROOT
+                / "docs"
+                / "harness"
+                / "feedback"
+                / "verify-json-example.json"
             ).read_text(encoding="utf-8")
         )
 
@@ -41,7 +49,11 @@ class VerifyContractTests(unittest.TestCase):
 
     def test_effectiveness_eval_contract_records_evidence_boundaries(self) -> None:
         contract = (
-            REPO_ROOT / "docs" / "harness" / "effectiveness-eval-contract.md"
+            REPO_ROOT
+            / "docs"
+            / "harness"
+            / "feedback"
+            / "effectiveness-eval-contract.md"
         ).read_text(encoding="utf-8")
 
         self.assertIn("candidate-sensitive metric", contract)
@@ -65,6 +77,7 @@ class VerifyContractTests(unittest.TestCase):
                 REPO_ROOT
                 / "docs"
                 / "harness"
+                / "feedback"
                 / "effectiveness-evidence.schema.json"
             ).read_text(encoding="utf-8")
         )
@@ -73,6 +86,7 @@ class VerifyContractTests(unittest.TestCase):
                 REPO_ROOT
                 / "docs"
                 / "harness"
+                / "feedback"
                 / "effectiveness-evidence-example.json"
             ).read_text(encoding="utf-8")
         )

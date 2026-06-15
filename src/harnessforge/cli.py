@@ -286,6 +286,15 @@ def build_parser() -> argparse.ArgumentParser:
         action="store_true",
         help="include release-gate verify evidence blockers in readiness",
     )
+    report.add_argument(
+        "--since",
+        help="include read-only docs fan-out analysis for changes since this git ref",
+    )
+    report.add_argument(
+        "--require-docs-fanout-budget",
+        action="store_true",
+        help="return a blocking status when docs fan-out exceeds the budget",
+    )
     report.add_argument("--json", action="store_true")
     report.add_argument(
         "--json-report",
@@ -779,6 +788,8 @@ def _report(args: argparse.Namespace) -> int:
         explicit_commands=tuple(args.commands),
         max_files=args.max_files,
         require_verify_evidence=args.require_verify_evidence,
+        require_docs_fanout_budget=args.require_docs_fanout_budget,
+        since=args.since,
     )
     target = args.target.resolve()
     json_report = write_json_payload(args.json_report or "", target, payload)
@@ -789,12 +800,21 @@ def _report(args: argparse.Namespace) -> int:
     )
     if args.json:
         print(json.dumps(payload, indent=2))
-        return 0
+        return _report_exit_code(payload)
     if markdown_report:
         print(f"Markdown report written to {markdown_report}")
     if json_report:
         print(f"JSON report written to {json_report}")
     print(format_report(payload))
+    return _report_exit_code(payload)
+
+
+def _report_exit_code(payload: dict[str, object]) -> int:
+    docs_fanout = payload.get("docsFanout", {})
+    if isinstance(docs_fanout, dict):
+        contract = docs_fanout.get("contract", {})
+        if isinstance(contract, dict) and contract.get("verdict") == "blocked":
+            return 2
     return 0
 
 

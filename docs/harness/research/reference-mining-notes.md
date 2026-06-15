@@ -80,7 +80,7 @@ Accepted for HarnessForge in this pass:
 High-value ideas to consider next:
 
 - Remaining ideas research is ranked in
-  `docs/harness/remaining-ideas-research.md`.
+  `docs/harness/research/remaining-ideas-research.md`.
 - Existing-repository mode. If a repo already has a coherent control plane
   such as specs, docs decisions, issue queues, or custom readiness scripts,
   HarnessForge should improve that surface instead of adding a competing state

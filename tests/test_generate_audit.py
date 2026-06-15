@@ -9,7 +9,6 @@ from pathlib import Path
 
 from harnessforge.audit import audit_target
 from harnessforge.generate import create_harness
-
 AGENTS_SECTION_ORDER = [
     "## Project overview",
     "## Build and test commands",
@@ -246,7 +245,7 @@ class GenerateAuditTests(unittest.TestCase):
 
             self.assertFalse((root / ".github/workflows/harnessforge.yml").exists())
             self.assertFalse((root / ".github/workflows/harness-self-heal.yml").exists())
-            self.assertFalse((root / "docs/harness/self-healing.md").exists())
+            self.assertFalse((root / "docs/harness/operations/self-healing.md").exists())
 
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp)
@@ -270,7 +269,7 @@ class GenerateAuditTests(unittest.TestCase):
                 root / ".github/workflows/harness-self-heal.yml"
             ).exists()
             self_healing_doc_exists = (
-                root / "docs/harness/self-healing.md"
+                root / "docs/harness/operations/self-healing.md"
             ).exists()
 
         self.assertIn(".github/workflows/harnessforge.yml", written)
@@ -296,13 +295,13 @@ class GenerateAuditTests(unittest.TestCase):
         self.assertIn("require-verify-evidence", ci_required_snippets)
         self.assertIn("Read-only sync preflight", ci_required_snippets)
         self.assertNotIn(".github/workflows/harness-self-heal.yml", manifest["requiredFiles"])
-        self.assertNotIn("docs/harness/self-healing.md", manifest["requiredFiles"])
+        self.assertNotIn("docs/harness/operations/self-healing.md", manifest["requiredFiles"])
         self.assertNotIn(
             ".github/workflows/harness-self-heal.yml",
             manifest["requiredHarnessSnippets"],
         )
         self.assertNotIn(
-            "docs/harness/self-healing.md",
+            "docs/harness/operations/self-healing.md",
             manifest["requiredHarnessSnippets"],
         )
 
@@ -316,7 +315,7 @@ class GenerateAuditTests(unittest.TestCase):
             ci = (root / ".github/workflows/harnessforge.yml").read_text(
                 encoding="utf-8"
             )
-            security = (root / "docs/harness/security-boundary-map.md").read_text(
+            security = (root / "docs/harness/boundaries/security-boundary-map.md").read_text(
                 encoding="utf-8"
             )
             readme = (root / "docs/harness/README.md").read_text(encoding="utf-8")
@@ -342,11 +341,11 @@ class GenerateAuditTests(unittest.TestCase):
         self.assertIn("failure records and attribution", readme)
         self.assertIn("project-owned generated files", readme)
         self.assertNotIn("self-healing.md", readme)
-        self.assertNotIn("docs/harness/self-healing.md", manifest["requiredFiles"])
+        self.assertNotIn("docs/harness/operations/self-healing.md", manifest["requiredFiles"])
         self.assertIn(
             "Workflow surfaces",
             manifest["requiredHarnessSnippets"][
-                "docs/harness/security-boundary-map.md"
+                "docs/harness/boundaries/security-boundary-map.md"
             ],
         )
 
@@ -363,7 +362,7 @@ class GenerateAuditTests(unittest.TestCase):
                 for path in root.rglob("*")
                 if path.is_file()
             )
-            sources = (root / "docs/harness/sources.md").read_text(encoding="utf-8")
+            sources = (root / "docs/harness/research/sources.md").read_text(encoding="utf-8")
 
         self.assertNotRegex(generated_text, r"(?i)\blocal commits?\b")
         self.assertNotRegex(generated_text, r"(?i)\bself-heal(?:ing)?\b")
@@ -503,15 +502,16 @@ class GenerateAuditTests(unittest.TestCase):
         self.assertIn("GEMINI.md", manifest["requiredFiles"])
         self.assertIn(".github/copilot-instructions.md", manifest["requiredFiles"])
         self.assertIn("init.ps1", manifest["requiredFiles"])
-        self.assertIn("docs/harness/clean-state-checklist.md", manifest["requiredFiles"])
-        self.assertIn("docs/harness/component-inventory.md", manifest["requiredFiles"])
+        self.assertIn("docs/harness/state/clean-state-checklist.md", manifest["requiredFiles"])
+        self.assertIn("docs/harness/boundaries/component-inventory.md", manifest["requiredFiles"])
         self.assertIn("scripts/check_pins.py", manifest["requiredFiles"])
-        self.assertIn("docs/harness/release-controls.md", manifest["requiredFiles"])
-        self.assertIn("docs/harness/research-sources.json", manifest["requiredFiles"])
-        self.assertIn("docs/harness/roadmap.md", manifest["requiredFiles"])
-        self.assertIn("docs/harness/sensor-registry.md", manifest["requiredFiles"])
-        self.assertIn("docs/harness/source-record.schema.json", manifest["requiredFiles"])
-        self.assertIn("docs/harness/source-record-example.json", manifest["requiredFiles"])
+        self.assertIn("docs/harness/release/release-controls.md", manifest["requiredFiles"])
+        self.assertIn("docs/harness/research/research-sources.json", manifest["requiredFiles"])
+        self.assertIn("docs/harness/state/roadmap.md", manifest["requiredFiles"])
+        self.assertIn("docs/harness/feedback/sensor-registry.md", manifest["requiredFiles"])
+        self.assertIn("docs/harness/research/source-record.schema.json", manifest["requiredFiles"])
+        self.assertIn("docs/harness/research/source-record-example.json", manifest["requiredFiles"])
+        self.assertIn(".agents/skills/harness/SKILL.md", manifest["requiredFiles"])
         self.assertIn("detectedComponents", manifest)
 
     def test_manifest_records_generated_file_ownership_metadata(self) -> None:
@@ -536,7 +536,8 @@ class GenerateAuditTests(unittest.TestCase):
             manifest["generatedFiles"]["AGENTS.md"]["templateSha256"],
             r"^[0-9a-f]{64}$",
         )
-        self.assertIn("docs/harness/feature-privacy-labels.json", manifest["reviewRequired"])
+        self.assertIn("docs/harness/boundaries/feature-privacy-labels.json", manifest["reviewRequired"])
+        self.assertIn(".agents/skills/harness/SKILL.md", manifest["reviewRequired"])
 
     def test_generated_placeholders_mark_project_review_required(self) -> None:
         with tempfile.TemporaryDirectory() as tmp:
@@ -560,17 +561,18 @@ class GenerateAuditTests(unittest.TestCase):
                 encoding="utf-8",
             )
             create_harness(root)
-            matrix = (root / "docs/harness/verification-matrix.md").read_text(
+            matrix = (root / "docs/harness/feedback/verification-matrix.md").read_text(
                 encoding="utf-8"
             )
-            evidence = (root / "docs/harness/evidence-log.md").read_text(
+            evidence = (root / "docs/harness/evidence/evidence-log.md").read_text(
                 encoding="utf-8"
             )
-            release = (root / "docs/harness/release-controls.md").read_text(
+            release = (root / "docs/harness/release/release-controls.md").read_text(
                 encoding="utf-8"
             )
             normalized_matrix = " ".join(matrix.split())
 
+        self.assertIn("repo-owned commands", matrix)
         self.assertIn("harnessforge verify --target . --json --run", matrix)
         self.assertIn(
             "--json-report docs/harness/evidence/verify-<date>.json",
@@ -581,11 +583,14 @@ class GenerateAuditTests(unittest.TestCase):
         self.assertIn("evidence ladder", matrix)
         self.assertIn("System/user-flow checks", matrix)
         self.assertIn("agent-oriented failure messages", matrix)
-        self.assertIn("does not replace `harnessforge audit", matrix)
+        self.assertIn(
+            "optional unless the repo owner adopts HarnessForge",
+            normalized_matrix,
+        )
         self.assertIn("does not prove real-agent effectiveness", matrix)
 
         self.assertIn("target-relative report path", evidence)
-        self.assertIn("harnessforge verify --target . --run --json-report", evidence)
+        self.assertIn("repo-owned verification command", evidence)
         self.assertIn("Do not paste full stdout", evidence)
         self.assertIn("failed, timed_out, or blocked", evidence)
 
@@ -602,17 +607,17 @@ class GenerateAuditTests(unittest.TestCase):
                 root,
                 commands=("python -m pytest", "python -m ruff check ."),
             )
-            registry = (root / "docs/harness/sensor-registry.md").read_text(
+            registry = (root / "docs/harness/feedback/sensor-registry.md").read_text(
                 encoding="utf-8"
             )
             manifest = json.loads(
                 (root / "docs/harness/manifest.json").read_text(encoding="utf-8")
             )
 
-        self.assertIn("docs/harness/sensor-registry.md", manifest["requiredFiles"])
-        self.assertIn("docs/harness/sensor-registry.md", manifest["reviewRequired"])
+        self.assertIn("docs/harness/feedback/sensor-registry.md", manifest["requiredFiles"])
+        self.assertIn("docs/harness/feedback/sensor-registry.md", manifest["reviewRequired"])
         self.assertEqual(
-            manifest["generatedFiles"]["docs/harness/sensor-registry.md"]["ownership"],
+            manifest["generatedFiles"]["docs/harness/feedback/sensor-registry.md"]["ownership"],
             "generated",
         )
         self.assertIn("# Sensor Registry", registry)
@@ -623,7 +628,7 @@ class GenerateAuditTests(unittest.TestCase):
         self.assertIn("Retire When", registry)
         self.assertIn("python -m pytest", registry)
         self.assertIn("python -m ruff check .", registry)
-        self.assertIn("docs/harness/roadmap.md", registry)
+        self.assertIn("docs/harness/state/roadmap.md", registry)
         self.assertIn("Agent-Oriented Failure Feedback", registry)
         self.assertIn("what failed", registry)
         self.assertIn("Pending project-specific decision.", registry)
@@ -637,18 +642,24 @@ class GenerateAuditTests(unittest.TestCase):
             root = Path(tmp)
             create_harness(root)
             agents = (root / "AGENTS.md").read_text(encoding="utf-8")
-            task = (root / "docs/harness/first-agent-task.md").read_text(
+            task = (root / "docs/harness/state/first-agent-task.md").read_text(
+                encoding="utf-8"
+            )
+            skill = (root / ".agents/skills/harness/SKILL.md").read_text(
                 encoding="utf-8"
             )
             manifest = json.loads(
                 (root / "docs/harness/manifest.json").read_text(encoding="utf-8")
             )
 
-        self.assertIn("docs/harness/first-agent-task.md", agents)
-        self.assertIn("docs/harness/first-agent-task.md", manifest["requiredFiles"])
-        self.assertIn("docs/harness/first-agent-task.md", manifest["reviewRequired"])
+        self.assertIn("docs/harness/state/first-agent-task.md", agents)
+        self.assertIn(".agents/skills/harness/SKILL.md", agents)
+        self.assertIn("docs/harness/state/first-agent-task.md", manifest["requiredFiles"])
+        self.assertIn("docs/harness/state/first-agent-task.md", manifest["reviewRequired"])
+        self.assertIn(".agents/skills/harness/SKILL.md", manifest["requiredFiles"])
+        self.assertIn(".agents/skills/harness/SKILL.md", manifest["reviewRequired"])
         self.assertEqual(
-            manifest["generatedFiles"]["docs/harness/first-agent-task.md"][
+            manifest["generatedFiles"]["docs/harness/state/first-agent-task.md"][
                 "ownership"
             ],
             "generated",
@@ -668,22 +679,28 @@ class GenerateAuditTests(unittest.TestCase):
         self.assertIn("Do not run target commands", task)
         self.assertNotIn("Antigravity", task)
         self.assertNotIn("AGY", task)
+        self.assertIn("name: harness", skill)
+        self.assertIn("Zero-Install Rule", skill)
+        self.assertIn("HarnessForge CLI and the HarnessForge GitHub Action are optional", skill)
+        self.assertIn("docs/harness/feedback/verification-matrix.md", skill)
+        self.assertIn("docs/harness/evidence/evidence-log.md", skill)
+        self.assertIn("repo-owned commands", skill)
 
     def test_generated_roadmap_tracks_harness_work_boundaries(self) -> None:
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp)
             create_harness(root)
-            roadmap = (root / "docs/harness/roadmap.md").read_text(
+            roadmap = (root / "docs/harness/state/roadmap.md").read_text(
                 encoding="utf-8"
             )
             manifest = json.loads(
                 (root / "docs/harness/manifest.json").read_text(encoding="utf-8")
             )
 
-        self.assertIn("docs/harness/roadmap.md", manifest["requiredFiles"])
-        self.assertIn("docs/harness/roadmap.md", manifest["reviewRequired"])
+        self.assertIn("docs/harness/state/roadmap.md", manifest["requiredFiles"])
+        self.assertIn("docs/harness/state/roadmap.md", manifest["reviewRequired"])
         self.assertEqual(
-            manifest["generatedFiles"]["docs/harness/roadmap.md"]["ownership"],
+            manifest["generatedFiles"]["docs/harness/state/roadmap.md"]["ownership"],
             "generated",
         )
         self.assertIn("# Harness Roadmap", roadmap)
@@ -716,24 +733,24 @@ class GenerateAuditTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp)
             create_harness(root)
-            quality = (root / "docs/harness/quality-document.md").read_text(
+            quality = (root / "docs/harness/feedback/quality-document.md").read_text(
                 encoding="utf-8"
             )
-            rubric = (root / "docs/harness/evaluator-rubric.md").read_text(
+            rubric = (root / "docs/harness/feedback/evaluator-rubric.md").read_text(
                 encoding="utf-8"
             )
-            contract = (root / "docs/harness/change-contract.md").read_text(
+            contract = (root / "docs/harness/boundaries/change-contract.md").read_text(
                 encoding="utf-8"
             )
             operating = (
-                root / "docs/harness/agent-operating-model.md"
+                root / "docs/harness/operations/agent-operating-model.md"
             ).read_text(encoding="utf-8")
             manifest = json.loads(
                 (root / "docs/harness/manifest.json").read_text(encoding="utf-8")
             )
 
-        self.assertIn("docs/harness/quality-document.md", manifest["requiredFiles"])
-        self.assertIn("docs/harness/quality-document.md", manifest["reviewRequired"])
+        self.assertIn("docs/harness/feedback/quality-document.md", manifest["requiredFiles"])
+        self.assertIn("docs/harness/feedback/quality-document.md", manifest["reviewRequired"])
         self.assertIn("Harness Subsystem Health", quality)
         self.assertIn("Instructions", quality)
         self.assertIn("Tools", quality)
@@ -762,12 +779,12 @@ class GenerateAuditTests(unittest.TestCase):
             root = Path(tmp)
             create_harness(root)
             schema = json.loads(
-                (root / "docs/harness/source-record.schema.json").read_text(
+                (root / "docs/harness/research/source-record.schema.json").read_text(
                     encoding="utf-8"
                 )
             )
             example = json.loads(
-                (root / "docs/harness/source-record-example.json").read_text(
+                (root / "docs/harness/research/source-record-example.json").read_text(
                     encoding="utf-8"
                 )
             )
@@ -776,22 +793,22 @@ class GenerateAuditTests(unittest.TestCase):
             )
 
         self.assertIn(
-            "docs/harness/source-record.schema.json",
+            "docs/harness/research/source-record.schema.json",
             manifest["requiredFiles"],
         )
         self.assertIn(
-            "docs/harness/source-record-example.json",
+            "docs/harness/research/source-record-example.json",
             manifest["requiredFiles"],
         )
         self.assertIn(
-            "docs/harness/source-record-example.json",
+            "docs/harness/research/source-record-example.json",
             manifest["reviewRequired"],
         )
         self.assertEqual(schema["title"], "HarnessForge Project Source Record")
         schema_text = json.dumps(schema)
         self.assertIn("targetRelativePath", schema_text)
         self.assertIn("machine-local absolute paths", schema_text)
-        self.assertIn("docs/harness/research-sources.json", schema_text)
+        self.assertIn("docs/harness/research/research-sources.json", schema_text)
         self.assertEqual(example["id"], "source-record-example")
         self.assertEqual(example["reviewStatus"], "REVIEW REQUIRED")
         self.assertEqual(
@@ -805,9 +822,9 @@ class GenerateAuditTests(unittest.TestCase):
             root = Path(tmp)
             create_harness(root, commands=("python -m compileall .",))
             for relative_path in (
-                "docs/harness/first-agent-task.md",
-                "docs/harness/roadmap.md",
-                "docs/harness/sensor-registry.md",
+                "docs/harness/state/first-agent-task.md",
+                "docs/harness/state/roadmap.md",
+                "docs/harness/feedback/sensor-registry.md",
             ):
                 (root / relative_path).unlink()
             manifest_path = root / "docs/harness/manifest.json"
@@ -835,13 +852,13 @@ class GenerateAuditTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp)
             create_harness(root, commands=("python -m compileall .",))
-            leaked = root / "docs/harness/self-healing.md"
+            leaked = root / "docs/harness/operations/self-healing.md"
             leaked.write_text("# Self-Healing Harness Loop\n", encoding="utf-8")
             manifest_path = root / "docs/harness/manifest.json"
             manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
-            manifest["requiredFiles"].append("docs/harness/self-healing.md")
+            manifest["requiredFiles"].append("docs/harness/operations/self-healing.md")
             manifest["requiredHarnessSnippets"][
-                "docs/harness/self-healing.md"
+                "docs/harness/operations/self-healing.md"
             ] = ["Self-Healing Harness Loop", "with-self-heal-workflow"]
             manifest_path.write_text(json.dumps(manifest, indent=2), encoding="utf-8")
 
@@ -856,7 +873,28 @@ class GenerateAuditTests(unittest.TestCase):
 
         self.assertLess(result.overall, 100)
         self.assertFalse(boundary.passed)
-        self.assertIn("docs/harness/self-healing.md", boundary.detail)
+        self.assertIn("docs/harness/operations/self-healing.md", boundary.detail)
+
+    def test_audit_rejects_flat_top_level_harness_docs(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            create_harness(root, commands=("python -m compileall .",))
+            (root / "docs/harness/stray.md").write_text(
+                "Flat harness docs should move into a focused subdirectory.\n",
+                encoding="utf-8",
+            )
+
+            result = audit_target(root)
+            scope = next(domain for domain in result.domains if domain.name == "scope")
+            layout = next(
+                check
+                for check in scope.checks
+                if check.message == "Harness docs use the organized directory layout"
+            )
+
+        self.assertLess(result.overall, 100)
+        self.assertFalse(layout.passed)
+        self.assertIn("stray.md", layout.detail)
 
     def test_audit_requires_harnessforge_product_fact_map(self) -> None:
         with tempfile.TemporaryDirectory() as tmp:
@@ -1315,7 +1353,7 @@ class GenerateAuditTests(unittest.TestCase):
             agents = (root / "AGENTS.md").read_text(encoding="utf-8")
 
         self.assertIn("Component inventory reached", agents)
-        self.assertIn("docs/harness/component-inventory.md", agents)
+        self.assertIn("docs/harness/boundaries/component-inventory.md", agents)
 
     def test_agents_file_includes_detected_quality_surface_context(self) -> None:
         with tempfile.TemporaryDirectory() as tmp:
@@ -1418,21 +1456,22 @@ class GenerateAuditTests(unittest.TestCase):
             )
 
         shared_controls = {
-            "docs/harness/verification-matrix.md",
-            "docs/harness/security-boundary-map.md",
-            "docs/harness/release-controls.md",
-            "docs/harness/first-agent-task.md",
-            "docs/harness/agent-operating-model.md",
-            "docs/harness/entropy-control.md",
-            "docs/harness/sensor-registry.md",
-            "docs/harness/source-record.schema.json",
-            "docs/harness/source-record-example.json",
+            "docs/harness/feedback/verification-matrix.md",
+            "docs/harness/boundaries/security-boundary-map.md",
+            "docs/harness/release/release-controls.md",
+            "docs/harness/state/first-agent-task.md",
+            "docs/harness/operations/agent-operating-model.md",
+            "docs/harness/state/entropy-control.md",
+            "docs/harness/feedback/sensor-registry.md",
+            "docs/harness/research/source-record.schema.json",
+            "docs/harness/research/source-record-example.json",
         }
         live_snippets = live["requiredHarnessSnippets"]
         for file_name in sorted(shared_controls):
             snippets = generated["requiredHarnessSnippets"][file_name]
+            live_values = live_snippets.get(file_name)
             with self.subTest(file_name=file_name):
-                self.assertEqual(live_snippets.get(file_name), snippets)
+                self.assertEqual(live_values, snippets)
 
     def test_generated_component_inventory_records_workspace_markers(self) -> None:
         with tempfile.TemporaryDirectory() as tmp:
@@ -1459,7 +1498,7 @@ class GenerateAuditTests(unittest.TestCase):
                 encoding="utf-8",
             )
             create_harness(root)
-            inventory = (root / "docs/harness/component-inventory.md").read_text(
+            inventory = (root / "docs/harness/boundaries/component-inventory.md").read_text(
                 encoding="utf-8"
             )
             manifest = json.loads(

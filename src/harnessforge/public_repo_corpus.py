@@ -9,6 +9,7 @@ from typing import Any
 from .audit import audit_target
 from .detect import MISSING_VERIFICATION_COMMAND, detect_project
 from .generate import create_harness
+from .harness_paths import HARNESS_SKILL_PATH, harness_path
 from .indexer import build_index_report
 
 SCHEMA_VERSION = "harnessforge.publicRepoCorpus.v1"
@@ -36,10 +37,13 @@ GENERATED_TEXT_PATHS = (
     "CLAUDE.md",
     "GEMINI.md",
     ".github/copilot-instructions.md",
+    HARNESS_SKILL_PATH,
     "docs/harness/README.md",
     "docs/harness/authoritative-facts.md",
-    "docs/harness/component-inventory.md",
-    "docs/harness/quality-document.md",
+    harness_path("component_inventory"),
+    harness_path("verification_matrix"),
+    harness_path("sensor_registry"),
+    harness_path("quality_document"),
 )
 
 

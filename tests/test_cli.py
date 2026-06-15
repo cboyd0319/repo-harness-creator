@@ -172,8 +172,14 @@ class CliTests(unittest.TestCase):
                 "# Architecture\n",
                 encoding="utf-8",
             )
-            (root / "docs" / "harness").mkdir()
-            (root / "docs" / "harness" / "source-record-example.json").write_text(
+            (root / "docs" / "harness" / "research").mkdir(parents=True)
+            (
+                root
+                / "docs"
+                / "harness"
+                / "research"
+                / "source-record-example.json"
+            ).write_text(
                 '{"review": "REVIEW REQUIRED"}\n',
                 encoding="utf-8",
             )
@@ -217,7 +223,7 @@ class CliTests(unittest.TestCase):
         self.assertIn("pyproject.toml", {item["path"] for item in payload["manifests"]})
         self.assertIn("AGENTS.md", {item["path"] for item in payload["sourceOfTruth"]})
         self.assertIn(
-            "docs/harness/source-record-example.json",
+            "docs/harness/research/source-record-example.json",
             {item["path"] for item in payload["reviewRequired"]},
         )
         self.assertTrue(
@@ -641,7 +647,7 @@ class CliTests(unittest.TestCase):
         self.assertTrue(state["feature_list.json"])
         self.assertTrue(state["progress.md"])
         self.assertTrue(state["session-handoff.md"])
-        self.assertIn("docs/harness/evidence-log.md", state)
+        self.assertIn("docs/harness/evidence/evidence-log.md", state)
         self.assertIn("git", payload)
 
     def test_session_text_reports_snapshot_without_git(self) -> None:
@@ -714,7 +720,94 @@ class CliTests(unittest.TestCase):
         self.assertTrue(
             all(surface["covered"] for surface in payload["docsFanout"]["surfaces"])
         )
+        self.assertEqual(payload["docsFanout"]["diff"]["status"], "not_requested")
+        self.assertEqual(
+            payload["docsFanout"]["duplicateFacts"]["summary"]["blocks"], 0
+        )
         self.assertIn("Run harnessforge report", payload["nextActions"][0])
+
+    def test_report_since_reports_docs_fanout_and_duplicate_facts(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            with contextlib.redirect_stdout(io.StringIO()):
+                init_code = main(
+                    [
+                        "init",
+                        "--target",
+                        str(root),
+                        "--command",
+                        "python -m compileall .",
+                    ]
+                )
+            _git(root, "init")
+            _git(root, "config", "user.email", "test@example.invalid")
+            _git(root, "config", "user.name", "HarnessForge Test")
+            _git(root, "add", ".")
+            _git(root, "commit", "-m", "initial")
+            repeated_fact = (
+                "This durable harness fact is repeated on purpose so the report "
+                "can identify duplicated long-form guidance and route one copy "
+                "through the authoritative facts map instead of keeping the same "
+                "maintenance instruction in multiple Markdown files."
+            )
+            for relative_path in (
+                "AGENTS.md",
+                "docs/harness/release/release-controls.md",
+                "docs/harness/boundaries/security-boundary-map.md",
+            ):
+                path = root / relative_path
+                path.write_text(
+                    path.read_text(encoding="utf-8")
+                    + "\n\n"
+                    + repeated_fact
+                    + "\n",
+                    encoding="utf-8",
+                )
+            stdout = io.StringIO()
+            with contextlib.redirect_stdout(stdout):
+                code = main(["report", "--target", str(root), "--since", "HEAD", "--json"])
+
+            payload = json.loads(stdout.getvalue())
+            blocking_stdout = io.StringIO()
+            with contextlib.redirect_stdout(blocking_stdout):
+                blocking_code = main(
+                    [
+                        "report",
+                        "--target",
+                        str(root),
+                        "--since",
+                        "HEAD",
+                        "--require-docs-fanout-budget",
+                        "--json",
+                    ]
+                )
+            blocking_payload = json.loads(blocking_stdout.getvalue())
+
+        self.assertEqual(init_code, 0)
+        self.assertEqual(code, 0)
+        fanout = payload["docsFanout"]
+        self.assertEqual(fanout["contract"]["verdict"], "warning")
+        self.assertEqual(fanout["diff"]["status"], "available")
+        self.assertEqual(fanout["diff"]["base"], "HEAD")
+        self.assertEqual(fanout["diff"]["changedFileCount"], 3)
+        self.assertEqual(fanout["diff"]["classification"], "exception_review")
+        self.assertGreaterEqual(fanout["diff"]["touchedSurfaceCount"], 4)
+        self.assertIn("security_privacy", fanout["diff"]["touchedSurfaceIds"])
+        self.assertTrue(
+            any("Docs fan-out warning" in item for item in fanout["warnings"])
+        )
+        self.assertGreaterEqual(fanout["duplicateFacts"]["summary"]["blocks"], 1)
+        duplicate_paths = set(fanout["duplicateFacts"]["items"][0]["paths"])
+        self.assertIn("AGENTS.md", duplicate_paths)
+        self.assertEqual(blocking_code, 2)
+        self.assertEqual(
+            blocking_payload["docsFanout"]["contract"]["verdict"],
+            "blocked",
+        )
+        self.assertIn(
+            "Changed files touch more than three product boundary surfaces.",
+            blocking_payload["docsFanout"]["contract"]["blockedReasons"],
+        )
 
     def test_report_markdown_can_write_target_contained_reports(self) -> None:
         with tempfile.TemporaryDirectory() as tmp:
@@ -1341,7 +1434,7 @@ class CliTests(unittest.TestCase):
         self.assertIn("Files HarnessForge would create:", output)
         self.assertIn("docs/harness/manifest.json", output)
         self.assertIn("Generated files needing project review:", output)
-        self.assertIn("docs/harness/change-contract.md", output)
+        self.assertIn("docs/harness/boundaries/change-contract.md", output)
         self.assertIn("Review required:", output)
         self.assertIn("MCP configuration detected", output)
         self.assertIn("Next commands:", output)
@@ -2406,7 +2499,7 @@ class CliTests(unittest.TestCase):
                 (root / "docs/harness/manifest.json").read_text(encoding="utf-8")
             )
             change_contract = (
-                root / "docs/harness/change-contract.md"
+                root / "docs/harness/boundaries/change-contract.md"
             ).read_text(encoding="utf-8")
 
         self.assertEqual(code, 0)

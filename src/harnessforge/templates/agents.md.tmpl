@@ -28,14 +28,17 @@ Startup path:
 1. Confirm the working directory.
 2. Read this file and `docs/harness/README.md`.
 3. Read `feature_list.json`, `progress.md`, and `session-handoff.md`.
-4. Check `docs/harness/roadmap.md` before selecting, deferring, or reshaping
+4. Check `docs/harness/state/roadmap.md` before selecting, deferring, or reshaping
    backlog, release-prep, or product-scope work.
-5. Check `docs/harness/component-inventory.md` before changing component
+5. Check `docs/harness/boundaries/component-inventory.md` before changing component
    boundaries or verification routing.
-6. For the first agent session after harness generation, review
-   `docs/harness/first-agent-task.md` and improve the harness before unrelated
+6. For harness-maintenance work, use `.agents/skills/harness/SKILL.md`; it is
+   the repo-local zero-install playbook for improving this harness from repo
+   files.
+7. For the first agent session after harness generation, review
+   `docs/harness/state/first-agent-task.md` and improve the harness before unrelated
    feature work.
-7. Pick one current objective before editing.
+8. Pick one current objective before editing.
 
 ## Build and test commands
 
@@ -54,7 +57,7 @@ has real cost.
 - Follow the repository's existing language, framework, formatting, and helper
   patterns.
 - Prefer the smallest correct change. Preserve user changes and dirty work.
-- One feature or fix at a time unless `docs/harness/multi-agent-orchestration.md`
+- One feature or fix at a time unless `docs/harness/operations/multi-agent-orchestration.md`
   defines separate owners.
 - Keep project-specific facts in repo docs, not in chat history.
 - Keep platform-specific instruction routers short. They should point to this
@@ -110,7 +113,7 @@ Rules:
   can restart from the harness files.
 - End of Session: update `progress.md` and `session-handoff.md` with current
   state, verification evidence, blockers, and the recommended next step. Use
-  `docs/harness/clean-state-checklist.md` before claiming the session is
+  `docs/harness/state/clean-state-checklist.md` before claiming the session is
   complete.
 
 ## Security considerations
@@ -119,9 +122,9 @@ Rules:
   secure and easiest behavior for edge cases. When those conflict, security wins
   and the error message must explain the safe next step.
 - Do not overwrite user work or generated artifacts without explicit approval.
-- Respect `docs/harness/security-boundary-map.md` for security, privacy,
+- Respect `docs/harness/boundaries/security-boundary-map.md` for security, privacy,
   permission, and cost boundaries.
-- Respect `docs/harness/dependency-change-policy.md` for package, tool, and
+- Respect `docs/harness/boundaries/dependency-change-policy.md` for package, tool, and
   Action pin policy.
 - Do not commit secrets, credentials, private data, machine-specific absolute
   paths, or long raw command output.

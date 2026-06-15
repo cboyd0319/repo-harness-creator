@@ -22,7 +22,7 @@ Startup path:
 3. Read `feature_list.json`, `progress.md`, and `session-handoff.md`.
 4. Read `docs/roadmap.md` before selecting, deferring, or reshaping backlog,
    release-prep, or product-scope work.
-5. Check `docs/harness/component-inventory.md` before changing component
+5. Check `docs/harness/boundaries/component-inventory.md` before changing component
    boundaries, generated files, or verification routing.
 
 This repo is itself a harnessed project. Keep root instructions short and place
@@ -70,6 +70,11 @@ real cost.
 - Prefer the smallest correct change. Preserve user changes and dirty work.
 - Treat generated templates, audit scoring, docs, and workflows as product
   code.
+- HarnessForge has not been deployed and has no external users. Do not preserve
+  backward compatibility with previous generated artifacts, CLI shapes, report
+  schemas, manifests, docs layouts, or Action behavior unless a maintainer
+  explicitly sets a release boundary. Prefer the clean product contract over
+  migration shims.
 - Keep platform-specific instruction routers short. They should point to the
   canonical repo instructions instead of duplicating durable rules.
 - Keep generated artifacts portable. Do not commit machine-specific or
@@ -125,7 +130,7 @@ Rules:
   skipped OS-specific checks are recorded with risk.
 - End of Session: update `progress.md` and `session-handoff.md` when work
   changes durable state, blockers, verification evidence, or the next step. Use
-  `docs/harness/clean-state-checklist.md` before ending non-trivial work.
+  `docs/harness/state/clean-state-checklist.md` before ending non-trivial work.
 
 ## Security considerations
 

@@ -95,7 +95,7 @@ packaging, CI, or platform support changes.
   alignment and research-first routing.
 - pi-harness local sibling reference for exact dependency pins, lockfile review,
   package install safety, and harness-as-product discipline.
-- JobSentinel `docs/harness/sources.md` local sibling reference for dated
+- JobSentinel `docs/harness/research/sources.md` local sibling reference for dated
   harness source inventory and refresh checklist.
 - Walking Labs `docs/en/lectures`, `docs/en/resources`, `docs/en/projects`,
   `projects`, and `skills/harness-creator` local sibling references for

@@ -52,6 +52,23 @@ with scope, verification, and rollback.
 | Scope | `change-contract.md`, `security-boundary-map.md`, `feature-privacy-labels.json` | Problem, non-goals, acceptance, rollback, and data boundaries |
 | Lifecycle | `session-handoff.md`, `clean-state-checklist.md`, `quality-document.md`, `release-controls.md`, `entropy-control.md` | Restart, roadmap freshness, release readiness, and recurring harness upkeep |
 
+## Directory Layout
+
+| Path | Use |
+| --- | --- |
+| `docs/harness/README.md` | Human landing page and operating map |
+| `docs/harness/manifest.json` | Machine-readable generated-file ownership and required snippets |
+| `docs/harness/authoritative-facts.md` | Fact ownership and docs fan-out routing |
+| `docs/harness/boundaries/` | Component, security, dependency, privacy, and change-contract boundaries |
+| `docs/harness/feedback/` | Verification matrix, sensor registry, rubric, and quality snapshot |
+| `docs/harness/state/` | First-agent task, harness roadmap, restart checklist, and drift-control notes |
+| `docs/harness/evidence/` | Evidence log and optional persisted verify/report evidence |
+| `docs/harness/research/` | Research/source ledgers and source-record schema/example |
+| `docs/harness/operations/` | Agent operating model and multi-agent coordination guidance |
+| `docs/harness/release/` | Release controls |
+| `docs/harness/schemas/` | JSON schemas for generated state files |
+| `.agents/skills/harness/SKILL.md` | Repo-local zero-install harness maintenance skill |
+
 ## Operating Loop
 
 1. Start from `{{agent_file}}`.
@@ -70,7 +87,10 @@ with scope, verification, and rollback.
 
 ## Assessment And Updates
 
-Use HarnessForge for regular structural checks:
+Contributors should be able to use this harness without installing
+HarnessForge. Use repo-owned commands from `verification-matrix.md` first. If
+the repo owner has HarnessForge installed, or has opted into the HarnessForge
+Action, these optional structural checks can help maintain the harness:
 
 ```bash
 harnessforge index --target . --json
@@ -99,7 +119,8 @@ structural scores into performance claims.
 state when available, detected stack, readiness verdict, harness audit score
 when a harness surface is present, state-file presence, and next actions.
 
-`harnessforge report --target .` is a read-only unified harness status artifact.
+`harnessforge report --target .` is an optional read-only unified harness
+status artifact.
 It composes readiness, audit, generated drift, structural index summary,
 verify evidence, effectiveness evidence, first-agent task status, and platform
 contract without running target commands. Use `--json-report` or

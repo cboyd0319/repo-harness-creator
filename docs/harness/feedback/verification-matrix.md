@@ -55,7 +55,8 @@ Windows:
 
 ## Verification Evidence Reports
 
-Use `harnessforge verify --target . --json` for a read-only plan. Use
+Use repo-owned commands as the default verification path. Use
+`harnessforge verify --target . --json` for a read-only plan. Use
 `harnessforge verify --target . --json --run` only when project checks should
 execute.
 
@@ -85,6 +86,9 @@ When recording runnable evidence:
   raw logs out of durable docs.
 - Prefer agent-oriented failure messages for custom sensors: what failed, why
   the boundary matters, and where to repair.
+- The verify report proves configured project checks were planned or run. It
+  does not prove real-agent effectiveness, and it is optional unless the repo
+  owner adopts HarnessForge or its Action as a gate.
 - The verify report proves configured project checks were planned or run. It
   does not replace `harnessforge audit --target .` for structural harness score
   and does not prove real-agent effectiveness.

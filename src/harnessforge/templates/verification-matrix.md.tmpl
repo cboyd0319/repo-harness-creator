@@ -22,7 +22,7 @@ risk, and next best evidence when a layer cannot run.
 
 | Change Type | Required Checks |
 | --- | --- |
-| Harness docs or templates | `harnessforge audit --target .` and inspect generated diff |
+| Harness docs or templates | Inspect generated diff and run repo-owned docs or script checks; optionally run `harnessforge audit --target .` if available |
 | Python code | `python -m compileall .` plus project tests |
 | Node or web code | package manager `test`, `lint`, `typecheck`, or `build` scripts when present |
 | Go code | `go test ./...` |
@@ -42,21 +42,24 @@ risk, and next best evidence when a layer cannot run.
 
 ## Verification Evidence Reports
 
-Use `harnessforge verify --target . --json` for a read-only plan. Use
-`harnessforge verify --target . --json --run` only when project checks should
-execute.
+Use repo-owned commands as the default verification path. If HarnessForge is
+available, `harnessforge verify --target . --json` can produce a read-only
+plan, and `harnessforge verify --target . --json --run` can execute those
+checks explicitly.
 
-Use `harnessforge plan --target . --since HEAD` to map changed files to a
-read-only verification plan before choosing which project checks to run. It
-uses `git diff` and does not execute target commands.
+If HarnessForge is available, use `harnessforge plan --target . --since HEAD`
+to map changed files to a read-only verification plan before choosing which
+project checks to run. It uses `git diff` and does not execute target commands.
 
-Use `harnessforge report --target .` when a reviewer needs one read-only
-snapshot that composes readiness, audit, drift, index, verify evidence,
-effectiveness evidence, first-agent status, and platform contract. Persist
-JSON or Markdown with target-relative `--json-report` or `--markdown-report`
-paths when the report is release or handoff evidence.
+If HarnessForge is available, use `harnessforge report --target .` when a
+reviewer needs one read-only snapshot that composes readiness, audit, drift,
+index, verify evidence, effectiveness evidence, first-agent status, and
+platform contract. Persist JSON or Markdown with target-relative
+`--json-report` or `--markdown-report` paths when the report is release or
+handoff evidence.
 
-To store runnable evidence without shell redirection:
+To store runnable HarnessForge evidence without shell redirection when
+HarnessForge is available:
 
 ```bash
 harnessforge verify --target . --run --json-report docs/harness/evidence/verify-<date>.json
@@ -73,8 +76,8 @@ When recording runnable evidence:
 - Prefer agent-oriented failure messages for custom sensors: what failed, why
   the boundary matters, and where to repair.
 - The verify report proves configured project checks were planned or run. It
-  does not replace `harnessforge audit --target .` for structural harness score
-  and does not prove real-agent effectiveness.
+  does not prove real-agent effectiveness, and it is optional unless the repo
+  owner adopts HarnessForge or its Action as a gate.
 
 ## When Checks Cannot Run
 

@@ -13,6 +13,10 @@ from pathlib import Path
 
 from . import __version__
 from .detect import MISSING_VERIFICATION_COMMAND, detect_project
+from .harness_paths import (
+    HARNESS_SKILL_PATH,
+    harness_path,
+)
 from .models import ProjectProfile, WriteResult
 from .paths import is_inside_root
 from .redact import redact_local_paths
@@ -64,16 +68,17 @@ CANONICAL_SECTION_ALIASES = {
 }
 PLATFORM_CONTRACTS = ("cross-platform", "macos-only", "windows-only", "linux-only")
 REVIEW_REQUIRED_FILES = (
-    "docs/harness/change-contract.md",
-    "docs/harness/feature-privacy-labels.json",
-    "docs/harness/evidence-log.md",
-    "docs/harness/first-agent-task.md",
-    "docs/harness/authoritative-facts.md",
-    "docs/harness/quality-document.md",
-    "docs/harness/release-controls.md",
-    "docs/harness/roadmap.md",
-    "docs/harness/sensor-registry.md",
-    "docs/harness/source-record-example.json",
+    HARNESS_SKILL_PATH,
+    harness_path("change_contract"),
+    harness_path("feature_privacy_labels"),
+    harness_path("evidence_log"),
+    harness_path("first_agent_task"),
+    harness_path("authoritative_facts"),
+    harness_path("quality_document"),
+    harness_path("release_controls"),
+    harness_path("roadmap"),
+    harness_path("sensor_registry"),
+    harness_path("source_record_example"),
 )
 PLATFORM_SOURCE_REVIEW_DATE = "2026-06-15"
 PLATFORM_SOURCE_REVIEW = (
@@ -212,79 +217,80 @@ def _template_specs(
             ("feature-list.json.tmpl", "feature_list.json", False),
             (
                 "feature-list.schema.json.tmpl",
-                "docs/harness/feature-list.schema.json",
+                harness_path("feature_list_schema"),
                 False,
             ),
             ("progress.md.tmpl", "progress.md", False),
             ("session-handoff.md.tmpl", "session-handoff.md", False),
             ("check-pins.py.tmpl", "scripts/check_pins.py", True),
-            ("harness-readme.md.tmpl", "docs/harness/README.md", False),
+            ("harness-readme.md.tmpl", harness_path("readme"), False),
             (
                 "authoritative-facts.md.tmpl",
-                "docs/harness/authoritative-facts.md",
+                harness_path("authoritative_facts"),
                 False,
             ),
-            ("first-agent-task.md.tmpl", "docs/harness/first-agent-task.md", False),
-            ("roadmap.md.tmpl", "docs/harness/roadmap.md", False),
-            ("change-contract.md.tmpl", "docs/harness/change-contract.md", False),
-            ("verification-matrix.md.tmpl", "docs/harness/verification-matrix.md", False),
-            ("sensor-registry.md.tmpl", "docs/harness/sensor-registry.md", False),
-            ("component-inventory.md.tmpl", "docs/harness/component-inventory.md", False),
+            ("harness-skill.md.tmpl", HARNESS_SKILL_PATH, False),
+            ("first-agent-task.md.tmpl", harness_path("first_agent_task"), False),
+            ("roadmap.md.tmpl", harness_path("roadmap"), False),
+            ("change-contract.md.tmpl", harness_path("change_contract"), False),
+            ("verification-matrix.md.tmpl", harness_path("verification_matrix"), False),
+            ("sensor-registry.md.tmpl", harness_path("sensor_registry"), False),
+            ("component-inventory.md.tmpl", harness_path("component_inventory"), False),
             (
                 "dependency-change-policy.md.tmpl",
-                "docs/harness/dependency-change-policy.md",
+                harness_path("dependency_change_policy"),
                 False,
             ),
             (
                 "security-boundary-map.md.tmpl",
-                "docs/harness/security-boundary-map.md",
+                harness_path("security_boundary_map"),
                 False,
             ),
             (
                 "feature-privacy-labels.json.tmpl",
-                "docs/harness/feature-privacy-labels.json",
+                harness_path("feature_privacy_labels"),
                 False,
             ),
-            ("evidence-log.md.tmpl", "docs/harness/evidence-log.md", False),
+            ("evidence-log.md.tmpl", harness_path("evidence_log"), False),
             (
                 "clean-state-checklist.md.tmpl",
-                "docs/harness/clean-state-checklist.md",
+                harness_path("clean_state_checklist"),
                 False,
             ),
-            ("evaluator-rubric.md.tmpl", "docs/harness/evaluator-rubric.md", False),
-            ("quality-document.md.tmpl", "docs/harness/quality-document.md", False),
-            ("release-controls.md.tmpl", "docs/harness/release-controls.md", False),
+            ("evaluator-rubric.md.tmpl", harness_path("evaluator_rubric"), False),
+            ("quality-document.md.tmpl", harness_path("quality_document"), False),
+            ("release-controls.md.tmpl", harness_path("release_controls"), False),
             (
                 "source-record.schema.json.tmpl",
-                "docs/harness/source-record.schema.json",
+                harness_path("source_record_schema"),
                 False,
             ),
             (
                 "source-record-example.json.tmpl",
-                "docs/harness/source-record-example.json",
+                harness_path("source_record_example"),
                 False,
             ),
-            ("research-sources.json.tmpl", "docs/harness/research-sources.json", False),
-            ("research-inbox.md.tmpl", "docs/harness/research-inbox.md", False),
+            ("research-sources.json.tmpl", harness_path("research_sources"), False),
+            ("research-inbox.md.tmpl", harness_path("research_inbox"), False),
             (
                 "agent-operating-model.md.tmpl",
-                "docs/harness/agent-operating-model.md",
+                harness_path("agent_operating_model"),
                 False,
             ),
             (
                 "multi-agent-orchestration.md.tmpl",
-                "docs/harness/multi-agent-orchestration.md",
+                harness_path("multi_agent_orchestration"),
                 False,
             ),
-            ("entropy-control.md.tmpl", "docs/harness/entropy-control.md", False),
-            ("sources.md.tmpl", "docs/harness/sources.md", False),
-            ("manifest.json.tmpl", "docs/harness/manifest.json", False),
+            ("entropy-control.md.tmpl", harness_path("entropy_control"), False),
+            ("sources.md.tmpl", harness_path("sources"), False),
+            ("manifest.json.tmpl", harness_path("manifest"), False),
         ]
     )
     insert_at = next(
         index
         for index, spec in enumerate(specs)
-        if spec[1] == "docs/harness/README.md"
+        if spec[1] == harness_path("readme")
     )
     entrypoint_specs: list[tuple[str, str, bool]] = []
     if platform["requires_posix"]:
@@ -449,7 +455,7 @@ def _platform_source_review_markdown() -> str:
         f"- Last HarnessForge platform source review: {PLATFORM_SOURCE_REVIEW_DATE}.\n"
         "- Before changing platform floors, interpreter versions, runner labels, "
         "or CI image assumptions, record current primary-source evidence and "
-        "the review date in `docs/harness/evidence-log.md`.\n"
+        "the review date in `docs/harness/evidence/evidence-log.md`.\n"
         f"- Recheck source IDs: {source_ids}."
     )
 
@@ -484,7 +490,7 @@ def _project_context_markdown(profile: ProjectProfile) -> str:
             "- Component inventory reached the generated "
             f"{profile.component_scan_limit}-component limit. Run "
             "`harnessforge index --target . --max-files <N>` and add important\n"
-            "  omitted boundaries to `docs/harness/component-inventory.md` "
+            "  omitted boundaries to `docs/harness/boundaries/component-inventory.md` "
             "before broad changes."
         )
     if profile.stack == "rust" or "rust" in profile.languages:
@@ -1612,15 +1618,17 @@ Startup path:
 1. Confirm the working directory.
 2. Read `{agent_file}` and `docs/harness/README.md`.
 3. Read `feature_list.json`, `progress.md`, and `session-handoff.md`.
-4. Check `docs/harness/roadmap.md` before selecting, deferring, or reshaping
+4. Check `docs/harness/state/roadmap.md` before selecting, deferring, or reshaping
    backlog, release-prep, or product-scope work.
-5. Check `docs/harness/component-inventory.md` before changing component
+5. Check `docs/harness/boundaries/component-inventory.md` before changing component
    boundaries or verification routing.
+6. For harness-maintenance work, use `{HARNESS_SKILL_PATH}` as the repo-local
+   zero-install playbook.
 
 Build and test commands:
 
 - Use the smallest reliable command listed in this file,
-  `docs/harness/verification-matrix.md`, or the generated init entrypoint.
+  `docs/harness/feedback/verification-matrix.md`, or the generated init entrypoint.
 - Prefer local checks before remote CI. Push or open remote CI only at an
   explicit checkpoint, release point, or user request.
 
@@ -1669,7 +1677,7 @@ and route durable policy to the canonical instruction file.
 ## HarnessForge Quality Addendum
 
 Use `{agent_file}` as the source of truth for repo guidance. Read the Security
-boundary map at `docs/harness/security-boundary-map.md` before
+boundary map at `docs/harness/boundaries/security-boundary-map.md` before
 security-sensitive work.
 <!-- HarnessForge Quality Addendum: end -->"""
     return ""
@@ -1838,36 +1846,37 @@ def _manifest_content(
         *([] if agent_file == "CLAUDE.md" else ["CLAUDE.md"]),
         *([] if agent_file == "GEMINI.md" else ["GEMINI.md"]),
         ".github/copilot-instructions.md",
+        HARNESS_SKILL_PATH,
         "feature_list.json",
         "progress.md",
         "session-handoff.md",
         "scripts/check_pins.py",
         "docs/harness/README.md",
         "docs/harness/authoritative-facts.md",
-        "docs/harness/first-agent-task.md",
-        "docs/harness/roadmap.md",
-        "docs/harness/change-contract.md",
-        "docs/harness/verification-matrix.md",
-        "docs/harness/sensor-registry.md",
-        "docs/harness/component-inventory.md",
-        "docs/harness/dependency-change-policy.md",
-        "docs/harness/security-boundary-map.md",
-        "docs/harness/feature-privacy-labels.json",
-        "docs/harness/evidence-log.md",
-        "docs/harness/clean-state-checklist.md",
-        "docs/harness/evaluator-rubric.md",
-        "docs/harness/quality-document.md",
-        "docs/harness/release-controls.md",
-        "docs/harness/source-record.schema.json",
-        "docs/harness/source-record-example.json",
-        "docs/harness/research-sources.json",
-        "docs/harness/research-inbox.md",
+        "docs/harness/state/first-agent-task.md",
+        "docs/harness/state/roadmap.md",
+        "docs/harness/boundaries/change-contract.md",
+        "docs/harness/feedback/verification-matrix.md",
+        "docs/harness/feedback/sensor-registry.md",
+        "docs/harness/boundaries/component-inventory.md",
+        "docs/harness/boundaries/dependency-change-policy.md",
+        "docs/harness/boundaries/security-boundary-map.md",
+        "docs/harness/boundaries/feature-privacy-labels.json",
+        "docs/harness/evidence/evidence-log.md",
+        "docs/harness/state/clean-state-checklist.md",
+        "docs/harness/feedback/evaluator-rubric.md",
+        "docs/harness/feedback/quality-document.md",
+        "docs/harness/release/release-controls.md",
+        "docs/harness/research/source-record.schema.json",
+        "docs/harness/research/source-record-example.json",
+        "docs/harness/research/research-sources.json",
+        "docs/harness/research/research-inbox.md",
         "docs/harness/manifest.json",
-        "docs/harness/sources.md",
-        "docs/harness/entropy-control.md",
-        "docs/harness/agent-operating-model.md",
-        "docs/harness/multi-agent-orchestration.md",
-        "docs/harness/feature-list.schema.json",
+        "docs/harness/research/sources.md",
+        "docs/harness/state/entropy-control.md",
+        "docs/harness/operations/agent-operating-model.md",
+        "docs/harness/operations/multi-agent-orchestration.md",
+        "docs/harness/schemas/feature-list.schema.json",
     ]
     if platform["requires_posix"]:
         required_files.insert(required_files.index("docs/harness/README.md"), "init.sh")
@@ -1886,8 +1895,20 @@ def _manifest_content(
             "feature_list.json",
             "progress.md",
             "roadmap",
+            HARNESS_SKILL_PATH,
+            "repo skill",
             "remote CI",
             "stubbed",
+        ],
+        HARNESS_SKILL_PATH: [
+            "name: harness",
+            "zero-install",
+            "repo-owned",
+            "HarnessForge optional",
+            "first-agent-task.md",
+            "verification-matrix.md",
+            "sensor-registry.md",
+            "evidence-log.md",
         ],
         ".github/copilot-instructions.md": [
             "source of truth",
@@ -1924,7 +1945,7 @@ def _manifest_content(
             "Change-To-Docs Routing",
             "Fan-Out Budgets",
         ],
-        "docs/harness/first-agent-task.md": [
+        "docs/harness/state/first-agent-task.md": [
             "First-Agent Harness Improvement Task",
             "REVIEW REQUIRED",
             "component inventory",
@@ -1938,7 +1959,7 @@ def _manifest_content(
             "Do not overwrite project-owned instructions",
             "Do not run target commands",
         ],
-        "docs/harness/roadmap.md": [
+        "docs/harness/state/roadmap.md": [
             "Harness Roadmap",
             "REVIEW REQUIRED",
             "Source And Evidence Weighting",
@@ -1956,7 +1977,7 @@ def _manifest_content(
             "progress.md",
             "session-handoff.md",
         ],
-        "docs/harness/change-contract.md": [
+        "docs/harness/boundaries/change-contract.md": [
             "Problem",
             "Build Necessity Gate",
             "standard library",
@@ -1967,11 +1988,12 @@ def _manifest_content(
             "current primary-source evidence",
             "runner labels",
         ],
-        "docs/harness/verification-matrix.md": [
+        "docs/harness/feedback/verification-matrix.md": [
             "Change Type",
             "Required Checks",
             "When Checks Cannot Run",
             "Verification Evidence Reports",
+            "repo-owned commands",
             "harnessforge plan --target . --since HEAD",
             "harnessforge report --target .",
             "harnessforge verify --target . --json --run",
@@ -1985,7 +2007,7 @@ def _manifest_content(
             "intentionally vulnerable",
             "does not prove real-agent effectiveness",
         ],
-        "docs/harness/sensor-registry.md": [
+        "docs/harness/feedback/sensor-registry.md": [
             "Sensor Registry",
             "REVIEW REQUIRED",
             "roadmap",
@@ -1994,10 +2016,10 @@ def _manifest_content(
             "Purpose",
             "Retire When",
             "Agent-Oriented Failure Feedback",
-            "harnessforge report",
+            "Optional `",
             "does not prove real-agent effectiveness",
         ],
-        "docs/harness/component-inventory.md": [
+        "docs/harness/boundaries/component-inventory.md": [
             "Component Inventory",
             "Effective Agent Boundary",
             "changes the effective agent",
@@ -2006,13 +2028,13 @@ def _manifest_content(
             "Detected Components",
             "Routing Rules",
         ],
-        "docs/harness/dependency-change-policy.md": [
+        "docs/harness/boundaries/dependency-change-policy.md": [
             "latest stable",
             "exact pins",
             "pins.toml",
             "GitHub Actions",
         ],
-        "docs/harness/security-boundary-map.md": [
+        "docs/harness/boundaries/security-boundary-map.md": [
             "Harness Surface Boundaries",
             "Access Boundaries",
             "Data Boundaries",
@@ -2031,25 +2053,24 @@ def _manifest_content(
             "intentionally vulnerable",
             "Threat model",
         ],
-        "docs/harness/feature-privacy-labels.json": [
+        "docs/harness/boundaries/feature-privacy-labels.json": [
             "External AI optional",
             "Sensitive",
             "Public-data only",
         ],
-        "docs/harness/evidence-log.md": [
+        "docs/harness/evidence/evidence-log.md": [
             "Date",
             "Scope",
             "Command Or Review",
             "target-relative report path",
-            "harnessforge verify --target . --run --json-report",
             "failed, timed_out, or blocked",
         ],
-        "docs/harness/clean-state-checklist.md": [
+        "docs/harness/state/clean-state-checklist.md": [
             "Startup path",
             "Verification path",
             "Next Session",
         ],
-        "docs/harness/evaluator-rubric.md": [
+        "docs/harness/feedback/evaluator-rubric.md": [
             "Correctness",
             "Verification",
             "Handoff Readiness",
@@ -2058,7 +2079,7 @@ def _manifest_content(
             "test integrity",
             "unnecessary abstractions",
         ],
-        "docs/harness/quality-document.md": [
+        "docs/harness/feedback/quality-document.md": [
             "Quality Document",
             "Domain Grades",
             "Harness Subsystem Health",
@@ -2068,7 +2089,7 @@ def _manifest_content(
             "Benchmark Or Task Evidence",
             "Harness Simplification",
         ],
-        "docs/harness/release-controls.md": [
+        "docs/harness/release/release-controls.md": [
             "Release Controls",
             "--run --json-report",
             "owner, risk, and next action",
@@ -2079,20 +2100,20 @@ def _manifest_content(
             "Rollback",
             "real-agent effectiveness",
         ],
-        "docs/harness/source-record.schema.json": [
+        "docs/harness/research/source-record.schema.json": [
             "HarnessForge Project Source Record",
             "targetRelativePath",
             "machine-local absolute paths",
-            "docs/harness/research-sources.json",
+            "docs/harness/research/research-sources.json",
             "harnessUsage",
         ],
-        "docs/harness/source-record-example.json": [
+        "docs/harness/research/source-record-example.json": [
             "source-record-example",
             "REVIEW REQUIRED",
             "docs/architecture.md",
             "harnessUsage",
         ],
-        "docs/harness/research-sources.json": [
+        "docs/harness/research/research-sources.json": [
             "openai-harness-engineering",
             "walkinglabs-course",
             "github-actions-secure-use",
@@ -2112,7 +2133,7 @@ def _manifest_content(
             "github-actions-workflow-syntax",
             "terraform-standard-module-structure",
         ],
-        "docs/harness/agent-operating-model.md": [
+        "docs/harness/operations/agent-operating-model.md": [
             "Delegate",
             "Review",
             "Own",
@@ -2127,12 +2148,12 @@ def _manifest_content(
             "push",
             "intentionally vulnerable",
         ],
-        "docs/harness/research-inbox.md": [
+        "docs/harness/research/research-inbox.md": [
             "Research Inbox",
             "review signals",
             "Promotion checklist",
         ],
-        "docs/harness/entropy-control.md": [
+        "docs/harness/state/entropy-control.md": [
             "Promotion Rules",
             "Evidence Rules",
             "Stop Conditions",

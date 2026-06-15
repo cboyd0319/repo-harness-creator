@@ -88,8 +88,8 @@ class RefreshResearchTests(unittest.TestCase):
     def test_check_rejects_duplicate_ids_urls_and_placeholders(self) -> None:
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp)
-            (root / "docs/harness").mkdir(parents=True)
-            (root / "docs/harness/research-sources.json").write_text(
+            (root / "docs/harness/research").mkdir(parents=True)
+            (root / "docs/harness/research/research-sources.json").write_text(
                 json.dumps(
                     {
                         "version": 1,
@@ -132,8 +132,8 @@ class RefreshResearchTests(unittest.TestCase):
     def test_check_rejects_local_paths_in_source_docs(self) -> None:
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp)
-            (root / "docs/harness").mkdir(parents=True)
-            (root / "docs/harness/research-sources.json").write_text(
+            (root / "docs/harness/research").mkdir(parents=True)
+            (root / "docs/harness/research/research-sources.json").write_text(
                 json.dumps(
                     {
                         "version": 1,
@@ -148,7 +148,7 @@ class RefreshResearchTests(unittest.TestCase):
                 ),
                 encoding="utf-8",
             )
-            (root / "docs/harness/sources.md").write_text(
+            (root / "docs/harness/research/sources.md").write_text(
                 "Local source: " + "/" + "Users" + "/example/private-paper.pdf\n",
                 encoding="utf-8",
             )
@@ -163,8 +163,8 @@ class RefreshResearchTests(unittest.TestCase):
     def test_refresh_writes_lock_and_inbox(self) -> None:
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp)
-            (root / "docs/harness").mkdir(parents=True)
-            (root / "docs/harness/research-sources.json").write_text(
+            (root / "docs/harness/research").mkdir(parents=True)
+            (root / "docs/harness/research/research-sources.json").write_text(
                 json.dumps(
                     {
                         "version": 1,
@@ -196,11 +196,11 @@ class RefreshResearchTests(unittest.TestCase):
                 code = refresh_research.main(["--root", str(root)])
 
             lock = json.loads(
-                (root / "docs/harness/research-sources.lock.json").read_text(
+                (root / "docs/harness/research/research-sources.lock.json").read_text(
                     encoding="utf-8"
                 )
             )
-            inbox = (root / "docs/harness/research-inbox.md").read_text(
+            inbox = (root / "docs/harness/research/research-inbox.md").read_text(
                 encoding="utf-8"
             )
 
@@ -213,8 +213,8 @@ class RefreshResearchTests(unittest.TestCase):
     def test_refresh_withholds_adversarial_source_metadata(self) -> None:
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp)
-            (root / "docs/harness").mkdir(parents=True)
-            (root / "docs/harness/research-sources.json").write_text(
+            (root / "docs/harness/research").mkdir(parents=True)
+            (root / "docs/harness/research/research-sources.json").write_text(
                 json.dumps(
                     {
                         "version": 1,
@@ -248,11 +248,11 @@ class RefreshResearchTests(unittest.TestCase):
                 code = refresh_research.main(["--root", str(root)])
 
             lock = json.loads(
-                (root / "docs/harness/research-sources.lock.json").read_text(
+                (root / "docs/harness/research/research-sources.lock.json").read_text(
                     encoding="utf-8"
                 )
             )
-            inbox = (root / "docs/harness/research-inbox.md").read_text(
+            inbox = (root / "docs/harness/research/research-inbox.md").read_text(
                 encoding="utf-8"
             )
 
@@ -269,8 +269,8 @@ class RefreshResearchTests(unittest.TestCase):
     def test_refresh_withholds_unicode_and_markdown_exfiltration_metadata(self) -> None:
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp)
-            (root / "docs/harness").mkdir(parents=True)
-            (root / "docs/harness/research-sources.json").write_text(
+            (root / "docs/harness/research").mkdir(parents=True)
+            (root / "docs/harness/research/research-sources.json").write_text(
                 json.dumps(
                     {
                         "version": 1,
@@ -304,11 +304,11 @@ class RefreshResearchTests(unittest.TestCase):
                 code = refresh_research.main(["--root", str(root)])
 
             lock = json.loads(
-                (root / "docs/harness/research-sources.lock.json").read_text(
+                (root / "docs/harness/research/research-sources.lock.json").read_text(
                     encoding="utf-8"
                 )
             )
-            inbox = (root / "docs/harness/research-inbox.md").read_text(
+            inbox = (root / "docs/harness/research/research-inbox.md").read_text(
                 encoding="utf-8"
             )
 
@@ -577,7 +577,7 @@ class RefreshResearchTests(unittest.TestCase):
     def test_research_source_template_matches_repo_source_ids(self) -> None:
         root = Path(__file__).resolve().parents[1]
         repo_sources = json.loads(
-            (root / "docs/harness/research-sources.json").read_text(encoding="utf-8")
+            (root / "docs/harness/research/research-sources.json").read_text(encoding="utf-8")
         )
         template_sources = json.loads(
             (

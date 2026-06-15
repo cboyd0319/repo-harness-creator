@@ -5,7 +5,8 @@ files do not.
 
 ## Regular Assessment
 
-Run at least before releases, large refactors, and after repeated agent errors:
+Run at least before releases, large refactors, and after repeated agent errors.
+Use repo-owned checks first. If HarnessForge is available, add:
 
 ```bash
 harnessforge audit --target .
@@ -16,7 +17,7 @@ harnessforge audit --target .
 1. Identify the lowest-scoring domain.
 2. Confirm the failure from logs, review comments, or missed checks.
 3. Add the smallest guide or sensor that would have prevented it.
-4. Re-run the audit and relevant project checks.
+4. Re-run the relevant project checks and optional audit.
 
 ## Cleanup
 
@@ -36,7 +37,7 @@ recoverable, or preserve source evidence a maintainer will need.
 ## Evidence Rules
 
 - Keep command names and pass/fail status in `progress.md`, active plans, or
-  `docs/harness/evidence-log.md`.
+  `docs/harness/evidence/evidence-log.md`.
 - Keep screenshots and raw logs out of git unless visual or forensic proof is
   required and sanitized.
 - Never preserve secrets, tokens, raw credentials, or workstation-local absolute

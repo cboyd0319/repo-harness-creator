@@ -39,6 +39,14 @@ Non-goals:
 - Python 3.13+, macOS 15+, Windows 11+, and Ubuntu 22.04+ remain supported.
 - Focused tests cover the behavior.
 
+## Pre-Release Compatibility
+
+HarnessForge is alpha/pre-release, undeployed, and has no external users. Do
+not add migration shims or preserve earlier generated layouts, schemas, CLI
+outputs, Action behavior, or docs only for backward compatibility unless a
+maintainer explicitly declares a release boundary. Prefer one clean current
+contract, and record any temporary evaluation bridge with removal criteria.
+
 ## Verification
 
 - `python -m compileall src tests`
@@ -63,6 +71,6 @@ assumptions, record source-backed evidence:
 - Last HarnessForge platform source review: 2026-06-15.
 - Before changing platform floors, interpreter versions, runner labels, or CI
   image assumptions, record current primary-source evidence and the review date
-  in `docs/harness/evidence-log.md`.
+  in `docs/harness/evidence/evidence-log.md`.
 - Recheck source IDs: python-devguide-versions,
   github-actions-hosted-runners, github-runner-images-windows-vs2026.
