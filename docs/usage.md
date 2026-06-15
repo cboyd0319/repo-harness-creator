@@ -18,6 +18,11 @@ harnessforge audit --target /path/to/repo --min-score 85
 systems, preserved existing files, planned generated files, generated review
 placeholders, and the safest next commands.
 
+After `init`, the generated canonical agent instruction routes the first agent
+session to `docs/harness/first-agent-task.md`. That review-required task asks
+the first agent to deepen the harness using repo-specific analysis before
+unrelated feature work.
+
 ## Inspect And Index
 
 Inspect a repository before writing anything:
@@ -251,6 +256,10 @@ blocked. `require-verify-evidence` stays `"false"` until the project has
 reviewed run-mode verify evidence under `docs/harness/evidence/`. Review
 permissions, triggers, branches, credential surfaces, and full-length commit
 SHAs before relying on the generated workflow.
+
+Generated harnesses also include `docs/harness/first-agent-task.md`. Treat that
+file as a review-required first improvement pass for the target repo harness,
+not as automatic policy.
 
 ## Audit
 

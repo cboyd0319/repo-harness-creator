@@ -704,6 +704,9 @@ Generated first-agent guidance verification passed focused generator tests with
 50 tests, full unit discovery with 228 tests, JSON validation, pin check,
 durable local-path scan, diff hygiene, self-audit `100/100`, and both local
 entrypoints with 228 tests each.
+Full docs update pass is complete: `docs/harness/README.md`,
+`docs/capabilities.md`, `docs/usage.md`, and `docs/harness/manifest.json` now
+surface the first-agent task and the split top-level docs consistently.
 `sync --check`
 returns the expected warning for local workflow and instruction review surfaces
 without blockers or generated drift.

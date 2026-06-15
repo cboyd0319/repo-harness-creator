@@ -31,6 +31,9 @@
     "README.md",
     "action.yml",
     "docs/action.md",
+    "docs/installation.md",
+    "docs/usage.md",
+    "docs/capabilities.md",
     "docs/assets/logo.png",
     "pyproject.toml",
     "pins.toml",
@@ -147,9 +150,30 @@
       "with-ci-workflow",
       "with-self-heal-workflow"
     ],
+    "docs/installation.md": [
+      "Platform Contract",
+      "Install From A Clone",
+      "Verify This Repository",
+      "Focused Checks"
+    ],
+    "docs/usage.md": [
+      "Normal Flow",
+      "Readiness And Sync",
+      "Verify Project Checks",
+      "Generation Boundary",
+      "Command Reference"
+    ],
+    "docs/capabilities.md": [
+      "Core Capabilities",
+      "Default Boundaries",
+      "Generated Files",
+      "Security Model",
+      "Repo-Local Self-Healing"
+    ],
     "docs/harness/README.md": [
       "Operating Loop",
       "Assessment And Updates",
+      "first-agent-task.md",
       "harnessforge index",
       "harnessforge effectiveness",
       "self-healing workflow"

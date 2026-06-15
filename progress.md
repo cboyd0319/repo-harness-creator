@@ -100,6 +100,10 @@ maintenance loop.
   Focused generator tests, full unit discovery, POSIX/PowerShell entrypoints,
   JSON validation, pin check, research source check, local-path scan, diff
   hygiene, and self-audit `100/100` passed with 228 tests.
+- Completed a full docs update pass after first-agent guidance. The live
+  harness README now routes first-agent harness improvement work, capabilities
+  and usage docs describe the generated first-agent task, and the live manifest
+  requires the split top-level docs plus the first-agent route.
 - Re-ran a deeper read-only comparison against `agent-governance-toolkit`.
   Accepted the small, durable pieces that fit this repo now: contribution
   policy, PR template, stronger security scope, `.gitignore` hygiene, and
@@ -554,6 +558,14 @@ Push local commits only at an explicit batch/release boundary or user request.
   check, research source check, and self-audit `100/100`.
 - `git diff --check` and the durable-doc/template local-path scan passed after
   the first-agent guidance update.
+- `PYTHONPATH=src:. python3 -m unittest tests.test_generate_audit` passed with
+  50 tests after the full docs update pass.
+- `PYTHONPATH=src:. python3 -m harnessforge audit --target .
+  --min-score 85` passed with self-audit `100/100` after the full docs update
+  pass.
+- `python3 -m json.tool feature_list.json`,
+  `python3 -m json.tool docs/harness/manifest.json`, and `git diff --check`
+  passed after the full docs update pass.
 - Large-codebase analysis and indexing research reviewed primary project
   sources for Zoekt, Sourcebot, Livegrep, Hound, OpenGrok, Universal Ctags,
   Tree-sitter, ast-grep, Aider repo maps, SCIP, LSIF, Kythe, Glean, Stack

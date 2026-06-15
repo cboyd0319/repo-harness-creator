@@ -15,6 +15,9 @@ boundaries it preserves. See [Usage](usage.md) for commands and
 - Generates a compact harness with agent entrypoints, project state files,
   local verification scripts, security boundaries, evidence docs, lifecycle
   docs, and a manifest.
+- Adds a review-required first-agent task so the first agent session in a newly
+  harnessed repo can deepen component boundaries, verification routing,
+  source-of-truth guidance, evidence sensors, and security notes.
 - Preserves existing files by default.
 - Can append a reviewed HarnessForge quality addendum to existing instruction
   files with `--enhance-existing`.
@@ -54,6 +57,7 @@ The default generated harness includes:
 | Project state | `feature_list.json`, `progress.md`, `session-handoff.md` |
 | Local checks | `init.sh`, `init.ps1`, `scripts/check_pins.py` |
 | Harness docs | `docs/harness/README.md`, `verification-matrix.md`, `sensor-registry.md`, `change-contract.md` |
+| First-agent improvement | `docs/harness/first-agent-task.md` |
 | Security and privacy | `security-boundary-map.md`, `feature-privacy-labels.json` |
 | Evidence and quality | `evidence-log.md`, `quality-document.md`, `release-controls.md`, `evaluator-rubric.md` |
 | Research | `sources.md`, `research-sources.json`, `research-inbox.md`, `source-record.schema.json`, `source-record-example.json` |

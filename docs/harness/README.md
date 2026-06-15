@@ -21,7 +21,7 @@ agent sessions.
 | Tools | `harnessforge`, `action.yml`, `init.sh`, `init.ps1`, `scripts/check_pins.py` | Creation, audit, update, CI action, local checks, and pin enforcement |
 | Environment | `pyproject.toml`, CI matrix, `component-inventory.md`, `dependency-change-policy.md` | Python, OS, package, component, and Action support contract |
 | State | `feature_list.json`, `progress.md`, `evidence-log.md` | Current objective, evidence, and restart state |
-| Feedback | tests, self-audit, CI, `verification-matrix.md`, `sensor-registry.md`, `evaluator-rubric.md`, `verify-json-contract.md`, `effectiveness-eval-contract.md`, research refresh | Deterministic quality checks, sensor ownership, machine-readable verification output, benchmark-claim boundaries, and source drift signal |
+| Feedback | tests, self-audit, CI, `first-agent-task.md`, `verification-matrix.md`, `sensor-registry.md`, `evaluator-rubric.md`, `verify-json-contract.md`, `effectiveness-eval-contract.md`, research refresh | First-agent harness improvement, deterministic quality checks, sensor ownership, machine-readable verification output, benchmark-claim boundaries, and source drift signal |
 | Research | `sources.md`, `research-sources.json`, `source-record.schema.json`, `source-record-example.json` | Fixed research allowlist, source provenance, and project-owned source records |
 | Scope | `docs/harness/change-contract.md`, `security-boundary-map.md`, `feature-privacy-labels.json` | Acceptance, rollback, security, and data-flow discipline |
 | Lifecycle | `session-handoff.md`, `clean-state-checklist.md`, `quality-document.md`, `release-controls.md`, `self-healing.md`, entropy control | Restart, release readiness, recurring maintenance, and reviewed automation |
@@ -29,18 +29,20 @@ agent sessions.
 ## Operating Loop
 
 1. Read `AGENTS.md`.
-2. Check `feature_list.json`, `progress.md`, and `session-handoff.md`.
-3. Check `component-inventory.md` when a task touches nested project boundaries.
-4. Use `change-contract.md` for non-trivial behavior or template changes.
-5. Implement the smallest coherent slice.
-6. Review `sensor-registry.md` when adding, deleting, or promoting checks.
-7. Run `./init.sh` or the narrowest relevant subset.
-8. Run `python scripts/check_pins.py --root .` for dependency, Action, or
+2. Use `first-agent-task.md` when a newly generated harness needs its first
+   repo-specific improvement pass.
+3. Check `feature_list.json`, `progress.md`, and `session-handoff.md`.
+4. Check `component-inventory.md` when a task touches nested project boundaries.
+5. Use `change-contract.md` for non-trivial behavior or template changes.
+6. Implement the smallest coherent slice.
+7. Review `sensor-registry.md` when adding, deleting, or promoting checks.
+8. Run `./init.sh` or the narrowest relevant subset.
+9. Run `python scripts/check_pins.py --root .` for dependency, Action, or
    workflow changes.
-9. Run `python scripts/refresh_research.py --root . --check` for research
+10. Run `python scripts/refresh_research.py --root . --check` for research
    source ledger or source-doc changes.
-10. Use `clean-state-checklist.md` before ending non-trivial sessions.
-11. Update state and handoff files when durable facts change.
+11. Use `clean-state-checklist.md` before ending non-trivial sessions.
+12. Update state and handoff files when durable facts change.
 
 ## Assessment And Updates
 

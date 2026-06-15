@@ -1247,6 +1247,7 @@ def _manifest_content(
             "When To Add Harness",
             "Assessment And Updates",
             "project-owned generated files",
+            "first-agent-task.md",
             "command: sync",
             "harnessforge index",
             "harnessforge effectiveness",
