@@ -1110,6 +1110,59 @@ class GenerateAuditTests(unittest.TestCase):
         self.assertIn("Component inventory reached", agents)
         self.assertIn("docs/harness/component-inventory.md", agents)
 
+    def test_agents_file_includes_detected_quality_surface_context(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            (root / "src").mkdir()
+            (root / "src" / "native.cpp").write_text(
+                "int main() { return 0; }\n",
+                encoding="utf-8",
+            )
+            (root / "App.sln").write_text("\n", encoding="utf-8")
+            (root / "composer.json").write_text("{}\n", encoding="utf-8")
+            (root / "Gemfile").write_text(
+                "source 'https://rubygems.org'\n",
+                encoding="utf-8",
+            )
+            (root / "assets").mkdir()
+            (root / "assets" / "demo.js").write_text(
+                "console.log('demo')\n",
+                encoding="utf-8",
+            )
+            (root / ".github" / "workflows").mkdir(parents=True)
+            (root / ".github" / "workflows" / "ci.yml").write_text(
+                "on:\n"
+                "  pull_request:\n"
+                "    paths:\n"
+                "      - 'src/**'\n"
+                "jobs:\n"
+                "  test:\n"
+                "    defaults:\n"
+                "      run:\n"
+                "        working-directory: src\n",
+                encoding="utf-8",
+            )
+            (root / ".devcontainer").mkdir()
+            (root / ".devcontainer" / "devcontainer.json").write_text(
+                "{}\n",
+                encoding="utf-8",
+            )
+            (root / "CLAUDE.md").write_text("# Claude\n", encoding="utf-8")
+            create_harness(root)
+            agents = (root / "AGENTS.md").read_text(encoding="utf-8")
+
+        self.assertIn("C/C++ or native-code files detected", agents)
+        self.assertIn(".NET solution or project files detected", agents)
+        self.assertIn("PHP or Composer surface detected", agents)
+        self.assertIn("Ruby or Bundler surface detected", agents)
+        self.assertIn("JavaScript or TypeScript files detected without", agents)
+        self.assertIn("Existing GitHub workflow surfaces detected", agents)
+        self.assertIn("path filters", agents)
+        self.assertIn("`working-directory` routing", agents)
+        self.assertIn("Devcontainer configuration detected", agents)
+        self.assertIn("Existing root agent instruction files detected", agents)
+        self.assertIn("CLAUDE.md", agents)
+
     def test_audit_requires_instructions_to_route_to_detected_spec_sources(self) -> None:
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp)

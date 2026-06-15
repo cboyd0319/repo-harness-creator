@@ -461,6 +461,11 @@ maintenance loop.
   metadata files, generated project context now warns when component discovery
   reaches the bounded inventory limit, and explicit CLI evidence/report paths
   are trimmed while literal repo-discovered filenames remain preserved.
+- Continued the generated-artifact quality pass across the local reference set.
+  Accepted targeted project-context improvements for detected GitHub workflow
+  metadata, devcontainers, native C/C++, .NET, PHP, Ruby, JavaScript or
+  TypeScript assets without package-manager boundaries, and existing root agent
+  instruction files.
 - Added read-only `harnessforge effectiveness --target . --json` evidence
   assessment. The command scans target-contained
   `docs/harness/evidence/effectiveness*.json` reports or explicit
@@ -469,7 +474,7 @@ maintenance loop.
   running benchmarks, installing dependencies, calling models, writing files,
   or turning structural audit score into a performance claim.
 - Current verification passes full unit discovery and POSIX/PowerShell
-  entrypoints with 226 tests, focused CLI, generator, and contract tests,
+  entrypoints with 227 tests, focused CLI, generator, and contract tests,
   index/effectiveness JSON and text smokes, compile, pin check, research source
   check, JSON validation, session/plan/index/effectiveness JSON smokes,
   self-audit `100/100`, changed-file local-path scan, and diff hygiene.
@@ -529,6 +534,14 @@ Push local commits only at an explicit batch/release boundary or user request.
   errors, and no readiness blockers. The only index warnings are missing
   repo-owned checks in docs/catalog repositories and expected component-limit
   warnings for very large repositories.
+- The generated-artifact quality scorer across 32 reference repositories found
+  no local-path leaks, no unrendered template tokens, no generic AGENTS context,
+  no component-cap warning gaps, and no init dry-run failures after the latest
+  context improvements. The only remaining findings are intentional
+  review-required verification placeholders for repositories without detected
+  repo-owned validation commands.
+- `PYTHONPATH=src <python3.13> -m unittest tests.test_generate_audit` passed
+  with 49 generator/audit tests after the generated-artifact quality pass.
 - `PYTHONPATH=src <python3.13> -m unittest
   tests.test_cli.CliTests.test_index_json_ignores_common_os_metadata_files
   tests.test_cli.CliTests.test_index_json_preserves_trailing_space_file_names
@@ -543,6 +556,12 @@ Push local commits only at an explicit batch/release boundary or user request.
 - `PYTHON=<python3.13> pwsh -NoProfile -File ./init.ps1` passed with doctor,
   compile, 226 tests, pin check, research source check, and self-audit
   `100/100` after the latest real-repo refinement pass.
+- `PYTHON=<python3.13> ./init.sh` passed with doctor, compile, 227 tests, pin
+  check, research source check, and self-audit `100/100` after the
+  generated-artifact quality pass.
+- `PYTHON=<python3.13> pwsh -NoProfile -File ./init.ps1` passed with doctor,
+  compile, 227 tests, pin check, research source check, and self-audit
+  `100/100` after the generated-artifact quality pass.
 - `./init.sh` passed with doctor, compile, 211 tests, pin check, research
   source check, and self-audit `100/100`.
 - `pwsh -NoProfile -File ./init.ps1` passed with doctor, compile, 211 tests,

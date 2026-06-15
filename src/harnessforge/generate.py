@@ -562,6 +562,30 @@ def _project_context_markdown(profile: ProjectProfile) -> str:
             "- Terraform or infrastructure files detected. Treat provider, "
             "state, secret, cost, and environment changes as review-sensitive."
         )
+    if "cpp" in languages and not (
+        profile.stack == "bazel" and {"java", "cpp", "starlark"} & languages
+    ):
+        signals.append(
+            "- C/C++ or native-code files detected. Inspect compiler, linker, "
+            "platform, packaging, and fixture boundaries before choosing\n"
+            "  validation."
+        )
+    if "dotnet" in languages:
+        signals.append(
+            "- .NET solution or project files detected. Treat `.sln`, `.slnx`, "
+            "`.csproj`, `.fsproj`, and `global.json` as build-contract inputs."
+        )
+    if "php" in languages:
+        signals.append(
+            "- PHP or Composer surface detected. Inspect `composer.json`, "
+            "`composer.lock`, framework config, and test scripts before\n"
+            "  changing runtime behavior."
+        )
+    if "ruby" in languages:
+        signals.append(
+            "- Ruby or Bundler surface detected. Inspect `Gemfile`, lockfiles, "
+            "Rake tasks, and framework config before changing runtime behavior."
+        )
     if "shell" in languages:
         signals.append(
             "- Shell entrypoints detected. Quote paths, preserve spaces, use "
@@ -598,6 +622,12 @@ def _project_context_markdown(profile: ProjectProfile) -> str:
             "- JavaScript or TypeScript subprojects are present. Inspect the "
             "nearest `package.json`\n"
             "  scripts before choosing Node-based checks."
+        )
+    elif {"javascript", "typescript"} & languages:
+        signals.append(
+            "- JavaScript or TypeScript files detected without a package manager "
+            "marker. Treat them as templates, examples, docs assets, or\n"
+            "  secondary scripts until a package boundary is confirmed."
         )
     if {"maven", "gradle"} & package_managers:
         signals.append(
@@ -639,6 +669,47 @@ def _project_context_markdown(profile: ProjectProfile) -> str:
             "- GitHub Action surface detected. Changes to `action.yml` or "
             "workflow behavior are\n"
             "  release and security-sensitive."
+        )
+    if ".github/workflows" in routing_markers:
+        workflow_details = []
+        if ".github/workflows path filters" in routing_markers:
+            workflow_details.append("path filters")
+        if ".github/workflows working-directory" in routing_markers:
+            workflow_details.append("`working-directory` routing")
+        if ".github/actions" in routing_markers:
+            workflow_details.append("local Actions")
+        detail = (
+            f" Existing workflow metadata includes {', '.join(workflow_details)}."
+            if workflow_details
+            else ""
+        )
+        signals.append(
+            "- Existing GitHub workflow surfaces detected. Review triggers, "
+            "permissions, matrix coverage, environment use, and generated\n"
+            f"  workflow boundaries before changing CI.{detail}"
+        )
+    if ".devcontainer" in routing_markers:
+        signals.append(
+            "- Devcontainer configuration detected. Treat container images, "
+            "features, mounts, secrets, and setup commands as environment\n"
+            "  contract inputs."
+        )
+    root_agent_markers = tuple(
+        marker
+        for marker in (
+            "AGENTS.md",
+            "CLAUDE.md",
+            "GEMINI.md",
+            ".github/copilot-instructions.md",
+        )
+        if marker in routing_markers
+    )
+    if root_agent_markers:
+        signals.append(
+            "- Existing root agent instruction files detected: "
+            f"{', '.join(f'`{marker}`' for marker in root_agent_markers)}. "
+            "Preserve project-owned text and keep durable rules in\n"
+            "  the canonical instruction surface after review."
         )
     hidden_agent_markers = tuple(
         marker

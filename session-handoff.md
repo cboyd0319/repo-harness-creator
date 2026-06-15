@@ -633,6 +633,14 @@ explicit CLI evidence/report paths are trimmed while literal repo-discovered
 filenames remain preserved. The rendered-content sweep across 32 reference
 repositories found no local-path leaks, no unrendered template tokens, no
 generic context fallback, and no missing generated project context.
+The latest generated-artifact quality pass added AGENTS project-context guidance
+for detected GitHub workflow metadata, devcontainers, native C/C++, .NET, PHP,
+Ruby, JavaScript or TypeScript assets without package-manager boundaries, and
+existing root agent instruction files. The 32-repo generated-artifact scorer
+now reports no local-path leaks, no unrendered template tokens, no generic
+AGENTS context, no component-cap warning gaps, and no init dry-run failures.
+The only remaining findings are review-required verification placeholders for
+repositories without detected repo-owned validation commands.
 `scripts/refresh_research.py --check` validates duplicate source IDs and URLs,
 required fields, placeholder text, canonical URL shape, arXiv `/abs/` URLs,
 lock-file consistency, and local-path leakage before any metadata fetch. Root
@@ -657,7 +665,7 @@ coverage, focused verify report-persistence tests, focused verify-evidence gate
 tests, focused Action sync tests, focused session tests, focused sensor-registry
 generator test, focused source-record generator test, focused index CLI tests,
 focused effectiveness CLI and contract tests, full unit discovery and
-POSIX/PowerShell entrypoints with 226 tests, compile, JSON/YAML validation, pin
+POSIX/PowerShell entrypoints with 227 tests, compile, JSON/YAML validation, pin
 check, research source check, rendered optional workflow audit and pin smoke,
 session, plan, index, and effectiveness JSON smokes, expected-warning sync JSON
 smoke, self-audit `100/100`, changed-file local-path scan, and diff hygiene.
