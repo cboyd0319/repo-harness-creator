@@ -102,6 +102,7 @@ def build_report(
         "index": _index_summary(index),
         "verifyEvidence": readiness_payload["verifyEvidence"],
         "effectiveness": _effectiveness_summary(effectiveness),
+        "instructionQuality": readiness_payload["instructionQuality"],
         "firstAgentTask": first_agent,
         "platform": _platform_summary(manifest),
         "docsFanout": docs_fanout,
@@ -118,6 +119,7 @@ def build_report(
 
 
 def format_report(payload: dict[str, Any]) -> str:
+    instruction_average = payload["instructionQuality"]["summary"]["averageScore"]
     lines = [
         "# HarnessForge Report",
         "",
@@ -174,6 +176,13 @@ def format_report(payload: dict[str, Any]) -> str:
             "",
             f"- Verdict: `{payload['effectiveness']['verdict']}`",
             f"- Reports: {payload['effectiveness']['summary']['reports']}",
+            "",
+            "## Instruction Quality",
+            "",
+            f"- Status: `{payload['instructionQuality']['summary']['status']}`",
+            f"- Average score: `{instruction_average if instruction_average is not None else 'none'}`",
+            f"- Startup files: {payload['instructionQuality']['summary']['fileCount']}",
+            f"- Largest files tracked: {len(payload['instructionQuality']['largestFiles'])}",
             "",
             "## First-Agent Task",
             "",

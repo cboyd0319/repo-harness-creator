@@ -199,6 +199,10 @@ quality signals include fresh-session answerability, instruction bloat or
 duplication, first-agent review state, evidence-gated feature state, runtime
 observability gaps, and cleanup or stale-artifact drift.
 
+Implemented report expansion: instruction-quality and context-budget signals
+now report startup instruction coverage, signal/noise, placeholder noise,
+word/line/byte budget status, and largest instruction surfaces in warning mode.
+
 Remaining report expansion: add repo-map summaries, policy preset status, and
 release evidence automation as those surfaces land.
 
@@ -579,8 +583,9 @@ Candidate behavior:
 - extend section parsing beyond the current Markdown-heading pass;
 - classify project-owned rules, generated routers, stale generated blocks,
   and conflicts beyond the current finding set;
-- compute instruction signal-to-noise signals for common task classes and
-  suggest focused topic docs when root files become dumping grounds;
+- extend the implemented instruction signal-to-noise report into task-class
+  guidance and suggest focused topic docs when root files become dumping
+  grounds;
 - optionally apply reviewed cleanup edits after explicit patch preview approval;
 - preserve local wording unless it conflicts with a detected boundary or
   generated ownership metadata;

@@ -26,6 +26,11 @@ from .governance_inventory import (
     analyze_governance_inventory,
     governance_item_to_dict,
 )
+from .instruction_quality import (
+    InstructionQualityReport,
+    analyze_instruction_quality,
+    instruction_quality_to_dict,
+)
 from .models import DriftResult, ProjectProfile
 from .paths import path_from_relative_text
 from .spec_system import (
@@ -79,6 +84,7 @@ class ReadinessReport:
     context_budget: ContextBudgetReport
     governance_inventory: tuple[GovernanceItem, ...]
     effectiveness_inventory: tuple[EffectivenessItem, ...]
+    instruction_quality: InstructionQualityReport
     verify_evidence: VerifyEvidenceReport
     verify_evidence_required: bool
     first_agent_lifecycle: FirstAgentLifecycleReport
@@ -95,6 +101,7 @@ def inspect_readiness(
     context_budget = analyze_context_budget(profile.root, profile.files)
     governance_inventory = analyze_governance_inventory(profile.files)
     effectiveness_inventory = analyze_effectiveness_inventory(profile.files)
+    instruction_quality = analyze_instruction_quality(profile.root, profile.files)
     verify_evidence = analyze_verify_evidence(profile.root, profile.files)
     first_agent_lifecycle = analyze_first_agent_lifecycle(profile.root, profile.files)
     runnable_checks = tuple(
@@ -143,6 +150,7 @@ def inspect_readiness(
     warnings.extend(context_budget.warnings)
     warnings.extend(governance_inventory.warnings)
     warnings.extend(effectiveness_inventory.warnings)
+    warnings.extend(instruction_quality.warnings)
     warnings.extend(verify_evidence.warnings)
     warnings.extend(first_agent_lifecycle.warnings)
     if require_verify_evidence:
@@ -173,6 +181,10 @@ def inspect_readiness(
     if effectiveness_inventory.items:
         next_actions.append(
             "Review effectiveness eval inventory before making harness performance claims."
+        )
+    if instruction_quality.warnings:
+        next_actions.append(
+            "Review instruction quality and context budget findings before expanding startup instructions."
         )
     next_actions.extend(verify_evidence.next_actions)
     next_actions.extend(first_agent_lifecycle.next_actions)
@@ -220,6 +232,7 @@ def inspect_readiness(
         context_budget=context_budget,
         governance_inventory=governance_inventory.items,
         effectiveness_inventory=effectiveness_inventory.items,
+        instruction_quality=instruction_quality,
         verify_evidence=verify_evidence,
         verify_evidence_required=require_verify_evidence,
         first_agent_lifecycle=first_agent_lifecycle,
@@ -252,6 +265,7 @@ def readiness_to_dict(report: ReadinessReport) -> dict[str, Any]:
             effectiveness_item_to_dict(item)
             for item in report.effectiveness_inventory
         ],
+        "instructionQuality": instruction_quality_to_dict(report.instruction_quality),
         "verifyEvidence": verify_evidence_report_to_dict(report.verify_evidence),
         "verifyEvidenceRequired": report.verify_evidence_required,
         "firstAgentLifecycle": first_agent_lifecycle_to_dict(
@@ -299,6 +313,15 @@ def format_readiness(report: ReadinessReport) -> str:
         tuple(
             f"{item.path}: {item.line_count} lines, {item.char_count} chars"
             for item in report.context_budget.instruction_files
+        ),
+    )
+    _append_section(
+        lines,
+        "Instruction quality",
+        tuple(
+            f"{item.path}: {item.status}, score={item.score}/100, "
+            f"budget={item.budget_status}, words={item.word_count}"
+            for item in report.instruction_quality.files
         ),
     )
     _append_section(

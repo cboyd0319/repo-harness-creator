@@ -9,6 +9,17 @@ generated harness quality, product boundaries, and verification evidence intact.
 
 ## What Changed
 
+- Instruction-quality reporting is implemented in readiness and unified report.
+  It reports startup instruction section coverage, signal/noise, placeholder
+  noise, word/line/byte budget status, largest instruction surfaces, and
+  warning-mode count metadata.
+- The implementation borrows the useful Persona content-budget patterns:
+  deterministic counts, explicit budgets, largest-offender reporting, and
+  warning-mode review rather than hard blocking target repos.
+- Local `docs/harness/evidence/first-agent-review.json` now exists so the
+  repo-local harness shape matches generated target harnesses.
+- Local `AGENTS.md` is 998 words, below the 1,000-word hard budget for primary
+  startup instructions.
 - First-agent lifecycle evidence is implemented. Generated targets include
   `docs/harness/evidence/first-agent-review.json`, and report/readiness
   classify first-agent review as pending, completed, retired, blocked, invalid,
@@ -61,12 +72,16 @@ generated harness quality, product boundaries, and verification evidence intact.
 - `src/harnessforge/generate.py`
 - `src/harnessforge/first_agent.py`
 - `src/harnessforge/harness_paths.py`
+- `src/harnessforge/instruction_quality.py`
 - `src/harnessforge/readiness.py`
 - `src/harnessforge/report.py`
 - `tests/test_generate_audit.py`
 - `tests/test_cli.py`
+- `tests/test_github_action.py`
+- `AGENTS.md`
 - `docs/harness/manifest.json`
 - `docs/harness/evidence/evidence-log.md`
+- `docs/harness/evidence/first-agent-review.json`
 - `docs/harness/research/source-record.schema.json`
 - `docs/harness/research/source-record-example.json`
 - `docs/roadmap.md`
@@ -77,27 +92,32 @@ generated harness quality, product boundaries, and verification evidence intact.
 
 Latest checks:
 
+- focused CLI tests passed with 82 tests
+- focused Action tests passed with 21 tests
 - focused generated/audit tests passed with 56 tests
-- focused first-agent lifecycle and generated tests passed with 137 tests
-- full unit discovery passed with 250 tests
-- explicit Agent Skills spec validation passed for a fresh render and the
-  RunHaven deployed skill
+- full unit discovery passed with 251 tests
 - fresh generated-target audit passed at `100/100`
 - HarnessForge self-audit passed at `100/100`
-- RunHaven audit passed at `100/100`
-- HarnessForge and RunHaven `git diff --check` passed
-- representative generated Markdown is 69,927 bytes and total generated output
-  is 139,404 bytes after adding first-agent evidence
+- HarnessForge `git diff --check` passed
+- JSON validation passed for `feature_list.json`, `docs/harness/manifest.json`,
+  and `docs/harness/evidence/first-agent-review.json`
+- local-path scan found only intentional redaction fixtures and regexes
+- local `AGENTS.md` is 998 words, below the hard budget
 
 Earlier optimization checks also passed before the spec adjustment:
 
 - compile passed
+- explicit Agent Skills spec validation passed for a fresh render and the
+  RunHaven deployed skill
+- RunHaven audit passed at `100/100`
 - self-audit passed at `100/100`
 - JSON validation passed for `feature_list.json` and
   `docs/harness/manifest.json`
 - report smoke passed with no duplicate durable fact blocks
 - public fixture corpus passed with 13 fixtures and minimum score `100`
 - stale flat-path scan was clean
+- representative generated Markdown was 69,927 bytes and total generated output
+  was 139,404 bytes after adding first-agent evidence
 
 Rerun focused tests after any further template or scoring edit.
 
@@ -122,5 +142,5 @@ Rerun focused tests after any further template or scoring edit.
 ## Next Session
 
 If the user wants more backlog work, continue with instruction-quality and
-signal-to-noise reporting. If the user asks to checkpoint, commit the current
-slice first.
+signal-to-noise task-class guidance, or move to compact repo map and SBOM-aware
+detection. If the user asks to checkpoint, commit the current slice first.

@@ -76,8 +76,9 @@ harnessforge report --target /path/to/repo --markdown-report docs/harness/eviden
 `report` combines readiness, structural audit score, generated drift,
 structural index summary, stored verify evidence, stored effectiveness
 evidence, first-agent task lifecycle evidence, platform contract, and docs
-fan-out routing status. It is read-only by default, does not run target
-repository commands, and writes files only when a target-relative
+fan-out routing status. It also includes instruction-quality and context-budget
+signals for startup instruction files. It is read-only by default, does not run
+target repository commands, and writes files only when a target-relative
 `--json-report` or `--markdown-report` path is supplied.
 
 Use `--require-verify-evidence` when the report should include release-gate
@@ -115,6 +116,7 @@ Readiness reports:
 - `workflowInventory`
 - `workItemInventory`
 - `contextBudget`
+- `instructionQuality`
 - `governanceInventory`
 - `effectivenessInventory`
 - `verifyEvidence`
@@ -143,6 +145,12 @@ Context budget is also advisory. It reports instruction-file size and repeated
 instruction blocks across `AGENTS.md`, `CLAUDE.md`, `GEMINI.md`, and Copilot
 instructions so teams can keep router files compact and avoid wasting agent
 context on duplicated guidance.
+
+Instruction quality is advisory. It reports startup instruction signal,
+required-section coverage, placeholder noise, word/line/byte budget status, and
+largest instruction surfaces. Budgets use warning mode so teams can review
+oversized or low-signal instructions without making HarnessForge the target
+repo's canonical policy.
 
 Governance inventory is advisory as well. It reports MCP configs, agent
 settings, agent skills, agent plugin manifests, installer scripts, hooks,

@@ -646,9 +646,11 @@ class CliTests(unittest.TestCase):
             "contextBudget",
             "governanceInventory",
             "effectivenessInventory",
+            "instructionQuality",
             "verifyEvidence",
         ):
             self.assertIn(key, payload)
+        self.assertEqual(payload["instructionQuality"]["summary"]["status"], "absent")
         self.assertIsNone(payload["verifyEvidence"]["latest"])
         self.assertEqual(payload["verifyEvidence"]["reports"], [])
         self.assertIn("python -m unittest discover", payload["runnableChecks"])
@@ -749,6 +751,10 @@ class CliTests(unittest.TestCase):
         self.assertIn("fileCount", payload["index"]["summary"])
         self.assertEqual(payload["verifyEvidence"]["latest"]["verdict"], "passed")
         self.assertEqual(payload["effectiveness"]["verdict"], "blocked")
+        self.assertEqual(payload["instructionQuality"]["summary"]["status"], "strong")
+        self.assertGreaterEqual(
+            payload["instructionQuality"]["summary"]["averageScore"], 80
+        )
         self.assertEqual(payload["firstAgentTask"]["status"], "pending_review")
         self.assertEqual(payload["firstAgentTask"]["lifecycle"]["status"], "pending")
         self.assertEqual(
@@ -1364,6 +1370,45 @@ class CliTests(unittest.TestCase):
         )
         self.assertTrue(any("context budget" in item for item in payload["warnings"]))
         self.assertTrue(any("duplicate instruction" in item for item in payload["warnings"]))
+
+    def test_inspect_readiness_reports_instruction_quality_budget(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            (root / "pyproject.toml").write_text(
+                "[project]\nname='demo'\n",
+                encoding="utf-8",
+            )
+            (root / "tests").mkdir()
+            (root / "tests" / "test_demo.py").write_text("", encoding="utf-8")
+            low_signal = "\n".join(
+                f"Project background placeholder paragraph {index} TODO later."
+                for index in range(240)
+            )
+            (root / "AGENTS.md").write_text(
+                "# Existing\n\n" + low_signal + "\n",
+                encoding="utf-8",
+            )
+            stdout = io.StringIO()
+            with contextlib.redirect_stdout(stdout):
+                code = main(["inspect", "--target", str(root), "--readiness", "--json"])
+
+            payload = json.loads(stdout.getvalue())
+
+        self.assertEqual(code, 0)
+        quality = payload["instructionQuality"]
+        self.assertEqual(quality["summary"]["status"], "weak")
+        files = {item["path"]: item for item in quality["files"]}
+        agents = files["AGENTS.md"]
+        self.assertEqual(agents["budgetStatus"], "over_hard")
+        self.assertIn("missing_sections", agents["findings"])
+        self.assertIn("placeholder_or_review_noise", agents["findings"])
+        self.assertEqual(quality["largestFiles"][0]["path"], "AGENTS.md")
+        self.assertTrue(
+            any("instruction quality warning" in item for item in payload["warnings"])
+        )
+        self.assertTrue(
+            any("instruction budget warning" in item for item in payload["warnings"])
+        )
 
     def test_inspect_readiness_reports_governance_inventory(self) -> None:
         with tempfile.TemporaryDirectory() as tmp:

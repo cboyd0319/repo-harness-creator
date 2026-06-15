@@ -30,6 +30,14 @@ generated harness effectiveness, product-boundary enforcement, or verification.
 
 ## Latest Work
 
+- Added warning-mode instruction-quality reporting to readiness and unified
+  report. It records startup instruction section coverage, signal/noise,
+  placeholder noise, word/line/byte budget status, largest instruction
+  surfaces, and count metadata inspired by Persona content-budget patterns.
+- Added local `docs/harness/evidence/first-agent-review.json` so the
+  repo-local harness shape matches generated target harnesses.
+- Trimmed local `AGENTS.md` to 998 words, below the 1,000-word hard budget for
+  primary startup instructions.
 - Added first-agent lifecycle evidence for generated harnesses. New targets get
   `docs/harness/evidence/first-agent-review.json`, and `harnessforge report`
   plus readiness can classify the first deep harness review as pending,
@@ -70,24 +78,24 @@ generated harness effectiveness, product-boundary enforcement, or verification.
 
 ## Verification
 
-Latest lifecycle/spec-alignment verification:
+Latest instruction-quality verification:
 
 - `PYTHONPATH=src:. python3 -m unittest discover -s tests`
 - `PYTHONPATH=src:. python3 -m unittest tests.test_cli tests.test_generate_audit`
-- explicit Agent Skills spec validator for fresh render and RunHaven deployed
-  skill
+- `PYTHONPATH=src:. python3 -m unittest tests.test_github_action`
 - fresh generated-target `harnessforge audit --min-score 85`
 - HarnessForge `harnessforge audit --target . --min-score 85`
-- RunHaven `harnessforge audit --min-score 85`
-- RunHaven manifest JSON validation
 - JSON validation for `feature_list.json` and `docs/harness/manifest.json`
-- HarnessForge and RunHaven `git diff --check`
+- JSON validation for `docs/harness/evidence/first-agent-review.json`
+- HarnessForge `git diff --check`
+- local-path scan
 
-Results: 250 unit tests passed, focused first-agent lifecycle and generated
-tests passed with 137 tests, fresh generated skill spec validation passed,
-RunHaven deployed skill spec validation passed, fresh generated-target audit
-was `100/100`, HarnessForge self-audit was `100/100`, RunHaven audit was
-`100/100`, and diff hygiene passed.
+Results: 251 unit tests passed, focused CLI tests passed with 82 tests, Action
+tests passed with 21 tests, generated/audit tests passed with 56 tests, compile
+passed, fresh generated-target audit was `100/100`, HarnessForge self-audit was
+`100/100`, local `AGENTS.md` is 998 words, JSON validation passed, local-path
+scan found only intentional redaction fixtures and regexes, and diff hygiene
+passed.
 
 Earlier optimization verification also included:
 
@@ -104,7 +112,6 @@ Earlier optimization verification also included:
 
 Continue accepted pre-release backlog before release prep:
 
-- instruction-quality and signal-to-noise reporting
 - compact repo map and SBOM-aware detection or adapter design
 - Action summary polish
 - `release-check`

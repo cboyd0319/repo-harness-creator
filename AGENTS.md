@@ -87,8 +87,7 @@ real cost.
   exact path and durable evidence records why.
 - If a repo contains intentionally vulnerable training, demo, or fixture code,
   preserve it unless the user explicitly requests remediation for that scope.
-- Follow `CONTRIBUTING.md` for submitted work. Use signed-off commits for
-  commits intended for review.
+- Follow `CONTRIBUTING.md`. Use signed-off commits for review commits.
 - Keep this file as a map. Move long-running policy, research, and operational
   detail into `docs/harness/`.
 
