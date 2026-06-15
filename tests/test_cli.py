@@ -111,6 +111,8 @@ class CliTests(unittest.TestCase):
             "runnableChecks",
             "generatedDrift",
             "reviewRequired",
+            "workflowInventory",
+            "workItemInventory",
         ):
             self.assertIn(key, payload)
         self.assertIn("python -m unittest discover", payload["runnableChecks"])
@@ -268,6 +270,92 @@ class CliTests(unittest.TestCase):
         )
         self.assertTrue(any("workflow definitions" in item for item in payload["warnings"]))
         self.assertTrue(any("source-of-truth specs" in item for item in payload["reviewRequired"]))
+
+    def test_inspect_readiness_reports_workflow_and_work_item_inventory(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            (root / "pyproject.toml").write_text(
+                "[project]\nname='demo'\n",
+                encoding="utf-8",
+            )
+            (root / "tests").mkdir()
+            (root / "tests" / "test_demo.py").write_text("", encoding="utf-8")
+            (root / "AGENTS.md").write_text(
+                "# Existing\n\nFollow AGENTS only.\n",
+                encoding="utf-8",
+            )
+            (root / "aspec" / "workflows").mkdir(parents=True)
+            (root / "aspec" / "work-items").mkdir()
+            (root / "aspec" / "workflows" / "repair.toml").write_text(
+                'name = "repair"\n'
+                'setup = ["make setup"]\n'
+                'teardown = ["make clean"]\n'
+                'remediation = ["python scripts/fix.py"]\n'
+                'push = true\n'
+                'credentials = ["GH_TOKEN"]\n'
+                "[pull_request]\n"
+                "enabled = true\n"
+                "[ci]\n"
+                "poll = true\n",
+                encoding="utf-8",
+            )
+            (root / "workflows").mkdir()
+            (root / "workflows" / "release.yml").write_text(
+                "name: release\n"
+                "on:\n"
+                "  push:\n"
+                "  pull_request:\n"
+                "jobs:\n"
+                "  release:\n"
+                "    steps:\n"
+                "      - run: python scripts/remediate.py\n"
+                "        env:\n"
+                "          TOKEN: ${{ secrets.GITHUB_TOKEN }}\n",
+                encoding="utf-8",
+            )
+            (root / "aspec" / "work-items" / "0000-template.md").write_text(
+                "# Work Item Template\n",
+                encoding="utf-8",
+            )
+            (root / "aspec" / "work-items" / "1001-repair.md").write_text(
+                "# Repair Work Item\n",
+                encoding="utf-8",
+            )
+            stdout = io.StringIO()
+            with contextlib.redirect_stdout(stdout):
+                code = main(["inspect", "--target", str(root), "--readiness", "--json"])
+
+            payload = json.loads(stdout.getvalue())
+
+        self.assertEqual(code, 0)
+        workflows = {item["path"]: item for item in payload["workflowInventory"]}
+        repair = workflows["aspec/workflows/repair.toml"]
+        self.assertEqual(repair["format"], "toml")
+        for surface in (
+            "setup",
+            "teardown",
+            "remediation",
+            "push",
+            "pull-request",
+            "ci-polling",
+            "credentials",
+        ):
+            self.assertIn(surface, repair["surfaces"])
+        release = workflows["workflows/release.yml"]
+        self.assertEqual(release["format"], "yaml")
+        self.assertIn("pull-request", release["surfaces"])
+        self.assertIn("credentials", release["surfaces"])
+        work_items = {item["path"]: item for item in payload["workItemInventory"]}
+        self.assertEqual(
+            work_items["aspec/work-items/0000-template.md"]["kind"],
+            "template",
+        )
+        self.assertEqual(
+            work_items["aspec/work-items/1001-repair.md"]["kind"],
+            "work-item",
+        )
+        self.assertTrue(any("workflow inventory" in item for item in payload["warnings"]))
+        self.assertTrue(any("credential" in item for item in payload["reviewRequired"]))
 
     def test_inspect_readiness_reports_generated_drift(self) -> None:
         with tempfile.TemporaryDirectory() as tmp:

@@ -188,6 +188,8 @@ Readiness reports:
 - `runnableChecks`
 - `generatedDrift`
 - `reviewRequired`
+- `workflowInventory`
+- `workItemInventory`
 
 `sync --check` wraps the same readiness report in a CI-friendly command with
 stable exit codes:
@@ -202,6 +204,12 @@ For spec-driven repos, readiness also reports static quality gaps such as
 unresolved clarification markers, incomplete requirement checklists, missing
 plan/task artifacts, weak FR/SC traceability, tasks without explicit file
 paths, and workflow surfaces that need review.
+
+Workflow inventory is advisory. It detects `.github/workflows/`,
+`aspec/workflows/`, and `workflows/` TOML/YAML files, then reports visible
+setup, teardown, remediation, push, pull-request, CI polling, and credential
+surfaces. Work-item inventory reports templates and concrete work-item files
+without adopting ASPEC or AWMAN formats as generated defaults.
 
 ## Planned Verify JSON Contract
 

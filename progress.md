@@ -329,10 +329,15 @@ maintenance loop.
   schema, and example payload under `docs/harness/`. The contract separates
   project verification reporting from harness scoring and keeps default mode
   plan-only with no target command execution.
+- Added read-only workflow and work-item inventory to readiness. The inventory
+  reports `.github/workflows/`, `aspec/workflows/`, and `workflows/` TOML/YAML
+  files, visible setup/teardown/remediation/push/pull-request/CI-polling/
+  credential surfaces, work-item templates, and concrete work-item files
+  without generating or adopting ASPEC/AWMAN workflow formats.
 
 ## Recommended Next Step
 
-Continue with the P1 backlog, starting with workflow and work-item inventory.
+Continue with the next P1 backlog item: context-budget and duplication audit.
 Push local commits only at an explicit batch/release boundary or user request.
 Remaining product decisions before a first public Action release: whether to
 add component-directed monorepo verification commands, path/package exclusions
@@ -365,6 +370,15 @@ blocking.
   `PYTHONPATH=src:. python3 -m harnessforge audit --target . --min-score 85`
   passed with self-audit `100/100`, and `git diff --check` passed after the
   `verify --json` contract slice.
+- `PYTHONPATH=src:. python3 -m unittest discover -s tests` passed with
+  155 tests, `PYTHONPATH=src:. python3 -m compileall src tests scripts`
+  passed, `PYTHONPATH=src:. python3 scripts/check_pins.py --root .` passed,
+  `PYTHONPATH=src:. python3 -m harnessforge audit --target . --min-score 85`
+  passed with self-audit `100/100`, and `PYTHONPATH=src:. python3 -m
+  harnessforge sync --check --target . --json` returned expected warning exit
+  code `1` after adding workflow/work-item inventory. The warning now includes
+  this repo's two GitHub workflow definitions, plus existing local instruction
+  review items; no blockers or generated drift were reported.
 - `PYTHONPATH=src:. python3 -m unittest discover -s tests` passed with
   148 tests, and `PYTHONPATH=src:. python3 -m compileall src tests scripts`
   passed after adding source-of-truth spec sync detection.

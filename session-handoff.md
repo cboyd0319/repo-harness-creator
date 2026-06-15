@@ -67,14 +67,15 @@ and the required AGENTS instruction format.
   templates, and repo workflow definitions. Implemented the third P0 item:
   read-only `sync --check`, which wraps readiness, generated drift,
   source-of-truth spec routing, and review-required surfaces with exit codes
-  `0` ready, `1` warning, and `2` blocked. Remaining P0 candidate: a
-  design-only `verify --json` contract. P1 candidates:
-  workflow/work-item inventory, context-budget and duplication audit,
-  permission/governance inventory, and guided first-run UX. P2 candidates:
-  opt-in blueprints, real-agent evals, source-verified platform adapters, and
-  sandbox/container readiness. Rejected defaults remain large skill/memory
-  trees, platform permission config, LLM-assisted init, autonomous push/PR
-  workflows, and copied ASPEC/AWMAN/Maki templates.
+  `0` ready, `1` warning, and `2` blocked. Implemented the final P0 item:
+  design-only `verify --json` contract docs, schema, example, and fixture
+  tests. Implemented the first P1 item: read-only workflow and work-item
+  inventory in readiness. Remaining P1 candidates: context-budget and
+  duplication audit, permission/governance inventory, and guided first-run UX.
+  P2 candidates: opt-in blueprints, real-agent evals, source-verified platform
+  adapters, and sandbox/container readiness. Rejected defaults remain large
+  skill/memory trees, platform permission config, LLM-assisted init,
+  autonomous push/PR workflows, and copied ASPEC/AWMAN/Maki templates.
 - Current HarnessForge-adjacent research and UX batch mined local `awman`,
   `aspec`, and `maki`, plus public HarnessForge-like and harness-engineering
   sources. Accepted generic improvements: structured project spec detection,
@@ -85,10 +86,11 @@ and the required AGENTS instruction format.
   repo-local control planes, but it does not generate sibling-repo
   instructions, personal tool mandates, large skill trees, blueprints, MCP
   setup, or extra agent adapters by default. Current verification passes full
-  unit discovery with 154 tests, compile, pin check, self-audit `100/100`,
+  unit discovery with 155 tests, compile, pin check, self-audit `100/100`,
   diff hygiene, a read-only readiness smoke, and `sync --check` smoke against
   this repo. Readiness and sync check are warning-only because existing local
-  instruction files need review; there are no readiness blockers.
+  instruction files and the two repo-local GitHub workflow definitions need
+  review; there are no readiness blockers.
 - Current SDD research supplement reviewed the GitHub Spec Kit article, the
   supplied local Spec Kit checkout, Fowler's SDD tools article, and
   specdriven.ai. Accepted generic ideas: detect `.specify/`, active feature
@@ -114,6 +116,12 @@ and the required AGENTS instruction format.
   `docs/harness/verify-json-contract.md`, `verify-json.schema.json`, and
   `verify-json-example.json`, plus contract fixture tests. It does not add a
   CLI command or command execution semantics.
+- Current workflow/work-item inventory work is read-only and advisory. It adds
+  `src/harnessforge/workflow_inventory.py`, readiness JSON fields
+  `workflowInventory` and `workItemInventory`, and review-required warnings for
+  setup, teardown, remediation, push, pull-request, CI-polling, and credential
+  surfaces. It detects existing repo surfaces; it does not generate ASPEC,
+  AWMAN, workflow engines, or automation defaults.
 - Current expanded reference-repo quality batch ran shadow generation and
   content review against agent-governance-toolkit, apple-container,
   Bluepeak-AI, JobSentinel, nhl-betting-analytics, persona, RunHaven,
@@ -443,7 +451,7 @@ and the required AGENTS instruction format.
 
 ## Next Session
 
-Continue with the P1 backlog, starting with workflow and work-item inventory.
+Continue with the next P1 backlog item: context-budget and duplication audit.
 Push local commits only at an explicit batch/release boundary or user request.
 Remaining product decisions before public release: component-directed monorepo
 verification commands, path/package exclusions for intentionally vulnerable

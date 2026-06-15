@@ -55,6 +55,10 @@ The planned `verify --json` contract is documented in
 `verify-json-contract.md`, with schema and example artifacts beside it. The
 contract is plan-only until explicit command execution is implemented.
 
+Readiness also includes advisory workflow and work-item inventory. Treat
+detected setup, teardown, remediation, push, pull-request, CI polling, and
+credential surfaces as review inputs before agent automation relies on them.
+
 The GitHub Action in `action.yml` exposes the same behavior to other
 repositories. Keep it wired to the Python library instead of duplicating logic
 in shell.

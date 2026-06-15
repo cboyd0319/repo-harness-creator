@@ -14,6 +14,13 @@ from .spec_system import (
     instruction_routes_to_specs,
 )
 from .update import build_drift_report
+from .workflow_inventory import (
+    WorkItem,
+    WorkflowItem,
+    analyze_workflow_inventory,
+    work_item_to_dict,
+    workflow_to_dict,
+)
 
 
 INSTRUCTION_FILES = (
@@ -54,6 +61,8 @@ class ReadinessReport:
     runnable_checks: tuple[str, ...]
     generated_drift: tuple[DriftResult, ...]
     review_required: tuple[str, ...]
+    workflow_inventory: tuple[WorkflowItem, ...]
+    work_item_inventory: tuple[WorkItem, ...]
 
 
 def inspect_readiness(profile: ProjectProfile) -> ReadinessReport:
@@ -61,6 +70,7 @@ def inspect_readiness(profile: ProjectProfile) -> ReadinessReport:
     drift = build_drift_report(profile.root)
     ownership = _generated_ownership(profile.root)
     spec_report = analyze_spec_system(profile.root, profile.files)
+    inventory = analyze_workflow_inventory(profile.root, profile.files)
     runnable_checks = tuple(
         command
         for command in profile.verification_commands
@@ -103,10 +113,15 @@ def inspect_readiness(profile: ProjectProfile) -> ReadinessReport:
             "source of truth."
         )
     warnings.extend(spec_report.quality_warnings)
+    warnings.extend(inventory.warnings)
     if source_of_truth:
         next_actions.append(
             "Review detected source-of-truth docs before enhancing or generating "
             "instruction files."
+        )
+    if inventory.workflows or inventory.work_items:
+        next_actions.append(
+            "Review workflow and work-item inventory before agent automation relies on it."
         )
     instruction_text = _instruction_text(profile.root, file_set)
     if instruction_text and not instruction_routes_to_specs(instruction_text, spec_report):
@@ -115,6 +130,7 @@ def inspect_readiness(profile: ProjectProfile) -> ReadinessReport:
         )
 
     review_required.extend(_governance_review_items(file_set))
+    review_required.extend(inventory.review_required)
     if any(item in file_set for item in AGENT_SETUP_WORKFLOWS):
         warnings.append(
             "GitHub agent setup workflow detected; review runner, permissions, "
@@ -144,6 +160,8 @@ def inspect_readiness(profile: ProjectProfile) -> ReadinessReport:
         runnable_checks=runnable_checks,
         generated_drift=drift_items,
         review_required=tuple(_dedupe(review_required)),
+        workflow_inventory=inventory.workflows,
+        work_item_inventory=inventory.work_items,
     )
 
 
@@ -158,6 +176,12 @@ def readiness_to_dict(report: ReadinessReport) -> dict[str, Any]:
         "runnableChecks": list(report.runnable_checks),
         "generatedDrift": [_drift_to_dict(item) for item in report.generated_drift],
         "reviewRequired": list(report.review_required),
+        "workflowInventory": [
+            workflow_to_dict(item) for item in report.workflow_inventory
+        ],
+        "workItemInventory": [
+            work_item_to_dict(item) for item in report.work_item_inventory
+        ],
     }
 
 
@@ -176,6 +200,22 @@ def format_readiness(report: ReadinessReport) -> str:
         ),
     )
     _append_section(lines, "Review required", report.review_required)
+    _append_section(
+        lines,
+        "Workflow inventory",
+        tuple(
+            (
+                f"{item.path}: {item.kind}, {item.format}, "
+                f"surfaces={', '.join(item.surfaces) or 'none detected'}"
+            )
+            for item in report.workflow_inventory
+        ),
+    )
+    _append_section(
+        lines,
+        "Work-item inventory",
+        tuple(f"{item.path}: {item.kind}" for item in report.work_item_inventory),
+    )
     _append_section(lines, "Next actions", report.next_actions)
     return "\n".join(lines).rstrip()
 

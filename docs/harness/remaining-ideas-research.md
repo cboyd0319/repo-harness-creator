@@ -375,13 +375,13 @@ Sources:
 
 ### P1: Important After P0
 
-5. Add workflow and work-item inventory.
+5. Implemented: add workflow and work-item inventory.
    - Detect `aspec/workflows`, workflow TOML/YAML files, work-item directories,
      and templates.
    - Report setup, teardown, remediation, push, PR, CI-polling, and credential
      surfaces when parseable.
-   - Initial static detection and readiness warnings exist; deeper parsing and
-     inventory output remain future work.
+   - Readiness JSON now reports `workflowInventory` and `workItemInventory`
+     with advisory review warnings and review-required items.
 
 6. Add context-budget and duplication audit.
    - Report large instruction files, duplicated router content, and generated
@@ -443,6 +443,6 @@ HarnessForge generator behavior:
 
 ## Suggested Next Step
 
-Move to the P1 backlog, starting with workflow and work-item inventory. That
+Move to the next P1 backlog item: context-budget and duplication audit. That
 keeps improving user experience without expanding the generator's default write
 surface.
