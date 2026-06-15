@@ -80,7 +80,9 @@ with scope, verification, and rollback.
 12. Run `python scripts/refresh_research.py --root . --check` for research
    source ledger or source-doc changes.
 13. Use `clean-state-checklist.md` before ending non-trivial sessions.
-14. Update state and handoff files when durable facts change.
+14. Update only the state file that owns the changed fact; do not update
+    `feature_list.json`, `progress.md`, `session-handoff.md`, and the evidence
+    log as a routine bundle.
 
 ## Assessment And Updates
 

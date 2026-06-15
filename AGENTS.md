@@ -132,9 +132,15 @@ Rules:
 - Definition Of Done: behavior is implemented, focused verification ran,
   generated files and docs match the CLI, self-audit stays above threshold, and
   skipped OS-specific checks are recorded with risk.
-- End of Session: update `progress.md` and `session-handoff.md` when work
-  changes durable state, blockers, verification evidence, or the next step. Use
-  `docs/harness/state/clean-state-checklist.md` before ending non-trivial work.
+- State file discipline: do not update `feature_list.json`, `progress.md`,
+  `session-handoff.md`, and the evidence log as a routine bundle.
+  `feature_list.json` changes only for feature state or major durable product
+  evidence. `progress.md` changes only when the active objective, verified
+  state, or next step materially changes. `session-handoff.md` changes only at
+  a pause, handoff, context reset, or major restart boundary.
+  `docs/harness/evidence/evidence-log.md` changes only for meaningful
+  verification evidence. Use `docs/harness/state/clean-state-checklist.md`
+  before ending non-trivial work.
 
 ## Security considerations
 

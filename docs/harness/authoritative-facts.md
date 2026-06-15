@@ -36,7 +36,7 @@ surfaces listed in the routing table when the change affects them.
 | Generated target content | `src/harnessforge/templates/` and generator tests | Update public docs only when user-visible generated behavior changes. |
 | Audit scoring and report interpretation | `src/harnessforge/audit.py`, `src/harnessforge/report.py`, and tests | Keep scoring caveats in `docs/capabilities.md` and `docs/usage.md` short. |
 | Accepted roadmap and backlog boundary | `docs/roadmap.md` | Reference from state files instead of duplicating full lists. |
-| Current work state and evidence | `feature_list.json`, `progress.md`, `session-handoff.md`, `docs/harness/evidence/evidence-log.md` | Keep entries compact and avoid raw logs. |
+| Current work state and evidence | `feature_list.json`, `progress.md`, `session-handoff.md`, `docs/harness/evidence/evidence-log.md` | Use the specific file that owns the fact. Do not update all four as a routine bundle. |
 | Verification commands and recurring gates | `docs/harness/feedback/verification-matrix.md`, `docs/harness/feedback/sensor-registry.md`, root entrypoints | Update only when a command, owner, or gate changes. |
 | Research source allowlist and review evidence | `docs/harness/research/research-sources.json`, `docs/harness/research/research-sources.lock.json`, `docs/harness/research/sources.md` | Do not paste source catalogs into other docs. |
 
@@ -44,7 +44,7 @@ surfaces listed in the routing table when the change affects them.
 
 | Change Type | Required Docs/State Updates | Usually Not Needed |
 | --- | --- | --- |
-| Small internal code fix with no CLI, generated output, Action, scoring, platform, security, or release impact | `progress.md` or no durable doc update if already covered by the active state | README, public docs, manifest snippets, roadmap |
+| Small internal code fix with no CLI, generated output, Action, scoring, platform, security, or release impact | No durable doc update unless the active objective or next step changes | README, public docs, manifest snippets, roadmap, state bundle |
 | CLI command, flag, JSON, or exit-code change | `docs/usage.md`, command tests, `docs/harness/manifest.json` only if required snippets change | `docs/capabilities.md` unless capability changes |
 | Generated target artifact change | Template, generator tests, `docs/capabilities.md` generated-file list if user-visible, `docs/harness/manifest.json` for local snippet coverage | Broad README rewrite |
 | Product boundary change | `docs/harness/boundaries/component-inventory.md`, focused tests, relevant public doc | Repeating the full boundary in every doc |
@@ -53,7 +53,22 @@ surfaces listed in the routing table when the change affects them.
 | Audit/report scoring change | `docs/capabilities.md` or `docs/usage.md` if user-visible, scoring/report tests, `docs/harness/manifest.json` only for snippet contract | README unless positioning changes |
 | Platform, dependency, workflow, or pin change | `docs/harness/boundaries/dependency-change-policy.md`, `pins.toml`, `scripts/check_pins.py`, relevant workflow/docs | Roadmap unless it changes accepted scope |
 | Research source or source policy change | `docs/harness/research/sources.md`, `docs/harness/research/research-sources.json`, lock file, research check | CLI docs unless command behavior changes |
-| Release-prep evidence change | `docs/harness/release/release-controls.md`, `docs/harness/evidence/evidence-log.md`, `progress.md`, `session-handoff.md` | Generated templates unless release guidance changes |
+| Release-prep evidence change | `docs/harness/release/release-controls.md` when the release process changes, `docs/harness/evidence/evidence-log.md` when evidence must be preserved | Generated templates unless release guidance changes; state files unless stopping, handing off, or changing the objective |
+
+## State File Write Thresholds
+
+Do not update state files as a bundle.
+
+- `feature_list.json`: update only for feature status transitions, active
+  objective changes, or major product evidence that must survive beyond the
+  current session.
+- `progress.md`: update only when the active objective, current verified state,
+  blockers, or next recommended step materially changes.
+- `session-handoff.md`: update only before a pause, context reset, ownership
+  handoff, or when restart instructions materially change.
+- `docs/harness/evidence/evidence-log.md`: update only after meaningful
+  verification, release evidence, audit evidence, or source review that should
+  be preserved. Do not log every focused test rerun.
 
 ## Fan-Out Budgets
 
