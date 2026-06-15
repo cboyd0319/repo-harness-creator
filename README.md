@@ -470,7 +470,8 @@ jobs:
 
 For production workflows, pin this Action and third-party Actions to reviewed
 full-length commit SHAs. See [docs/action.md](docs/action.md) for every Action
-input, output, and command mode.
+input, output, and command mode, including `command: verify` with read-only
+plan mode by default and explicit `verify-run: "true"` execution.
 
 ## Command Reference
 

@@ -93,6 +93,28 @@ Boundary:
 - Passing required checks exit `0`.
 - The JSON target root remains `null` for portable artifacts.
 
+## Implemented Action Verification Bridge
+
+The composite GitHub Action now exposes verification evidence without changing
+the default command-execution boundary.
+
+Current Action inputs:
+
+- `command: verify`
+- `verify-run: "false"` by default
+- `verify-command` as newline-separated repo-owned commands
+- `verify-timeout-seconds`
+- `json-report` for the target-relative verify JSON payload
+
+Boundary:
+
+- Action verify plan mode is read-only by default.
+- Action verify run mode requires `verify-run: "true"`.
+- Failed or timed-out run checks return exit code `1`.
+- Blocked run checks return exit code `2`.
+- `html-report` remains unsupported for verify reports.
+- The Action writes `verify-verdict` as an output for CI routing.
+
 ## Local Reference Findings
 
 ### AWMAN

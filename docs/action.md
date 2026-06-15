@@ -12,6 +12,10 @@ state files, or release process are present in the caller repository.
 
 - `audit` reads the declared `target`, writes only requested reports inside
   that target, and can run with `contents: read`.
+- `verify` reads the declared `target` and defaults to read-only plan mode.
+  It executes target repository checks only when `verify-run: "true"` is
+  explicit. Verify plan mode can run with `contents: read`; verify run mode
+  inherits the permissions and side effects of the repo-owned commands it runs.
 - `init` and applied `update` may write generated harness files inside
   `target`; callers should grant write permissions only when they intend to
   commit or open a pull request.
@@ -48,6 +52,36 @@ jobs:
           html-report: harness-report.html
           json-report: harness-report.json
 ```
+
+## Verify Project Checks
+
+Plan verification checks without running target commands:
+
+```yaml
+- uses: cboyd0319/harnessforge@<reviewed-commit-sha> # v1
+  with:
+    command: verify
+    json-report: harness-verify.json
+```
+
+Run verification checks explicitly:
+
+```yaml
+- uses: cboyd0319/harnessforge@<reviewed-commit-sha> # v1
+  with:
+    command: verify
+    verify-run: "true"
+    verify-timeout-seconds: "120"
+    verify-command: |
+      python -m unittest discover
+      python scripts/check_pins.py --root .
+    json-report: harness-verify.json
+```
+
+`verify-command` is newline-separated. Each line is one repo-owned command.
+Run mode uses argument lists rather than a shell, so shell control syntax such
+as `&&`, `||`, pipes, and redirection is rejected. If `verify-command` is
+empty, HarnessForge uses detected project verification commands.
 
 ## Plan Safe Corrections
 
@@ -91,7 +125,7 @@ and not behavior embedded in the composite Action runtime.
 
 | Input | Default | Purpose |
 | --- | --- | --- |
-| `command` | `audit` | `audit`, `init`, `update`, or `doctor` |
+| `command` | `audit` | `audit`, `init`, `update`, `verify`, or `doctor` |
 | `target` | `.` | Repository path to inspect or modify |
 | `python-version` | `3.13.14` | Python version passed to `actions/setup-python` |
 | `min-score` | `85` | Minimum passing structural audit score from 0 to 100 |
@@ -103,8 +137,11 @@ and not behavior embedded in the composite Action runtime.
 | `platform-contract` | `cross-platform` | Generated harness platform contract: `cross-platform`, `macos-only`, `windows-only`, or `linux-only` |
 | `with-ci-workflow` | `false` | Include optional manual HarnessForge CI workflow scaffolding during `init` or applied `update` |
 | `with-self-heal-workflow` | `false` | Include optional manual self-heal pull-request workflow scaffolding during `init` or applied `update` |
+| `verify-run` | `false` | Execute checks when `command` is `verify`; default verify mode is read-only plan mode |
+| `verify-command` | empty | Optional newline-separated repo-owned verification commands for `command: verify` |
+| `verify-timeout-seconds` | `300` | Per-command timeout when `command` is `verify` and `verify-run` is `true` |
 | `html-report` | empty | Optional target-relative HTML report path; POSIX and Windows absolute/rooted paths are rejected |
-| `json-report` | empty | Optional target-relative JSON report path; POSIX and Windows absolute/rooted paths are rejected |
+| `json-report` | empty | Optional target-relative audit or verify JSON report path; POSIX and Windows absolute/rooted paths are rejected |
 
 Report paths must be relative and stay inside `target`. Absolute paths and
 traversal outside the target repository are rejected.
@@ -118,6 +155,7 @@ traversal outside the target repository are rejected.
 | `report-json` | Target-relative JSON report path when requested |
 | `report-html` | Target-relative HTML report path when requested |
 | `changed-files` | Number of files written or enhanced by `init` or applied `update` |
+| `verify-verdict` | Verify verdict when `command` is `verify` |
 
 Report path outputs use forward slashes on every runner so workflow consumers
 can handle them consistently across Windows and POSIX jobs.

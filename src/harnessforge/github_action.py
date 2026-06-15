@@ -4,16 +4,24 @@ import json
 import os
 import sys
 import uuid
-from pathlib import Path
 from collections.abc import Mapping
+from pathlib import Path
 from typing import Any
 
 from .audit import audit_target, audit_to_dict, format_audit, render_html_report
+from .detect import detect_project
 from .doctor import doctor_report, format_doctor
 from .generate import create_harness
 from .paths import is_absolute_path_text, is_inside_root, path_from_relative_text
 from .redact import redact_local_paths
 from .update import plan_or_apply_update
+from .verify import (
+    DEFAULT_TIMEOUT_SECONDS,
+    build_verify_plan,
+    format_verify_plan,
+    run_verify_checks,
+    verify_report_to_dict,
+)
 
 
 def main() -> int:
@@ -49,6 +57,7 @@ def run_from_env(env: Mapping[str, str]) -> int:
                 "report-json": "",
                 "report-html": "",
                 "changed-files": "0",
+                "verify-verdict": "",
             }
         )
         return 0 if report["ok"] else 1
@@ -93,8 +102,10 @@ def run_from_env(env: Mapping[str, str]) -> int:
             print("No files changed. Set apply=true to create safe missing artifacts.")
     elif command == "audit":
         result = audit_target(target)
+    elif command == "verify":
+        return _run_verify_command(env, target, json_report, html_report)
     else:
-        raise ValueError("command must be one of: audit, init, update, doctor")
+        raise ValueError("command must be one of: audit, init, update, verify, doctor")
 
     json_path = _write_json_report(json_report, target, result)
     html_path = _write_html_report(html_report, target, result)
@@ -109,6 +120,7 @@ def run_from_env(env: Mapping[str, str]) -> int:
             "report-json": json_path,
             "report-html": html_path,
             "changed-files": str(changed_files),
+            "verify-verdict": "",
         }
     )
     if fail_on_score and result.overall < min_score:
@@ -116,12 +128,66 @@ def run_from_env(env: Mapping[str, str]) -> int:
     return 0
 
 
+def _run_verify_command(
+    env: Mapping[str, str],
+    target: Path,
+    json_report: str,
+    html_report: str,
+) -> int:
+    if html_report:
+        raise ValueError("html-report is not supported for command=verify")
+    commands = _verify_commands_input(env.get("INPUT_VERIFY_COMMAND", ""))
+    timeout_seconds = _float_input(
+        env.get("INPUT_VERIFY_TIMEOUT_SECONDS", str(DEFAULT_TIMEOUT_SECONDS)),
+        "verify-timeout-seconds",
+    )
+    if timeout_seconds <= 0:
+        raise ValueError("verify-timeout-seconds must be greater than 0")
+    profile = detect_project(target, explicit_commands=commands)
+    if _bool_input(env.get("INPUT_VERIFY_RUN", "false")):
+        report = run_verify_checks(
+            profile,
+            explicit_commands=commands,
+            timeout_seconds=timeout_seconds,
+        )
+    else:
+        report = build_verify_plan(profile, explicit_commands=commands)
+
+    payload = verify_report_to_dict(report)
+    json_path = _write_json_payload(json_report, target, payload)
+    text_report = format_verify_plan(report)
+    print(text_report)
+    _summary(env, "HarnessForge Verify", _verify_summary_markdown(report))
+    _output(
+        env,
+        {
+            "overall-score": "",
+            "bottleneck": "",
+            "report-json": json_path,
+            "report-html": "",
+            "changed-files": "0",
+            "verify-verdict": report.verdict,
+        },
+    )
+    if report.mode != "run":
+        return 0
+    if report.verdict == "passed":
+        return 0
+    if report.verdict == "failed":
+        return 1
+    return 2
+
+
 def _write_json_report(path_text: str, target: Path, result: Any) -> str:
+    return _write_json_payload(path_text, target, audit_to_dict(result))
+
+
+def _write_json_payload(path_text: str, target: Path, payload: Any) -> str:
     path = _report_path(path_text, target)
     if path is None:
         return ""
     path.parent.mkdir(parents=True, exist_ok=True)
-    path.write_text(f"{json.dumps(audit_to_dict(result), indent=2)}\n", encoding="utf-8")
+    path.write_text(f"{json.dumps(payload, indent=2)}\n", encoding="utf-8")
     return _relative_to_target(path, target)
 
 
@@ -181,6 +247,24 @@ def _summary_markdown(result: Any, changed_files: int) -> str:
     return "\n".join(lines)
 
 
+def _verify_summary_markdown(report: Any) -> str:
+    summary = verify_report_to_dict(report)["summary"]
+    lines = [
+        f"- Mode: `{report.mode}`",
+        f"- Verdict: `{report.verdict}`",
+        f"- Commands executed: `{str(report.commands_executed).lower()}`",
+        "",
+        "| Status | Count |",
+        "| --- | ---: |",
+    ]
+    for key in ("planned", "blocked", "passed", "failed", "timedOut", "errors"):
+        lines.append(f"| {key} | {summary[key]} |")
+    if report.blocked_reasons:
+        lines.extend(["", "Blocked reasons:"])
+        lines.extend(f"- {reason}" for reason in report.blocked_reasons)
+    return "\n".join(lines)
+
+
 def _summary(env: Mapping[str, str], title: str, body: str) -> None:
     path_text = env.get("GITHUB_STEP_SUMMARY")
     if not path_text:
@@ -225,6 +309,19 @@ def _score_input(value: str | None, name: str) -> int:
     if score < 0 or score > 100:
         raise ValueError(f"{name} must be between 0 and 100")
     return score
+
+
+def _float_input(value: str | None, name: str) -> float:
+    try:
+        return float(str(value or "").strip())
+    except ValueError as exc:
+        raise ValueError(f"{name} must be a number") from exc
+
+
+def _verify_commands_input(value: str | None) -> tuple[str, ...]:
+    if not value:
+        return ()
+    return tuple(line.strip() for line in value.splitlines() if line.strip())
 
 
 if __name__ == "__main__":

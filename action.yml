@@ -8,7 +8,7 @@ branding:
 
 inputs:
   command:
-    description: "Command to run: audit, init, update, or doctor."
+    description: "Command to run: audit, init, update, verify, or doctor."
     required: false
     default: audit
   target:
@@ -55,6 +55,18 @@ inputs:
     description: Also scaffold the optional manual self-heal pull-request workflow for init or update.
     required: false
     default: "false"
+  verify-run:
+    description: Execute verification checks when command is verify. Default verify mode is read-only plan mode.
+    required: false
+    default: "false"
+  verify-command:
+    description: Optional newline-separated repo-owned verification commands for command verify.
+    required: false
+    default: ""
+  verify-timeout-seconds:
+    description: Per-command timeout in seconds when command is verify and verify-run is true.
+    required: false
+    default: "300"
   html-report:
     description: Optional target-relative path for an HTML audit report.
     required: false
@@ -80,6 +92,9 @@ outputs:
   changed-files:
     description: Number of files written by init or update.
     value: ${{ steps.harnessforge.outputs.changed-files }}
+  verify-verdict:
+    description: Verify verdict when command is verify.
+    value: ${{ steps.harnessforge.outputs.verify-verdict }}
 
 runs:
   using: composite
@@ -106,6 +121,9 @@ runs:
         INPUT_PLATFORM_CONTRACT: ${{ inputs.platform-contract }}
         INPUT_WITH_CI_WORKFLOW: ${{ inputs.with-ci-workflow }}
         INPUT_WITH_SELF_HEAL_WORKFLOW: ${{ inputs.with-self-heal-workflow }}
+        INPUT_VERIFY_RUN: ${{ inputs.verify-run }}
+        INPUT_VERIFY_COMMAND: ${{ inputs.verify-command }}
+        INPUT_VERIFY_TIMEOUT_SECONDS: ${{ inputs.verify-timeout-seconds }}
         INPUT_HTML_REPORT: ${{ inputs.html-report }}
         INPUT_JSON_REPORT: ${{ inputs.json-report }}
       run: python -m harnessforge.github_action

@@ -2,6 +2,8 @@ from __future__ import annotations
 
 import contextlib
 import io
+import json
+import sys
 import tempfile
 import unittest
 from pathlib import Path
@@ -26,6 +28,10 @@ def _parse_github_output(text: str) -> dict[str, str]:
             key, value = line.split("=", 1)
             values[key] = value
     return values
+
+
+def _python_command(script: str) -> str:
+    return f"{json.dumps(sys.executable)} -c {json.dumps(script)}"
 
 
 class GitHubActionTests(unittest.TestCase):
@@ -92,6 +98,124 @@ class GitHubActionTests(unittest.TestCase):
             self.assertTrue((root / "report.html").exists())
             self.assertTrue((root / "reports" / "report.json").exists())
             self.assertIn("HarnessForge Audit", summary.read_text(encoding="utf-8"))
+
+    def test_action_verify_plan_writes_report_without_running(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            marker = root / "ran.txt"
+            output = root / "outputs.txt"
+            summary = root / "summary.md"
+            command = _python_command(
+                "from pathlib import Path; Path('ran.txt').write_text('ran')"
+            )
+            env = {
+                "INPUT_COMMAND": "verify",
+                "INPUT_TARGET": str(root),
+                "INPUT_VERIFY_COMMAND": command,
+                "INPUT_JSON_REPORT": "reports/verify.json",
+                "GITHUB_OUTPUT": str(output),
+                "GITHUB_STEP_SUMMARY": str(summary),
+            }
+
+            with contextlib.redirect_stdout(io.StringIO()):
+                code = run_from_env(env)
+
+            payload = json.loads(
+                (root / "reports" / "verify.json").read_text(encoding="utf-8")
+            )
+            outputs = _parse_github_output(output.read_text(encoding="utf-8"))
+            summary_text = summary.read_text(encoding="utf-8")
+
+        self.assertEqual(code, 0)
+        self.assertFalse(marker.exists())
+        self.assertEqual(payload["mode"], "plan")
+        self.assertFalse(payload["execution"]["commandsExecuted"])
+        self.assertEqual(outputs["report-json"], "reports/verify.json")
+        self.assertEqual(outputs["verify-verdict"], "planned")
+        self.assertEqual(outputs["changed-files"], "0")
+        self.assertIn("HarnessForge Verify", summary_text)
+
+    def test_action_verify_run_executes_when_explicit(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            marker = root / "ran.txt"
+            output = root / "outputs.txt"
+            command = _python_command(
+                "from pathlib import Path; "
+                "Path('ran.txt').write_text('ran', encoding='utf-8'); "
+                "print('action verify ok')"
+            )
+            env = {
+                "INPUT_COMMAND": "verify",
+                "INPUT_TARGET": str(root),
+                "INPUT_VERIFY_RUN": "true",
+                "INPUT_VERIFY_COMMAND": command,
+                "INPUT_JSON_REPORT": "verify.json",
+                "GITHUB_OUTPUT": str(output),
+            }
+
+            with contextlib.redirect_stdout(io.StringIO()):
+                code = run_from_env(env)
+
+            payload = json.loads((root / "verify.json").read_text(encoding="utf-8"))
+            outputs = _parse_github_output(output.read_text(encoding="utf-8"))
+            marker_exists = marker.exists()
+
+        self.assertEqual(code, 0)
+        self.assertTrue(marker_exists)
+        self.assertEqual(payload["mode"], "run")
+        self.assertEqual(payload["verdict"], "passed")
+        self.assertEqual(payload["checks"][0]["status"], "passed")
+        self.assertEqual(outputs["verify-verdict"], "passed")
+
+    def test_action_verify_run_failure_returns_one_and_writes_report(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            output = root / "outputs.txt"
+            command = _python_command("import sys; print('bad check'); sys.exit(4)")
+            env = {
+                "INPUT_COMMAND": "verify",
+                "INPUT_TARGET": str(root),
+                "INPUT_VERIFY_RUN": "true",
+                "INPUT_VERIFY_COMMAND": command,
+                "INPUT_JSON_REPORT": "verify.json",
+                "GITHUB_OUTPUT": str(output),
+            }
+
+            with contextlib.redirect_stdout(io.StringIO()):
+                code = run_from_env(env)
+
+            payload = json.loads((root / "verify.json").read_text(encoding="utf-8"))
+            outputs = _parse_github_output(output.read_text(encoding="utf-8"))
+
+        self.assertEqual(code, 1)
+        self.assertEqual(payload["verdict"], "failed")
+        self.assertEqual(payload["checks"][0]["exitCode"], 4)
+        self.assertEqual(outputs["verify-verdict"], "failed")
+
+    def test_action_verify_run_blocks_missing_verification(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            (root / "README.md").write_text("# Demo\n", encoding="utf-8")
+            output = root / "outputs.txt"
+            env = {
+                "INPUT_COMMAND": "verify",
+                "INPUT_TARGET": str(root),
+                "INPUT_VERIFY_RUN": "true",
+                "INPUT_JSON_REPORT": "verify.json",
+                "GITHUB_OUTPUT": str(output),
+            }
+
+            with contextlib.redirect_stdout(io.StringIO()):
+                code = run_from_env(env)
+
+            payload = json.loads((root / "verify.json").read_text(encoding="utf-8"))
+            outputs = _parse_github_output(output.read_text(encoding="utf-8"))
+
+        self.assertEqual(code, 2)
+        self.assertEqual(payload["verdict"], "blocked")
+        self.assertFalse(payload["execution"]["commandsExecuted"])
+        self.assertEqual(outputs["verify-verdict"], "blocked")
 
     def test_action_init_can_scaffold_optional_workflows(self) -> None:
         with tempfile.TemporaryDirectory() as tmp:

@@ -99,7 +99,10 @@ and advanced product modes.
   `harnessforge verify --run` executes checks only when requested, with
   per-command timeout, no-shell argument-list execution, run-mode JSON timing
   metadata, capped stdout/stderr previews, timeout reporting, and exit-code
-  mapping.
+  mapping. The composite Action now exposes the same boundary through
+  `command: verify`, read-only plan mode by default, explicit `verify-run:
+  "true"`, newline-separated `verify-command`, `verify-timeout-seconds`, a
+  target-contained verify JSON report, and `verify-verdict` output.
   Rejected defaults remain large
   skill/memory trees, platform permission config, LLM-assisted init,
   autonomous push/PR workflows, and copied ASPEC/AWMAN/Maki templates.
@@ -113,7 +116,7 @@ and advanced product modes.
   repo-local control planes, but it does not generate sibling-repo
   instructions, personal tool mandates, large skill trees, MCP
   setup, or extra agent adapters by default. Current verification passes full
-  unit discovery and POSIX/PowerShell entrypoints with 185 tests, compile, pin
+  unit discovery and POSIX/PowerShell entrypoints with 189 tests, compile, pin
   check, research source check, verify plan/run JSON smokes, blueprint
   JSON/apply smokes, self-audit `100/100`, local path scan, and diff hygiene.
   Readiness and sync check are warning-only
@@ -508,12 +511,14 @@ Maven/Gradle dependency pin parsing, intentionally vulnerable training-path
 pin-scan exclusions, nested JVM wrapper preference, container runtime
 governance inventory, a no-network research source hygiene gate, a
 machine-readable effectiveness evidence contract, source-reviewed platform
-adapter metadata, explicit blueprint mode, and explicit verification run mode.
-`harnessforge blueprint` currently supports list/show/apply, dry-run,
-force-only replacement, project-edit preservation, JSON output, ownership
-metadata, and six built-in packs. `harnessforge verify --run` executes planned
-checks explicitly, records structured JSON evidence, and keeps normal verify
-plan mode read-only.
+adapter metadata, explicit blueprint mode, explicit verification run mode, and
+the Action verification bridge. `harnessforge blueprint` currently supports
+list/show/apply, dry-run, force-only replacement, project-edit preservation,
+JSON output, ownership metadata, and six built-in packs. `harnessforge verify
+--run` executes planned checks explicitly, records structured JSON evidence,
+and keeps normal verify plan mode read-only. The composite Action mirrors that
+boundary with `command: verify`, `verify-run`, `verify-command`,
+`verify-timeout-seconds`, `json-report`, and `verify-verdict`.
 `scripts/refresh_research.py --check` validates duplicate source IDs and URLs,
 required fields, placeholder text, canonical URL shape, arXiv `/abs/` URLs,
 lock-file consistency, and local-path leakage before any metadata fetch. Root
@@ -533,15 +538,16 @@ primary-source evidence for platform-impacting changes. The primary-source
 review checked Python version status, GitHub hosted runner labels, and the
 GitHub runner-images Windows VS2026 migration notice.
 Current robust-mode verification passes: 6 focused blueprint tests, 6 focused
-verify run-mode tests, full unit discovery and POSIX/PowerShell entrypoints
-with 185 tests, compile, pin check, research source check, `verify --json`
-plan/run smokes, blueprint JSON/apply smokes, self-audit `100/100`, local-path
-scan, and diff hygiene. `sync --check` returns the expected warning for local
-workflow and instruction review surfaces without blockers or generated drift.
-The next highest-value product slice is the Action/CI bridge for verification
-evidence: decide whether the composite Action should expose verify plan/run
-modes, and if so add explicit inputs that preserve the current
-command-execution boundary.
+verify run-mode tests, 15 focused GitHub Action tests, full unit discovery with
+189 tests, compile, JSON parse, pin check, research source check, `verify
+--json` plan/run smokes, Action verify report smokes, blueprint JSON/apply
+smokes, self-audit `100/100`, local-path scan, and diff hygiene. `sync --check`
+returns the expected warning for local workflow and instruction review surfaces
+without blockers or generated drift.
+The next highest-value product slice is generated verification evidence
+guidance for target repos: make generated harness docs explain how to capture,
+store, and review `verify --run` evidence without confusing it with structural
+audit or real-agent effectiveness.
 Existing eval guidance comes from the Harness Forge, Meta-Harness, Code as
 Agent Harness catalog, and arXiv harness-eval reviews; those sources are mined
 only for product ideas and are not copied into generated target-repo defaults.
