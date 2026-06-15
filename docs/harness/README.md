@@ -91,6 +91,8 @@ Use `effectiveness-eval-contract.md` for the evidence boundary, with
 The GitHub Action in `action.yml` exposes the same behavior to other
 repositories. Keep it wired to the Python library instead of duplicating logic
 in shell.
+The Action also exposes `command: sync` as a read-only readiness preflight with
+the same exit codes as the CLI and optional `require-verify-evidence` gating.
 
 Run `./init.sh --no-env` or `.\init.ps1 -NoEnv` when checks should run without
 common AI, cloud, or GitHub credentials in the process environment.

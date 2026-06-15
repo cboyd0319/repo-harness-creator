@@ -8,7 +8,7 @@ branding:
 
 inputs:
   command:
-    description: "Command to run: audit, init, update, verify, or doctor."
+    description: "Command to run: audit, init, update, sync, verify, or doctor."
     required: false
     default: audit
   target:
@@ -67,6 +67,14 @@ inputs:
     description: Per-command timeout in seconds when command is verify and verify-run is true.
     required: false
     default: "300"
+  require-verify-evidence:
+    description: Require current passed stored verify evidence when command is sync.
+    required: false
+    default: "false"
+  sync-command:
+    description: Optional newline-separated repo-owned readiness commands for command sync.
+    required: false
+    default: ""
   html-report:
     description: Optional target-relative path for an HTML audit report.
     required: false
@@ -95,6 +103,12 @@ outputs:
   verify-verdict:
     description: Verify verdict when command is verify.
     value: ${{ steps.harnessforge.outputs.verify-verdict }}
+  readiness-verdict:
+    description: Readiness verdict when command is sync.
+    value: ${{ steps.harnessforge.outputs.readiness-verdict }}
+  sync-exit-code:
+    description: Sync readiness exit code when command is sync.
+    value: ${{ steps.harnessforge.outputs.sync-exit-code }}
 
 runs:
   using: composite
@@ -124,6 +138,8 @@ runs:
         INPUT_VERIFY_RUN: ${{ inputs.verify-run }}
         INPUT_VERIFY_COMMAND: ${{ inputs.verify-command }}
         INPUT_VERIFY_TIMEOUT_SECONDS: ${{ inputs.verify-timeout-seconds }}
+        INPUT_REQUIRE_VERIFY_EVIDENCE: ${{ inputs.require-verify-evidence }}
+        INPUT_SYNC_COMMAND: ${{ inputs.sync-command }}
         INPUT_HTML_REPORT: ${{ inputs.html-report }}
         INPUT_JSON_REPORT: ${{ inputs.json-report }}
       run: python -m harnessforge.github_action

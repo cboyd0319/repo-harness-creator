@@ -54,3 +54,5 @@ inventory, not permission to mutate nested projects.
 - `src/harnessforge/blueprints.py`: optional blueprint registry and safe
   blueprint artifact writer. This is product code, not generated target-repo
   template content.
+- `src/harnessforge/sync.py`: shared read-only sync preflight payload and exit
+  code helpers used by both the CLI and composite Action.

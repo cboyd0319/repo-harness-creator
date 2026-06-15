@@ -26,6 +26,7 @@ from .readiness import (
 )
 from .redact import redact_local_paths
 from .reports import write_json_payload
+from .sync import format_sync_check, sync_check_to_dict, sync_exit_code
 from .update import build_drift_report, plan_or_apply_update
 from .verify import (
     DEFAULT_TIMEOUT_SECONDS,
@@ -34,13 +35,6 @@ from .verify import (
     run_verify_checks,
     verify_report_to_dict,
 )
-
-SYNC_EXIT_CODES = {
-    "ready": 0,
-    "warning": 1,
-    "blocked": 2,
-}
-
 
 def main(argv: list[str] | None = None) -> int:
     parser = build_parser()
@@ -442,11 +436,11 @@ def _sync(args: argparse.Namespace) -> int:
         profile,
         require_verify_evidence=args.require_verify_evidence,
     )
-    exit_code = SYNC_EXIT_CODES.get(report.verdict, 2)
+    exit_code = sync_exit_code(report)
     if args.json:
-        print(json.dumps(_sync_check_to_dict(report, exit_code), indent=2))
+        print(json.dumps(sync_check_to_dict(report, exit_code), indent=2))
     else:
-        print(_format_sync_check(report))
+        print(format_sync_check(report))
     return exit_code
 
 
@@ -554,23 +548,6 @@ def _blueprint_apply(args: argparse.Namespace) -> int:
     if any(write.status == "skipped" for write in writes):
         print("Existing files preserved. Re-run with --force only after review.")
     return 0
-
-
-def _sync_check_to_dict(
-    report: ReadinessReport, exit_code: int
-) -> dict[str, object]:
-    readiness = readiness_to_dict(report)
-    return {
-        "mode": "check",
-        "target": readiness["target"],
-        "verdict": readiness["verdict"],
-        "exitCode": exit_code,
-        "readiness": readiness,
-    }
-
-
-def _format_sync_check(report: ReadinessReport) -> str:
-    return f"Sync check: {report.verdict}\n\n{format_readiness(report)}"
 
 
 def _format_quickstart(

@@ -11,8 +11,10 @@ from .audit import audit_target, audit_to_dict, format_audit, render_html_report
 from .detect import detect_project
 from .doctor import doctor_report, format_doctor
 from .generate import create_harness
+from .readiness import inspect_readiness
 from .redact import redact_local_paths
 from .reports import relative_to_target, report_path, write_json_payload
+from .sync import format_sync_check, sync_check_to_dict, sync_exit_code
 from .update import plan_or_apply_update
 from .verify import (
     DEFAULT_TIMEOUT_SECONDS,
@@ -57,6 +59,8 @@ def run_from_env(env: Mapping[str, str]) -> int:
                 "report-html": "",
                 "changed-files": "0",
                 "verify-verdict": "",
+                "readiness-verdict": "",
+                "sync-exit-code": "",
             }
         )
         return 0 if report["ok"] else 1
@@ -101,10 +105,14 @@ def run_from_env(env: Mapping[str, str]) -> int:
             print("No files changed. Set apply=true to create safe missing artifacts.")
     elif command == "audit":
         result = audit_target(target)
+    elif command == "sync":
+        return _run_sync_command(env, target, json_report, html_report)
     elif command == "verify":
         return _run_verify_command(env, target, json_report, html_report)
     else:
-        raise ValueError("command must be one of: audit, init, update, verify, doctor")
+        raise ValueError(
+            "command must be one of: audit, init, update, sync, verify, doctor"
+        )
 
     json_path = _write_json_report(json_report, target, result)
     html_path = _write_html_report(html_report, target, result)
@@ -120,11 +128,51 @@ def run_from_env(env: Mapping[str, str]) -> int:
             "report-html": html_path,
             "changed-files": str(changed_files),
             "verify-verdict": "",
+            "readiness-verdict": "",
+            "sync-exit-code": "",
         }
     )
     if fail_on_score and result.overall < min_score:
         return 1
     return 0
+
+
+def _run_sync_command(
+    env: Mapping[str, str],
+    target: Path,
+    json_report: str,
+    html_report: str,
+) -> int:
+    if html_report:
+        raise ValueError("html-report is not supported for command=sync")
+    commands = _commands_input(env.get("INPUT_SYNC_COMMAND", ""))
+    profile = detect_project(target, explicit_commands=commands)
+    report = inspect_readiness(
+        profile,
+        require_verify_evidence=_bool_input(
+            env.get("INPUT_REQUIRE_VERIFY_EVIDENCE", "false")
+        ),
+    )
+    exit_code = sync_exit_code(report)
+    payload = sync_check_to_dict(report, exit_code)
+    json_path = write_json_payload(json_report, target, payload)
+    text_report = format_sync_check(report)
+    print(text_report)
+    _summary(env, "HarnessForge Sync", _sync_summary_markdown(report, exit_code))
+    _output(
+        env,
+        {
+            "overall-score": "",
+            "bottleneck": "",
+            "report-json": json_path,
+            "report-html": "",
+            "changed-files": "0",
+            "verify-verdict": "",
+            "readiness-verdict": report.verdict,
+            "sync-exit-code": str(exit_code),
+        },
+    )
+    return exit_code
 
 
 def _run_verify_command(
@@ -135,7 +183,7 @@ def _run_verify_command(
 ) -> int:
     if html_report:
         raise ValueError("html-report is not supported for command=verify")
-    commands = _verify_commands_input(env.get("INPUT_VERIFY_COMMAND", ""))
+    commands = _commands_input(env.get("INPUT_VERIFY_COMMAND", ""))
     timeout_seconds = _float_input(
         env.get("INPUT_VERIFY_TIMEOUT_SECONDS", str(DEFAULT_TIMEOUT_SECONDS)),
         "verify-timeout-seconds",
@@ -166,6 +214,8 @@ def _run_verify_command(
             "report-html": "",
             "changed-files": "0",
             "verify-verdict": report.verdict,
+            "readiness-verdict": "",
+            "sync-exit-code": "",
         },
     )
     if report.mode != "run":
@@ -215,6 +265,24 @@ def _summary_markdown(result: Any, changed_files: int) -> str:
     if result.recommendations:
         lines.extend(["", "Recommended next actions:"])
         lines.extend(f"- {item}" for item in result.recommendations)
+    return "\n".join(lines)
+
+
+def _sync_summary_markdown(report: Any, exit_code: int) -> str:
+    lines = [
+        f"- Verdict: `{report.verdict}`",
+        f"- Exit code: `{exit_code}`",
+        f"- Verify evidence required: `{str(report.verify_evidence_required).lower()}`",
+    ]
+    if report.blocked_reasons:
+        lines.extend(["", "Blocked reasons:"])
+        lines.extend(f"- {reason}" for reason in report.blocked_reasons)
+    if report.warnings:
+        lines.extend(["", "Warnings:"])
+        lines.extend(f"- {warning}" for warning in report.warnings)
+    if report.review_required:
+        lines.extend(["", "Review required:"])
+        lines.extend(f"- {item}" for item in report.review_required)
     return "\n".join(lines)
 
 
@@ -289,7 +357,7 @@ def _float_input(value: str | None, name: str) -> float:
         raise ValueError(f"{name} must be a number") from exc
 
 
-def _verify_commands_input(value: str | None) -> tuple[str, ...]:
+def _commands_input(value: str | None) -> tuple[str, ...]:
     if not value:
         return ()
     return tuple(line.strip() for line in value.splitlines() if line.strip())

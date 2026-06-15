@@ -34,6 +34,46 @@ def _python_command(script: str) -> str:
     return f"{json.dumps(sys.executable)} -c {json.dumps(script)}"
 
 
+def _write_verify_report(
+    root: Path,
+    relative_path: str,
+    *,
+    verdict: str = "passed",
+    mode: str = "run",
+) -> Path:
+    path = root / relative_path
+    path.parent.mkdir(parents=True, exist_ok=True)
+    payload = {
+        "schemaVersion": "harnessforge.verify.v1",
+        "target": {"name": "demo", "root": None},
+        "mode": mode,
+        "verdict": verdict,
+        "platform": {"os": "darwin", "python": "3.14.6", "runner": "local"},
+        "execution": {
+            "commandsExecuted": mode == "run",
+            "startedAt": "2026-06-15T05:00:00Z",
+            "endedAt": "2026-06-15T05:00:00Z",
+            "durationMs": 1.0,
+        },
+        "summary": {
+            "total": 1,
+            "planned": 0,
+            "skipped": 0,
+            "blocked": 0,
+            "passed": 1 if verdict == "passed" else 0,
+            "failed": 1 if verdict == "failed" else 0,
+            "timedOut": 0,
+            "errors": 0,
+        },
+        "checks": [],
+        "blockedReasons": [],
+        "warnings": [],
+        "artifacts": [],
+    }
+    path.write_text(f"{json.dumps(payload, indent=2)}\n", encoding="utf-8")
+    return path
+
+
 class GitHubActionTests(unittest.TestCase):
     def test_action_manifest_quotes_description_values_with_colons(self) -> None:
         action = Path(__file__).resolve().parents[1] / "action.yml"
@@ -69,6 +109,21 @@ class GitHubActionTests(unittest.TestCase):
         self.assertIn("project-owned generated files", docs)
         self.assertIn("not the live HarnessForge repository workflow", docs)
 
+    def test_action_manifest_and_docs_expose_sync_preflight(self) -> None:
+        root = Path(__file__).resolve().parents[1]
+        action = (root / "action.yml").read_text(encoding="utf-8")
+        docs = (root / "docs/action.md").read_text(encoding="utf-8")
+
+        self.assertIn("audit, init, update, sync, verify, or doctor", action)
+        self.assertIn("require-verify-evidence", action)
+        self.assertIn("sync-command", action)
+        self.assertIn("readiness-verdict", action)
+        self.assertIn("sync-exit-code", action)
+        self.assertIn("command: sync", docs)
+        self.assertIn("require-verify-evidence", docs)
+        self.assertIn("sync-command", docs)
+        self.assertIn("readiness-verdict", docs)
+
     def test_action_audit_writes_outputs_and_reports(self) -> None:
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp)
@@ -98,6 +153,118 @@ class GitHubActionTests(unittest.TestCase):
             self.assertTrue((root / "report.html").exists())
             self.assertTrue((root / "reports" / "report.json").exists())
             self.assertIn("HarnessForge Audit", summary.read_text(encoding="utf-8"))
+
+    def test_action_sync_writes_readiness_report_and_outputs(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            (root / "pyproject.toml").write_text(
+                "[project]\nname='demo'\n",
+                encoding="utf-8",
+            )
+            (root / "tests").mkdir()
+            (root / "tests" / "test_demo.py").write_text("", encoding="utf-8")
+            _write_verify_report(
+                root,
+                "docs/harness/evidence/verify-current.json",
+            )
+            output = root / "outputs.txt"
+            summary = root / "summary.md"
+            env = {
+                "INPUT_COMMAND": "sync",
+                "INPUT_TARGET": str(root),
+                "INPUT_REQUIRE_VERIFY_EVIDENCE": "true",
+                "INPUT_JSON_REPORT": "reports/sync.json",
+                "GITHUB_OUTPUT": str(output),
+                "GITHUB_STEP_SUMMARY": str(summary),
+            }
+
+            with contextlib.redirect_stdout(io.StringIO()):
+                code = run_from_env(env)
+
+            payload = json.loads(
+                (root / "reports" / "sync.json").read_text(encoding="utf-8")
+            )
+            outputs = _parse_github_output(output.read_text(encoding="utf-8"))
+            summary_text = summary.read_text(encoding="utf-8")
+
+        self.assertEqual(code, 0)
+        self.assertEqual(payload["mode"], "check")
+        self.assertEqual(payload["verdict"], "ready")
+        self.assertEqual(payload["exitCode"], 0)
+        self.assertTrue(payload["readiness"]["verifyEvidenceRequired"])
+        self.assertEqual(outputs["report-json"], "reports/sync.json")
+        self.assertEqual(outputs["readiness-verdict"], "ready")
+        self.assertEqual(outputs["sync-exit-code"], "0")
+        self.assertEqual(outputs["changed-files"], "0")
+        self.assertEqual(outputs["verify-verdict"], "")
+        self.assertFalse((root / "AGENTS.md").exists())
+        self.assertIn("HarnessForge Sync", summary_text)
+
+    def test_action_sync_verify_evidence_gate_blocks_missing_evidence(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            (root / "pyproject.toml").write_text(
+                "[project]\nname='demo'\n",
+                encoding="utf-8",
+            )
+            (root / "tests").mkdir()
+            (root / "tests" / "test_demo.py").write_text("", encoding="utf-8")
+            output = root / "outputs.txt"
+            env = {
+                "INPUT_COMMAND": "sync",
+                "INPUT_TARGET": str(root),
+                "INPUT_REQUIRE_VERIFY_EVIDENCE": "true",
+                "INPUT_JSON_REPORT": "sync.json",
+                "GITHUB_OUTPUT": str(output),
+            }
+
+            with contextlib.redirect_stdout(io.StringIO()):
+                code = run_from_env(env)
+
+            payload = json.loads((root / "sync.json").read_text(encoding="utf-8"))
+            outputs = _parse_github_output(output.read_text(encoding="utf-8"))
+
+        self.assertEqual(code, 2)
+        self.assertEqual(payload["verdict"], "blocked")
+        self.assertEqual(payload["exitCode"], 2)
+        self.assertTrue(payload["readiness"]["verifyEvidenceRequired"])
+        self.assertTrue(
+            any(
+                "No stored verify evidence report" in item
+                for item in payload["readiness"]["blockedReasons"]
+            )
+        )
+        self.assertEqual(outputs["readiness-verdict"], "blocked")
+        self.assertEqual(outputs["sync-exit-code"], "2")
+
+    def test_action_sync_accepts_explicit_command_without_running_it(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            marker = root / "ran.txt"
+            (root / "README.md").write_text("# Demo\n", encoding="utf-8")
+            output = root / "outputs.txt"
+            command = _python_command(
+                "from pathlib import Path; Path('ran.txt').write_text('ran')"
+            )
+            env = {
+                "INPUT_COMMAND": "sync",
+                "INPUT_TARGET": str(root),
+                "INPUT_SYNC_COMMAND": command,
+                "INPUT_JSON_REPORT": "sync.json",
+                "GITHUB_OUTPUT": str(output),
+            }
+
+            with contextlib.redirect_stdout(io.StringIO()):
+                code = run_from_env(env)
+
+            payload = json.loads((root / "sync.json").read_text(encoding="utf-8"))
+            outputs = _parse_github_output(output.read_text(encoding="utf-8"))
+
+        self.assertEqual(code, 0)
+        self.assertFalse(marker.exists())
+        self.assertEqual(payload["verdict"], "ready")
+        self.assertIn(command, payload["readiness"]["runnableChecks"])
+        self.assertEqual(outputs["readiness-verdict"], "ready")
 
     def test_action_verify_plan_writes_report_without_running(self) -> None:
         with tempfile.TemporaryDirectory() as tmp:

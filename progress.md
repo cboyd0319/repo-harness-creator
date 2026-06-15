@@ -403,18 +403,38 @@ maintenance loop.
   block when stored evidence is missing, invalid, stale, plan-mode, failed,
   blocked, timed out, or has error counts. The default advisory behavior is
   unchanged.
+- Added composite Action sync preflight. `command: sync` now runs the same
+  read-only readiness contract as `harnessforge sync --check`, writes optional
+  target-contained JSON reports, exposes `readiness-verdict` and
+  `sync-exit-code` outputs, and supports `require-verify-evidence` without
+  running target commands or writing generated harness files. It also accepts
+  non-executed `sync-command` overrides when detection cannot infer the
+  project-owned readiness command.
 
 ## Recommended Next Step
 
 Continue the robust-mode buildout before returning to release prep. The next
-highest-value slice is a read-only composite Action sync/preflight mode that
-exposes the same readiness verdicts and optional verify-evidence gate to CI.
-Keep the Action input-driven and target-contained, and do not add generated
-workflow behavior as part of that Action change.
+highest-value slice is optional generated workflow integration for the Action
+sync preflight: update only the explicitly requested workflow scaffolds, keep
+manual triggers and review-required comments, and do not make verify-evidence
+gating the default.
 Push local commits only at an explicit batch/release boundary or user request.
 
 ## Verification Evidence
 
+- `PYTHONPATH=src:. python3 -m unittest
+  tests.test_github_action.GitHubActionTests.test_action_manifest_and_docs_expose_sync_preflight
+  tests.test_github_action.GitHubActionTests.test_action_sync_writes_readiness_report_and_outputs
+  tests.test_github_action.GitHubActionTests.test_action_sync_verify_evidence_gate_blocks_missing_evidence`
+  first failed because the Action did not accept `command: sync` and the
+  manifest/docs did not expose sync metadata, then passed after adding
+  `src/harnessforge/sync.py`, Action sync runtime wiring, manifest inputs and
+  outputs, `sync-command`, and docs. Full Action tests plus CLI sync gate
+  regressions passed. Full unit discovery passed with 202 tests. `python3 -m compileall src tests
+  scripts`, JSON parsing, pin check, research source check, self-audit
+  `100/100`, sync JSON smoke, `git diff --check`, and the exact local-path scan
+  passed. `./init.sh` and `pwsh -NoProfile -File ./init.ps1` both passed with
+  202 tests, pin check, research source check, and self-audit `100/100`.
 - `PYTHONPATH=src:. python3 -m unittest
   tests.test_cli.CliTests.test_inspect_readiness_can_require_verify_evidence
   tests.test_cli.CliTests.test_sync_check_verify_evidence_gate_passes_with_current_run_report
