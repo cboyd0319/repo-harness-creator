@@ -104,6 +104,11 @@ maintenance loop.
   harness README now routes first-agent harness improvement work, capabilities
   and usage docs describe the generated first-agent task, and the live manifest
   requires the split top-level docs plus the first-agent route.
+- Added the unified report surface. `harnessforge report --target <repo>` and
+  Action `command: report` compose readiness, audit, generated drift,
+  structural index, verify evidence, effectiveness evidence, first-agent task
+  status, and platform contract into a read-only JSON or Markdown review
+  artifact without running target commands.
 - Re-ran a deeper read-only comparison against `agent-governance-toolkit`.
   Accepted the small, durable pieces that fit this repo now: contribution
   policy, PR template, stronger security scope, `.gitignore` hygiene, and

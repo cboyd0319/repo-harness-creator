@@ -78,6 +78,7 @@
     "src/harnessforge/effectiveness.py",
     "src/harnessforge/github_action.py",
     "src/harnessforge/indexer.py",
+    "src/harnessforge/report.py",
     "src/harnessforge/reports.py",
     "src/harnessforge/sync.py",
     "src/harnessforge/verify_evidence.py",
@@ -92,7 +93,9 @@
       "harnessforge.github_action",
       "platform-contract",
       "with-ci-workflow",
-      "with-self-heal-workflow"
+      "with-self-heal-workflow",
+      "markdown-report",
+      "report-command"
     ],
     ".github/workflows/ci.yml": [
       "actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10",
@@ -144,27 +147,33 @@
       "Python 3.13",
       "harnessforge init",
       "harnessforge audit",
+      "harnessforge report",
       "harnessforge update",
       "GitHub Action"
     ],
     "docs/action.md": [
       "cboyd0319/harnessforge@<reviewed-commit-sha>",
       "Boundary Model",
+      "Unified Harness Report",
       "Inputs",
       "Outputs",
       "Version Pinning",
       "platform-contract",
       "with-ci-workflow",
-      "with-self-heal-workflow"
+      "with-self-heal-workflow",
+      "command: report",
+      "report-markdown"
     ],
     "docs/installation.md": [
       "Platform Contract",
       "Install From A Clone",
       "Verify This Repository",
-      "Focused Checks"
+      "Focused Checks",
+      "harnessforge report"
     ],
     "docs/usage.md": [
       "Normal Flow",
+      "Unified Report",
       "Readiness And Sync",
       "Verify Project Checks",
       "Generation Boundary",
@@ -173,6 +182,7 @@
     "docs/capabilities.md": [
       "Core Capabilities",
       "Default Boundaries",
+      "report",
       "Generated Files",
       "Security Model",
       "Repo-Local Self-Healing"
@@ -204,6 +214,7 @@
       "first-agent-task.md",
       "harnessforge index",
       "harnessforge effectiveness",
+      "harnessforge report",
       "self-healing workflow"
     ],
     "docs/harness/change-contract.md": [
@@ -222,6 +233,7 @@
       "When Checks Cannot Run",
       "Verification Evidence Reports",
       "harnessforge plan --target . --since HEAD",
+      "harnessforge report --target .",
       "harnessforge verify --target . --json --run",
       "--json-report docs/harness/evidence/verify-<date>.json",
       "evidence ladder",
@@ -242,6 +254,7 @@
       "Purpose",
       "Retire When",
       "Agent-Oriented Failure Feedback",
+      "harnessforge report",
       "does not prove real-agent effectiveness"
     ],
     "docs/harness/component-inventory.md": [

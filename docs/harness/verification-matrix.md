@@ -24,6 +24,7 @@ risk, and next best evidence when a layer cannot run.
 | CLI parser or command output | Focused unit tests plus `python -m harnessforge --help` |
 | Repository index reports | Focused index CLI tests, JSON parse smoke, local-path scan, and self-audit |
 | Effectiveness evidence assessment | Focused effectiveness CLI tests, JSON parse smoke, local-path scan, and self-audit |
+| Unified harness reports | Focused report CLI and Action tests, JSON and Markdown parse/read smoke, local-path scan, and self-audit |
 | Verification execution | Focused verify run-mode tests for pass, fail, blocked, timeout, JSON output, and plan-mode no-run behavior |
 | GitHub Action verify bridge | Focused Action tests for verify plan/run/fail/blocked, Action metadata checks, docs boundary checks, and JSON report smoke |
 | Generator or templates | Generator tests, temporary repo integration test, self-audit |
@@ -61,6 +62,12 @@ execute.
 Use `harnessforge plan --target . --since HEAD` to map changed files to a
 read-only verification plan before choosing which project checks to run. It
 uses `git diff` and does not execute target commands.
+
+Use `harnessforge report --target .` when a reviewer needs one read-only
+snapshot that composes readiness, audit, drift, index, verify evidence,
+effectiveness evidence, first-agent status, and platform contract. Persist
+JSON or Markdown with target-relative `--json-report` or `--markdown-report`
+paths when the report is release or handoff evidence.
 
 To store runnable evidence without shell redirection:
 

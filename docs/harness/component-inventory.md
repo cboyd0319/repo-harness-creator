@@ -79,6 +79,10 @@ route the change through `change-contract.md` and `verification-matrix.md`.
 - `src/harnessforge/effectiveness.py`: read-only effectiveness evidence
   assessor used by the CLI to validate stored benchmark or real-agent evidence
   without running benchmarks or producing unsupported performance scores.
+- `src/harnessforge/report.py`: read-only unified report composer used by the
+  CLI and composite Action. It combines readiness, audit, drift, index,
+  verify evidence, effectiveness evidence, first-agent status, and platform
+  contract without running target commands.
 - `docs/harness/sensor-registry.md`: review-required ownership, source,
   purpose, and retirement record for checks and recurring gates.
 - `docs/harness/source-record.schema.json`: generated schema for project-owned

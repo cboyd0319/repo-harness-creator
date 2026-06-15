@@ -13,6 +13,7 @@ from .doctor import doctor_report, format_doctor
 from .generate import create_harness
 from .readiness import inspect_readiness
 from .redact import redact_local_paths
+from .report import build_report, format_report, write_markdown_report
 from .reports import relative_to_target, report_path, write_json_payload
 from .sync import format_sync_check, sync_check_to_dict, sync_exit_code
 from .update import plan_or_apply_update
@@ -43,6 +44,7 @@ def run_from_env(env: Mapping[str, str]) -> int:
     fail_on_score = _bool_input(env.get("INPUT_FAIL_ON_SCORE", "true"))
     html_report = env.get("INPUT_HTML_REPORT", "").strip()
     json_report = env.get("INPUT_JSON_REPORT", "").strip()
+    markdown_report = env.get("INPUT_MARKDOWN_REPORT", "").strip()
     changed_files = 0
 
     if command == "doctor":
@@ -57,6 +59,7 @@ def run_from_env(env: Mapping[str, str]) -> int:
                 "bottleneck": "",
                 "report-json": "",
                 "report-html": "",
+                "report-markdown": "",
                 "changed-files": "0",
                 "verify-verdict": "",
                 "readiness-verdict": "",
@@ -109,9 +112,17 @@ def run_from_env(env: Mapping[str, str]) -> int:
         return _run_sync_command(env, target, json_report, html_report)
     elif command == "verify":
         return _run_verify_command(env, target, json_report, html_report)
+    elif command == "report":
+        return _run_report_command(
+            env,
+            target,
+            json_report,
+            html_report,
+            markdown_report,
+        )
     else:
         raise ValueError(
-            "command must be one of: audit, init, update, sync, verify, doctor"
+            "command must be one of: audit, init, update, sync, verify, report, doctor"
         )
 
     json_path = _write_json_report(json_report, target, result)
@@ -126,6 +137,7 @@ def run_from_env(env: Mapping[str, str]) -> int:
             "bottleneck": result.bottleneck,
             "report-json": json_path,
             "report-html": html_path,
+            "report-markdown": "",
             "changed-files": str(changed_files),
             "verify-verdict": "",
             "readiness-verdict": "",
@@ -166,6 +178,7 @@ def _run_sync_command(
             "bottleneck": "",
             "report-json": json_path,
             "report-html": "",
+            "report-markdown": "",
             "changed-files": "0",
             "verify-verdict": "",
             "readiness-verdict": report.verdict,
@@ -212,6 +225,7 @@ def _run_verify_command(
             "bottleneck": "",
             "report-json": json_path,
             "report-html": "",
+            "report-markdown": "",
             "changed-files": "0",
             "verify-verdict": report.verdict,
             "readiness-verdict": "",
@@ -225,6 +239,51 @@ def _run_verify_command(
     if report.verdict == "failed":
         return 1
     return 2
+
+
+def _run_report_command(
+    env: Mapping[str, str],
+    target: Path,
+    json_report: str,
+    html_report: str,
+    markdown_report: str,
+) -> int:
+    if html_report:
+        raise ValueError("html-report is not supported for command=report")
+    max_files = _int_input(
+        env.get("INPUT_REPORT_MAX_FILES", "4000"),
+        "report-max-files",
+    )
+    if max_files <= 0:
+        raise ValueError("report-max-files must be greater than 0")
+    payload = build_report(
+        target,
+        explicit_commands=_commands_input(env.get("INPUT_REPORT_COMMAND", "")),
+        max_files=max_files,
+        require_verify_evidence=_bool_input(
+            env.get("INPUT_REQUIRE_VERIFY_EVIDENCE", "false")
+        ),
+    )
+    json_path = write_json_payload(json_report, target, payload)
+    markdown_path = write_markdown_report(markdown_report, target, payload)
+    text_report = format_report(payload)
+    print(text_report)
+    _summary(env, "HarnessForge Report", _report_summary_markdown(payload))
+    _output(
+        env,
+        {
+            "overall-score": str(payload["audit"]["overall"]),
+            "bottleneck": payload["audit"]["bottleneck"],
+            "report-json": json_path,
+            "report-html": "",
+            "report-markdown": markdown_path,
+            "changed-files": "0",
+            "verify-verdict": "",
+            "readiness-verdict": payload["readiness"]["verdict"],
+            "sync-exit-code": "",
+        },
+    )
+    return 0
 
 
 def _write_json_report(path_text: str, target: Path, result: Any) -> str:
@@ -301,6 +360,22 @@ def _verify_summary_markdown(report: Any) -> str:
     if report.blocked_reasons:
         lines.extend(["", "Blocked reasons:"])
         lines.extend(f"- {reason}" for reason in report.blocked_reasons)
+    return "\n".join(lines)
+
+
+def _report_summary_markdown(payload: dict[str, Any]) -> str:
+    latest_verify = payload["verifyEvidence"]["latest"]
+    verify_status = latest_verify["verdict"] if latest_verify else "missing"
+    lines = [
+        f"- Readiness: `{payload['readiness']['verdict']}`",
+        f"- Audit score: `{payload['audit']['overall']}/100`",
+        f"- Generated drift: `{payload['drift']['summary']['actionable']}` actionable",
+        f"- Verify evidence: `{verify_status}`",
+        f"- Effectiveness: `{payload['effectiveness']['verdict']}`",
+    ]
+    if payload["nextActions"]:
+        lines.extend(["", "Next actions:"])
+        lines.extend(f"- {item}" for item in payload["nextActions"][:5])
     return "\n".join(lines)
 
 

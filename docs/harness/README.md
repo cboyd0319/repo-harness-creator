@@ -81,6 +81,7 @@ harnessforge index --target . --json
 harnessforge index --target . --max-files 20000 --json
 harnessforge effectiveness --target . --json
 harnessforge session --target .
+harnessforge report --target .
 harnessforge plan --target . --since HEAD
 harnessforge audit --target .
 harnessforge update --target .
@@ -110,6 +111,12 @@ structural scores into performance claims.
 `session` is a read-only restart snapshot. It reports git state when available,
 detected stack, readiness verdict, harness audit score when a harness surface is
 present, state-file presence, and next actions without running target commands.
+
+`report` is a read-only unified harness status artifact. It composes readiness,
+audit, generated drift, structural index summary, verify evidence,
+effectiveness evidence, first-agent task status, and platform contract without
+running target commands. Use `--json-report` or `--markdown-report` with a
+target-relative path to persist review evidence.
 
 `plan` is a read-only diff-aware verification planner. It uses `git diff` to
 map changed files to detected or explicit project verification checks, but it

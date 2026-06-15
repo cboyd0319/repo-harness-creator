@@ -60,6 +60,28 @@ harnessforge plan --target /path/to/repo --since HEAD
 harnessforge plan --target /path/to/repo --since HEAD --json
 ```
 
+## Unified Report
+
+Compose the current read-only harness signals into one review artifact:
+
+```bash
+harnessforge report --target /path/to/repo
+harnessforge report --target /path/to/repo --json
+harnessforge report --target /path/to/repo --json-report docs/harness/evidence/report-YYYY-MM-DD.json
+harnessforge report --target /path/to/repo --markdown-report docs/harness/evidence/report-YYYY-MM-DD.md
+```
+
+`report` combines readiness, structural audit score, generated drift,
+structural index summary, stored verify evidence, stored effectiveness
+evidence, first-agent task status, and platform contract. It is read-only by
+default, does not run target repository commands, and writes files only when a
+target-relative `--json-report` or `--markdown-report` path is supplied.
+
+Use `--require-verify-evidence` when the report should include release-gate
+verify evidence blockers. Use `--command` when detection cannot infer
+repo-owned verification commands; report mode records the command as readiness
+context but does not execute it.
+
 ## Readiness And Sync
 
 `inspect --readiness` and `sync --check` are static and read-only. They do not
@@ -319,6 +341,7 @@ alone unless `--force` is supplied.
 | `harnessforge index` | Build a read-only structural repo index for harness design |
 | `harnessforge effectiveness` | Assess stored real-agent effectiveness evidence without running benchmarks |
 | `harnessforge session` | Show a read-only restart snapshot with git, readiness, audit, and state-file status |
+| `harnessforge report` | Compose readiness, audit, drift, index, and evidence into one read-only report |
 | `harnessforge plan` | Map changed files to a read-only verification plan |
 | `harnessforge sync --check` | Run a read-only CI preflight with readiness exit codes |
 | `harnessforge verify` | Report planned project checks, or run them explicitly with `--run` |

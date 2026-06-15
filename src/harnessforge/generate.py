@@ -1279,6 +1279,7 @@ def _manifest_content(
             "harnessforge index",
             "harnessforge effectiveness",
             "harnessforge session",
+            "harnessforge report",
             "harnessforge plan",
         ],
         "docs/harness/first-agent-task.md": [
@@ -1330,6 +1331,7 @@ def _manifest_content(
             "When Checks Cannot Run",
             "Verification Evidence Reports",
             "harnessforge plan --target . --since HEAD",
+            "harnessforge report --target .",
             "harnessforge verify --target . --json --run",
             "--json-report docs/harness/evidence/verify-<date>.json",
             "evidence ladder",
@@ -1350,6 +1352,7 @@ def _manifest_content(
             "Purpose",
             "Retire When",
             "Agent-Oriented Failure Feedback",
+            "harnessforge report",
             "does not prove real-agent effectiveness",
         ],
         "docs/harness/component-inventory.md": [

@@ -648,7 +648,15 @@ class CliTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp)
             with contextlib.redirect_stdout(io.StringIO()):
-                main(["init", "--target", str(root), "--command", "python -m compileall ."])
+                main(
+                    [
+                        "init",
+                        "--target",
+                        str(root),
+                        "--command",
+                        "python -m compileall .",
+                    ]
+                )
             stdout = io.StringIO()
             with contextlib.redirect_stdout(stdout):
                 code = main(["session", "--target", str(root)])
@@ -663,6 +671,84 @@ class CliTests(unittest.TestCase):
         self.assertIn("Harness audit: 100/100", text)
         self.assertIn("State files:", text)
         self.assertIn("Next actions:", text)
+
+    def test_report_json_composes_readiness_audit_index_and_evidence(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            marker = root / "ran.txt"
+            command = _python_command(
+                "from pathlib import Path; Path('ran.txt').write_text('ran')"
+            )
+            with contextlib.redirect_stdout(io.StringIO()):
+                init_code = main(["init", "--target", str(root), "--command", command])
+            _write_verify_report(
+                root,
+                "docs/harness/evidence/verify-2026-06-15.json",
+            )
+            stdout = io.StringIO()
+            with contextlib.redirect_stdout(stdout):
+                code = main(["report", "--target", str(root), "--json"])
+
+            payload = json.loads(stdout.getvalue())
+            marker_exists = marker.exists()
+
+        self.assertEqual(init_code, 0)
+        self.assertEqual(code, 0)
+        self.assertFalse(marker_exists)
+        self.assertEqual(payload["schemaVersion"], "harnessforge.report.v1")
+        self.assertEqual(payload["target"]["root"], None)
+        self.assertEqual(payload["execution"]["commandsExecuted"], False)
+        self.assertEqual(payload["readiness"]["verdict"], "ready")
+        self.assertEqual(payload["audit"]["overall"], 100)
+        self.assertEqual(payload["drift"]["summary"]["actionable"], 0)
+        self.assertIn("fileCount", payload["index"]["summary"])
+        self.assertEqual(payload["verifyEvidence"]["latest"]["verdict"], "passed")
+        self.assertEqual(payload["effectiveness"]["verdict"], "blocked")
+        self.assertEqual(payload["firstAgentTask"]["status"], "pending_review")
+        self.assertEqual(payload["platform"]["contract"], "cross-platform")
+        self.assertIn("Run harnessforge report", payload["nextActions"][0])
+
+    def test_report_markdown_can_write_target_contained_reports(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            with contextlib.redirect_stdout(io.StringIO()):
+                main(["init", "--target", str(root), "--command", "python -m compileall ."])
+            stdout = io.StringIO()
+            with contextlib.redirect_stdout(stdout):
+                code = main(
+                    [
+                        "report",
+                        "--target",
+                        str(root),
+                        "--markdown-report",
+                        "docs/harness/evidence/report.md",
+                        "--json-report",
+                        "docs/harness/evidence/report.json",
+                    ]
+                )
+
+            markdown = (root / "docs/harness/evidence/report.md").read_text(
+                encoding="utf-8"
+            )
+            payload = json.loads(
+                (root / "docs/harness/evidence/report.json").read_text(
+                    encoding="utf-8"
+                )
+            )
+
+        self.assertEqual(code, 0)
+        self.assertIn(
+            "Markdown report written to docs/harness/evidence/report.md",
+            stdout.getvalue(),
+        )
+        self.assertIn(
+            "JSON report written to docs/harness/evidence/report.json",
+            stdout.getvalue(),
+        )
+        self.assertIn("# HarnessForge Report", markdown)
+        self.assertIn("## Readiness", markdown)
+        self.assertIn("## Next Actions", markdown)
+        self.assertEqual(payload["schemaVersion"], "harnessforge.report.v1")
 
     def test_plan_json_maps_changed_files_without_running_checks(self) -> None:
         with tempfile.TemporaryDirectory() as tmp:

@@ -8,7 +8,7 @@ branding:
 
 inputs:
   command:
-    description: "Command to run: audit, init, update, sync, verify, or doctor."
+    description: "Command to run: audit, init, update, sync, verify, report, or doctor."
     required: false
     default: audit
   target:
@@ -68,19 +68,31 @@ inputs:
     required: false
     default: "300"
   require-verify-evidence:
-    description: Require current passed stored verify evidence when command is sync.
+    description: Require current passed stored verify evidence when command is sync or report.
     required: false
     default: "false"
   sync-command:
     description: Optional newline-separated repo-owned readiness commands for command sync.
     required: false
     default: ""
+  report-command:
+    description: Optional newline-separated repo-owned readiness commands for command report.
+    required: false
+    default: ""
+  report-max-files:
+    description: Maximum number of repository files to include in command report index summary.
+    required: false
+    default: "4000"
   html-report:
     description: Optional target-relative path for an HTML audit report.
     required: false
     default: ""
   json-report:
-    description: Optional target-relative path for an audit, sync, or verify JSON report.
+    description: Optional target-relative path for an audit, sync, verify, or report JSON report.
+    required: false
+    default: ""
+  markdown-report:
+    description: Optional target-relative path for a Markdown report when command is report.
     required: false
     default: ""
 
@@ -97,6 +109,9 @@ outputs:
   report-html:
     description: HTML report path when requested.
     value: ${{ steps.harnessforge.outputs.report-html }}
+  report-markdown:
+    description: Markdown report path when requested.
+    value: ${{ steps.harnessforge.outputs.report-markdown }}
   changed-files:
     description: Number of files written by init or update.
     value: ${{ steps.harnessforge.outputs.changed-files }}
@@ -140,6 +155,9 @@ runs:
         INPUT_VERIFY_TIMEOUT_SECONDS: ${{ inputs.verify-timeout-seconds }}
         INPUT_REQUIRE_VERIFY_EVIDENCE: ${{ inputs.require-verify-evidence }}
         INPUT_SYNC_COMMAND: ${{ inputs.sync-command }}
+        INPUT_REPORT_COMMAND: ${{ inputs.report-command }}
+        INPUT_REPORT_MAX_FILES: ${{ inputs.report-max-files }}
         INPUT_HTML_REPORT: ${{ inputs.html-report }}
         INPUT_JSON_REPORT: ${{ inputs.json-report }}
+        INPUT_MARKDOWN_REPORT: ${{ inputs.markdown-report }}
       run: python -m harnessforge.github_action

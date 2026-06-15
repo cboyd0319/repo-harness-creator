@@ -141,8 +141,10 @@ repo's docs or process wholesale.
 
 ### Unified Report Command
 
-Add a `harnessforge report --target <repo>` command that composes the current
-inspection surfaces into one review artifact.
+Initial CLI and Action support is implemented through
+`harnessforge report --target <repo>` and `command: report`. The report
+composes current inspection surfaces into one review artifact without running
+target repository commands.
 
 Candidate report inputs:
 
@@ -165,6 +167,9 @@ Reports should distinguish structural readiness from real task evidence. Useful
 quality signals include fresh-session answerability, instruction bloat or
 duplication, first-agent review state, evidence-gated feature state, runtime
 observability gaps, and cleanup or stale-artifact drift.
+
+Remaining report expansion: add repo-map summaries, policy preset status, and
+release evidence automation as those surfaces land.
 
 ### Compact Repo Map From Index
 
@@ -477,7 +482,8 @@ coverage before they become recommended defaults.
 
 ## Suggested Build Order
 
-1. Add `harnessforge report` and first-agent lifecycle evidence.
+1. Expand `harnessforge report` with repo-map, policy preset, and release
+   evidence fields as those surfaces land.
 2. Design and implement the improved `--enhance-existing` plan.
 3. Add evidence-gated feature-state and instruction-quality reporting to the
    generated-harness quality scorer.

@@ -31,6 +31,7 @@ from .readiness import (
     readiness_to_dict,
 )
 from .redact import redact_local_paths
+from .report import build_report, format_report, write_markdown_report
 from .reports import write_json_payload
 from .session import build_session_report, format_session_report, session_report_to_dict
 from .sync import format_sync_check, sync_check_to_dict, sync_exit_code
@@ -237,6 +238,35 @@ def build_parser() -> argparse.ArgumentParser:
     session.add_argument("--target", type=Path, default=Path.cwd())
     session.add_argument("--json", action="store_true")
     session.set_defaults(func=_session)
+
+    report = subparsers.add_parser(
+        "report",
+        help="compose a read-only harness status report",
+    )
+    report.add_argument("--target", type=Path, default=Path.cwd())
+    report.add_argument("--package-manager")
+    report.add_argument("--command", dest="commands", action="append", default=[])
+    report.add_argument(
+        "--max-files",
+        type=int,
+        default=4000,
+        help="maximum number of repository files to include in the index summary",
+    )
+    report.add_argument(
+        "--require-verify-evidence",
+        action="store_true",
+        help="include release-gate verify evidence blockers in readiness",
+    )
+    report.add_argument("--json", action="store_true")
+    report.add_argument(
+        "--json-report",
+        help="write report JSON to a target-relative path",
+    )
+    report.add_argument(
+        "--markdown-report",
+        help="write report Markdown to a target-relative path",
+    )
+    report.set_defaults(func=_report)
 
     plan = subparsers.add_parser(
         "plan",
@@ -543,6 +573,32 @@ def _session(args: argparse.Namespace) -> int:
         print(json.dumps(session_report_to_dict(report), indent=2))
     else:
         print(format_session_report(report))
+    return 0
+
+
+def _report(args: argparse.Namespace) -> int:
+    payload = build_report(
+        args.target,
+        explicit_package_manager=args.package_manager,
+        explicit_commands=tuple(args.commands),
+        max_files=args.max_files,
+        require_verify_evidence=args.require_verify_evidence,
+    )
+    target = args.target.resolve()
+    json_report = write_json_payload(args.json_report or "", target, payload)
+    markdown_report = write_markdown_report(
+        args.markdown_report or "",
+        target,
+        payload,
+    )
+    if args.json:
+        print(json.dumps(payload, indent=2))
+        return 0
+    if markdown_report:
+        print(f"Markdown report written to {markdown_report}")
+    if json_report:
+        print(f"JSON report written to {json_report}")
+    print(format_report(payload))
     return 0
 
 

@@ -19,6 +19,10 @@ state files, or release process are present in the caller repository.
 - `sync` reads the declared `target`, reports the same readiness verdicts as
   the CLI, writes only requested JSON reports inside that target, and can run
   with `contents: read`.
+- `report` reads the declared `target`, composes readiness, audit, drift,
+  index, verify evidence, effectiveness evidence, first-agent status, and
+  platform contract into one review artifact, and writes only requested JSON
+  or Markdown reports inside that target.
 - `init` and applied `update` may write generated harness files inside
   `target`; callers should grant write permissions only when they intend to
   commit or open a pull request.
@@ -87,6 +91,28 @@ result to later workflow steps.
 Use `sync-command` when detection cannot infer the project-owned readiness
 command. Sync mode records that command as readiness evidence but does not
 execute it.
+
+## Unified Harness Report
+
+Create a read-only review artifact without running target commands:
+
+```yaml
+- uses: cboyd0319/harnessforge@<reviewed-commit-sha> # v1
+  with:
+    command: report
+    json-report: docs/harness/evidence/report.json
+    markdown-report: docs/harness/evidence/report.md
+```
+
+`command: report` is not a release gate by itself. It exits zero when the
+artifact is produced and reports readiness through the `readiness-verdict`
+output. Use `require-verify-evidence: "true"` when the report should include
+release-gate verify evidence blockers.
+
+Use `report-command` when detection cannot infer repo-owned verification
+commands. Report mode records those commands as readiness context but does not
+execute them. Use `report-max-files` to raise the bounded structural index
+scan limit for large repositories.
 
 ## Verify Project Checks
 
@@ -164,7 +190,7 @@ and not behavior embedded in the composite Action runtime.
 
 | Input | Default | Purpose |
 | --- | --- | --- |
-| `command` | `audit` | `audit`, `init`, `update`, `sync`, `verify`, or `doctor` |
+| `command` | `audit` | `audit`, `init`, `update`, `sync`, `verify`, `report`, or `doctor` |
 | `target` | `.` | Repository path to inspect or modify |
 | `python-version` | `3.13.14` | Python version passed to `actions/setup-python` |
 | `min-score` | `85` | Minimum passing structural audit score from 0 to 100 |
@@ -179,10 +205,13 @@ and not behavior embedded in the composite Action runtime.
 | `verify-run` | `false` | Execute checks when `command` is `verify`; default verify mode is read-only plan mode |
 | `verify-command` | empty | Optional newline-separated repo-owned verification commands for `command: verify` |
 | `verify-timeout-seconds` | `300` | Per-command timeout when `command` is `verify` and `verify-run` is `true` |
-| `require-verify-evidence` | `false` | Require current passed stored verify evidence when `command` is `sync` |
+| `require-verify-evidence` | `false` | Require current passed stored verify evidence when `command` is `sync` or `report` |
 | `sync-command` | empty | Optional newline-separated repo-owned readiness commands for `command: sync`; commands are not executed |
+| `report-command` | empty | Optional newline-separated repo-owned readiness commands for `command: report`; commands are not executed |
+| `report-max-files` | `4000` | Maximum number of files included in the `command: report` structural index summary |
 | `html-report` | empty | Optional target-relative HTML report path; POSIX and Windows absolute/rooted paths are rejected |
-| `json-report` | empty | Optional target-relative audit, sync, or verify JSON report path; POSIX and Windows absolute/rooted paths are rejected |
+| `json-report` | empty | Optional target-relative audit, sync, verify, or report JSON report path; POSIX and Windows absolute/rooted paths are rejected |
+| `markdown-report` | empty | Optional target-relative Markdown report path for `command: report`; POSIX and Windows absolute/rooted paths are rejected |
 
 Report paths must be relative and stay inside `target`. Absolute paths and
 traversal outside the target repository are rejected.
@@ -195,9 +224,10 @@ traversal outside the target repository are rejected.
 | `bottleneck` | Lowest-scoring harness domain |
 | `report-json` | Target-relative JSON report path when requested |
 | `report-html` | Target-relative HTML report path when requested |
+| `report-markdown` | Target-relative Markdown report path when requested |
 | `changed-files` | Number of files written or enhanced by `init` or applied `update` |
 | `verify-verdict` | Verify verdict when `command` is `verify` |
-| `readiness-verdict` | Readiness verdict when `command` is `sync` |
+| `readiness-verdict` | Readiness verdict when `command` is `sync` or `report` |
 | `sync-exit-code` | Sync readiness exit code when `command` is `sync` |
 
 Report path outputs use forward slashes on every runner so workflow consumers

@@ -114,7 +114,7 @@ class GitHubActionTests(unittest.TestCase):
         action = (root / "action.yml").read_text(encoding="utf-8")
         docs = (root / "docs/action.md").read_text(encoding="utf-8")
 
-        self.assertIn("audit, init, update, sync, verify, or doctor", action)
+        self.assertIn("audit, init, update, sync, verify, report, or doctor", action)
         self.assertIn("require-verify-evidence", action)
         self.assertIn("sync-command", action)
         self.assertIn("readiness-verdict", action)
@@ -123,6 +123,19 @@ class GitHubActionTests(unittest.TestCase):
         self.assertIn("require-verify-evidence", docs)
         self.assertIn("sync-command", docs)
         self.assertIn("readiness-verdict", docs)
+
+    def test_action_manifest_and_docs_expose_report_command(self) -> None:
+        root = Path(__file__).resolve().parents[1]
+        action = (root / "action.yml").read_text(encoding="utf-8")
+        docs = (root / "docs/action.md").read_text(encoding="utf-8")
+
+        self.assertIn("command: report", docs)
+        self.assertIn("markdown-report", action)
+        self.assertIn("report-command", action)
+        self.assertIn("report-max-files", action)
+        self.assertIn("report-markdown", action)
+        self.assertIn("Unified Harness Report", docs)
+        self.assertIn("report-markdown", docs)
 
     def test_action_audit_writes_outputs_and_reports(self) -> None:
         with tempfile.TemporaryDirectory() as tmp:
@@ -153,6 +166,61 @@ class GitHubActionTests(unittest.TestCase):
             self.assertTrue((root / "report.html").exists())
             self.assertTrue((root / "reports" / "report.json").exists())
             self.assertIn("HarnessForge Audit", summary.read_text(encoding="utf-8"))
+
+    def test_action_report_writes_read_only_json_and_markdown_outputs(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            create_harness(
+                root,
+                commands=(
+                    _python_command(
+                        "from pathlib import Path; Path('ran.txt').write_text('ran')"
+                    ),
+                ),
+            )
+            _write_verify_report(
+                root,
+                "docs/harness/evidence/verify-current.json",
+            )
+            output = root / "outputs.txt"
+            summary = root / "summary.md"
+            env = {
+                "INPUT_COMMAND": "report",
+                "INPUT_TARGET": str(root),
+                "INPUT_REQUIRE_VERIFY_EVIDENCE": "true",
+                "INPUT_REPORT_COMMAND": _python_command(
+                    "from pathlib import Path; Path('marker.txt').write_text('ran')"
+                ),
+                "INPUT_JSON_REPORT": "reports/report.json",
+                "INPUT_MARKDOWN_REPORT": "reports/report.md",
+                "GITHUB_OUTPUT": str(output),
+                "GITHUB_STEP_SUMMARY": str(summary),
+            }
+
+            with contextlib.redirect_stdout(io.StringIO()):
+                code = run_from_env(env)
+
+            payload = json.loads(
+                (root / "reports" / "report.json").read_text(encoding="utf-8")
+            )
+            markdown = (root / "reports" / "report.md").read_text(encoding="utf-8")
+            outputs = _parse_github_output(output.read_text(encoding="utf-8"))
+            summary_text = summary.read_text(encoding="utf-8")
+
+        self.assertEqual(code, 0)
+        self.assertEqual(payload["schemaVersion"], "harnessforge.report.v1")
+        self.assertEqual(payload["execution"]["commandsExecuted"], False)
+        self.assertEqual(payload["readiness"]["verdict"], "ready")
+        self.assertEqual(outputs["overall-score"], "100")
+        self.assertEqual(outputs["report-json"], "reports/report.json")
+        self.assertEqual(outputs["report-markdown"], "reports/report.md")
+        self.assertEqual(outputs["report-html"], "")
+        self.assertEqual(outputs["changed-files"], "0")
+        self.assertEqual(outputs["readiness-verdict"], "ready")
+        self.assertFalse((root / "ran.txt").exists())
+        self.assertFalse((root / "marker.txt").exists())
+        self.assertIn("# HarnessForge Report", markdown)
+        self.assertIn("HarnessForge Report", summary_text)
 
     def test_action_sync_writes_readiness_report_and_outputs(self) -> None:
         with tempfile.TemporaryDirectory() as tmp:

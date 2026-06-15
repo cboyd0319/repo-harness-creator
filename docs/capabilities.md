@@ -31,11 +31,14 @@ boundaries it preserves. See [Usage](usage.md) for commands and
 - Audits harness structure and reports actionable failures.
 - Reports generated-file drift and static readiness without running target
   project commands.
+- Composes readiness, audit, generated drift, structural index, verify
+  evidence, effectiveness evidence, first-agent task status, and platform
+  contract into one read-only JSON or Markdown report.
 - Provides explicit blueprint mode for richer project operating models. Built-in
   packs cover agentic applications, spec-driven projects, web services,
   data/ML, security-sensitive repos, and workflow automation.
-- Provides a composite GitHub Action for audit, init, update, sync, verify, and
-  doctor workflows.
+- Provides a composite GitHub Action for audit, init, update, sync, verify,
+  report, and doctor workflows.
 
 ## Default Boundaries
 
@@ -49,9 +52,10 @@ boundaries it preserves. See [Usage](usage.md) for commands and
   are explicit opt-ins and land in a separate review area.
 - It does not create autonomous push, PR, self-heal, setup, or teardown
   workflows unless optional workflow scaffolds are explicitly requested.
-- It does not run target repository commands during `inspect`, `sync --check`,
-  `audit`, `update --drift-report`, or default `verify`. Use `verify --run`
-  when command execution is explicitly wanted.
+- It does not run target repository commands during `inspect`, `index`,
+  `effectiveness`, `session`, `report`, `sync --check`, `audit`,
+  `update --drift-report`, or default `verify`. Use `verify --run` when
+  command execution is explicitly wanted.
 - It does not use structural scores as proof of real task performance.
 
 ## Generated Files
@@ -86,9 +90,9 @@ People may run this tool on personal machines and private repositories, so the
 default posture is intentionally restrictive. See [../SECURITY.md](../SECURITY.md)
 for vulnerability reporting, scope, and severity guidance.
 
-- Normal `init`, `inspect`, `index`, `effectiveness`, `sync --check`, `audit`,
-  `update`, and `doctor` commands use the Python standard library and do not
-  install runtime dependencies.
+- Normal `init`, `inspect`, `index`, `effectiveness`, `session`, `report`,
+  `sync --check`, `audit`, `update`, and `doctor` commands use the Python
+  standard library and do not install runtime dependencies.
 - Existing files are preserved unless `--force` is explicitly supplied.
 - `--enhance-existing` appends reviewed instruction addenda without replacing
   existing project text.

@@ -41,6 +41,7 @@ and advanced product modes.
 - `src/harnessforge/models.py`
 - `src/harnessforge/planner.py`
 - `src/harnessforge/readiness.py`
+- `src/harnessforge/report.py`
 - `src/harnessforge/reports.py`
 - `src/harnessforge/session.py`
 - `src/harnessforge/sync.py`
@@ -169,6 +170,10 @@ and advanced product modes.
 - Current sync preflight implementation is a CLI and composite Action read
   path. It does not add mutation semantics, run target checks, or change
   generator output.
+- Current unified report implementation is a CLI and composite Action read
+  path. It composes readiness, audit, generated drift, index, verify evidence,
+  effectiveness evidence, first-agent task status, and platform contract into
+  JSON or Markdown without running target commands.
 - Current sensor registry implementation adds a review-required generated
   `docs/harness/sensor-registry.md`, manifest required-file and snippet
   coverage, generated ownership metadata, and live harness ownership/source/

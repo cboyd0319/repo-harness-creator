@@ -48,6 +48,7 @@ This repository ships two related surfaces:
 | Help agents orient in a repo | Generate compact instruction routers and durable project state |
 | Avoid overwriting local work | Preserve existing files by default and track generated ownership |
 | Know whether a repo is ready | Run read-only readiness and sync preflight checks |
+| Review harness health in one place | Compose readiness, audit, drift, index, and evidence into one report |
 | Keep generated harnesses honest | Audit structure, drift, security boundaries, and lifecycle controls |
 | Respect existing spec systems | Detect `.specify`, `specs/`, `aspec/`, work-item templates, and workflow surfaces |
 | Build deeper project operating models | Apply optional blueprints for agentic apps, SDD, web services, data/ML, security, and automation |
@@ -76,6 +77,8 @@ effectiveness still needs representative task runs and human review.
   Spec Kit-style SDD, ASPEC-style folders, work items, and workflow definitions.
 - It gives humans and CI the same read-only readiness signal through
   `sync --check`.
+- It can produce one unified read-only report for review or release evidence
+  without running target commands.
 - It keeps the default runtime boring: Python standard library, explicit file
   writes, pinned build tooling, and no network access for normal generation.
 
@@ -114,9 +117,15 @@ Audit the result:
 harnessforge audit --target /path/to/repo --min-score 85
 ```
 
+Create one review artifact:
+
+```bash
+harnessforge report --target /path/to/repo --markdown-report docs/harness/evidence/report.md
+```
+
 See [Usage](docs/usage.md) for readiness checks, repo indexing, verification
-plans, explicit verify runs, `harnessforge update` drift workflows, blueprints,
-and CI preflight.
+plans, unified reports, explicit verify runs, `harnessforge update` drift
+workflows, blueprints, and CI preflight.
 
 ## Core Surfaces
 
@@ -126,6 +135,7 @@ and CI preflight.
 | `inspect` | Repository detection and static readiness |
 | `index` | Read-only structural map for large existing repos |
 | `session` | Restart snapshot with git, readiness, audit, and state-file status |
+| `report` | Unified read-only harness status report with optional JSON and Markdown outputs |
 | `plan` | Diff-aware verification planning without command execution |
 | `sync --check` | CI-oriented readiness preflight with stable exit codes |
 | `verify` | Planned project checks by default, explicit execution with `--run` |

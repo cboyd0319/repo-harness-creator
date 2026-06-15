@@ -70,6 +70,7 @@ PYTHONPATH=src:. python scripts/check_pins.py --root .
 PYTHONPATH=src:. python scripts/refresh_research.py --root . --check
 PYTHONPATH=src:. python -m harnessforge audit --target . --min-score 85
 PYTHONPATH=src:. python -m harnessforge index --target . --json
+PYTHONPATH=src:. python -m harnessforge report --target . --json
 PYTHONPATH=src:. python -m harnessforge sync --check --target . --json
 ```
 
