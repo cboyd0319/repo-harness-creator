@@ -88,6 +88,12 @@ the target repository. POSIX and Windows absolute or rooted paths are rejected,
 Windows-style relative separators are normalized, and traversal outside the
 target repository is rejected.
 
+Readiness and sync preflight can inventory stored reports under
+`docs/harness/evidence/verify*.json`. This inventory is advisory: it surfaces
+latest verdict, schema validity, stale reports, failed or blocked outcomes, and
+timed-out checks without turning stored evidence into a hard release gate by
+default.
+
 ## Exit Codes
 
 Plan mode exit codes are about whether the report could be produced:

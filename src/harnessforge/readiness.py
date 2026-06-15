@@ -29,6 +29,11 @@ from .spec_system import (
     instruction_routes_to_specs,
 )
 from .update import build_drift_report
+from .verify_evidence import (
+    VerifyEvidenceReport,
+    analyze_verify_evidence,
+    verify_evidence_report_to_dict,
+)
 from .workflow_inventory import (
     WorkItem,
     WorkflowItem,
@@ -68,6 +73,7 @@ class ReadinessReport:
     context_budget: ContextBudgetReport
     governance_inventory: tuple[GovernanceItem, ...]
     effectiveness_inventory: tuple[EffectivenessItem, ...]
+    verify_evidence: VerifyEvidenceReport
 
 
 def inspect_readiness(profile: ProjectProfile) -> ReadinessReport:
@@ -79,6 +85,7 @@ def inspect_readiness(profile: ProjectProfile) -> ReadinessReport:
     context_budget = analyze_context_budget(profile.root, profile.files)
     governance_inventory = analyze_governance_inventory(profile.files)
     effectiveness_inventory = analyze_effectiveness_inventory(profile.files)
+    verify_evidence = analyze_verify_evidence(profile.root, profile.files)
     runnable_checks = tuple(
         command
         for command in profile.verification_commands
@@ -125,6 +132,7 @@ def inspect_readiness(profile: ProjectProfile) -> ReadinessReport:
     warnings.extend(context_budget.warnings)
     warnings.extend(governance_inventory.warnings)
     warnings.extend(effectiveness_inventory.warnings)
+    warnings.extend(verify_evidence.warnings)
     if source_of_truth:
         next_actions.append(
             "Review detected source-of-truth docs before enhancing or generating "
@@ -146,6 +154,7 @@ def inspect_readiness(profile: ProjectProfile) -> ReadinessReport:
         next_actions.append(
             "Review effectiveness eval inventory before making harness performance claims."
         )
+    next_actions.extend(verify_evidence.next_actions)
     instruction_text = _instruction_text(profile.root, file_set)
     if instruction_text and not instruction_routes_to_specs(instruction_text, spec_report):
         review_required.append(
@@ -190,6 +199,7 @@ def inspect_readiness(profile: ProjectProfile) -> ReadinessReport:
         context_budget=context_budget,
         governance_inventory=governance_inventory.items,
         effectiveness_inventory=effectiveness_inventory.items,
+        verify_evidence=verify_evidence,
     )
 
 
@@ -219,6 +229,7 @@ def readiness_to_dict(report: ReadinessReport) -> dict[str, Any]:
             effectiveness_item_to_dict(item)
             for item in report.effectiveness_inventory
         ],
+        "verifyEvidence": verify_evidence_report_to_dict(report.verify_evidence),
     }
 
 
@@ -285,6 +296,16 @@ def format_readiness(report: ReadinessReport) -> str:
         tuple(
             f"{item.path}: {item.category}, signals={', '.join(item.signals)}"
             for item in report.effectiveness_inventory
+        ),
+    )
+    _append_section(
+        lines,
+        "Verify evidence",
+        tuple(
+            f"{item.path}: {item.verdict or 'invalid'}, "
+            f"mode={item.mode or 'unknown'}, recorded={item.recorded_at or 'unknown'}, "
+            f"issues={', '.join(item.issues) or 'none'}"
+            for item in report.verify_evidence.reports
         ),
     )
     _append_section(lines, "Next actions", report.next_actions)

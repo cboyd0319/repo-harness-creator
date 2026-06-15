@@ -68,6 +68,7 @@
     "src/harnessforge/cli.py",
     "src/harnessforge/github_action.py",
     "src/harnessforge/reports.py",
+    "src/harnessforge/verify_evidence.py",
     "tests/test_cli.py",
     "tests/test_pins.py"
   ],

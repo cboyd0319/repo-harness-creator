@@ -38,6 +38,7 @@ and advanced product modes.
 - `src/harnessforge/models.py`
 - `src/harnessforge/readiness.py`
 - `src/harnessforge/reports.py`
+- `src/harnessforge/verify_evidence.py`
 - `src/harnessforge/spec_system.py`
 - `src/harnessforge/update.py`
 - `src/harnessforge/templates/claude.md.tmpl`
@@ -530,6 +531,10 @@ structural audit score and real-agent effectiveness. Local CLI verify now also
 supports `--json-report <target-relative-path>` so users can persist verify
 JSON without shell redirection. CLI and Action report writers share
 target-contained path validation in `src/harnessforge/reports.py`.
+Readiness and sync now include advisory `verifyEvidence` inventory for
+target-contained `docs/harness/evidence/verify*.json` reports. It surfaces the
+latest report, schema validity, stale reports, failed or blocked verdicts, and
+timed-out checks without turning stored evidence into a hard gate by default.
 `scripts/refresh_research.py --check` validates duplicate source IDs and URLs,
 required fields, placeholder text, canonical URL shape, arXiv `/abs/` URLs,
 lock-file consistency, and local-path leakage before any metadata fetch. Root
@@ -551,17 +556,17 @@ GitHub runner-images Windows VS2026 migration notice.
 Current robust-mode verification passes: 6 focused blueprint tests, 6 focused
 verify run-mode tests, 15 focused GitHub Action tests, focused generated
 verify-evidence coverage, focused verify report-persistence tests, full unit
-discovery with 193 tests, compile, JSON parse, pin check, research source
+discovery with 195 tests, compile, JSON parse, pin check, research source
 check, `verify --json` plan/run/report smokes, Action verify report smokes,
 blueprint JSON/apply smokes, self-audit `100/100`, local-path scan, and diff
-hygiene. `./init.sh` and `pwsh -NoProfile -File ./init.ps1` both pass with 193
+hygiene. `./init.sh` and `pwsh -NoProfile -File ./init.ps1` both pass with 195
 tests, pin check, research source check, and self-audit `100/100`. `sync
 --check` returns the expected warning for local workflow and instruction review
 surfaces without blockers or generated drift.
-The next highest-value product slice is read-only stored-evidence inventory:
-detect target-contained `docs/harness/evidence/verify*.json` reports, surface
-latest verdicts and stale/failed evidence in readiness or sync output, and keep
-this advisory unless the target opts into release gates.
+The next highest-value product slice is optional release-gate mode for stored
+verify evidence: let users explicitly fail readiness or sync when latest verify
+evidence is missing, stale, invalid, failed, blocked, or timed out. Keep the
+default read-only/advisory behavior unchanged.
 Existing eval guidance comes from the Harness Forge, Meta-Harness, Code as
 Agent Harness catalog, and arXiv harness-eval reviews; those sources are mined
 only for product ideas and are not copied into generated target-repo defaults.

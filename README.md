@@ -242,6 +242,7 @@ Readiness reports:
 - `contextBudget`
 - `governanceInventory`
 - `effectivenessInventory`
+- `verifyEvidence`
 
 `sync --check` wraps the same readiness report in a CI-friendly command with
 stable exit codes:
@@ -278,6 +279,11 @@ scorer, result-log, and frontier artifacts so humans can review whether real
 agent-effectiveness claims have candidate-sensitive metrics, held-out tasks,
 runtime budgets, adapter contracts, worst-case quality, and reproducible
 evidence. Static readiness can find eval surfaces; it cannot validate them.
+
+Verify evidence inventory is advisory. It detects target-contained
+`docs/harness/evidence/verify*.json` reports, identifies the latest report,
+flags invalid, failed, blocked, timed-out, or stale evidence, and keeps that
+separate from structural `audit` scoring and real-agent effectiveness claims.
 
 ## Effectiveness Eval Contract
 

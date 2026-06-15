@@ -4,6 +4,7 @@ import contextlib
 import hashlib
 import io
 import json
+import os
 import sys
 import tempfile
 import unittest
@@ -14,6 +15,49 @@ from harnessforge.cli import main
 
 def _python_command(script: str) -> str:
     return f"{json.dumps(sys.executable)} -c {json.dumps(script)}"
+
+
+def _write_verify_report(
+    root: Path,
+    relative_path: str,
+    *,
+    verdict: str = "passed",
+    mode: str = "run",
+    recorded_at: str = "2026-06-15T05:00:00Z",
+    summary: dict[str, int] | None = None,
+) -> Path:
+    path = root / relative_path
+    path.parent.mkdir(parents=True, exist_ok=True)
+    payload = {
+        "schemaVersion": "harnessforge.verify.v1",
+        "target": {"name": "demo", "root": None},
+        "mode": mode,
+        "verdict": verdict,
+        "platform": {"os": "darwin", "python": "3.14.6", "runner": "local"},
+        "execution": {
+            "commandsExecuted": mode == "run",
+            "startedAt": recorded_at,
+            "endedAt": recorded_at,
+            "durationMs": 1.0,
+        },
+        "summary": summary
+        or {
+            "total": 1,
+            "planned": 0,
+            "skipped": 0,
+            "blocked": 0,
+            "passed": 1 if verdict == "passed" else 0,
+            "failed": 1 if verdict == "failed" else 0,
+            "timedOut": 0,
+            "errors": 0,
+        },
+        "checks": [],
+        "blockedReasons": [],
+        "warnings": [],
+        "artifacts": [],
+    }
+    path.write_text(f"{json.dumps(payload, indent=2)}\n", encoding="utf-8")
+    return path
 
 
 class CliTests(unittest.TestCase):
@@ -124,9 +168,101 @@ class CliTests(unittest.TestCase):
             "contextBudget",
             "governanceInventory",
             "effectivenessInventory",
+            "verifyEvidence",
         ):
             self.assertIn(key, payload)
+        self.assertIsNone(payload["verifyEvidence"]["latest"])
+        self.assertEqual(payload["verifyEvidence"]["reports"], [])
         self.assertIn("python -m unittest discover", payload["runnableChecks"])
+
+    def test_inspect_readiness_reports_stored_verify_evidence(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            (root / "pyproject.toml").write_text(
+                "[project]\nname='demo'\n",
+                encoding="utf-8",
+            )
+            _write_verify_report(
+                root,
+                "docs/harness/evidence/verify-2026-06-15.json",
+                verdict="passed",
+                recorded_at="2026-06-15T05:00:00Z",
+            )
+            _write_verify_report(
+                root,
+                "docs/harness/evidence/verify-2026-06-14.json",
+                verdict="failed",
+                recorded_at="2026-06-14T05:00:00Z",
+            )
+            (root / "docs/harness/evidence/verify-bad.json").write_text(
+                "{not json",
+                encoding="utf-8",
+            )
+            stdout = io.StringIO()
+            with contextlib.redirect_stdout(stdout):
+                code = main(
+                    ["inspect", "--target", str(root), "--readiness", "--json"]
+                )
+
+            payload = json.loads(stdout.getvalue())
+
+        self.assertEqual(code, 0)
+        self.assertEqual(payload["verdict"], "warning")
+        evidence = payload["verifyEvidence"]
+        self.assertEqual(
+            evidence["latest"]["path"],
+            "docs/harness/evidence/verify-2026-06-15.json",
+        )
+        self.assertEqual(evidence["latest"]["mode"], "run")
+        self.assertEqual(evidence["latest"]["verdict"], "passed")
+        self.assertEqual(evidence["latest"]["recordedAt"], "2026-06-15T05:00:00Z")
+        reports = {item["path"]: item for item in evidence["reports"]}
+        self.assertTrue(
+            reports["docs/harness/evidence/verify-2026-06-15.json"]["schemaValid"]
+        )
+        self.assertFalse(
+            reports["docs/harness/evidence/verify-bad.json"]["schemaValid"]
+        )
+        self.assertEqual(
+            reports["docs/harness/evidence/verify-2026-06-14.json"]["verdict"],
+            "failed",
+        )
+        self.assertTrue(any("failed" in item for item in payload["warnings"]))
+        self.assertTrue(
+            any("invalid verify evidence" in item for item in payload["warnings"])
+        )
+        self.assertTrue(
+            any(
+                "Review stored verify evidence" in item
+                for item in payload["nextActions"]
+            )
+        )
+
+    def test_inspect_readiness_warns_for_stale_verify_evidence(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            (root / "pyproject.toml").write_text(
+                "[project]\nname='demo'\n",
+                encoding="utf-8",
+            )
+            report = _write_verify_report(
+                root,
+                "docs/harness/evidence/verify-old.json",
+                verdict="passed",
+                recorded_at="2026-01-01T00:00:00Z",
+            )
+            os.utime(report, (0, 0))
+            stdout = io.StringIO()
+            with contextlib.redirect_stdout(stdout):
+                code = main(["inspect", "--target", str(root), "--readiness"])
+
+            output = stdout.getvalue()
+
+        self.assertEqual(code, 0)
+        self.assertIn("Readiness: warning", output)
+        self.assertIn("Verify evidence:", output)
+        self.assertIn("verify-old.json: passed", output)
+        self.assertIn("stale", output)
 
     def test_inspect_readiness_reports_config_precedence(self) -> None:
         with tempfile.TemporaryDirectory() as tmp:

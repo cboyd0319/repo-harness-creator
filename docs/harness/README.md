@@ -72,6 +72,10 @@ Governance inventory reports MCP configs, agent settings, agent skills, agent
 plugin manifests, installer scripts, hooks, devcontainers, sandbox configs,
 agent setup workflows, and environment files as review surfaces before agents
 receive tool or runner access.
+Verify evidence inventory reports target-contained
+`docs/harness/evidence/verify*.json` files, latest verdicts, invalid schemas,
+failed or blocked outcomes, timed-out checks, and stale reports as advisory
+readiness signals.
 
 Effectiveness inventory reports visible eval specs, benchmark files, scorer
 scripts, result logs, and frontier files as review surfaces before anyone
