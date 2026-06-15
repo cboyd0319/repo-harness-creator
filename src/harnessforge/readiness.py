@@ -11,6 +11,11 @@ from .context_budget import (
     context_budget_to_dict,
 )
 from .detect import MISSING_VERIFICATION_COMMAND
+from .governance_inventory import (
+    GovernanceItem,
+    analyze_governance_inventory,
+    governance_item_to_dict,
+)
 from .models import DriftResult, ProjectProfile
 from .paths import path_from_relative_text
 from .spec_system import (
@@ -35,20 +40,6 @@ INSTRUCTION_FILES = (
     ".github/copilot-instructions.md",
 )
 
-MCP_CONFIGS = (
-    ".mcp.json",
-    ".github/copilot/mcp.json",
-    ".cursor/mcp.json",
-    ".continue/config.json",
-)
-
-AGENT_PERMISSION_FILES = (
-    ".claude/settings.json",
-    ".claude/settings.local.json",
-    ".codex/config.toml",
-    ".aider.conf.yml",
-)
-
 AGENT_SETUP_WORKFLOWS = (
     ".github/workflows/copilot-setup-steps.yml",
     ".github/workflows/copilot-setup-steps.yaml",
@@ -69,6 +60,7 @@ class ReadinessReport:
     workflow_inventory: tuple[WorkflowItem, ...]
     work_item_inventory: tuple[WorkItem, ...]
     context_budget: ContextBudgetReport
+    governance_inventory: tuple[GovernanceItem, ...]
 
 
 def inspect_readiness(profile: ProjectProfile) -> ReadinessReport:
@@ -78,6 +70,7 @@ def inspect_readiness(profile: ProjectProfile) -> ReadinessReport:
     spec_report = analyze_spec_system(profile.root, profile.files)
     inventory = analyze_workflow_inventory(profile.root, profile.files)
     context_budget = analyze_context_budget(profile.root, profile.files)
+    governance_inventory = analyze_governance_inventory(profile.files)
     runnable_checks = tuple(
         command
         for command in profile.verification_commands
@@ -122,6 +115,7 @@ def inspect_readiness(profile: ProjectProfile) -> ReadinessReport:
     warnings.extend(spec_report.quality_warnings)
     warnings.extend(inventory.warnings)
     warnings.extend(context_budget.warnings)
+    warnings.extend(governance_inventory.warnings)
     if source_of_truth:
         next_actions.append(
             "Review detected source-of-truth docs before enhancing or generating "
@@ -135,13 +129,17 @@ def inspect_readiness(profile: ProjectProfile) -> ReadinessReport:
         next_actions.append(
             "Review context budget findings before expanding instruction files."
         )
+    if governance_inventory.items:
+        next_actions.append(
+            "Review governance inventory before giving agents tool, environment, or runner access."
+        )
     instruction_text = _instruction_text(profile.root, file_set)
     if instruction_text and not instruction_routes_to_specs(instruction_text, spec_report):
         review_required.append(
             "Instruction files do not route agents to detected source-of-truth specs."
         )
 
-    review_required.extend(_governance_review_items(file_set))
+    review_required.extend(governance_inventory.review_required)
     review_required.extend(inventory.review_required)
     if any(item in file_set for item in AGENT_SETUP_WORKFLOWS):
         warnings.append(
@@ -175,6 +173,7 @@ def inspect_readiness(profile: ProjectProfile) -> ReadinessReport:
         workflow_inventory=inventory.workflows,
         work_item_inventory=inventory.work_items,
         context_budget=context_budget,
+        governance_inventory=governance_inventory.items,
     )
 
 
@@ -196,6 +195,9 @@ def readiness_to_dict(report: ReadinessReport) -> dict[str, Any]:
             work_item_to_dict(item) for item in report.work_item_inventory
         ],
         "contextBudget": context_budget_to_dict(report.context_budget),
+        "governanceInventory": [
+            governance_item_to_dict(item) for item in report.governance_inventory
+        ],
     }
 
 
@@ -246,6 +248,14 @@ def format_readiness(report: ReadinessReport) -> str:
             for item in report.context_budget.duplicate_instruction_blocks
         ),
     )
+    _append_section(
+        lines,
+        "Governance inventory",
+        tuple(
+            f"{item.path}: {item.category}, surfaces={', '.join(item.surfaces)}"
+            for item in report.governance_inventory
+        ),
+    )
     _append_section(lines, "Next actions", report.next_actions)
     return "\n".join(lines).rstrip()
 
@@ -279,27 +289,6 @@ def _instruction_text(root: Path, file_set: set[str]) -> str:
         except (OSError, UnicodeDecodeError):
             continue
     return ""
-
-
-def _governance_review_items(file_set: set[str]) -> list[str]:
-    items: list[str] = []
-    for file_name in MCP_CONFIGS:
-        if file_name in file_set:
-            items.append(
-                f"MCP configuration detected at {file_name}; review server scopes "
-                "and trust."
-            )
-    for file_name in AGENT_PERMISSION_FILES:
-        if file_name in file_set:
-            items.append(
-                f"Agent permission/settings file detected at {file_name}; review tool and path access."
-            )
-    for file_name in AGENT_SETUP_WORKFLOWS:
-        if file_name in file_set:
-            items.append(
-                f"GitHub agent setup workflow detected at {file_name}; review before agent use."
-            )
-    return items
 
 
 def _generated_ownership(root: Path) -> dict[str, str]:

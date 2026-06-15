@@ -390,10 +390,13 @@ Sources:
      character counts plus duplicate instruction-block pairs.
    - Findings remain advisory until thresholds are proven on real repos.
 
-7. Add permission/governance inventory.
+7. Implemented: add permission/governance inventory.
    - Detect MCP configs, agent settings, hooks, permission files, cloud-agent
      setup workflows, devcontainers, and sandbox configs.
    - Mark these as review-required security surfaces.
+   - Readiness JSON now reports `governanceInventory` for MCP configs, agent
+     settings, hooks, devcontainers, sandbox configs, Copilot setup workflows,
+     and environment files/templates.
 
 8. Add first-run guided UX.
    - A `quickstart` or `wizard` command can explain what will be generated,
@@ -445,6 +448,6 @@ HarnessForge generator behavior:
 
 ## Suggested Next Step
 
-Move to the next P1 backlog item: permission/governance inventory. That
+Move to the next P1 backlog item: guided first-run UX. That
 keeps improving user experience without expanding the generator's default write
 surface.

@@ -114,6 +114,7 @@ class CliTests(unittest.TestCase):
             "workflowInventory",
             "workItemInventory",
             "contextBudget",
+            "governanceInventory",
         ):
             self.assertIn(key, payload)
         self.assertIn("python -m unittest discover", payload["runnableChecks"])
@@ -176,6 +177,92 @@ class CliTests(unittest.TestCase):
         )
         self.assertTrue(any("context budget" in item for item in payload["warnings"]))
         self.assertTrue(any("duplicate instruction" in item for item in payload["warnings"]))
+
+    def test_inspect_readiness_reports_governance_inventory(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            (root / "pyproject.toml").write_text(
+                "[project]\nname='demo'\n",
+                encoding="utf-8",
+            )
+            (root / "tests").mkdir()
+            (root / "tests" / "test_demo.py").write_text("", encoding="utf-8")
+            (root / ".mcp.json").write_text("{}\n", encoding="utf-8")
+            (root / ".claude").mkdir()
+            (root / ".claude" / "settings.json").write_text("{}\n", encoding="utf-8")
+            (root / ".codex").mkdir()
+            (root / ".codex" / "config.toml").write_text(
+                "sandbox = 'read-only'\n",
+                encoding="utf-8",
+            )
+            (root / ".claude" / "hooks").mkdir()
+            (root / ".claude" / "hooks" / "pre-tool-use.sh").write_text(
+                "#!/bin/sh\n",
+                encoding="utf-8",
+            )
+            (root / ".devcontainer").mkdir()
+            (root / ".devcontainer" / "devcontainer.json").write_text(
+                "{}\n",
+                encoding="utf-8",
+            )
+            (root / ".husky").mkdir()
+            (root / ".husky" / "pre-commit").write_text(
+                "#!/bin/sh\n",
+                encoding="utf-8",
+            )
+            (root / ".pre-commit-config.yaml").write_text(
+                "repos: []\n",
+                encoding="utf-8",
+            )
+            (root / ".sandbox").mkdir()
+            (root / ".sandbox" / "policy.toml").write_text(
+                "mode = 'deny'\n",
+                encoding="utf-8",
+            )
+            (root / ".env.example").write_text(
+                "API_TOKEN=\n",
+                encoding="utf-8",
+            )
+            (root / ".env.local").write_text(
+                "API_TOKEN=secret\n",
+                encoding="utf-8",
+            )
+            (root / ".github" / "workflows").mkdir(parents=True)
+            (root / ".github" / "workflows" / "copilot-setup-steps.yml").write_text(
+                "name: setup\n",
+                encoding="utf-8",
+            )
+            stdout = io.StringIO()
+            with contextlib.redirect_stdout(stdout):
+                code = main(["inspect", "--target", str(root), "--readiness", "--json"])
+
+            payload = json.loads(stdout.getvalue())
+
+        self.assertEqual(code, 0)
+        inventory = {item["path"]: item for item in payload["governanceInventory"]}
+        self.assertEqual(inventory[".mcp.json"]["category"], "mcp-config")
+        self.assertIn("server-trust", inventory[".mcp.json"]["surfaces"])
+        self.assertEqual(inventory[".claude/settings.json"]["category"], "agent-settings")
+        self.assertEqual(inventory[".codex/config.toml"]["category"], "agent-settings")
+        self.assertEqual(
+            inventory[".devcontainer/devcontainer.json"]["category"],
+            "devcontainer",
+        )
+        self.assertEqual(inventory[".sandbox/policy.toml"]["category"], "sandbox")
+        self.assertEqual(inventory[".env.example"]["category"], "environment-template")
+        self.assertEqual(
+            inventory[".github/workflows/copilot-setup-steps.yml"]["category"],
+            "agent-setup-workflow",
+        )
+        self.assertEqual(inventory[".claude/hooks/pre-tool-use.sh"]["category"], "hook")
+        self.assertEqual(inventory[".husky/pre-commit"]["category"], "hook")
+        self.assertEqual(inventory[".pre-commit-config.yaml"]["category"], "hook")
+        self.assertEqual(inventory[".env.local"]["category"], "environment-local")
+        self.assertTrue(any("governance inventory" in item for item in payload["warnings"]))
+        self.assertTrue(any("MCP" in item for item in payload["reviewRequired"]))
+        self.assertTrue(any("devcontainer" in item for item in payload["reviewRequired"]))
+        self.assertTrue(any("environment" in item for item in payload["reviewRequired"]))
+        self.assertTrue(any("hook" in item for item in payload["reviewRequired"]))
 
     def test_inspect_readiness_warns_for_specs_and_governance_surfaces(self) -> None:
         with tempfile.TemporaryDirectory() as tmp:

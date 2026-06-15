@@ -191,6 +191,7 @@ Readiness reports:
 - `workflowInventory`
 - `workItemInventory`
 - `contextBudget`
+- `governanceInventory`
 
 `sync --check` wraps the same readiness report in a CI-friendly command with
 stable exit codes:
@@ -216,6 +217,11 @@ Context budget is also advisory. It reports instruction-file size and repeated
 instruction blocks across `AGENTS.md`, `CLAUDE.md`, `GEMINI.md`, and Copilot
 instructions so teams can keep router files compact and avoid wasting agent
 context on duplicated guidance.
+
+Governance inventory is advisory as well. It reports MCP configs, agent
+settings, hooks, devcontainers, sandbox configs, agent setup workflows, and
+environment template or local env files as review surfaces without reading or
+exposing secret values.
 
 ## Planned Verify JSON Contract
 

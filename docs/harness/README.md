@@ -60,6 +60,9 @@ detected setup, teardown, remediation, push, pull-request, CI polling, and
 credential surfaces as review inputs before agent automation relies on them.
 It also includes advisory context-budget data for instruction file size and
 duplicated router text.
+Governance inventory reports MCP configs, agent settings, hooks, devcontainers,
+sandbox configs, agent setup workflows, and environment files as review surfaces
+before agents receive tool or runner access.
 
 The GitHub Action in `action.yml` exposes the same behavior to other
 repositories. Keep it wired to the Python library instead of duplicating logic

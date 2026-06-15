@@ -338,10 +338,15 @@ maintenance loop.
   readiness. The `contextBudget` payload reports instruction-file line and
   character counts plus repeated instruction-block pairs across `AGENTS.md`,
   `CLAUDE.md`, `GEMINI.md`, and Copilot instructions.
+- Added advisory permission/governance inventory to readiness. The
+  `governanceInventory` payload reports MCP configs, agent settings,
+  hooks, devcontainers, sandbox configs, agent setup workflows, and environment
+  files or templates as review surfaces without reading or exposing secret
+  values.
 
 ## Recommended Next Step
 
-Continue with the next P1 backlog item: permission/governance inventory.
+Continue with the next P1 backlog item: guided first-run UX.
 Push local commits only at an explicit batch/release boundary or user request.
 Remaining product decisions before a first public Action release: whether to
 add component-directed monorepo verification commands, path/package exclusions
@@ -392,6 +397,15 @@ blocking.
   code `1` after adding context-budget readiness. This repo has no
   context-budget findings; warning state still comes from workflow and existing
   local instruction review items.
+- `PYTHONPATH=src:. python3 -m unittest discover -s tests` passed with
+  157 tests, `PYTHONPATH=src:. python3 -m compileall src tests scripts`
+  passed, `PYTHONPATH=src:. python3 scripts/check_pins.py --root .` passed,
+  `PYTHONPATH=src:. python3 -m harnessforge audit --target . --min-score 85`
+  passed with self-audit `100/100`, and `PYTHONPATH=src:. python3 -m
+  harnessforge sync --check --target . --json` returned expected warning exit
+  code `1` after adding governance inventory. This repo has no governance
+  inventory items; warning state still comes from workflow and existing local
+  instruction review items.
 - `PYTHONPATH=src:. python3 -m unittest discover -s tests` passed with
   148 tests, and `PYTHONPATH=src:. python3 -m compileall src tests scripts`
   passed after adding source-of-truth spec sync detection.
