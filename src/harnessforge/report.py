@@ -15,7 +15,22 @@ from .update import build_drift_report
 
 SCHEMA_VERSION = "harnessforge.report.v1"
 FIRST_AGENT_TASK = "docs/harness/first-agent-task.md"
+AUTHORITATIVE_FACTS = "docs/harness/authoritative-facts.md"
 MANIFEST = "docs/harness/manifest.json"
+DOCS_FANOUT_SURFACES = (
+    ("local_repo_harness", "Local repo harness"),
+    ("generated_harness", "Generated harness files"),
+    ("cli_runtime", "CLI/runtime behavior"),
+    ("existing_project_files", "Existing project files"),
+    ("github_action_or_ci", "GitHub Action or CI workflows"),
+    ("optional_workflow_scaffolds", "Optional workflow scaffolds"),
+    ("tests_and_fixtures", "Tests and fixture corpus"),
+    ("release_package", "Release/package surface"),
+    ("research_sources", "Research and source records"),
+    ("security_privacy", "Security and privacy"),
+    ("platform_contracts", "Platform contracts"),
+    ("docs_ux", "Docs and UX"),
+)
 
 
 def build_report(
@@ -46,6 +61,7 @@ def build_report(
     audit_payload = audit_to_dict(audit)
     manifest = _read_manifest(profile.root)
     first_agent = _first_agent_task_status(profile.root)
+    docs_fanout = _docs_fanout_summary(profile.root, manifest)
     payload = {
         "schemaVersion": SCHEMA_VERSION,
         "target": {
@@ -67,12 +83,14 @@ def build_report(
         "effectiveness": _effectiveness_summary(effectiveness),
         "firstAgentTask": first_agent,
         "platform": _platform_summary(manifest),
+        "docsFanout": docs_fanout,
         "nextActions": _next_actions(
             readiness_payload,
             audit_payload,
             drift,
             effectiveness,
             first_agent,
+            docs_fanout,
         ),
     }
     return payload
@@ -144,6 +162,12 @@ def format_report(payload: dict[str, Any]) -> str:
             "## Platform",
             "",
             f"- Contract: `{payload['platform']['contract']}`",
+            "",
+            "## Docs Fan-Out",
+            "",
+            f"- Routing map: `{payload['docsFanout']['authoritativeMap']['status']}`",
+            f"- Covered surfaces: {payload['docsFanout']['coveredSurfaceCount']}/{payload['docsFanout']['surfaceCount']}",
+            f"- Routine budget: {payload['docsFanout']['fanoutBudgets']['routine']}",
             "",
             "## Next Actions",
             "",
@@ -281,6 +305,81 @@ def _platform_summary(manifest: dict[str, Any]) -> dict[str, Any]:
     }
 
 
+def _docs_fanout_summary(root: Path, manifest: dict[str, Any]) -> dict[str, Any]:
+    path = root / AUTHORITATIVE_FACTS
+    present = path.exists()
+    review_required = False
+    if present:
+        try:
+            review_required = "REVIEW REQUIRED" in path.read_text(encoding="utf-8")
+        except OSError:
+            review_required = True
+    manifest_paths = _manifest_paths(manifest)
+    generated_or_required = AUTHORITATIVE_FACTS in manifest_paths
+    covered = present and (generated_or_required or not manifest_paths)
+    surfaces = [
+        {
+            "id": surface_id,
+            "label": label,
+            "covered": bool(covered),
+            "ownerMap": AUTHORITATIVE_FACTS if present else None,
+        }
+        for surface_id, label in DOCS_FANOUT_SURFACES
+    ]
+    warnings: list[str] = []
+    if not present:
+        warnings.append(
+            "No authoritative facts map found; docs fan-out routing is unavailable."
+        )
+    elif review_required:
+        warnings.append(
+            "Authoritative facts map still contains REVIEW REQUIRED markers."
+        )
+    elif not generated_or_required and manifest_paths:
+        warnings.append(
+            "Authoritative facts map exists but is not tracked in the harness manifest."
+        )
+    return {
+        "authoritativeMap": {
+            "path": AUTHORITATIVE_FACTS,
+            "present": present,
+            "reviewRequired": review_required,
+            "manifestTracked": generated_or_required,
+            "status": (
+                "pending_review"
+                if present and review_required
+                else "present"
+                if present
+                else "missing"
+            ),
+        },
+        "surfaceCount": len(surfaces),
+        "coveredSurfaceCount": sum(1 for surface in surfaces if surface["covered"]),
+        "surfaces": surfaces,
+        "fanoutBudgets": {
+            "routine": "0-1 durable doc/state updates",
+            "userVisible": "1-3 durable doc/state updates",
+            "exception": "more than 3 only for boundary, platform, security, release, README, or generated-contract changes",
+        },
+        "warnings": warnings,
+    }
+
+
+def _manifest_paths(manifest: dict[str, Any]) -> set[str]:
+    paths: set[str] = set()
+    for key in ("requiredFiles", "reviewRequired"):
+        value = manifest.get(key)
+        if isinstance(value, list):
+            paths.update(item for item in value if isinstance(item, str))
+    snippets = manifest.get("requiredHarnessSnippets")
+    if isinstance(snippets, dict):
+        paths.update(key for key in snippets if isinstance(key, str))
+    generated_files = manifest.get("generatedFiles")
+    if isinstance(generated_files, dict):
+        paths.update(key for key in generated_files if isinstance(key, str))
+    return paths
+
+
 def _read_manifest(root: Path) -> dict[str, Any]:
     path = root / MANIFEST
     try:
@@ -296,6 +395,7 @@ def _next_actions(
     drift: tuple[Any, ...],
     effectiveness: dict[str, Any],
     first_agent: dict[str, Any],
+    docs_fanout: dict[str, Any],
 ) -> list[str]:
     actions: list[str] = [
         "Run harnessforge report --target <repo> --markdown-report "
@@ -311,6 +411,14 @@ def _next_actions(
     if first_agent["status"] == "pending_review":
         actions.append(
             "Complete or retire docs/harness/first-agent-task.md after repo-specific harness review."
+        )
+    if docs_fanout["authoritativeMap"]["status"] == "missing":
+        actions.append(
+            "Add docs/harness/authoritative-facts.md to reduce harness docs fan-out."
+        )
+    elif docs_fanout["authoritativeMap"]["reviewRequired"]:
+        actions.append(
+            "Review docs/harness/authoritative-facts.md and remove REVIEW REQUIRED markers when accepted."
         )
     return _dedupe(actions)
 

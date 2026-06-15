@@ -1,0 +1,62 @@
+# Authoritative Facts And Docs Routing
+
+Status: REVIEW REQUIRED
+
+Use this file to reduce harness maintenance fan-out in {{project_name}}. Update
+the authoritative owner first, then update only the surfaces that the routing
+table says are affected.
+
+## Boundary Types Covered
+
+| Boundary Type | Default Owner |
+| --- | --- |
+| Local repo harness | `docs/harness/README.md`, `docs/harness/component-inventory.md` |
+| Generated harness files | `docs/harness/manifest.json` and generated ownership metadata |
+| CLI/runtime behavior | Project CLI source, command tests, and `docs/harness/verification-matrix.md` |
+| Existing project files | Existing project docs and instruction files; HarnessForge should not take ownership silently |
+| GitHub Action or CI workflows | Project workflow files and `docs/harness/security-boundary-map.md` |
+| Optional workflow scaffolds | Generated workflow file plus manifest ownership metadata |
+| Tests and fixtures | Project test suite, `docs/harness/sensor-registry.md`, and verification evidence |
+| Release/package surface | `docs/harness/release-controls.md` |
+| Research and source records | `docs/harness/sources.md`, `research-sources.json`, and project source records |
+| Security and privacy | `docs/harness/security-boundary-map.md`, `feature-privacy-labels.json` |
+| Platform contracts | `docs/harness/manifest.json`, runtime manifests, and platform source evidence |
+| Docs and UX | User-facing docs plus this routing map |
+
+## Fact Owners
+
+| Fact Class | Authoritative Owner | Other Surfaces Should |
+| --- | --- | --- |
+| Project purpose, supported platforms, and runtime contract | Primary README, runtime manifests, and `docs/harness/manifest.json` | Summarize only the part needed for agent startup. |
+| Agent startup and non-negotiable constraints | Canonical agent instruction file | Route detail to harness docs instead of duplicating long rules. |
+| Component boundaries and source-of-truth docs | `docs/harness/component-inventory.md` | Link or summarize when needed. |
+| Verification commands and recurring gates | `docs/harness/verification-matrix.md`, `docs/harness/sensor-registry.md` | Do not repeat every command in every doc. |
+| Generated ownership and drift | `docs/harness/manifest.json` | Use reports instead of hand-maintained file lists. |
+| Current work state and evidence | `feature_list.json`, `progress.md`, `session-handoff.md`, `docs/harness/evidence-log.md` | Keep entries compact and avoid raw logs. |
+| Security, privacy, permissions, and cost boundaries | `docs/harness/security-boundary-map.md` and `feature-privacy-labels.json` | Reference the relevant boundary only. |
+| Roadmap and accepted backlog | `docs/harness/roadmap.md` | Do not duplicate full backlog lists elsewhere. |
+
+## Change-To-Docs Routing
+
+| Change Type | Required Docs/State Updates | Usually Not Needed |
+| --- | --- | --- |
+| Small internal code fix with no CLI, generated output, workflow, scoring, platform, security, or release impact | `progress.md` or no durable doc update if active state already covers it | README, manifest snippets, roadmap |
+| CLI command, flag, JSON, or exit-code change | Usage docs, command tests, verification matrix if checks change | Broad harness README rewrite |
+| Generated harness artifact change | Template, manifest metadata, generated-content tests, generated-file docs if user-visible | Unrelated state files |
+| Existing instruction enhancement change | Canonical instruction file or enhance plan output, plus tests | Generated templates unless default generation changes |
+| GitHub Action or CI behavior change | Workflow/Action file, Action docs, security boundary if permissions change | Generated target docs unless generated guidance changes |
+| Audit or report scoring change | Audit/report tests and short scoring docs | README unless product positioning changes |
+| Platform, dependency, workflow, or pin change | Pin policy, manifest/platform metadata, pin check evidence | Roadmap unless accepted scope changes |
+| Research or source policy change | Source ledger, source records, research check evidence | CLI docs unless command behavior changes |
+| Release-prep evidence change | Release controls, evidence log, progress or handoff | Generated templates unless release guidance changes |
+
+## Fan-Out Budgets
+
+- 0-1 durable doc/state updates for isolated internal fixes.
+- 1-3 docs/state updates for user-visible CLI, generated-content, workflow, or
+  audit changes.
+- More than 3 docs/state updates only for boundary, platform, security,
+  release, public README, or generated-contract changes.
+
+When a small change appears to need more updates, stop and identify the
+authoritative owner before editing.

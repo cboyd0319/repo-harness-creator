@@ -181,6 +181,7 @@
     "docs/usage.md": [
       "Normal Flow",
       "Unified Report",
+      "docs fan-out",
       "Readiness And Sync",
       "Verify Project Checks",
       "Public Repo Quality Corpus",
@@ -192,6 +193,8 @@
       "Default Boundaries",
       "offline public-repo fixture corpus",
       "report",
+      "docs fan-out",
+      "authoritative-facts.md",
       "Generated Files",
       "Security Model",
       "Repo-Local Self-Healing"
@@ -232,6 +235,7 @@
     ],
     "docs/harness/authoritative-facts.md": [
       "Authoritative Facts And Docs Routing",
+      "Boundary Types Covered",
       "Fact Owners",
       "Change-To-Docs Routing",
       "Fan-Out Budgets",

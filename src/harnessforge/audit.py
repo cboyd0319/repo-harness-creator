@@ -642,6 +642,7 @@ def _harnessforge_fact_map_check(
         text,
         (
             "Authoritative Facts",
+            "Boundary Types Covered",
             "Fact Owners",
             "Change-To-Docs Routing",
             "Fan-Out Budgets",

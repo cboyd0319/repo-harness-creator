@@ -706,6 +706,14 @@ class CliTests(unittest.TestCase):
         self.assertEqual(payload["effectiveness"]["verdict"], "blocked")
         self.assertEqual(payload["firstAgentTask"]["status"], "pending_review")
         self.assertEqual(payload["platform"]["contract"], "cross-platform")
+        self.assertEqual(
+            payload["docsFanout"]["authoritativeMap"]["status"], "pending_review"
+        )
+        self.assertEqual(payload["docsFanout"]["surfaceCount"], 12)
+        self.assertEqual(payload["docsFanout"]["coveredSurfaceCount"], 12)
+        self.assertTrue(
+            all(surface["covered"] for surface in payload["docsFanout"]["surfaces"])
+        )
         self.assertIn("Run harnessforge report", payload["nextActions"][0])
 
     def test_report_markdown_can_write_target_contained_reports(self) -> None:
@@ -747,6 +755,7 @@ class CliTests(unittest.TestCase):
         )
         self.assertIn("# HarnessForge Report", markdown)
         self.assertIn("## Readiness", markdown)
+        self.assertIn("## Docs Fan-Out", markdown)
         self.assertIn("## Next Actions", markdown)
         self.assertEqual(payload["schemaVersion"], "harnessforge.report.v1")
 

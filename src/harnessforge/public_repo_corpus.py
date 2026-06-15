@@ -37,6 +37,7 @@ GENERATED_TEXT_PATHS = (
     "GEMINI.md",
     ".github/copilot-instructions.md",
     "docs/harness/README.md",
+    "docs/harness/authoritative-facts.md",
     "docs/harness/component-inventory.md",
     "docs/harness/quality-document.md",
 )

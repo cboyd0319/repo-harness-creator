@@ -87,6 +87,12 @@ class GenerateAuditTests(unittest.TestCase):
             copilot = (root / ".github/copilot-instructions.md").read_text(
                 encoding="utf-8"
             )
+            facts = (root / "docs/harness/authoritative-facts.md").read_text(
+                encoding="utf-8"
+            )
+            manifest = json.loads(
+                (root / "docs/harness/manifest.json").read_text(encoding="utf-8")
+            )
 
         written = {write.path.name for write in writes if write.status == "written"}
         self.assertEqual(profile.stack, "python")
@@ -94,11 +100,28 @@ class GenerateAuditTests(unittest.TestCase):
         self.assertIn("CLAUDE.md", written)
         self.assertIn("GEMINI.md", written)
         self.assertIn("copilot-instructions.md", written)
+        self.assertIn("authoritative-facts.md", written)
         self.assertIn("check_pins.py", written)
         self.assertIn("@AGENTS.md", claude)
         self.assertIn("@AGENTS.md", gemini)
         self.assertIn("../AGENTS.md", copilot)
         self.assertIn("Security boundary map", copilot)
+        self.assertIn("Authoritative Facts And Docs Routing", facts)
+        self.assertIn("Boundary Types Covered", facts)
+        self.assertIn("Generated harness files", facts)
+        self.assertIn("GitHub Action", facts)
+        self.assertIn(
+            "docs/harness/authoritative-facts.md", manifest["requiredFiles"]
+        )
+        self.assertIn(
+            "docs/harness/authoritative-facts.md", manifest["reviewRequired"]
+        )
+        self.assertIn(
+            "Boundary Types Covered",
+            manifest["requiredHarnessSnippets"][
+                "docs/harness/authoritative-facts.md"
+            ],
+        )
         self.assertIn('cd "$SCRIPT_DIR"', init_sh)
         self.assertIn("--no-env", init_sh)
         self.assertIn("OPENAI_API_KEY", init_sh)
@@ -853,11 +876,13 @@ class GenerateAuditTests(unittest.TestCase):
                 ["action.yml", "docs/action.md", "src/harnessforge/cli.py"]
             )
             manifest_path.write_text(json.dumps(manifest, indent=2), encoding="utf-8")
+            facts_path = root / "docs/harness/authoritative-facts.md"
+            facts_path.unlink()
 
             missing = audit_target(root)
-            facts_path = root / "docs/harness/authoritative-facts.md"
             facts_path.write_text(
                 "# Authoritative Facts And Docs Routing\n\n"
+                "## Boundary Types Covered\n\n"
                 "## Fact Owners\n\n"
                 "## Change-To-Docs Routing\n\n"
                 "## Fan-Out Budgets\n",

@@ -1576,7 +1576,14 @@ Push local commits only at an explicit batch/release boundary or user request.
 - Added a local-product-aware self-audit check. It requires the map only when
   the target is the HarnessForge product repo and skips arbitrary generated
   target repos.
-- Verification passed: `PYTHONPATH=src:. python3 -m unittest
-  tests.test_generate_audit` with 53 tests; `python3 -m json.tool
-  docs/harness/manifest.json`; and `PYTHONPATH=src:. python3 -m harnessforge
-  audit --target . --min-score 85` with self-audit `100/100`.
+- Extended the optimization across product boundaries. Generated target
+  harnesses now include a review-required `docs/harness/authoritative-facts.md`,
+  `harnessforge report` summarizes docs fan-out routing status, and the corpus
+  gate checks the new generated map for unrendered tokens and local paths.
+- Verification passed: focused generator/CLI/corpus tests with 132 tests; full
+  unit discovery with 243 tests; compile; pin check; research source check;
+  manifest and feature JSON validation; self-audit `100/100`; corpus JSON gate
+  at 13 fixtures with minimum score `100`; local report smoke showing map
+  `present` and 12/12 covered surfaces; generated-target smoke showing map
+  `pending_review` and 12/12 covered surfaces; local-path scan; and
+  `git diff --check`.

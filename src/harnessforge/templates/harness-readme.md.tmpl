@@ -133,6 +133,11 @@ before files are changed. Patch previews are review-only and are not applied
 automatically. Use `harnessforge init --target . --enhance-existing` only when
 you are ready to append the reviewed HarnessForge quality addendum.
 
+Use `authoritative-facts.md` before updating more than one durable doc or state
+file for a routine change. It maps fact owners, product boundary types, and
+change-to-doc routing so the harness does not require broad manual doc edits
+for small changes.
+
 The optional CI workflow scaffold is a project-owned generated file. It is
 separate from the published HarnessForge Action runtime and from HarnessForge's
 live repository maintenance workflows.

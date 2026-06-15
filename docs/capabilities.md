@@ -14,7 +14,7 @@ boundaries it preserves. See [Usage](usage.md) for commands and
   next commands.
 - Generates a compact harness with agent entrypoints, project state files,
   local verification scripts, security boundaries, evidence docs, lifecycle
-  docs, and a manifest.
+  docs, a target-owned authoritative fact map, and a manifest.
 - Treats a harness as five core subsystems: instructions, tools, environment,
   state, and feedback. Generated docs make feedback and verification commands
   the first repair target when agent output is weak.
@@ -37,8 +37,9 @@ boundaries it preserves. See [Usage](usage.md) for commands and
 - Reports generated-file drift and static readiness without running target
   project commands.
 - Composes readiness, audit, generated drift, structural index, verify
-  evidence, effectiveness evidence, first-agent task status, and platform
-  contract into one read-only JSON or Markdown report.
+  evidence, effectiveness evidence, first-agent task status, platform
+  contract, and docs fan-out routing status into one read-only JSON or Markdown
+  report.
 - Provides explicit blueprint mode for richer project operating models. Built-in
   packs cover agentic applications, spec-driven projects, web services,
   data/ML, security-sensitive repos, and workflow automation.
@@ -77,7 +78,7 @@ The default generated harness includes:
 | Agent instructions | `AGENTS.md`, `CLAUDE.md`, `GEMINI.md`, `.github/copilot-instructions.md` |
 | Project state | `feature_list.json`, `progress.md`, `session-handoff.md` |
 | Local checks | `init.sh`, `init.ps1`, `scripts/check_pins.py` |
-| Harness docs | `docs/harness/README.md`, `roadmap.md`, `verification-matrix.md`, `sensor-registry.md`, `change-contract.md` |
+| Harness docs | `docs/harness/README.md`, `authoritative-facts.md`, `roadmap.md`, `verification-matrix.md`, `sensor-registry.md`, `change-contract.md` |
 | First-agent improvement | `docs/harness/first-agent-task.md` |
 | Security and privacy | `security-boundary-map.md`, `feature-privacy-labels.json` |
 | Evidence and quality | `evidence-log.md`, `quality-document.md`, `release-controls.md`, `evaluator-rubric.md` |

@@ -839,12 +839,20 @@ The first local optimization slice is now implemented:
 `docs/harness/authoritative-facts.md` owns fact-owner routing, change-to-doc
 routing, fan-out budgets, exceptions, and future audit/report expectations.
 Harness operations and the sensor registry route to it. Self-audit requires the
-map only for the HarnessForge product repo, not generated target repos. Focused
-generator/audit tests passed with 53 tests and self-audit stayed `100/100`.
-Latest verification passed full unit discovery with 242 tests, compile, pin
+map for the HarnessForge product repo.
+The cross-boundary optimization slice is also implemented. Generated target
+harnesses now include review-required `docs/harness/authoritative-facts.md`,
+`harnessforge report` exposes docs fan-out routing status, and the corpus gate
+checks the new generated map for unrendered template tokens and local paths.
+Focused generator/CLI/corpus tests passed with 132 tests; full unit discovery
+passed with 243 tests; self-audit stayed `100/100`; corpus JSON gate passed at
+13 fixtures with minimum score `100`; local report smoke showed map `present`
+and 12/12 covered surfaces; generated-target smoke showed map `pending_review`
+and 12/12 covered surfaces.
+Latest verification passed full unit discovery with 243 tests, compile, pin
 check, research source check, manifest and feature JSON validation, self-audit
-`100/100`, public corpus JSON gate, generated-target boundary smoke, RunHaven
-audit `100/100`, RunHaven manifest JSON validation, and diff hygiene.
+`100/100`, public corpus JSON gate, report smoke, generated-target docs fan-out
+smoke, local-path scan, and diff hygiene.
 Push local commits only at an explicit batch/release boundary or user request.
 Release prep is intentionally deferred. Continue accepted roadmap work before
 release gates, package publishing, or Action tag decisions. The pre-release

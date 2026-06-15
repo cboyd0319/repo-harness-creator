@@ -349,10 +349,10 @@ Surface impact:
   harness docs.
 - Generated harness: apply only if the pattern improves target repos without
   hiding important review obligations.
-- CLI/runtime: possible report/audit support for stale duplicated facts and
-  source-of-truth routing.
-- GitHub Action: no direct behavior unless report output gains a docs-fanout
-  summary.
+- CLI/runtime: initial `report` output now summarizes docs fan-out routing
+  status from `docs/harness/authoritative-facts.md`.
+- GitHub Action: report mode inherits the docs fan-out summary when callers run
+  `command: report`; no separate Action-specific behavior yet.
 - Tests and fixtures: add regression coverage only for canonical routing or
   generated summary behavior, not for every prose copy.
 

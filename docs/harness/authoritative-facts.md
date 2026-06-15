@@ -6,6 +6,23 @@ Use this file to reduce harness maintenance fan-out. Do not copy every fact
 into every doc. Update the authoritative owner first, then update only the
 surfaces listed in the routing table when the change affects them.
 
+## Boundary Types Covered
+
+| Boundary Type | Default Owner |
+| --- | --- |
+| Local repo harness | `docs/harness/README.md`, `docs/harness/component-inventory.md` |
+| Generated target harness | `src/harnessforge/templates/`, `src/harnessforge/generate.py`, generated manifest metadata |
+| CLI/runtime behavior | `src/harnessforge/cli.py`, command modules, focused CLI tests |
+| Existing project files | `harnessforge enhance`, generated addenda, and project-owned instruction files |
+| GitHub Action | `action.yml`, `src/harnessforge/github_action.py`, `docs/action.md` |
+| Optional workflow scaffolds | Generated CI workflow template and manifest ownership metadata |
+| Tests and fixture corpus | `tests/`, `src/harnessforge/public_repo_corpus.py` |
+| Release/package surface | `docs/harness/release-controls.md`, package metadata, release evidence |
+| Research and source ledger | `docs/harness/research-sources.json`, lock file, `docs/harness/sources.md` |
+| Security and privacy | `docs/harness/security-boundary-map.md`, `feature-privacy-labels.json` |
+| Platform contracts | `docs/harness/manifest.json`, platform source review metadata |
+| Docs and UX | README, usage, capabilities, Action docs, and this routing map |
+
 ## Fact Owners
 
 | Fact Class | Authoritative Owner | Other Surfaces Should |
@@ -63,6 +80,7 @@ Broader updates are expected for:
 ## Audit And Report Expectations
 
 Self-audit must ensure this map exists for the HarnessForge product repo.
-Future report work should summarize likely docs fan-out from the diff by using
-this routing table and should flag stale duplicate facts instead of requiring
-manual prose updates everywhere.
+`harnessforge report` should summarize whether this map is present, reviewed,
+and manifest-tracked for target repos. Future report work should summarize
+likely docs fan-out from the diff by using this routing table and should flag
+stale duplicate facts instead of requiring manual prose updates everywhere.
