@@ -20,6 +20,7 @@ FILE_CLASS_ORDER = (
     "workflow",
     "harness",
     "config",
+    "sbom",
     "other",
 )
 
@@ -197,6 +198,25 @@ MANIFEST_KIND_BY_NAME = {
     "turbo.jsonc": "node-workspace",
     "uv.toml": "python",
 }
+SBOM_NAME_MARKERS = (
+    "bom.json",
+    "bom.xml",
+    "cyclonedx.json",
+    "cyclonedx.xml",
+    "sbom.json",
+    "sbom.xml",
+    "spdx.json",
+)
+SBOM_SUFFIX_MARKERS = (
+    ".cdx.json",
+    ".cdx.xml",
+    ".cyclonedx.json",
+    ".cyclonedx.xml",
+    ".spdx",
+    ".spdx.json",
+    ".spdx.yml",
+    ".spdx.yaml",
+)
 
 
 def build_index_report(profile: ProjectProfile) -> dict[str, Any]:
@@ -208,6 +228,7 @@ def build_index_report(profile: ProjectProfile) -> dict[str, Any]:
     components = _component_records(profile.components)
     language_breakdown = _language_breakdown(records)
     entrypoints = _entrypoints(records, profile.verification_commands)
+    sboms = _sbom_records(records)
     total_bytes = sum(record["bytes"] for record in records)
     if profile.file_scan_truncated:
         warnings.append(
@@ -244,6 +265,7 @@ def build_index_report(profile: ProjectProfile) -> dict[str, Any]:
             "manifestCount": len(manifests),
             "sourceOfTruthCount": len(source_of_truth),
             "reviewRequiredCount": len(review_required),
+            "sbomCount": len(sboms),
             "truncated": profile.file_scan_truncated,
             "componentsTruncated": profile.component_scan_truncated,
         },
@@ -253,6 +275,18 @@ def build_index_report(profile: ProjectProfile) -> dict[str, Any]:
         "manifests": manifests,
         "entrypoints": entrypoints,
         "sourceOfTruth": source_of_truth,
+        "sbom": sboms,
+        "repoMap": _repo_map(
+            profile=profile,
+            language_breakdown=language_breakdown,
+            class_totals=class_totals,
+            components=components,
+            manifests=manifests,
+            entrypoints=entrypoints,
+            source_of_truth=source_of_truth,
+            review_required=review_required,
+            sboms=sboms,
+        ),
         "reviewRequired": review_required,
         "limits": {
             "maxFiles": profile.file_scan_limit,
@@ -294,6 +328,11 @@ def format_index_report(report: dict[str, Any]) -> str:
         lines.append("Source of truth:")
         for item in report["sourceOfTruth"][:10]:
             lines.append(f"  - {item['path']}: {item['kind']}")
+    if report["sbom"]:
+        lines.append("")
+        lines.append("SBOM:")
+        for item in report["sbom"][:10]:
+            lines.append(f"  - {item['path']}: {item['format']}")
     if report["reviewRequired"]:
         lines.append("")
         lines.append("Review required:")
@@ -441,6 +480,23 @@ def _entrypoints(
     return entrypoints[:120]
 
 
+def _sbom_records(records: list[dict[str, Any]]) -> list[dict[str, str]]:
+    sboms: list[dict[str, str]] = []
+    for record in records:
+        sbom_format, evidence = _sbom_format(record["path"], record["textProbe"])
+        if not sbom_format:
+            continue
+        sboms.append(
+            {
+                "path": record["path"],
+                "format": sbom_format,
+                "source": "existing-file",
+                "evidence": evidence,
+            }
+        )
+    return sboms[:50]
+
+
 def _source_of_truth_records(records: list[dict[str, Any]]) -> list[dict[str, str]]:
     result: list[dict[str, str]] = []
     for record in records:
@@ -528,9 +584,109 @@ def _classes_for_path(
         in {".json", ".toml", ".yaml", ".yml", ".ini", ".cfg", ".conf"}
     ):
         classes.append("config")
+    if _sbom_format(relative, text_probe)[0]:
+        classes.append("sbom")
     if not classes:
         classes.append("other")
     return tuple(file_class for file_class in FILE_CLASS_ORDER if file_class in classes)
+
+
+def _repo_map(
+    *,
+    profile: ProjectProfile,
+    language_breakdown: list[dict[str, Any]],
+    class_totals: list[dict[str, Any]],
+    components: list[dict[str, Any]],
+    manifests: list[dict[str, str]],
+    entrypoints: list[dict[str, str]],
+    source_of_truth: list[dict[str, str]],
+    review_required: list[dict[str, str]],
+    sboms: list[dict[str, str]],
+) -> dict[str, Any]:
+    class_by_name = {item["class"]: item for item in class_totals}
+    primary_languages = [
+        item
+        for item in language_breakdown
+        if item["language"] not in {"other", "json", "yaml", "toml"}
+    ][:5]
+    manifest_counts: dict[str, int] = defaultdict(int)
+    for item in manifests:
+        manifest_counts[item["kind"]] += 1
+    boundaries = [
+        {
+            "class": name,
+            "files": class_by_name[name]["files"],
+            "examples": class_by_name[name]["examples"][:5],
+        }
+        for name in (
+            "source",
+            "test",
+            "docs",
+            "workflow",
+            "harness",
+            "generated",
+            "vendor",
+            "sbom",
+        )
+        if class_by_name.get(name, {}).get("files", 0)
+    ]
+    verification_commands = [
+        command
+        for command in profile.verification_commands
+        if not _verification_missing((command,))
+    ]
+    unknowns: list[str] = []
+    if not source_of_truth:
+        unknowns.append("No high-signal project source-of-truth document detected.")
+    if not components:
+        unknowns.append("No component boundary markers detected.")
+    if not verification_commands:
+        unknowns.append("No runnable verification command detected.")
+    if not sboms:
+        unknowns.append("No existing project-owned SBOM detected.")
+    return {
+        "schemaVersion": "harnessforge.repoMap.v1",
+        "mode": "structural",
+        "summary": {
+            "target": profile.name,
+            "detectedStack": profile.stack,
+            "primaryLanguages": [
+                {
+                    "language": item["language"],
+                    "files": item["files"],
+                }
+                for item in primary_languages
+            ],
+            "componentCount": len(components),
+            "sourceOfTruthCount": len(source_of_truth),
+            "manifestCount": len(manifests),
+            "sbomCount": len(sboms),
+            "reviewRequiredCount": len(review_required),
+        },
+        "components": components[:20],
+        "sourceOfTruth": source_of_truth[:10],
+        "manifestKinds": [
+            {"kind": kind, "count": count}
+            for kind, count in sorted(
+                manifest_counts.items(),
+                key=lambda item: (-item[1], item[0]),
+            )[:20]
+        ],
+        "entrypoints": entrypoints[:20],
+        "boundaries": boundaries,
+        "sbom": sboms[:10],
+        "verification": {
+            "commands": verification_commands[:10],
+            "missing": not verification_commands,
+        },
+        "reviewRequired": review_required[:10],
+        "unknowns": unknowns,
+        "notes": [
+            "Structural map only; no target commands were executed.",
+            "Paths are target-relative and no private code summaries are included.",
+            "Existing SBOM files are cited as evidence; HarnessForge did not generate an SBOM.",
+        ],
+    }
 
 
 def _is_generated(relative: str, text_probe: str) -> bool:
@@ -542,6 +698,33 @@ def _is_generated(relative: str, text_probe: str) -> bool:
         or any(marker in lower_name for marker in GENERATED_NAME_MARKERS)
         or _comment_header_has_marker(text_probe, GENERATED_TEXT_MARKERS)
     )
+
+
+def _sbom_format(relative: str, text_probe: str) -> tuple[str, str]:
+    pure = PurePosixPath(relative)
+    lower_name = pure.name.lower()
+    lower_path = relative.lower()
+    lower_probe = text_probe[:2048].lower()
+    name_match = lower_name in SBOM_NAME_MARKERS or any(
+        lower_path.endswith(marker) for marker in SBOM_SUFFIX_MARKERS
+    )
+    if '"bomformat"' in lower_probe and "cyclonedx" in lower_probe:
+        return "cyclonedx", "bomFormat marker"
+    if "<bom" in lower_probe and (
+        "cyclonedx" in lower_probe or "cyclonedx.org/schema" in lower_probe
+    ):
+        return "cyclonedx", "CycloneDX XML marker"
+    if '"spdxversion"' in lower_probe or lower_probe.lstrip().startswith(
+        "spdxversion:"
+    ):
+        return "spdx", "SPDX version marker"
+    if name_match:
+        if "spdx" in lower_path:
+            return "spdx", "SPDX filename marker"
+        if "cdx" in lower_path or "cyclonedx" in lower_path or "bom" in lower_name:
+            return "cyclonedx", "CycloneDX filename marker"
+        return "unknown", "SBOM filename marker"
+    return "", ""
 
 
 def _language_for_path(relative: str) -> str:

@@ -153,6 +153,8 @@ def format_report(payload: dict[str, Any]) -> str:
         f"- Components: {payload['index']['summary']['componentCount']}",
         f"- Manifests: {payload['index']['summary']['manifestCount']}",
         f"- Source-of-truth docs: {payload['index']['summary']['sourceOfTruthCount']}",
+        f"- SBOM files: {payload['index']['summary']['sbomCount']}",
+        f"- Repo-map unknowns: {len(payload['index']['repoMap']['unknowns'])}",
         "",
         "## Verify Evidence",
         "",
@@ -285,6 +287,8 @@ def _index_summary(index: dict[str, Any]) -> dict[str, Any]:
         "summary": index["summary"],
         "warnings": index["warnings"],
         "fileClasses": index["fileClasses"],
+        "repoMap": index["repoMap"],
+        "sbom": index["sbom"],
         "sourceOfTruth": index["sourceOfTruth"][:10],
         "reviewRequired": index["reviewRequired"][:10],
     }

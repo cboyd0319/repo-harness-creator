@@ -211,6 +211,10 @@ class CliTests(unittest.TestCase):
                 "# Architecture\n",
                 encoding="utf-8",
             )
+            (root / "docs" / "sbom.cdx.json").write_text(
+                '{"bomFormat": "CycloneDX", "specVersion": "1.6"}\n',
+                encoding="utf-8",
+            )
             (root / "docs" / "harness" / "research").mkdir(parents=True)
             (
                 root
@@ -259,8 +263,16 @@ class CliTests(unittest.TestCase):
         self.assertIn("src/demo/generated_client.py", class_examples["generated"])
         self.assertIn("third_party/lib/shim.js", class_examples["vendor"])
         self.assertIn(".github/workflows/ci.yml", class_examples["workflow"])
+        self.assertIn("docs/sbom.cdx.json", class_examples["sbom"])
         self.assertIn("pyproject.toml", {item["path"] for item in payload["manifests"]})
         self.assertIn("AGENTS.md", {item["path"] for item in payload["sourceOfTruth"]})
+        self.assertEqual(payload["summary"]["sbomCount"], 1)
+        self.assertEqual(payload["sbom"][0]["format"], "cyclonedx")
+        self.assertEqual(payload["repoMap"]["summary"]["sbomCount"], 1)
+        self.assertTrue(
+            any(item["class"] == "sbom" for item in payload["repoMap"]["boundaries"])
+        )
+        self.assertIn("Structural map only", payload["repoMap"]["notes"][0])
         self.assertIn(
             "docs/harness/research/source-record-example.json",
             {item["path"] for item in payload["reviewRequired"]},
@@ -749,6 +761,8 @@ class CliTests(unittest.TestCase):
         self.assertEqual(payload["audit"]["overall"], 100)
         self.assertEqual(payload["drift"]["summary"]["actionable"], 0)
         self.assertIn("fileCount", payload["index"]["summary"])
+        self.assertIn("repoMap", payload["index"])
+        self.assertIn("sbomCount", payload["index"]["summary"])
         self.assertEqual(payload["verifyEvidence"]["latest"]["verdict"], "passed")
         self.assertEqual(payload["effectiveness"]["verdict"], "blocked")
         self.assertEqual(payload["instructionQuality"]["summary"]["status"], "strong")

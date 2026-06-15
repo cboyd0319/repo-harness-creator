@@ -45,6 +45,16 @@ The default index scans up to 4,000 files for fast first-pass analysis. Use
 bounded component inventory was truncated, so humans can add important omitted
 boundaries to `docs/harness/boundaries/component-inventory.md`.
 
+`index --json` includes a compact `repoMap` built from the structural index:
+primary languages, component candidates, source-of-truth docs, manifest kinds,
+entrypoints, boundary examples, verification commands, review-required files,
+unknowns, and existing SBOM evidence. It does not summarize private code or run
+target commands.
+
+Existing SPDX or CycloneDX-style SBOM files are detected and cited under
+`sbom`. HarnessForge does not generate SBOMs during normal `init`, `inspect`,
+`index`, `sync`, or `report` flows.
+
 ## Session And Planning
 
 Get a compact restart snapshot for an existing repo:
@@ -77,9 +87,10 @@ harnessforge report --target /path/to/repo --markdown-report docs/harness/eviden
 structural index summary, stored verify evidence, stored effectiveness
 evidence, first-agent task lifecycle evidence, platform contract, and docs
 fan-out routing status. It also includes instruction-quality and context-budget
-signals for startup instruction files. It is read-only by default, does not run
-target repository commands, and writes files only when a target-relative
-`--json-report` or `--markdown-report` path is supplied.
+signals for startup instruction files plus the compact repo-map summary from
+`index`. It is read-only by default, does not run target repository commands,
+and writes files only when a target-relative `--json-report` or
+`--markdown-report` path is supplied.
 
 Use `--require-verify-evidence` when the report should include release-gate
 verify evidence blockers. Use `--command` when detection cannot infer

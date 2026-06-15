@@ -9,6 +9,13 @@ generated harness quality, product boundaries, and verification evidence intact.
 
 ## What Changed
 
+- Compact repo maps are implemented in `index --json` and unified report. The
+  map records primary languages, components, source-of-truth docs, manifest
+  kinds, entrypoints, boundary examples, verification commands,
+  review-required files, unknowns, and SBOM evidence without private code
+  summaries.
+- Existing SPDX and CycloneDX-style SBOM files are detected and cited. Normal
+  read-only flows do not generate SBOMs or run target commands.
 - Instruction-quality reporting is implemented in readiness and unified report.
   It reports startup instruction section coverage, signal/noise, placeholder
   noise, word/line/byte budget status, largest instruction surfaces, and
@@ -72,6 +79,7 @@ generated harness quality, product boundaries, and verification evidence intact.
 - `src/harnessforge/generate.py`
 - `src/harnessforge/first_agent.py`
 - `src/harnessforge/harness_paths.py`
+- `src/harnessforge/indexer.py`
 - `src/harnessforge/instruction_quality.py`
 - `src/harnessforge/readiness.py`
 - `src/harnessforge/report.py`
@@ -80,6 +88,7 @@ generated harness quality, product boundaries, and verification evidence intact.
 - `tests/test_github_action.py`
 - `AGENTS.md`
 - `docs/harness/manifest.json`
+- `docs/harness/README.md`
 - `docs/harness/evidence/evidence-log.md`
 - `docs/harness/evidence/first-agent-review.json`
 - `docs/harness/research/source-record.schema.json`
@@ -98,6 +107,7 @@ Latest checks:
 - full unit discovery passed with 251 tests
 - fresh generated-target audit passed at `100/100`
 - HarnessForge self-audit passed at `100/100`
+- index/report JSON smokes emitted `harnessforge.repoMap.v1`
 - HarnessForge `git diff --check` passed
 - JSON validation passed for `feature_list.json`, `docs/harness/manifest.json`,
   and `docs/harness/evidence/first-agent-review.json`
@@ -142,5 +152,6 @@ Rerun focused tests after any further template or scoring edit.
 ## Next Session
 
 If the user wants more backlog work, continue with instruction-quality and
-signal-to-noise task-class guidance, or move to compact repo map and SBOM-aware
-detection. If the user asks to checkpoint, commit the current slice first.
+signal-to-noise task-class guidance, optional SBOM adapter design, Action
+summary polish, or `release-check`. If the user asks to checkpoint, commit the
+current slice first.

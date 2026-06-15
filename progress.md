@@ -30,6 +30,13 @@ generated harness effectiveness, product-boundary enforcement, or verification.
 
 ## Latest Work
 
+- Added compact repo-map output to `harnessforge index --json` and unified
+  report. The map records primary languages, components, source-of-truth docs,
+  manifest kinds, entrypoints, boundary examples, verification commands,
+  review-required files, unknowns, and SBOM evidence without code summaries.
+- Added default detection for existing SPDX and CycloneDX-style SBOM files.
+  Normal `init`, `inspect`, `index`, `sync`, and `report` flows still do not
+  generate SBOMs or run target commands.
 - Added warning-mode instruction-quality reporting to readiness and unified
   report. It records startup instruction section coverage, signal/noise,
   placeholder noise, word/line/byte budget status, largest instruction
@@ -78,13 +85,15 @@ generated harness effectiveness, product-boundary enforcement, or verification.
 
 ## Verification
 
-Latest instruction-quality verification:
+Latest repo-map/SBOM verification:
 
 - `PYTHONPATH=src:. python3 -m unittest discover -s tests`
 - `PYTHONPATH=src:. python3 -m unittest tests.test_cli tests.test_generate_audit`
 - `PYTHONPATH=src:. python3 -m unittest tests.test_github_action`
 - fresh generated-target `harnessforge audit --min-score 85`
 - HarnessForge `harnessforge audit --target . --min-score 85`
+- `PYTHONPATH=src:. python3 -m harnessforge index --target . --json`
+- `PYTHONPATH=src:. python3 -m harnessforge report --target . --json`
 - JSON validation for `feature_list.json` and `docs/harness/manifest.json`
 - JSON validation for `docs/harness/evidence/first-agent-review.json`
 - HarnessForge `git diff --check`
@@ -93,9 +102,9 @@ Latest instruction-quality verification:
 Results: 251 unit tests passed, focused CLI tests passed with 82 tests, Action
 tests passed with 21 tests, generated/audit tests passed with 56 tests, compile
 passed, fresh generated-target audit was `100/100`, HarnessForge self-audit was
-`100/100`, local `AGENTS.md` is 998 words, JSON validation passed, local-path
-scan found only intentional redaction fixtures and regexes, and diff hygiene
-passed.
+`100/100`, index/report JSON smokes emitted `harnessforge.repoMap.v1`, local
+`AGENTS.md` is 998 words, JSON validation passed, local-path scan found only
+intentional redaction fixtures and regexes, and diff hygiene passed.
 
 Earlier optimization verification also included:
 
@@ -112,7 +121,7 @@ Earlier optimization verification also included:
 
 Continue accepted pre-release backlog before release prep:
 
-- compact repo map and SBOM-aware detection or adapter design
+- optional SBOM adapter design if needed
 - Action summary polish
 - `release-check`
 - harness maturity levels

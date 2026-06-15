@@ -199,14 +199,24 @@ quality signals include fresh-session answerability, instruction bloat or
 duplication, first-agent review state, evidence-gated feature state, runtime
 observability gaps, and cleanup or stale-artifact drift.
 
-Implemented report expansion: instruction-quality and context-budget signals
-now report startup instruction coverage, signal/noise, placeholder noise,
-word/line/byte budget status, and largest instruction surfaces in warning mode.
+Implemented report expansion:
 
-Remaining report expansion: add repo-map summaries, policy preset status, and
-release evidence automation as those surfaces land.
+- instruction-quality and context-budget signals now report startup instruction
+  coverage, signal/noise, placeholder noise, word/line/byte budget status, and
+  largest instruction surfaces in warning mode;
+- structural index output now includes a compact `repoMap` with primary
+  languages, components, source-of-truth docs, manifest kinds, entrypoints,
+  boundary examples, verification commands, review-required files, unknowns,
+  and existing SBOM evidence;
+- unified reports carry the repo-map summary.
+
+Remaining report expansion: add policy preset status and release evidence
+automation as those surfaces land.
 
 ### Compact Repo Map From Index
+
+Status: initial compact `repoMap` implemented in `index --json` and carried by
+`report`.
 
 Build a compact, cited repo map from `harnessforge index` output. The map
 should help generated instructions and `--enhance-existing` addenda become
@@ -230,6 +240,10 @@ The repo map should be deterministic, compact, and reviewable. It should never
 commit embeddings, private code summaries, or machine-local paths by default.
 
 ### SBOM-Aware Indexing
+
+Status: default detection of existing SPDX and CycloneDX-style SBOM files is
+implemented in `index --json` and `report`. Optional SBOM generation/import
+adapters remain future work.
 
 SBOM data can add value when it is used as evidence, not as a default
 dependency or quality claim.
