@@ -641,6 +641,13 @@ now reports no local-path leaks, no unrendered template tokens, no generic
 AGENTS context, no component-cap warning gaps, and no init dry-run failures.
 The only remaining findings are review-required verification placeholders for
 repositories without detected repo-owned validation commands.
+The follow-up artifact-noise pass reduced repeated `REVIEW REQUIRED` markers in
+generated sensor registries. Sensor rows now use concise pending placeholders
+for project-specific purpose, owner, retirement condition, and review cadence.
+Across 32 reference repositories, the generated-artifact scorer reports no
+remaining findings, max total review markers dropped from 106 to 30, and sensor
+registries have at most two review markers only when the repo has the
+intentional no-command placeholder.
 `scripts/refresh_research.py --check` validates duplicate source IDs and URLs,
 required fields, placeholder text, canonical URL shape, arXiv `/abs/` URLs,
 lock-file consistency, and local-path leakage before any metadata fetch. Root

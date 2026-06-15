@@ -658,6 +658,10 @@ class GenerateAuditTests(unittest.TestCase):
         self.assertIn("Retire When", registry)
         self.assertIn("python -m pytest", registry)
         self.assertIn("python -m ruff check .", registry)
+        self.assertIn("Pending project-specific decision.", registry)
+        self.assertIn("Pending owner.", registry)
+        self.assertIn("Pending retirement condition.", registry)
+        self.assertEqual(registry.count("REVIEW REQUIRED"), 1)
         self.assertIn("does not prove real-agent effectiveness", registry)
 
     def test_generated_source_record_schema_guides_project_sources(self) -> None:

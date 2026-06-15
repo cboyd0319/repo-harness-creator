@@ -466,6 +466,10 @@ maintenance loop.
   metadata, devcontainers, native C/C++, .NET, PHP, Ruby, JavaScript or
   TypeScript assets without package-manager boundaries, and existing root agent
   instruction files.
+- The next generated-artifact quality pass reduced repeated
+  `REVIEW REQUIRED` markers in generated sensor registries. Sensor rows now use
+  concise pending placeholders for purpose, owner, retirement condition, and
+  review cadence while keeping the file-level review requirement explicit.
 - Added read-only `harnessforge effectiveness --target . --json` evidence
   assessment. The command scans target-contained
   `docs/harness/evidence/effectiveness*.json` reports or explicit
@@ -540,6 +544,12 @@ Push local commits only at an explicit batch/release boundary or user request.
   context improvements. The only remaining findings are intentional
   review-required verification placeholders for repositories without detected
   repo-owned validation commands.
+- The follow-up artifact-noise scorer across 32 reference repositories found no
+  remaining generated-artifact findings after reducing sensor-registry
+  placeholder repetition. Max generated `REVIEW REQUIRED` count dropped from
+  106 to 30 across the reference set, and max sensor-registry review markers
+  dropped to 2 only for repositories with the intentional no-command
+  placeholder.
 - `PYTHONPATH=src <python3.13> -m unittest tests.test_generate_audit` passed
   with 49 generator/audit tests after the generated-artifact quality pass.
 - `PYTHONPATH=src <python3.13> -m unittest

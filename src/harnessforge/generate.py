@@ -1127,21 +1127,18 @@ def _sensor_rows_markdown(commands: tuple[str, ...]) -> str:
     for command in commands:
         if _is_missing_verification_command(command):
             source = "HarnessForge placeholder"
-            purpose = (
-                "REVIEW REQUIRED: replace with the smallest reliable project "
-                "verification check."
-            )
+            purpose = "Pending replacement with the smallest reliable project check."
         else:
             source = "Detected or explicitly supplied project command"
-            purpose = "REVIEW REQUIRED: define the decision this sensor supports."
+            purpose = "Pending project-specific decision."
         rows.append(
             "| "
             f"{_markdown_code_cell(command)} | "
             f"{source} | "
             f"{purpose} | "
-            "REVIEW REQUIRED: assign owner. | "
-            "REVIEW REQUIRED: state when to retire or replace this sensor. | "
-            "REVIEW REQUIRED: set review cadence. |"
+            "Pending owner. | "
+            "Pending retirement condition. | "
+            "Pending review cadence. |"
         )
     return "\n".join(rows)
 
