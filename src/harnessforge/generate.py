@@ -473,6 +473,14 @@ def _project_context_markdown(profile: ProjectProfile) -> str:
     routing_markers = set(profile.routing_markers)
     workspace_markers = set(profile.workspace_markers)
     command_text = "\n".join(profile.verification_commands).lower()
+    if profile.component_scan_truncated:
+        signals.append(
+            "- Component inventory reached the generated "
+            f"{profile.component_scan_limit}-component limit. Run "
+            "`harnessforge index --target . --max-files <N>` and add important\n"
+            "  omitted boundaries to `docs/harness/component-inventory.md` "
+            "before broad changes."
+        )
     if profile.stack == "rust" or "rust" in profile.languages:
         signals.append(
             "- Rust workspace or crate detected. Treat `Cargo.toml`, "

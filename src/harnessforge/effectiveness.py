@@ -377,6 +377,7 @@ def _detected_evidence_paths(files: tuple[str, ...]) -> tuple[str, ...]:
 def _explicit_evidence_paths(root: Path, values: tuple[str, ...]) -> tuple[str, ...]:
     paths: list[str] = []
     for value in values:
+        value = value.strip()
         if is_absolute_path_text(value):
             raise ValueError("--evidence must be a target-relative path")
         relative = path_from_relative_text(value).as_posix()

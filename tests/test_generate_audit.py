@@ -1097,6 +1097,19 @@ class GenerateAuditTests(unittest.TestCase):
         self.assertIn("Documentation or catalog repository detected", agents)
         self.assertNotIn("No stack-specific context", agents)
 
+    def test_agents_file_reports_component_inventory_limit(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            for index in range(85):
+                component = root / f"pkg-{index:02d}"
+                component.mkdir()
+                (component / "package.json").write_text("{}", encoding="utf-8")
+            create_harness(root)
+            agents = (root / "AGENTS.md").read_text(encoding="utf-8")
+
+        self.assertIn("Component inventory reached", agents)
+        self.assertIn("docs/harness/component-inventory.md", agents)
+
     def test_audit_requires_instructions_to_route_to_detected_spec_sources(self) -> None:
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp)

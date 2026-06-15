@@ -292,6 +292,31 @@ class CliTests(unittest.TestCase):
             any("Could not stat file" in warning for warning in payload["warnings"])
         )
 
+    def test_index_json_ignores_common_os_metadata_files(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            (root / ".DS_Store").write_bytes(b"metadata")
+            (root / "Thumbs.db").write_bytes(b"metadata")
+            (root / "desktop.ini").write_text("[ViewState]\n", encoding="utf-8")
+            (root / "README.md").write_text("# Demo\n", encoding="utf-8")
+            stdout = io.StringIO()
+            with contextlib.redirect_stdout(stdout):
+                code = main(["index", "--target", str(root), "--json"])
+
+            payload = json.loads(stdout.getvalue())
+
+        self.assertEqual(code, 0)
+        examples = {
+            example
+            for item in payload["fileClasses"]
+            for example in item["examples"]
+        }
+        self.assertIn("README.md", examples)
+        self.assertNotIn(".DS_Store", examples)
+        self.assertNotIn("Thumbs.db", examples)
+        self.assertNotIn("desktop.ini", examples)
+        self.assertEqual(payload["summary"]["fileCount"], 1)
+
     def test_effectiveness_json_assesses_reviewable_evidence_without_writing(
         self,
     ) -> None:
@@ -504,6 +529,40 @@ class CliTests(unittest.TestCase):
         self.assertEqual(code, 2)
         self.assertIn("--evidence must be a target-relative path", error)
         self.assertNotIn(str(root), error)
+
+    def test_effectiveness_trims_explicit_evidence_paths(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            (root / "pyproject.toml").write_text(
+                "[project]\nname='demo'\n",
+                encoding="utf-8",
+            )
+            evidence_dir = root / "docs" / "harness" / "evidence"
+            evidence_dir.mkdir(parents=True)
+            (evidence_dir / "effectiveness-context.json").write_text(
+                json.dumps({"schemaVersion": "bad"}),
+                encoding="utf-8",
+            )
+            stdout = io.StringIO()
+            with contextlib.redirect_stdout(stdout):
+                code = main(
+                    [
+                        "effectiveness",
+                        "--target",
+                        str(root),
+                        "--evidence",
+                        " docs/harness/evidence/effectiveness-context.json ",
+                        "--json",
+                    ]
+                )
+
+            payload = json.loads(stdout.getvalue())
+
+        self.assertEqual(code, 0)
+        self.assertEqual(
+            payload["reports"][0]["path"],
+            "docs/harness/evidence/effectiveness-context.json",
+        )
 
     def test_inspect_readiness_json_reports_ready_without_writing(self) -> None:
         with tempfile.TemporaryDirectory() as tmp:
@@ -1902,7 +1961,7 @@ class CliTests(unittest.TestCase):
                         "--command",
                         command,
                         "--json-report",
-                        "docs\\harness\\evidence\\verify.json",
+                        " docs\\harness\\evidence\\verify.json ",
                     ]
                 )
 

@@ -9,6 +9,7 @@ from .redact import redact_local_paths
 
 
 def report_path(path_text: str, target: Path) -> Path | None:
+    path_text = path_text.strip()
     if not path_text:
         return None
     if is_absolute_path_text(path_text):

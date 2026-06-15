@@ -20,6 +20,7 @@ MISSING_VERIFICATION_COMMAND = (
 IGNORED_DIRS = {
     ".git",
     ".hg",
+    ".DS_Store",
     ".mypy_cache",
     ".nox",
     ".pytest_cache",
@@ -33,9 +34,12 @@ IGNORED_DIRS = {
     "bazel-out",
     "bazel-testlogs",
     "build",
+    "Desktop.ini",
+    "desktop.ini",
     "dist",
     "node_modules",
     "target",
+    "Thumbs.db",
     "venv",
 }
 

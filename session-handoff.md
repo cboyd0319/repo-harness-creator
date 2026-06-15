@@ -626,6 +626,13 @@ unclassified artifacts, and improved generated context for agent skill
 catalogs, plugin manifests, and docs/catalog repositories. Remaining blocked
 reference repos are blocked only because they do not expose a repo-owned
 verification command.
+The latest real-repo refinement pass fixed three narrower quality issues:
+structural indexing ignores common OS metadata files, generated project context
+now warns when component discovery reaches the bounded inventory limit, and
+explicit CLI evidence/report paths are trimmed while literal repo-discovered
+filenames remain preserved. The rendered-content sweep across 32 reference
+repositories found no local-path leaks, no unrendered template tokens, no
+generic context fallback, and no missing generated project context.
 `scripts/refresh_research.py --check` validates duplicate source IDs and URLs,
 required fields, placeholder text, canonical URL shape, arXiv `/abs/` URLs,
 lock-file consistency, and local-path leakage before any metadata fetch. Root
@@ -650,7 +657,7 @@ coverage, focused verify report-persistence tests, focused verify-evidence gate
 tests, focused Action sync tests, focused session tests, focused sensor-registry
 generator test, focused source-record generator test, focused index CLI tests,
 focused effectiveness CLI and contract tests, full unit discovery and
-POSIX/PowerShell entrypoints with 223 tests, compile, JSON/YAML validation, pin
+POSIX/PowerShell entrypoints with 226 tests, compile, JSON/YAML validation, pin
 check, research source check, rendered optional workflow audit and pin smoke,
 session, plan, index, and effectiveness JSON smokes, expected-warning sync JSON
 smoke, self-audit `100/100`, changed-file local-path scan, and diff hygiene.

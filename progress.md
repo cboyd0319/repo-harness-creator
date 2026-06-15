@@ -456,6 +456,11 @@ maintenance loop.
   include an `other` file class for unclassified repo artifacts, and generated
   context now calls out agent skill catalogs, plugin manifests, and
   docs/catalog repositories as first-class review surfaces.
+- Continued the read-only real-repo refinement pass across the local reference
+  set. Accepted three narrow fixes: structural indexing now ignores common OS
+  metadata files, generated project context now warns when component discovery
+  reaches the bounded inventory limit, and explicit CLI evidence/report paths
+  are trimmed while literal repo-discovered filenames remain preserved.
 - Added read-only `harnessforge effectiveness --target . --json` evidence
   assessment. The command scans target-contained
   `docs/harness/evidence/effectiveness*.json` reports or explicit
@@ -464,7 +469,7 @@ maintenance loop.
   running benchmarks, installing dependencies, calling models, writing files,
   or turning structural audit score into a performance claim.
 - Current verification passes full unit discovery and POSIX/PowerShell
-  entrypoints with 223 tests, focused CLI, generator, and contract tests,
+  entrypoints with 226 tests, focused CLI, generator, and contract tests,
   index/effectiveness JSON and text smokes, compile, pin check, research source
   check, JSON validation, session/plan/index/effectiveness JSON smokes,
   self-audit `100/100`, changed-file local-path scan, and diff hygiene.
@@ -514,6 +519,30 @@ Push local commits only at an explicit batch/release boundary or user request.
 - `harnessforge index --target <repo> --max-files 20000 --json` no longer
   emits false stat warnings for awkward but valid target-relative filenames
   with trailing spaces, and now exposes those files through the `other` class.
+- The latest rendered-content sweep across 32 reference repositories found no
+  local-path leaks, no unrendered template tokens, no generic context fallback,
+  and no missing generated project context. The only review-required
+  verification placeholders remain in repositories with no detected repo-owned
+  validation command.
+- The latest real-repo marker pass across 32 reference repositories found no OS
+  metadata examples in index output, no component-cap context gaps, no command
+  errors, and no readiness blockers. The only index warnings are missing
+  repo-owned checks in docs/catalog repositories and expected component-limit
+  warnings for very large repositories.
+- `PYTHONPATH=src <python3.13> -m unittest
+  tests.test_cli.CliTests.test_index_json_ignores_common_os_metadata_files
+  tests.test_cli.CliTests.test_index_json_preserves_trailing_space_file_names
+  tests.test_cli.CliTests.test_effectiveness_trims_explicit_evidence_paths
+  tests.test_cli.CliTests.test_verify_json_report_writes_target_relative_file
+  tests.test_generate_audit.GenerateAuditTests.test_agents_file_reports_component_inventory_limit
+  tests.test_generate_audit.GenerateAuditTests.test_agents_file_includes_docs_catalog_context`
+  passed with 6 focused tests after the latest real-repo refinement pass.
+- `PYTHON=<python3.13> ./init.sh` passed with doctor, compile, 226 tests, pin
+  check, research source check, and self-audit `100/100` after the latest
+  real-repo refinement pass.
+- `PYTHON=<python3.13> pwsh -NoProfile -File ./init.ps1` passed with doctor,
+  compile, 226 tests, pin check, research source check, and self-audit
+  `100/100` after the latest real-repo refinement pass.
 - `./init.sh` passed with doctor, compile, 211 tests, pin check, research
   source check, and self-audit `100/100`.
 - `pwsh -NoProfile -File ./init.ps1` passed with doctor, compile, 211 tests,
