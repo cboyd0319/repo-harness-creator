@@ -5,28 +5,28 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
 
-from .context_budget import (
+from .evidence.context_budget import (
     ContextBudgetReport,
     analyze_context_budget,
     context_budget_to_dict,
 )
 from .detect import MISSING_VERIFICATION_COMMAND
-from .effectiveness_inventory import (
+from .evidence.effectiveness_inventory import (
     EffectivenessItem,
     analyze_effectiveness_inventory,
     effectiveness_item_to_dict,
 )
-from .first_agent import (
+from .evidence.first_agent import (
     FirstAgentLifecycleReport,
     analyze_first_agent_lifecycle,
     first_agent_lifecycle_to_dict,
 )
-from .governance_inventory import (
+from .evidence.governance_inventory import (
     GovernanceItem,
     analyze_governance_inventory,
     governance_item_to_dict,
 )
-from .instruction_quality import (
+from .evidence.instruction_quality import (
     InstructionQualityReport,
     analyze_instruction_quality,
     instruction_quality_to_dict,
@@ -39,13 +39,13 @@ from .spec_system import (
     instruction_routes_to_specs,
 )
 from .update import build_drift_report
-from .verify_evidence import (
+from .evidence.verify_evidence import (
     VerifyEvidenceReport,
     analyze_verify_evidence,
     verify_evidence_gate_blockers,
     verify_evidence_report_to_dict,
 )
-from .workflow_inventory import (
+from .evidence.workflow_inventory import (
     WorkItem,
     WorkflowItem,
     analyze_workflow_inventory,

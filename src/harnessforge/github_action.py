@@ -13,13 +13,13 @@ from .doctor import doctor_report, format_doctor
 from .generate import create_harness
 from .readiness import inspect_readiness
 from .redact import redact_local_paths
-from .release_check import (
+from .evidence.release_check import (
     build_release_check,
     format_release_check,
     release_check_exit_code,
     write_markdown_release_check,
 )
-from .report import build_report, format_report, write_markdown_report
+from .evidence.report import build_report, format_report, write_markdown_report
 from .reports import relative_to_target, report_path, write_json_payload
 from .sync import format_sync_check, sync_check_to_dict, sync_exit_code
 from .update import plan_or_apply_update
@@ -457,6 +457,8 @@ def _report_summary_markdown(payload: dict[str, Any]) -> str:
         f"| Instruction quality | `{payload['instructionQuality']['summary']['status']}` |",
         f"| First-agent lifecycle | `{payload['firstAgentTask']['lifecycle']['status']}` |",
         f"| Maturity level | `{payload['maturity']['currentLevel']}` |",
+        f"| Policy presets | `{payload['policyPresets']['status']}` ({len(payload['policyPresets']['recommendedPresets'])} recommended) |",
+        f"| SBOM adapter | `{payload['sbomAdapter']['status']}` |",
         f"| Repo map | `{repo_map['componentCount']}` components, `{repo_map['sourceOfTruthCount']}` source docs |",
         f"| SBOM files | `{repo_map['sbomCount']}` |",
     ]

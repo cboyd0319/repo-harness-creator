@@ -18,6 +18,10 @@ from .harness_paths import (
     HARNESS_SKILL_REFERENCE_PATH,
     harness_path,
 )
+from .evidence.instruction_quality import (
+    analyze_instruction_quality,
+    instruction_quality_to_dict,
+)
 from .models import ProjectProfile, WriteResult
 from .paths import is_inside_root
 from .redact import redact_local_paths
@@ -958,6 +962,14 @@ def build_enhance_existing_plan(
     }
     existing_files = _existing_enhanceable_instruction_files(root, agent_file)
     duplicate_map = _duplicate_instruction_paragraphs(existing_files)
+    quality = instruction_quality_to_dict(
+        analyze_instruction_quality(root, tuple(sorted(existing_files)))
+    )
+    quality_by_path = {
+        str(item.get("path", "")): item
+        for item in quality.get("files", [])
+        if isinstance(item, dict)
+    }
     files = [
         _enhance_plan_file(
             root,
@@ -966,6 +978,7 @@ def build_enhance_existing_plan(
             project_context_markdown=project_context,
             write_status=write_statuses.get(relative_path),
             duplicate_map=duplicate_map,
+            instruction_quality=quality_by_path.get(relative_path),
         )
         for relative_path in sorted(existing_files)
     ]
@@ -1053,6 +1066,7 @@ def _enhance_plan_file(
     project_context_markdown: str,
     write_status: str | None,
     duplicate_map: dict[str, set[str]],
+    instruction_quality: dict[str, object] | None,
 ) -> dict[str, object]:
     path = root / relative_path
     try:
@@ -1126,8 +1140,70 @@ def _enhance_plan_file(
                 if relative_path in duplicate_map.get(paragraph, set())
             ),
         },
+        "instructionQuality": _enhance_instruction_quality_summary(
+            instruction_quality
+        ),
         "findings": findings,
         "proposedEdits": proposed_edits,
+    }
+
+
+def _enhance_instruction_quality_summary(
+    item: dict[str, object] | None,
+) -> dict[str, object]:
+    if not item:
+        return {
+            "status": "unknown",
+            "score": None,
+            "budgetStatus": "unknown",
+            "recommendations": [
+                "Review this instruction file manually; automatic quality scoring was unavailable."
+            ],
+        }
+    findings = [
+        str(finding)
+        for finding in item.get("findings", [])
+        if isinstance(finding, str)
+    ]
+    missing = [
+        str(section)
+        for section in item.get("missingSections", [])
+        if isinstance(section, str)
+    ]
+    recommendations: list[str] = []
+    if missing:
+        recommendations.append(
+            "Add or route missing instruction coverage: " + ", ".join(missing) + "."
+        )
+    if "low_signal_ratio" in findings:
+        recommendations.append(
+            "Replace broad prose with explicit commands, paths, constraints, or links."
+        )
+    if "placeholder_or_review_noise" in findings:
+        recommendations.append(
+            "Resolve placeholders and review markers before treating the file as stable."
+        )
+    if "over_target" in findings or "over_hard" in findings:
+        recommendations.append(
+            "Move detailed guidance into topic docs and keep startup instructions compact."
+        )
+    if "large_startup_surface" in findings:
+        recommendations.append(
+            "Route deep detail from this startup surface instead of embedding it inline."
+        )
+    if not recommendations:
+        recommendations.append("Keep this file compact and preserve project-owned wording.")
+    return {
+        "status": item.get("status", "unknown"),
+        "score": item.get("score"),
+        "budgetStatus": item.get("budgetStatus", "unknown"),
+        "lineCount": item.get("lineCount", 0),
+        "wordCount": item.get("wordCount", 0),
+        "byteCount": item.get("byteCount", 0),
+        "signalRatio": item.get("signalRatio", 0),
+        "missingSections": missing,
+        "findings": findings,
+        "recommendations": recommendations,
     }
 
 

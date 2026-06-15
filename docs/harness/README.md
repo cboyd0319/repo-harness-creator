@@ -107,6 +107,9 @@ harnessforge verify --target . --json
 `quickstart` is a read-only guided first-run view. It composes detection,
 readiness, dry-run generation planning, preserved-file reporting, review
 placeholder reporting, and next commands without writing files.
+Use `quickstart --interactive --json` when a review needs the same decisions
+as reproducible CLI flags. Non-JSON `--interactive` prints the dry-run summary
+first, skips prompts without a TTY, and asks before writing in a real terminal.
 
 `index --json` is a read-only structural repo map. It reports file class,
 language, manifest, component, source-of-truth, entrypoint, generated, vendor,
@@ -132,8 +135,10 @@ present, state-file presence, and next actions without running target commands.
 `report` is a read-only unified harness status artifact. It composes readiness,
 audit, generated drift, structural index summary, verify evidence,
 effectiveness evidence, first-agent task status, and platform contract without
-running target commands. Use `--json-report` or `--markdown-report` with a
-target-relative path to persist review evidence.
+running target commands. It also reports policy preset recommendations and SBOM
+adapter status while keeping preset application and SBOM generation explicit
+opt-ins. Use `--json-report` or `--markdown-report` with a target-relative path
+to persist review evidence.
 
 `corpus` is an offline generated-content quality gate. It creates temporary
 fixtures modeled on pinned popular public repositories, runs detection,

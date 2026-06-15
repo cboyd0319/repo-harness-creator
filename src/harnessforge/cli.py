@@ -16,10 +16,17 @@ from .blueprints import (
 )
 from .detect import detect_project
 from .doctor import doctor_json, doctor_report, format_doctor
-from .effectiveness import (
+from .evidence.effectiveness import (
     build_effectiveness_assessment,
     format_effectiveness_assessment,
 )
+from .evidence.release_check import (
+    build_release_check,
+    format_release_check,
+    release_check_exit_code,
+    write_markdown_release_check,
+)
+from .evidence.report import build_report, format_report, write_markdown_report
 from .generate import (
     PLATFORM_CONTRACTS,
     REVIEW_REQUIRED_FILES,
@@ -41,13 +48,6 @@ from .readiness import (
     readiness_to_dict,
 )
 from .redact import redact_local_paths
-from .release_check import (
-    build_release_check,
-    format_release_check,
-    release_check_exit_code,
-    write_markdown_release_check,
-)
-from .report import build_report, format_report, write_markdown_report
 from .reports import write_json_payload
 from .session import build_session_report, format_session_report, session_report_to_dict
 from .sync import format_sync_check, sync_check_to_dict, sync_exit_code
@@ -154,6 +154,15 @@ def build_parser() -> argparse.ArgumentParser:
         action="store_true",
         help="preview instruction-file enhancement instead of preserving existing routers",
     )
+    quickstart.add_argument(
+        "--interactive",
+        action="store_true",
+        help=(
+            "emit an interactive-ready decision plan; no prompts are shown unless "
+            "a future interactive runner is added"
+        ),
+    )
+    quickstart.add_argument("--json", action="store_true")
     quickstart.set_defaults(func=_quickstart)
 
     corpus = subparsers.add_parser(
@@ -518,8 +527,166 @@ def _quickstart(args: argparse.Namespace) -> int:
         platform_contract=args.platform_contract,
     )
     report = inspect_readiness(profile)
-    print(_format_quickstart(profile, report, writes))
+    if args.json:
+        print(json.dumps(_quickstart_to_dict(args, profile, report, writes), indent=2))
+    else:
+        print(_format_quickstart(profile, report, writes))
+        if args.interactive:
+            return _quickstart_interactive_prompt(args, writes)
     return 0
+
+
+def _quickstart_interactive_prompt(
+    args: argparse.Namespace,
+    writes: tuple[WriteResult, ...],
+) -> int:
+    planned_writes = tuple(
+        write for write in writes if write.status in {"would_write", "would_enhance"}
+    )
+    if not planned_writes:
+        print("\nInteractive: no generated writes are planned.")
+        return 0
+    if not sys.stdin.isatty():
+        print(
+            "\nInteractive prompts skipped because stdin is not a TTY. "
+            "Run the shown init command when ready to write."
+        )
+        return 0
+    answer = input("\nWrite the planned HarnessForge files now? [y/N] ").strip().lower()
+    if answer not in {"y", "yes"}:
+        print("No files written.")
+        return 0
+    _, applied = create_harness(
+        args.target,
+        agent_file=args.agent_file,
+        force=False,
+        enhance_existing=args.enhance_existing,
+        dry_run=False,
+        package_manager=args.package_manager,
+        commands=tuple(args.commands),
+        project_name=args.project_name,
+        platform_contract=args.platform_contract,
+    )
+    print("Writes:")
+    for write in applied:
+        suffix = f" ({write.reason})" if write.reason else ""
+        print(f"  - {write.status.upper()} {_relative(write.path, args.target)}{suffix}")
+    return 0
+
+
+def _quickstart_to_dict(
+    args: argparse.Namespace,
+    profile: ProjectProfile,
+    report: ReadinessReport,
+    writes: tuple[WriteResult, ...],
+) -> dict[str, object]:
+    planned_paths = sorted(
+        _relative(result.path, profile.root)
+        for result in writes
+        if result.status in {"would_write", "would_enhance"}
+    )
+    preserved = sorted(
+        _relative(result.path, profile.root)
+        for result in writes
+        if result.status == "skipped"
+    )
+    decisions = {
+        "agentFile": args.agent_file,
+        "platformContract": args.platform_contract,
+        "packageManager": args.package_manager,
+        "projectName": args.project_name,
+        "enhanceExisting": bool(args.enhance_existing),
+        "verificationCommands": list(args.commands),
+        "writeMode": "dry_run",
+    }
+    return {
+        "schemaVersion": "harnessforge.quickstartPlan.v1",
+        "mode": "read_only",
+        "interactive": bool(args.interactive),
+        "target": {
+            "name": profile.name,
+            "root": None,
+        },
+        "detectedStack": profile.stack,
+        "execution": {
+            "commandsExecuted": False,
+            "writesPerformed": False,
+        },
+        "decisions": decisions,
+        "readiness": readiness_to_dict(report),
+        "plannedWrites": planned_paths,
+        "preservedFiles": preserved,
+        "reviewRequired": list(report.review_required),
+        "reproducibleCommands": {
+            "quickstart": _quickstart_repro_command(args),
+            "init": _quickstart_init_repro_command(args),
+            "sync": _quickstart_sync_repro_command(args),
+        },
+    }
+
+
+def _quickstart_repro_command(args: argparse.Namespace) -> str:
+    parts = [
+        "harnessforge",
+        "quickstart",
+        "--target",
+        "<repo>",
+        "--agent-file",
+        args.agent_file,
+        "--platform-contract",
+        args.platform_contract,
+    ]
+    if args.package_manager:
+        parts.extend(["--package-manager", args.package_manager])
+    for command in args.commands:
+        parts.extend(["--command", _quote_command(command)])
+    if args.project_name:
+        parts.extend(["--project-name", _quote_command(args.project_name)])
+    if args.enhance_existing:
+        parts.append("--enhance-existing")
+    if args.interactive:
+        parts.append("--interactive")
+    return " ".join(parts)
+
+
+def _quickstart_init_repro_command(args: argparse.Namespace) -> str:
+    parts = [
+        "harnessforge",
+        "init",
+        "--target",
+        "<repo>",
+        "--dry-run",
+        "--agent-file",
+        args.agent_file,
+        "--platform-contract",
+        args.platform_contract,
+    ]
+    if args.package_manager:
+        parts.extend(["--package-manager", args.package_manager])
+    for command in args.commands:
+        parts.extend(["--command", _quote_command(command)])
+    if args.project_name:
+        parts.extend(["--project-name", _quote_command(args.project_name)])
+    if args.enhance_existing:
+        parts.append("--enhance-existing")
+    return " ".join(parts)
+
+
+def _quickstart_sync_repro_command(args: argparse.Namespace) -> str:
+    parts = ["harnessforge", "sync", "--check", "--target", "<repo>"]
+    if args.package_manager:
+        parts.extend(["--package-manager", args.package_manager])
+    for command in args.commands:
+        parts.extend(["--command", _quote_command(command)])
+    return " ".join(parts)
+
+
+def _quote_command(value: str) -> str:
+    if not value:
+        return "''"
+    if any(char.isspace() for char in value) or any(char in value for char in "\"'"):
+        return json.dumps(value)
+    return value
 
 
 def _corpus(args: argparse.Namespace) -> int:

@@ -46,20 +46,21 @@ Current release boundary:
 | Effectiveness evidence assessment | Implemented as `harnessforge effectiveness` | Reviews stored evidence; does not run benchmarks |
 | Source-record schema | Implemented as generated schema/example | Project-owned records only |
 | First-agent harness improvement task | Implemented | Review-oriented; no project command execution by default |
+| SBOM adapter status | Implemented as report-only adapter plan | Detect/import/generation remain explicit; no normal-flow SBOM generation |
+| Policy presets | Implemented through expanded blueprint-backed recommendations | Advisory until project owner applies a blueprint |
+| Interactive quickstart/init UX | Implemented through reproducible JSON plan and guarded TTY prompt | Dry-run summary first; prompts skipped without TTY |
+| Action summary and release evidence automation | Implemented for report, sync, and release-check | Read-only unless report paths are explicitly requested |
+| Harness maturity levels | Implemented as evidence-gated report/release-check output | Separate from structural score and real-agent effectiveness |
 
 ## Still Worth Considering
 
 These remain useful but should stay behind explicit roadmap/release decisions:
 
-- SBOM-aware indexing and optional SBOM adapters when dependency inventory
-  improves generated quality.
-- Better instruction-quality and signal-to-noise reporting beyond current size
-  and duplicate checks.
 - More real-repo golden fixtures built from popular public open-source repos.
-- Harness maturity levels backed by evidence, not marketing scores.
-- Expanded policy presets with clear owner opt-in.
-- Better interactive quickstart/init UX.
-- Action summary polish and release evidence automation.
+- Optional SBOM generation or project-owned SBOM command import when dependency
+  inventory improves generated quality enough to justify explicit opt-in.
+- Deeper instruction-quality and signal-to-noise scoring beyond the current
+  section, budget, placeholder, and duplicate-guidance checks.
 
 Track accepted work in `docs/roadmap.md`; do not duplicate full backlog state
 here.

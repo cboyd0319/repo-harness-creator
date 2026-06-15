@@ -4,9 +4,8 @@ Last Updated: 2026-06-15 UTC
 
 ## Current Objective
 
-Consolidate routine harness state so local and generated harnesses use one
-current-state file, keep `feature_list.json` machine-readable, and reserve the
-evidence log for meaningful verification evidence.
+Close the accepted pre-release backlog and resume release prep from a clean
+docs, code, and harness boundary.
 
 ## Product State
 
@@ -39,41 +38,54 @@ evidence log for meaningful verification evidence.
 
 ## Latest Verified Work
 
-- Root `progress.md` and `session-handoff.md` are obsolete. Local and generated
-  harnesses now use root `current-state.md`.
-- Generated target harnesses create `current-state.md` and no longer render
-  progress or session-handoff templates.
-- Audit scoring, session snapshots, manifest snippets, self-heal staging, and
-  generated docs use the new state contract.
-- `feature_list.json` remains because audit/release state needs a
-  machine-readable feature ledger.
-- `docs/harness/evidence/evidence-log.md` remains for meaningful preserved
-  verification, release, audit, or source-review evidence only.
+- `harnessforge report` now includes policy preset recommendations and SBOM
+  adapter status.
+- Expanded blueprint-backed policy presets cover open-source libraries,
+  internal services, monorepos, CLI/dev tools, infrastructure/IaC,
+  mobile/desktop apps, docs/research repos, legacy migrations, and
+  education/training repos in addition to the existing presets.
+- `quickstart --interactive --json` emits reproducible decisions without
+  prompts or writes. Non-JSON `--interactive` prints the dry-run summary first,
+  skips prompts without a TTY, and asks before writing in a real terminal.
+- Enhance-existing plans include per-file instruction-quality recommendations.
+- Report/evidence/policy helpers moved under `src/harnessforge/evidence/`;
+  public CLI and Action entrypoints remain top-level.
+- The docs/backlog consistency pass found no remaining accepted pre-release
+  backlog. Optional release evidence imports are tracked as release-prep
+  candidates, not current buildout blockers.
 
 ## Trusted Verification
 
-- `PYTHONPATH=src:. python3 -m unittest discover -s tests` passed with 258 tests.
+- `PYTHONPATH=src:. python3 -m unittest discover -s tests` passed with 261 tests.
 - `PYTHONPATH=src:. python3 scripts/check_pins.py --root .` passed.
 - `PYTHONPATH=src:. python3 scripts/refresh_research.py --root . --check`
   passed.
 - `PYTHONPATH=src:. python3 -m harnessforge audit --target . --min-score 85`
   passed at `100/100`.
-- Generated target CLI smoke passed: `init` wrote `current-state.md`, did not
-  write old progress/handoff files, and audit returned `100/100`.
-- Session JSON smoke passed and reports `current-state.md` with no old root
-  progress/handoff entries.
-- `git diff --check`, `compileall`, and JSON validation passed.
+- `PYTHONPATH=src:. python3 -m harnessforge report --target . --json` produced
+  parseable JSON.
+- `PYTHONPATH=src:. python3 -m harnessforge release-check --target . --json`
+  produced parseable JSON and returned the expected strict-gate blocked exit.
+- `PYTHONPATH=src:. python3 -m harnessforge quickstart --target . --interactive --json`
+  produced parseable JSON.
+- `./init.sh` passed with 261 tests and self-audit `100/100`.
+- `pwsh -NoProfile -File ./init.ps1` passed with 261 tests and self-audit
+  `100/100`.
+- `git diff --check`, compileall, JSON validation, stale old-module-path scan,
+  and local-path scan passed.
 
 ## Touched Surfaces
 
 - `docs/roadmap.md`
+- `docs/action.md`
+- `docs/capabilities.md`
+- `docs/usage.md`
+- `docs/harness/README.md`
 - `docs/harness/authoritative-facts.md`
 - `docs/harness/boundaries/component-inventory.md`
-- `docs/harness/state/`
-- `docs/harness/feedback/`
+- `docs/harness/manifest.json`
+- `docs/harness/research/remaining-ideas-research.md`
 - `src/harnessforge/`
-- `src/harnessforge/templates/`
-- `.github/workflows/harness-self-heal.yml`
 - `tests/`
 
 ## Blockers
@@ -82,6 +94,4 @@ evidence log for meaningful verification evidence.
 
 ## Next Step
 
-Continue accepted pre-release backlog before release prep: optional SBOM
-adapter design, expanded policy presets, interactive quickstart/init UX, and
-`src/harnessforge/` organization.
+Commit the backlog-closure changes, then begin release prep.

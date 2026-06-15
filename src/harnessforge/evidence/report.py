@@ -5,20 +5,22 @@ from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
 
-from .audit import audit_target, audit_to_dict
-from .detect import detect_project
 from .effectiveness import build_effectiveness_assessment
 from .first_agent import (
     analyze_first_agent_lifecycle,
     first_agent_lifecycle_to_dict,
 )
-from .harness_paths import existing_harness_path, harness_path
-from .indexer import build_index_report
 from .maturity import build_maturity_report
-from .planner import DiffPlanReport, build_diff_plan
-from .readiness import inspect_readiness, readiness_to_dict
-from .reports import report_path, relative_to_target
-from .update import build_drift_report
+from .policy_presets import build_policy_preset_report
+from .sbom_adapter import build_sbom_adapter_plan
+from ..audit import audit_target, audit_to_dict
+from ..detect import detect_project
+from ..harness_paths import existing_harness_path, harness_path
+from ..indexer import build_index_report
+from ..planner import DiffPlanReport, build_diff_plan
+from ..readiness import inspect_readiness, readiness_to_dict
+from ..reports import report_path, relative_to_target
+from ..update import build_drift_report
 
 SCHEMA_VERSION = "harnessforge.report.v1"
 FIRST_AGENT_TASK = harness_path("first_agent_task")
@@ -68,6 +70,8 @@ def build_report(
     drift = build_drift_report(profile.root)
     index = build_index_report(profile)
     effectiveness = build_effectiveness_assessment(profile)
+    policy_presets = build_policy_preset_report(profile, index)
+    sbom_adapter = build_sbom_adapter_plan(profile, index)
     readiness_payload = readiness_to_dict(readiness)
     audit_payload = audit_to_dict(audit)
     manifest = _read_manifest(profile.root)
@@ -106,6 +110,8 @@ def build_report(
         "instructionQuality": readiness_payload["instructionQuality"],
         "firstAgentTask": first_agent,
         "platform": _platform_summary(manifest),
+        "policyPresets": policy_presets,
+        "sbomAdapter": sbom_adapter,
         "releaseControls": _release_controls_summary(profile.root),
         "docsFanout": docs_fanout,
     }
@@ -118,6 +124,8 @@ def build_report(
         first_agent,
         docs_fanout,
         payload["maturity"],
+        policy_presets,
+        sbom_adapter,
     )
     return payload
 
@@ -200,6 +208,20 @@ def format_report(payload: dict[str, Any]) -> str:
             "## Platform",
             "",
             f"- Contract: `{payload['platform']['contract']}`",
+            "",
+            "## Policy Presets",
+            "",
+            f"- Status: `{payload['policyPresets']['status']}`",
+            f"- Available: {len(payload['policyPresets']['availablePresets'])}",
+            f"- Applied: {len(payload['policyPresets']['appliedPresets'])}",
+            f"- Recommended: {len(payload['policyPresets']['recommendedPresets'])}",
+            "",
+            "## SBOM Adapter",
+            "",
+            f"- Status: `{payload['sbomAdapter']['status']}`",
+            f"- Default behavior: `{payload['sbomAdapter']['defaultBehavior']}`",
+            f"- Existing SBOMs: {payload['sbomAdapter']['detectedExistingSbomCount']}",
+            f"- Generation enabled: `{str(payload['sbomAdapter']['generationEnabled']).lower()}`",
             "",
             "## Maturity",
             "",
@@ -734,6 +756,8 @@ def _next_actions(
     first_agent: dict[str, Any],
     docs_fanout: dict[str, Any],
     maturity: dict[str, Any],
+    policy_presets: dict[str, Any],
+    sbom_adapter: dict[str, Any],
 ) -> list[str]:
     actions: list[str] = [
         "Run harnessforge report --target <repo> --markdown-report "
@@ -747,6 +771,8 @@ def _next_actions(
         )
     actions.extend(effectiveness["nextActions"])
     actions.extend(first_agent["lifecycle"]["nextActions"])
+    actions.extend(policy_presets["nextActions"])
+    actions.extend(sbom_adapter["nextActions"])
     if docs_fanout["authoritativeMap"]["status"] == "missing":
         actions.append(
             "Add docs/harness/authoritative-facts.md to reduce harness docs fan-out."

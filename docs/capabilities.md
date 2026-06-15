@@ -11,7 +11,8 @@ boundaries it preserves. See [Usage](usage.md) for commands and
   ASPEC-style folders, work-item templates, and workflow control surfaces.
 - Provides a read-only guided first-run summary that explains detected context,
   readiness, preserved files, planned generated files, review placeholders, and
-  next commands.
+  next commands. The JSON form can emit reproducible decisions for an
+  interactive-ready first run without prompting or writing files.
 - Generates a compact harness with agent entrypoints, project state files,
   local verification scripts, security boundaries, evidence docs, lifecycle
   docs, a target-owned authoritative fact map, and a manifest.
@@ -38,14 +39,18 @@ boundaries it preserves. See [Usage](usage.md) for commands and
   project commands.
 - Composes readiness, audit, generated drift, structural index, verify
   evidence, effectiveness evidence, first-agent task status, platform
-  contract, docs fan-out routing status, release-control presence, and
-  evidence-gated maturity into one read-only JSON or Markdown report.
+  contract, docs fan-out routing status, policy preset recommendations, SBOM
+  adapter status, release-control presence, and evidence-gated maturity into
+  one read-only JSON or Markdown report.
 - Assembles read-only release readiness gates from existing report evidence
   and the source report maturity level without publishing artifacts, tagging,
   pushing, uploading, or running target commands.
 - Provides explicit blueprint mode for richer project operating models. Built-in
-  packs cover agentic applications, spec-driven projects, web services,
-  data/ML, security-sensitive repos, and workflow automation.
+  packs cover agentic applications, open-source libraries, internal services,
+  monorepos, CLI/dev tools, spec-driven projects, web services, data/ML,
+  security-sensitive repos, infrastructure/IaC, mobile/desktop apps,
+  docs/research repos, legacy migrations, education/training repos, and
+  workflow automation.
 - Provides an offline public-repo fixture corpus for generated-content quality
   and detection regression checks without cloning public repositories.
 - Provides a composite GitHub Action for audit, init, update, sync, verify,
@@ -70,6 +75,9 @@ boundaries it preserves. See [Usage](usage.md) for commands and
   command execution is explicitly wanted.
 - It does not clone public repositories or use network access during the
   offline `corpus` quality gate.
+- It does not generate SBOMs during normal flows. Existing SPDX and
+  CycloneDX-style SBOMs are detected as evidence; generation or project-owned
+  SBOM imports require an explicit future adapter path.
 - It does not use structural scores as proof of real task performance.
 
 ## Generated Files

@@ -2,10 +2,10 @@
 
 Last reviewed: 2026-06-15 UTC.
 
-This roadmap captures accepted product improvements that should be considered
-after the current docs update and before, during, or after release prep. It is
-separate from `docs/harness/research/remaining-ideas-research.md`, which records the
-research trail and rejected defaults.
+This roadmap captures accepted product improvements and candidate follow-up
+ideas. It is separate from
+`docs/harness/research/remaining-ideas-research.md`, which records the research
+trail and rejected defaults.
 
 ## Product Direction
 
@@ -26,9 +26,9 @@ The main boundary remains unchanged:
 
 ## Current Release Boundary
 
-Release prep is intentionally deferred. Keep building the accepted roadmap
-items before returning to release gates, package publishing, or Action tag
-decisions.
+Release prep can resume after the current commit. The accepted pre-release
+backlog is closed; candidate ideas below need a new maintainer decision before
+they become release-blocking work.
 
 HarnessForge is still alpha/pre-release, has not been deployed, and has no
 external users. Accepted backlog work should optimize for the clean current
@@ -37,16 +37,9 @@ schemas, manifest formats, CLI outputs, Action behavior, or docs as backward
 compatibility promises. Add a shim only when a maintainer declares a release
 boundary or records a temporary evaluation bridge with removal criteria.
 
-The current remaining pre-release buildout includes:
-
-- report expansion for policy preset status;
-- better instruction-quality and signal-to-noise reporting;
-- optional SBOM adapter design;
-- expanded policy presets;
-- interactive quickstart/init UX.
-
-Return to release prep only after these items are completed or explicitly
-deferred with owner, evidence, and risk recorded.
+Current release-prep work should focus on clean package evidence, release
+notes, tags, Action pin guidance, optional SBOM/provenance decisions, and any
+manual platform checks the maintainer wants before publishing.
 
 ## Surface Impact Checklist
 
@@ -201,10 +194,12 @@ Implemented report expansion:
   languages, components, source-of-truth docs, manifest kinds, entrypoints,
   boundary examples, verification commands, review-required files, unknowns,
   and existing SBOM evidence;
-- unified reports carry the repo-map summary.
-
-Remaining report expansion: add policy preset status and release evidence
-automation as those surfaces land.
+- unified reports carry the repo-map summary;
+- report and Action summaries include policy preset status;
+- report and release-check surfaces include release evidence automation and
+  evidence-gated maturity;
+- reports include SBOM adapter status while keeping SBOM generation out of
+  normal flows.
 
 ### Compact Repo Map From Index
 
@@ -235,8 +230,9 @@ commit embeddings, private code summaries, or machine-local paths by default.
 ### SBOM-Aware Indexing
 
 Status: default detection of existing SPDX and CycloneDX-style SBOM files is
-implemented in `index --json` and `report`. Optional SBOM generation/import
-adapters remain future work.
+implemented in `index --json` and `report`. The optional adapter contract is
+implemented as a read-only report plan. Actual SBOM generation remains a
+future explicit opt-in.
 
 SBOM data can add value when it is used as evidence, not as a default
 dependency or quality claim.
@@ -254,7 +250,8 @@ Default behavior should detect existing SPDX or CycloneDX-style SBOM files and
 report them as review surfaces. HarnessForge should not generate SBOMs during
 normal `init`, `inspect`, `index`, or `sync --check`.
 
-Optional behavior can add an explicit SBOM adapter later. That adapter should:
+Optional generation behavior can add an explicit SBOM adapter later. That
+adapter must:
 
 - require an explicit command or flag;
 - use installed or project-owned tooling only;
@@ -608,8 +605,14 @@ This work should get a dedicated design and fixture pass before implementation.
 
 ### Interactive Quickstart And Init
 
-Add an interactive first-run flow after the non-interactive command surfaces
-are stable.
+Status: initial reproducible decision plan implemented.
+
+`harnessforge quickstart --interactive --json` emits an interactive-ready plan
+without prompts or writes. It records the selected agent file, platform
+contract, verification commands, planned writes, preserved files, readiness,
+and reproducible `quickstart`, `init`, and `sync` commands. Non-JSON
+`--interactive` prints the dry-run summary first, skips prompts safely when
+stdin is not a TTY, and asks before writing in real TTY sessions.
 
 Useful prompts:
 
@@ -658,9 +661,9 @@ Implemented behavior:
   runnable-check, instruction-quality, first-agent, and verify-evidence status;
 - existing audit and verify summaries remain concise and table-oriented.
 
-Remaining polish:
-
-- examples for artifact upload without making upload a default requirement.
+Caller-owned artifact upload examples are documented in `docs/action.md`.
+HarnessForge still does not upload artifacts, publish releases, create tags, or
+open pull requests by itself.
 
 ### Release Evidence Automation
 
@@ -688,7 +691,10 @@ Implemented checks:
 - immediate clean-state checks and periodic cleanup or drift-scan evidence when
   the target project defines those sensors.
 
-Remaining optional release-policy extensions:
+Release-prep evidence candidates:
+
+These are release-prep decisions, not accepted pre-release backlog. Add them
+only when the maintainer chooses the release evidence boundary.
 
 - package build and isolated install smoke evidence import;
 - pin and research-source check evidence import where applicable;
@@ -715,6 +721,9 @@ score should remain separate.
 
 ### Policy Presets
 
+Status: initial expanded preset catalog and report recommendations
+implemented.
+
 Expand policy presets beyond the current blueprint packs. Presets should tune
 readiness checks, report sections, suggested sensors, and review gates. They
 should not inject personal preferences or platform-specific config by default.
@@ -739,9 +748,17 @@ Candidate presets:
 Presets should have source-reviewed rationale, dry-run output, and fixture
 coverage before they become recommended defaults.
 
+Implemented behavior:
+
+- built-in review-required blueprints now cover the accepted preset families;
+- `harnessforge report --json` includes `policyPresets` with available,
+  applied, and recommended presets;
+- recommendations are read-only and advisory until a project owner reviews and
+  applies a blueprint explicitly.
+
 ### Source Package Organization
 
-Status: accepted.
+Status: implemented for the current pre-release package shape.
 
 Reorganize `src/harnessforge/` so related command, report, generator, evidence,
 and policy modules are easier to navigate and maintain.
@@ -761,19 +778,34 @@ Done when the package layout has clear module groups, stale imports are gone,
 focused import/CLI/Action/generator tests pass, and the public docs do not
 advertise internal paths as stable API.
 
+Implemented shape:
+
+- public entrypoints and command dispatch stay top-level in `cli.py` and
+  `github_action.py`;
+- generated harness creation stays in `generate.py` and templates remain under
+  `templates/`;
+- shared report-path helpers stay in `reports.py`;
+- evidence, report composition, release-check gates, maturity, policy preset
+  recommendations, SBOM adapter status, instruction quality, context budget,
+  first-agent lifecycle, governance inventory, workflow inventory, and verify
+  evidence now live under `src/harnessforge/evidence/`.
+
 ## Suggested Build Order
 
 1. Keep the generated target wording advisory unless the repo owner opts into
    the Action, and continue quality passes against real repositories.
 2. Keep the pinned public-repo quality corpus and generated-artifact scorer
    green as quality and detection gates evolve.
-3. Expand `harnessforge report` with policy preset status.
+3. Expand `harnessforge report` with policy preset status. Done.
 4. Add evidence-gated feature-state and deeper instruction-quality reporting
    to the generated-harness quality scorer.
 5. Design the optional SBOM adapter before adding any SBOM generation behavior.
-6. Add expanded policy presets.
+   Done for read-only reporting; generation remains future explicit opt-in.
+6. Add expanded policy presets. Done for the initial blueprint-backed catalog.
 7. Design the interactive quickstart/init UX once the underlying decisions are
-   stable.
+   stable. Done for the reproducible JSON decision plan and guarded TTY prompt.
+8. Reorganize `src/harnessforge/` and run focused import, CLI, Action, and
+   generator checks.
 
 ## Rejected Defaults
 

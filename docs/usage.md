@@ -18,6 +18,19 @@ harnessforge audit --target /path/to/repo --min-score 85
 systems, preserved existing files, planned generated files, generated review
 placeholders, and the safest next commands.
 
+Use `--interactive --json` to emit a reproducible first-run decision plan
+without prompts or writes:
+
+```bash
+harnessforge quickstart --target /path/to/repo --interactive --json
+```
+
+The JSON includes the selected agent file, platform contract, optional
+verification commands, planned writes, preserved files, readiness report, and
+equivalent non-interactive `quickstart`, `init`, and `sync` commands.
+Without `--json`, `--interactive` prints the dry-run summary first, skips
+prompts when stdin is not a TTY, and asks before writing in a real terminal.
+
 After `init`, the generated canonical agent instruction routes the first agent
 session to `docs/harness/state/first-agent-task.md` and the generated
 `.agents/skills/harness/SKILL.md` skill. Those review-required files give the
@@ -87,12 +100,13 @@ harnessforge report --target /path/to/repo --markdown-report docs/harness/eviden
 structural index summary, stored verify evidence, stored effectiveness
 evidence, first-agent task lifecycle evidence, platform contract, and docs
 fan-out routing status. It also includes instruction-quality and context-budget
-signals for startup instruction files plus the compact repo-map summary from
-`index`. It also reports an evidence-gated maturity level from `generated` to
-`measured` without treating structural audit score as proof of real-agent
-effectiveness. It is read-only by default, does not run target repository
-commands, and writes files only when a target-relative `--json-report` or
-`--markdown-report` path is supplied.
+signals for startup instruction files, the compact repo-map summary from
+`index`, policy preset recommendations, and SBOM adapter status. It also
+reports an evidence-gated maturity level from `generated` to `measured`
+without treating structural audit score as proof of real-agent effectiveness.
+It is read-only by default, does not run target repository commands, and writes
+files only when a target-relative `--json-report` or `--markdown-report` path
+is supplied.
 
 Use `--require-verify-evidence` when the report should include release-gate
 verify evidence blockers. Use `--command` when detection cannot infer
@@ -279,16 +293,29 @@ Built-in blueprints:
 | Blueprint | Use when |
 | --- | --- |
 | `agentic-app` | The repo has agent runtime behavior, tool calls, model-mediated outputs, or autonomous actions |
+| `open-source-library` | The repo has public package, contributor, license, or release compatibility surfaces |
+| `internal-service` | The repo has service startup, runtime dependencies, deployment, or incident rollback needs |
+| `monorepo` | The repo has multiple components, workspaces, or selective verification needs |
+| `cli-dev-tool` | The repo exposes CLI or developer-tool contracts across shells or platforms |
 | `spec-driven` | The repo uses specs, plans, tasks, and traceability as the source of truth |
 | `web-service` | The repo exposes web apps, APIs, UI flows, or server-backed product workflows |
 | `data-ml` | The repo has data pipelines, notebooks, models, benchmarks, or result artifacts |
 | `security-sensitive` | The repo handles auth, secrets, permissions, infrastructure, or sensitive data |
+| `infrastructure-iac` | The repo changes cloud, infrastructure, plans, state, permissions, or cost surfaces |
+| `mobile-desktop` | The repo builds client apps, bundles, installers, permissions, or signed artifacts |
+| `docs-research` | The repo is docs-heavy or research-heavy and needs provenance and stale-link discipline |
+| `legacy-migration` | The repo is moving old layouts or behavior while preserving compatibility boundaries |
+| `education-training` | The repo contains lessons, examples, fixtures, or intentionally vulnerable training content |
 | `workflow-automation` | The repo has CI, scheduled jobs, bots, self-heal flows, or PR automation |
 
 `blueprint apply` writes under `docs/harness/blueprints/` and records ownership
 metadata in `docs/harness/blueprints/manifest.json`. Existing blueprint files
 are preserved unless `--force` is explicit. Treat generated blueprint docs as
 review-required project drafts, not automatic policy.
+
+`harnessforge report --json` includes a `policyPresets` block that recommends
+matching blueprints from read-only repository signals. Recommendations are
+advisory; a project owner still reviews and applies a blueprint explicitly.
 
 ## Generation Boundary
 

@@ -800,6 +800,60 @@ class CliTests(unittest.TestCase):
             any("first-agent-review.json" in item for item in payload["nextActions"])
         )
 
+    def test_report_json_includes_policy_presets_and_sbom_adapter_status(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            (root / "pyproject.toml").write_text(
+                "[project]\nname='demo'\n",
+                encoding="utf-8",
+            )
+            (root / "LICENSE").write_text("MIT\n", encoding="utf-8")
+            (root / "specs" / "001-demo").mkdir(parents=True)
+            (root / "specs" / "001-demo" / "spec.md").write_text(
+                "# Demo\n",
+                encoding="utf-8",
+            )
+            stdout = io.StringIO()
+            with contextlib.redirect_stdout(stdout):
+                code = main(
+                    [
+                        "report",
+                        "--target",
+                        str(root),
+                        "--command",
+                        "python -m compileall .",
+                        "--json",
+                    ]
+                )
+
+            payload = json.loads(stdout.getvalue())
+
+        self.assertEqual(code, 0)
+        self.assertEqual(
+            payload["policyPresets"]["schemaVersion"],
+            "harnessforge.policyPresets.v1",
+        )
+        available_ids = {
+            item["id"] for item in payload["policyPresets"]["availablePresets"]
+        }
+        self.assertIn("open-source-library", available_ids)
+        self.assertIn("spec-driven", available_ids)
+        recommended_ids = {
+            item["id"] for item in payload["policyPresets"]["recommendedPresets"]
+        }
+        self.assertIn("open-source-library", recommended_ids)
+        self.assertIn("spec-driven", recommended_ids)
+        self.assertEqual(
+            payload["sbomAdapter"]["schemaVersion"],
+            "harnessforge.sbomAdapter.v1",
+        )
+        self.assertEqual(
+            payload["sbomAdapter"]["defaultBehavior"],
+            "detect_existing_only",
+        )
+        self.assertFalse(payload["sbomAdapter"]["generationEnabled"])
+        self.assertTrue(payload["sbomAdapter"]["explicitOptInRequired"])
+
     def test_report_json_summarizes_completed_first_agent_review(self) -> None:
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp)
@@ -1742,6 +1796,54 @@ class CliTests(unittest.TestCase):
         self.assertIn("harnessforge init --target <repo> --dry-run", output)
         self.assertIn("harnessforge sync --check --target <repo>", output)
 
+    def test_quickstart_interactive_json_reports_reproducible_decisions(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            (root / "pyproject.toml").write_text(
+                "[project]\nname='demo'\n",
+                encoding="utf-8",
+            )
+            stdout = io.StringIO()
+            with contextlib.redirect_stdout(stdout):
+                code = main(
+                    [
+                        "quickstart",
+                        "--target",
+                        str(root),
+                        "--interactive",
+                        "--json",
+                    ]
+                )
+            payload = json.loads(stdout.getvalue())
+
+        self.assertEqual(code, 0)
+        self.assertEqual(
+            payload["schemaVersion"], "harnessforge.quickstartPlan.v1"
+        )
+        self.assertTrue(payload["interactive"])
+        self.assertEqual(payload["target"]["root"], None)
+        self.assertFalse(payload["execution"]["writesPerformed"])
+        self.assertEqual(payload["decisions"]["agentFile"], "AGENTS.md")
+        self.assertIn("--platform-contract", payload["reproducibleCommands"]["init"])
+        self.assertIn("harnessforge init", payload["reproducibleCommands"]["init"])
+
+    def test_quickstart_interactive_skips_prompts_without_tty(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            (root / "pyproject.toml").write_text(
+                "[project]\nname='demo'\n",
+                encoding="utf-8",
+            )
+            stdout = io.StringIO()
+            with contextlib.redirect_stdout(stdout):
+                code = main(["quickstart", "--target", str(root), "--interactive"])
+
+        self.assertEqual(code, 0)
+        output = stdout.getvalue()
+        self.assertIn("Quickstart for", output)
+        self.assertIn("Interactive prompts skipped because stdin is not a TTY", output)
+        self.assertFalse((root / "AGENTS.md").exists())
+
     def test_quickstart_reports_blocked_missing_verification_without_writing(self) -> None:
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp)
@@ -2543,6 +2645,9 @@ class CliTests(unittest.TestCase):
         ids = {item["id"] for item in list_payload["blueprints"]}
         self.assertIn("agentic-app", ids)
         self.assertIn("spec-driven", ids)
+        self.assertIn("open-source-library", ids)
+        self.assertIn("internal-service", ids)
+        self.assertIn("infrastructure-iac", ids)
         self.assertEqual(show_payload["id"], "agentic-app")
         self.assertIn("reviewQuestions", show_payload)
         self.assertIn("generatedFiles", show_payload)
@@ -3249,6 +3354,8 @@ class CliTests(unittest.TestCase):
             payload["enhanceExistingPlan"]["schemaVersion"],
             "harnessforge.enhanceExistingPlan.v1",
         )
+        self.assertIn("instructionQuality", agents)
+        self.assertIn("recommendations", agents["instructionQuality"])
         self.assertIn("patchPreviews", payload["enhanceExistingPlan"]["summary"])
         self.assertIn("local_absolute_path", {item["type"] for item in agents["findings"]})
 

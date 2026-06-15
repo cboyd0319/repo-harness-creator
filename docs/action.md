@@ -21,8 +21,9 @@ state files, or release process are present in the caller repository.
   with `contents: read`.
 - `report` reads the declared `target`, composes readiness, audit, drift,
   index, verify evidence, effectiveness evidence, first-agent status, and
-  platform contract into one review artifact, and writes only requested JSON
-  or Markdown reports inside that target.
+  platform contract, policy preset recommendations, and SBOM adapter status
+  into one review artifact, and writes only requested JSON or Markdown reports
+  inside that target.
 - `release-check` reads the declared `target`, assembles release readiness
   gates from the same report evidence, writes only requested JSON or Markdown
   reports inside that target, and never publishes, tags, uploads, pushes, or
@@ -120,6 +121,25 @@ scan limit for large repositories. Use `report-since` to add read-only
 docs fan-out analysis for changed files since a git ref. Use
 `require-docs-fanout-budget: "true"` when that analysis should fail the Action
 on over-budget fan-out or duplicated durable fact blocks.
+
+The step summary includes readiness, audit score, generated drift, docs
+fan-out, verify/effectiveness evidence, instruction quality, first-agent
+lifecycle, maturity, policy preset status, SBOM adapter status, repo-map
+counts, and SBOM file count.
+
+Upload report artifacts in the caller workflow when that is useful. The
+HarnessForge Action does not upload artifacts by default:
+
+```yaml
+- uses: actions/upload-artifact@<reviewed-commit-sha> # v4
+  if: always()
+  with:
+    name: harness-report
+    path: |
+      docs/harness/evidence/report.json
+      docs/harness/evidence/report.md
+    if-no-files-found: warn
+```
 
 ## Release Evidence Check
 

@@ -288,6 +288,357 @@ BLUEPRINTS: tuple[Blueprint, ...] = (
             "No generated workflow inherits local repo-only preferences or machine paths.",
         ),
     ),
+    Blueprint(
+        id="open-source-library",
+        title="Open-Source Library Blueprint",
+        summary=(
+            "Shape harness guidance for public packages where API stability, "
+            "contributor onboarding, license clarity, and release evidence matter."
+        ),
+        domains=("open-source", "packaging", "contributors", "release"),
+        fit_signals=(
+            "The repo has a license, public README, package manifest, or contribution flow.",
+            "Users consume the project as a library, CLI, package, module, or reusable tool.",
+            "Release quality depends on changelog, compatibility, and public support signals.",
+        ),
+        review_questions=(
+            "Which API, CLI, or package surfaces are public compatibility contracts?",
+            "Which supported platforms and runtime versions are release-blocking?",
+            "What contribution, security, release-note, and deprecation evidence is required?",
+        ),
+        operating_model=(
+            "Keep public support claims tied to tests, docs, and release evidence.",
+            "Route contributors to the smallest local setup and verification commands.",
+            "Separate maintainer-only release steps from normal contributor checks.",
+        ),
+        generated_review_items=(
+            "Public surface inventory covering packages, commands, APIs, and supported platforms.",
+            "Contributor verification ladder with fast local checks and release-only checks.",
+            "Release note checklist for breaking changes, deprecations, and security fixes.",
+        ),
+        verification_gates=(
+            "Run package, import, or CLI smoke tests before release promotion.",
+            "Run docs link or README checks when public setup guidance changes.",
+            "Record skipped platform checks with owner, risk, and follow-up.",
+        ),
+        promotion_gates=(
+            "No public compatibility claim lacks a named verification signal.",
+            "No release ships with unresolved ownership for security reporting.",
+            "No generated harness text imposes maintainer-local preferences on contributors.",
+        ),
+    ),
+    Blueprint(
+        id="internal-service",
+        title="Internal Service Blueprint",
+        summary=(
+            "Improve harness guidance for services that have runtime dependencies, "
+            "deployment gates, operational ownership, and incident rollback needs."
+        ),
+        domains=("service", "runtime", "operations", "deployment"),
+        fit_signals=(
+            "The repo has service startup commands, containers, compose files, or deployment config.",
+            "Correctness depends on environment variables, external services, or operational state.",
+            "Release risk includes outages, data loss, or user-visible downtime.",
+        ),
+        review_questions=(
+            "What starts the service locally, and what dependencies are required or mocked?",
+            "Which checks cover health, auth, migrations, rollbacks, and observability?",
+            "What deployment or incident response steps are human-owned?",
+        ),
+        operating_model=(
+            "Make startup, dependency, and health-check commands explicit.",
+            "Keep destructive, production, and cloud-cost operations behind human review.",
+            "Record deployment and rollback evidence separately from local unit tests.",
+        ),
+        generated_review_items=(
+            "Runtime dependency map for databases, queues, caches, secrets, and external APIs.",
+            "Health and smoke-test checklist for critical routes or jobs.",
+            "Rollback and migration-risk note for deployment-sensitive changes.",
+        ),
+        verification_gates=(
+            "Run focused service startup or health checks when runtime wiring changes.",
+            "Run migration or rollback checks before schema or data-path promotion.",
+            "Run security checks for auth, secrets, and permission changes.",
+        ),
+        promotion_gates=(
+            "No deployable change lacks rollback ownership.",
+            "No secret or credential assumption is embedded in generated instructions.",
+            "No production-impacting command runs without explicit approval.",
+        ),
+    ),
+    Blueprint(
+        id="monorepo",
+        title="Monorepo Blueprint",
+        summary=(
+            "Guide agents through repositories with multiple components, build "
+            "systems, ownership boundaries, and selective verification needs."
+        ),
+        domains=("monorepo", "components", "routing", "verification"),
+        fit_signals=(
+            "The repo has workspace markers, multiple manifests, or nested package roots.",
+            "Different components have different setup, test, or ownership rules.",
+            "A global check is expensive and changed-file routing matters.",
+        ),
+        review_questions=(
+            "Which files identify component roots and ownership boundaries?",
+            "How should changed files map to focused verification commands?",
+            "Which root-level commands are safe and which are release-only?",
+        ),
+        operating_model=(
+            "Prefer component-near instructions and checks over root-wide guesses.",
+            "Keep global commands as explicit release or integration gates.",
+            "Record unknown component boundaries as review items instead of hiding them.",
+        ),
+        generated_review_items=(
+            "Component inventory with manifest, owner, purpose, and verification command.",
+            "Changed-file routing table for focused local checks.",
+            "Global gate note explaining when broad checks are required.",
+        ),
+        verification_gates=(
+            "Run component-scoped checks for changed components.",
+            "Run root integration checks before release or shared-contract changes.",
+            "Record skipped component checks with owner and risk.",
+        ),
+        promotion_gates=(
+            "No component is marked verified from an unrelated root-only check.",
+            "No generated instruction collapses distinct component rules into one vague command.",
+            "No unknown boundary is treated as confirmed ownership.",
+        ),
+    ),
+    Blueprint(
+        id="cli-dev-tool",
+        title="CLI And Developer Tool Blueprint",
+        summary=(
+            "Focus harness guidance on command behavior, exit codes, packaging, "
+            "cross-platform shells, and developer workflow ergonomics."
+        ),
+        domains=("cli", "developer-tooling", "packaging", "cross-platform"),
+        fit_signals=(
+            "The repo exposes a command-line entry point, scripts, or developer automation.",
+            "Correctness depends on arguments, exit codes, stdout, stderr, or file writes.",
+            "Users need reliable behavior across shells and operating systems.",
+        ),
+        review_questions=(
+            "Which commands are public, and what exit codes and output shapes are contracts?",
+            "Which OS and shell combinations must be verified?",
+            "What file writes, environment variables, and destructive operations need guardrails?",
+        ),
+        operating_model=(
+            "Treat CLI help, errors, and output schemas as user-facing behavior.",
+            "Prefer argument-list subprocesses and target-contained writes.",
+            "Keep platform differences explicit instead of relying on one shell.",
+        ),
+        generated_review_items=(
+            "CLI contract table for commands, flags, outputs, exit codes, and write paths.",
+            "Cross-platform verification matrix for POSIX, PowerShell, and CI runners.",
+            "Packaging smoke checklist for installed entry points.",
+        ),
+        verification_gates=(
+            "Run focused CLI tests for changed arguments, output, and errors.",
+            "Run packaging or install smoke before release promotion.",
+            "Run platform-specific checks when shell behavior changes.",
+        ),
+        promotion_gates=(
+            "No public command changes without help/output regression coverage.",
+            "No target write path lacks containment validation.",
+            "No platform support claim lacks recent evidence or a named gap.",
+        ),
+    ),
+    Blueprint(
+        id="infrastructure-iac",
+        title="Infrastructure And IaC Blueprint",
+        summary=(
+            "Tighten harness guidance for infrastructure repositories where plans, "
+            "permissions, state, secrets, and cloud costs need explicit review."
+        ),
+        domains=("infrastructure", "iac", "security", "operations"),
+        fit_signals=(
+            "The repo contains Terraform, OpenTofu, CloudFormation, Kubernetes, or deployment config.",
+            "Changes can create, destroy, expose, or bill external resources.",
+            "Validation depends on plans, policy checks, and human approval boundaries.",
+        ),
+        review_questions=(
+            "Which plan commands are safe locally and which require credentials or approval?",
+            "What state, workspace, account, and region boundaries apply?",
+            "Which policy, cost, and security checks block promotion?",
+        ),
+        operating_model=(
+            "Default to read-only validation and plan review.",
+            "Require explicit approval before apply, destroy, import, or credentialed cloud actions.",
+            "Record account, workspace, region, and state assumptions before promotion.",
+        ),
+        generated_review_items=(
+            "Infrastructure boundary map for accounts, workspaces, regions, and state files.",
+            "Plan review checklist for resource creation, deletion, IAM, network, and cost changes.",
+            "Credential and approval matrix for cloud or platform operations.",
+        ),
+        verification_gates=(
+            "Run format, validate, and policy checks before plan promotion.",
+            "Review generated plans before apply-capable operations.",
+            "Run secret and permission checks for workflow or IAM changes.",
+        ),
+        promotion_gates=(
+            "No apply or destroy command is treated as an agent-default action.",
+            "No cloud-cost or permission expansion lacks human approval.",
+            "No state or workspace assumption is implicit in generated instructions.",
+        ),
+    ),
+    Blueprint(
+        id="mobile-desktop",
+        title="Mobile And Desktop Blueprint",
+        summary=(
+            "Guide harnesses for client applications with platform SDKs, bundles, "
+            "permissions, signing, and manual device or simulator checks."
+        ),
+        domains=("mobile", "desktop", "platform", "release"),
+        fit_signals=(
+            "The repo includes Swift, Kotlin, Tauri, Electron, installers, or app bundles.",
+            "Correctness depends on OS versions, signing, permissions, or manual UI checks.",
+            "Release evidence includes packaging, notarization, store, or installer behavior.",
+        ),
+        review_questions=(
+            "Which OS, SDK, simulator, and device targets are supported?",
+            "Which permissions, entitlements, signing, and packaging steps are release-sensitive?",
+            "Which UI or installer flows require manual evidence?",
+        ),
+        operating_model=(
+            "Separate local build checks from release signing or store submission.",
+            "Keep permission, entitlement, and installer changes review-required.",
+            "Record manual platform evidence when automation cannot cover the risk.",
+        ),
+        generated_review_items=(
+            "Platform target matrix with SDK, OS, simulator/device, and bundle checks.",
+            "Permission and entitlement review checklist.",
+            "Packaging, signing, notarization, or installer evidence checklist.",
+        ),
+        verification_gates=(
+            "Run platform build or bundle checks for changed client surfaces.",
+            "Run manual UI or installer smoke checks when automation is unavailable.",
+            "Record skipped device checks with owner and release risk.",
+        ),
+        promotion_gates=(
+            "No platform support claim lacks current evidence.",
+            "No permission or entitlement expansion is unreviewed.",
+            "No release packaging step is hidden in local-only instructions.",
+        ),
+    ),
+    Blueprint(
+        id="docs-research",
+        title="Docs And Research Blueprint",
+        summary=(
+            "Keep docs-heavy repositories grounded in source provenance, review "
+            "state, stale-link checks, and clear distinction between notes and policy."
+        ),
+        domains=("docs", "research", "provenance", "review"),
+        fit_signals=(
+            "The repo is mostly documentation, research notes, examples, or knowledge base content.",
+            "Correctness depends on citations, source freshness, links, or review status.",
+            "Generated summaries should not become policy without promotion.",
+        ),
+        review_questions=(
+            "Which docs are canonical policy versus notes, examples, or generated evidence?",
+            "Which sources need freshness checks, citations, or primary-source review?",
+            "What link, spelling, style, or schema checks are available?",
+        ),
+        operating_model=(
+            "Separate durable policy from research inboxes and generated summaries.",
+            "Record source, date, confidence, and retirement conditions for lasting claims.",
+            "Keep startup docs compact and route deep references on demand.",
+        ),
+        generated_review_items=(
+            "Docs ownership map for policy, reference, examples, generated evidence, and archive.",
+            "Source-review checklist for volatile claims and canonical references.",
+            "Link and style verification guidance for changed docs.",
+        ),
+        verification_gates=(
+            "Run link, schema, or style checks when docs contracts change.",
+            "Refresh source evidence for volatile claims before release.",
+            "Record manual source review when automation cannot verify the claim.",
+        ),
+        promotion_gates=(
+            "No generated note becomes canonical policy without review.",
+            "No volatile external claim lacks date/source evidence.",
+            "No stale startup doc is left as a first-run instruction surface.",
+        ),
+    ),
+    Blueprint(
+        id="legacy-migration",
+        title="Legacy Migration Blueprint",
+        summary=(
+            "Help agents change old systems safely by preserving behavior, "
+            "mapping compatibility risks, and proving migration checkpoints."
+        ),
+        domains=("migration", "compatibility", "risk", "verification"),
+        fit_signals=(
+            "The repo contains legacy paths, migration plans, compatibility shims, or retired artifacts.",
+            "Work needs behavior preservation while replacing structure or dependencies.",
+            "Success depends on staged rollout, rollback, and stale-reference cleanup.",
+        ),
+        review_questions=(
+            "Which behaviors must remain compatible and which can intentionally break?",
+            "What stale paths, docs, tests, or workflows must move together?",
+            "What rollback or dual-run evidence is needed before retirement?",
+        ),
+        operating_model=(
+            "Make compatibility boundaries explicit before editing.",
+            "Prefer small migration checkpoints with evidence and rollback.",
+            "Retire stale docs, tests, and generated artifacts as part of done criteria.",
+        ),
+        generated_review_items=(
+            "Migration inventory for old paths, new paths, owners, and retirement state.",
+            "Compatibility risk table with tests, rollback, and accepted breaks.",
+            "Stale-reference cleanup checklist for docs, workflows, and instructions.",
+        ),
+        verification_gates=(
+            "Run old/new behavior comparison checks where practical.",
+            "Run stale-path and docs-reference checks before completion.",
+            "Record intentionally removed compatibility with owner approval.",
+        ),
+        promotion_gates=(
+            "No compatibility break is hidden as cleanup.",
+            "No stale path remains in live instructions without retired-path classification.",
+            "No migration is marked done without rollback or retirement evidence.",
+        ),
+    ),
+    Blueprint(
+        id="education-training",
+        title="Education And Training Blueprint",
+        summary=(
+            "Bound tutorials, examples, fixtures, and intentionally vulnerable "
+            "training content so agents preserve learning goals and safety context."
+        ),
+        domains=("education", "examples", "fixtures", "safety"),
+        fit_signals=(
+            "The repo contains lessons, examples, fixtures, workshops, or training apps.",
+            "Some insecure or incomplete code may be intentional teaching material.",
+            "Verification must distinguish product defects from scenario fixtures.",
+        ),
+        review_questions=(
+            "Which files are instructional fixtures and which are production code?",
+            "Which vulnerabilities, failures, or TODOs are intentional learning material?",
+            "What checks prove examples still run without erasing the lesson?",
+        ),
+        operating_model=(
+            "Label intentional training weaknesses before remediation work starts.",
+            "Keep example setup and expected outcomes close to the lesson.",
+            "Protect fixture behavior unless the owner explicitly requests remediation.",
+        ),
+        generated_review_items=(
+            "Training fixture inventory with intent, expected failure, and allowed edits.",
+            "Example verification checklist for setup, run, expected output, and teardown.",
+            "Safety note for intentionally vulnerable or destructive demonstrations.",
+        ),
+        verification_gates=(
+            "Run example or lesson smoke checks when changing instructional content.",
+            "Run fixture-specific tests before modifying expected failures.",
+            "Record owner approval before remediating intentional vulnerabilities.",
+        ),
+        promotion_gates=(
+            "No teaching fixture is silently converted into production guidance.",
+            "No intentional vulnerability is removed without explicit scope approval.",
+            "No example claims to work without a current smoke check or recorded gap.",
+        ),
+    ),
 )
 
 

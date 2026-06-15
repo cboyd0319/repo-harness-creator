@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import unittest
 
-from harnessforge.maturity import build_maturity_report
+from harnessforge.evidence.maturity import build_maturity_report
 
 
 def _base_report() -> dict[str, object]:

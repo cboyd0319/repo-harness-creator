@@ -34,7 +34,7 @@ surfaces listed in the routing table when the change affects them.
 | GitHub Action inputs, outputs, and command modes | `action.yml`, `src/harnessforge/github_action.py`, and Action tests | Summarize in `docs/action.md` only. |
 | Generated file list, required snippets, and local self-audit contract | `docs/harness/manifest.json` | Avoid duplicating snippet lists elsewhere. |
 | Generated target content | `src/harnessforge/templates/` and generator tests | Update public docs only when user-visible generated behavior changes. |
-| Audit scoring and report interpretation | `src/harnessforge/audit.py`, `src/harnessforge/report.py`, and tests | Keep scoring caveats in `docs/capabilities.md` and `docs/usage.md` short. |
+| Audit scoring and report interpretation | `src/harnessforge/audit.py`, `src/harnessforge/evidence/report.py`, and tests | Keep scoring caveats in `docs/capabilities.md` and `docs/usage.md` short. |
 | Accepted roadmap and backlog boundary | `docs/roadmap.md` | Reference from state files instead of duplicating full lists. |
 | Current work state and evidence | `feature_list.json`, `current-state.md`, `docs/harness/evidence/evidence-log.md` | Use the specific file that owns the fact. Do not update state files as a routine bundle. |
 | Verification commands and recurring gates | `docs/harness/feedback/verification-matrix.md`, `docs/harness/feedback/sensor-registry.md`, root entrypoints | Update only when a command, owner, or gate changes. |

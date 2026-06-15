@@ -4,7 +4,7 @@ from pathlib import Path
 from typing import Any
 
 from .report import build_report
-from .reports import relative_to_target, report_path
+from ..reports import relative_to_target, report_path
 
 SCHEMA_VERSION = "harnessforge.releaseCheck.v1"
 DEFAULT_MIN_SCORE = 85
