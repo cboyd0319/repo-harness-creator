@@ -49,11 +49,22 @@ and the required AGENTS instruction format.
 - `docs/harness/evaluator-rubric.md`
 - `docs/harness/sources.md`
 - `docs/harness/reference-mining-notes.md`
+- `docs/harness/remaining-ideas-research.md`
 - `.gitignore`
 
 ## Blockers
 
 - No known blockers.
+- Current remaining-ideas research pass completed without AGY. The ranked
+  backlog lives in `docs/harness/remaining-ideas-research.md`. P0 candidates:
+  read-only `inspect --readiness --json`, source-of-truth spec sync audit,
+  `sync --check`, and a design-only `verify --json` contract. P1 candidates:
+  workflow/work-item inventory, context-budget and duplication audit,
+  permission/governance inventory, and guided first-run UX. P2 candidates:
+  opt-in blueprints, real-agent evals, source-verified platform adapters, and
+  sandbox/container readiness. Rejected defaults remain large skill/memory
+  trees, platform permission config, LLM-assisted init, autonomous push/PR
+  workflows, and copied ASPEC/AWMAN/Maki templates.
 - Current HarnessForge-adjacent research and UX batch mined local `awman`,
   `aspec`, and `maki`, plus public HarnessForge-like and harness-engineering
   sources. Accepted generic improvements: structured project spec detection,
@@ -395,9 +406,10 @@ and the required AGENTS instruction format.
 
 ## Next Session
 
-Review and commit the reference-repo compatibility and UX research slice when
-ready. Push local commits only at an explicit batch/release boundary or user
-request. Remaining product decisions before public release:
+Implement the P0 remaining-ideas backlog: `inspect --readiness --json`,
+source-of-truth spec sync audit, `sync --check`, then a design-only
+`verify --json` contract. Push local commits only at an explicit batch/release
+boundary or user request. Remaining product decisions before public release:
 component-directed monorepo verification commands, path/package exclusions for
 intentionally vulnerable training repos, Maven/Gradle dependency pin parsing,
 selective update semantics for generated-owned files, manual macOS/Windows

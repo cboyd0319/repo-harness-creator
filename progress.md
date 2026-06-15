@@ -286,21 +286,35 @@ maintenance loop.
   Deferred blueprints, MCP setup, memory schemas, large generated skill trees,
   LLM-assisted init, and extra agent adapter files until they are explicit
   opt-ins with current source evidence.
+- Completed the remaining-ideas research pass without AGY. The ranked backlog
+  is now in `docs/harness/remaining-ideas-research.md`. Highest-value next
+  ideas are read-only readiness reporting, source-of-truth spec sync checks, a
+  project verification JSON contract separate from harness audit, a `sync
+  --check` drift alias, workflow/work-item inventory, context-budget and
+  duplication audit signals, permission/governance inventory, guided first-run
+  UX, explicit blueprint mode, and measured real-agent evals. Rejected defaults
+  remain large skill/memory/platform config trees, LLM-assisted init,
+  autonomous push/PR workflows, and copying ASPEC/AWMAN/Maki templates into
+  target repos.
 
 ## Recommended Next Step
 
-Review and commit the reference-repo compatibility and UX research slice when
-ready. Push local commits only at an explicit batch/release boundary or user
-request. Remaining product decisions before a first public Action release:
-whether to add
-component-directed monorepo verification commands, path/package exclusions for
-intentionally vulnerable training repos, Maven/Gradle dependency pin parsing,
-and selective update semantics for generated-owned files. Then run the manual
-macOS/Windows platform CI check and decide whether to cut a `v1` Action tag and
-which release-time SBOM/provenance controls should become blocking.
+Implement the P0 remaining-ideas backlog in this order: `inspect --readiness
+--json`, source-of-truth spec sync audit, `sync --check`, then a design-only
+issue or doc for `verify --json`. Push local commits only at an explicit
+batch/release boundary or user request. Remaining product decisions before a
+first public Action release: whether to add component-directed monorepo
+verification commands, path/package exclusions for intentionally vulnerable
+training repos, Maven/Gradle dependency pin parsing, and selective update
+semantics for generated-owned files. Then run the manual macOS/Windows platform
+CI check and decide whether to cut a `v1` Action tag and which release-time
+SBOM/provenance controls should become blocking.
 
 ## Verification Evidence
 
+- `PYTHONPATH=src:. python3 -m harnessforge audit --target . --min-score 85`
+  and `git diff --check` passed after adding the remaining-ideas research
+  artifact and updating handoff state.
 - `PYTHONPATH=src:. python3 -m unittest discover -s tests` passed with
   138 tests after adding generic structured-spec, Just, architecture-lint,
   generated-doc context, `inspect`, and Python-package/docs-site detection
