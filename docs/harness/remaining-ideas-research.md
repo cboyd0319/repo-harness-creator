@@ -57,7 +57,7 @@ benchmarks or creating synthetic performance scores.
 | Session snapshot | JobSentinel `harness:session`, Bluepeak-AI and JobSentinel state docs | Implemented as read-only `harnessforge session` | Must not write files or run target checks |
 | Diff-aware verification planner | JobSentinel `harness:plan -- --since` | Implemented as read-only `harnessforge plan --since` | Uses detected or explicit project checks; command execution remains explicit through `verify --run` |
 | Source-record schema | Bluepeak-AI structured provenance records | Implemented as generated schema plus review-required example | Keep separate from HarnessForge's own fixed research allowlist |
-| First-agent harness improvement instruction | Real-repo quality passes and generated-harness review gaps | Add a generated first-run instruction that asks the first agent in a newly harnessed repo to deepen and improve the harness using HarnessForge's structure | Must not impose repo-local preferences, overwrite project-owned instructions, or bypass review/verification |
+| First-agent harness improvement instruction | Real-repo quality passes and generated-harness review gaps | Implemented as generated `docs/harness/first-agent-task.md` plus canonical instruction routing | Must not impose repo-local preferences, overwrite project-owned instructions, or bypass review/verification |
 
 ## New Backlog: Large-Codebase Analysis And Indexing
 
@@ -815,7 +815,7 @@ Sources:
      readiness, dry-run generation planning, preserved-file reporting, review
      placeholders, and next commands.
 
-9. Backlog: add a generated first-agent harness improvement instruction.
+9. Implemented: add a generated first-agent harness improvement instruction.
    - When HarnessForge generates a harness, include a clear first instruction
      for the first agent session in that target repo.
    - The instruction should ask the agent to use the generated harness
@@ -832,9 +832,10 @@ Sources:
      force/review, do not run target commands unless the project has an
      approved verification route, and record any project-specific assumptions
      as review-required until a maintainer accepts them.
-   - Candidate surfaces: a short generated section in the canonical agent
-     instruction file, a dedicated `docs/harness/first-agent-task.md`, or both
-     with the instruction router pointing to the detailed task.
+   - Implemented as a short generated startup-path section in the canonical
+     agent instruction file plus dedicated
+     `docs/harness/first-agent-task.md`, with the task marked
+     review-required in generated manifests.
 
 ### P2: Closed Or Deferred Before Release Prep
 

@@ -76,5 +76,8 @@ inventory, not permission to mutate nested projects.
   project-owned source provenance.
 - `docs/harness/large-codebase-indexing-research.md`: repo-local research note
   for large existing repo analysis and future `harnessforge index` design.
+- `docs/harness/first-agent-task.md`: generated first-agent harness improvement
+  task that asks the first agent in a newly harnessed repo to deepen component,
+  verification, source-of-truth, evidence, and security guidance.
 - `src/harnessforge/sync.py`: shared read-only sync preflight payload and exit
   code helpers used by both the CLI and composite Action.

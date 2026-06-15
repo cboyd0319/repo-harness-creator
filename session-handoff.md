@@ -54,6 +54,7 @@ and advanced product modes.
 - `src/harnessforge/templates/component-inventory.md.tmpl`
 - `src/harnessforge/templates/verification-matrix.md.tmpl`
 - `src/harnessforge/templates/evidence-log.md.tmpl`
+- `src/harnessforge/templates/first-agent-task.md.tmpl`
 - `src/harnessforge/templates/release-controls.md.tmpl`
 - `src/harnessforge/templates/research-sources.json.tmpl`
 - `src/harnessforge/templates/sensor-registry.md.tmpl`
@@ -72,6 +73,7 @@ and advanced product modes.
 - `docs/harness/change-contract.md`
 - `docs/harness/evaluator-rubric.md`
 - `docs/harness/evidence-log.md`
+- `docs/harness/first-agent-task.md`
 - `docs/harness/manifest.json`
 - `docs/harness/sources.md`
 - `docs/harness/sensor-registry.md`
@@ -92,10 +94,9 @@ and advanced product modes.
 - Root README split is complete: the README is now a short landing page,
   with detailed install, usage, and capability/reference content moved to
   `docs/installation.md`, `docs/usage.md`, and `docs/capabilities.md`.
-- New backlog item added: generated harnesses should include a first-agent
-  instruction that asks the first agent session in a target repo to deepen and
-  improve the harness using HarnessForge's generated structure, detection
-  output, readiness signals, and review boundaries.
+- Generated first-agent harness improvement instruction is implemented:
+  generated harnesses now include `docs/harness/first-agent-task.md` and the
+  canonical generated instruction file routes first agent sessions to it.
 - Current remaining-ideas research pass completed without AGY. The ranked
   backlog lives in `docs/harness/remaining-ideas-research.md`. Implemented the
   first P0 item: read-only `inspect --readiness --json`, including static
@@ -699,6 +700,10 @@ README split verification passed focused CLI/audit tests with 118 tests,
 self-audit `100/100`, local-path scan, and diff hygiene. The audit known-file
 list now includes `docs/installation.md`, `docs/usage.md`, and
 `docs/capabilities.md`.
+Generated first-agent guidance verification passed focused generator tests with
+50 tests, full unit discovery with 228 tests, JSON validation, pin check,
+durable local-path scan, diff hygiene, self-audit `100/100`, and both local
+entrypoints with 228 tests each.
 `sync --check`
 returns the expected warning for local workflow and instruction review surfaces
 without blockers or generated drift.

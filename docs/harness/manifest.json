@@ -44,6 +44,7 @@
     "scripts/check_pins.py",
     "scripts/refresh_research.py",
     "docs/harness/README.md",
+    "docs/harness/first-agent-task.md",
     "docs/harness/change-contract.md",
     "docs/harness/verification-matrix.md",
     "docs/harness/sensor-registry.md",
@@ -228,6 +229,17 @@
       "target-relative report path",
       "harnessforge verify --target . --run --json-report",
       "failed, timed_out, or blocked"
+    ],
+    "docs/harness/first-agent-task.md": [
+      "First-Agent Harness Improvement Task",
+      "REVIEW REQUIRED",
+      "component inventory",
+      "readiness signals",
+      "verification matrix",
+      "evidence log",
+      "security boundary",
+      "Do not overwrite project-owned instructions",
+      "Do not run target commands"
     ],
     "docs/harness/clean-state-checklist.md": [
       "Startup path",

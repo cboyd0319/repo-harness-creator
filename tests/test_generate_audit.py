@@ -664,6 +664,39 @@ class GenerateAuditTests(unittest.TestCase):
         self.assertEqual(registry.count("REVIEW REQUIRED"), 1)
         self.assertIn("does not prove real-agent effectiveness", registry)
 
+    def test_generated_first_agent_task_guides_harness_improvement(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            create_harness(root)
+            agents = (root / "AGENTS.md").read_text(encoding="utf-8")
+            task = (root / "docs/harness/first-agent-task.md").read_text(
+                encoding="utf-8"
+            )
+            manifest = json.loads(
+                (root / "docs/harness/manifest.json").read_text(encoding="utf-8")
+            )
+
+        self.assertIn("docs/harness/first-agent-task.md", agents)
+        self.assertIn("docs/harness/first-agent-task.md", manifest["requiredFiles"])
+        self.assertIn("docs/harness/first-agent-task.md", manifest["reviewRequired"])
+        self.assertEqual(
+            manifest["generatedFiles"]["docs/harness/first-agent-task.md"][
+                "ownership"
+            ],
+            "generated",
+        )
+        self.assertIn("# First-Agent Harness Improvement Task", task)
+        self.assertIn("REVIEW REQUIRED", task)
+        self.assertIn("component inventory", task)
+        self.assertIn("readiness signals", task)
+        self.assertIn("verification matrix", task)
+        self.assertIn("evidence log", task)
+        self.assertIn("security boundary", task)
+        self.assertIn("Do not overwrite project-owned instructions", task)
+        self.assertIn("Do not run target commands", task)
+        self.assertNotIn("Antigravity", task)
+        self.assertNotIn("AGY", task)
+
     def test_generated_source_record_schema_guides_project_sources(self) -> None:
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp)
@@ -1219,6 +1252,7 @@ class GenerateAuditTests(unittest.TestCase):
             "docs/harness/security-boundary-map.md",
             "docs/harness/release-controls.md",
             "docs/harness/self-healing.md",
+            "docs/harness/first-agent-task.md",
             "docs/harness/agent-operating-model.md",
             "docs/harness/entropy-control.md",
             "docs/harness/sensor-registry.md",

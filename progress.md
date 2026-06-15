@@ -93,6 +93,13 @@ maintenance loop.
 - Updated the scheduled self-healing workflow so it stages generated root
   harness files along with `docs/harness` and source templates, preventing
   unstaged root updates from causing empty commits or incomplete pull requests.
+- Generated harnesses now include `docs/harness/first-agent-task.md` plus a
+  canonical instruction pointer so the first agent session in a newly harnessed
+  repo can deepen the generated harness using repo-specific analysis,
+  readiness signals, verification guidance, evidence, and security boundaries.
+  Focused generator tests, full unit discovery, POSIX/PowerShell entrypoints,
+  JSON validation, pin check, research source check, local-path scan, diff
+  hygiene, and self-audit `100/100` passed with 228 tests.
 - Re-ran a deeper read-only comparison against `agent-governance-toolkit`.
   Accepted the small, durable pieces that fit this repo now: contribution
   policy, PR template, stronger security scope, `.gitignore` hygiene, and
@@ -499,11 +506,9 @@ maintenance loop.
 
 ## Recommended Next Step
 
-Implement the new backlog item for generated first-agent harness improvement
-instructions before returning to release prep. If release prep resumes after
-that, review the current diff, run the release checklist, rebuild the isolated
-package smoke, and decide whether to trigger manual macOS and Windows platform
-CI.
+Return to release prep. Review the current diff, run the release checklist,
+rebuild the isolated package smoke, and decide whether to trigger manual macOS
+and Windows platform CI.
 Push local commits only at an explicit batch/release boundary or user request.
 
 ## Verification Evidence
@@ -528,6 +533,27 @@ Push local commits only at an explicit batch/release boundary or user request.
 - `PYTHONPATH=src:. python3 -m harnessforge audit --target .
   --min-score 85` passed with self-audit `100/100` after the README split.
 - `git diff --check` and the local-path scan passed after the README split.
+- `PYTHONPATH=src:. python3 -m unittest discover -s tests` passed with 228
+  tests after adding generated first-agent harness improvement guidance.
+- `PYTHONPATH=src:. python3 -m unittest tests.test_generate_audit` passed with
+  50 tests after adding first-agent task generation and live/generated snippet
+  coverage.
+- `python3 -m json.tool feature_list.json` and
+  `python3 -m json.tool docs/harness/manifest.json` passed after manifest and
+  state updates.
+- `PYTHONPATH=src:. python3 scripts/check_pins.py --root .` passed after the
+  first-agent guidance update.
+- `PYTHONPATH=src:. python3 -m harnessforge audit --target .
+  --min-score 85` passed with self-audit `100/100` after the first-agent
+  guidance update.
+- `./init.sh` passed on macOS 26.5.1 with Python 3.14.6 after the first-agent
+  guidance update: doctor, compile, 228 unit tests, pin check, research source
+  check, and self-audit `100/100`.
+- `pwsh -NoProfile -File ./init.ps1` passed on macOS 26.5.1 with Python 3.14.6
+  after the first-agent guidance update: doctor, compile, 228 unit tests, pin
+  check, research source check, and self-audit `100/100`.
+- `git diff --check` and the durable-doc/template local-path scan passed after
+  the first-agent guidance update.
 - Large-codebase analysis and indexing research reviewed primary project
   sources for Zoekt, Sourcebot, Livegrep, Hound, OpenGrok, Universal Ctags,
   Tree-sitter, ast-grep, Aider repo maps, SCIP, LSIF, Kythe, Glean, Stack

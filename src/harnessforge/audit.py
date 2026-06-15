@@ -250,6 +250,7 @@ def _load_known_files(root: Path, manifest: dict[str, Any]) -> dict[str, str]:
         ".github/workflows/ci.yml",
         ".github/workflows/harness-self-heal.yml",
         "docs/harness/README.md",
+        "docs/harness/first-agent-task.md",
         "docs/harness/change-contract.md",
         "docs/harness/verification-matrix.md",
         "docs/harness/component-inventory.md",
