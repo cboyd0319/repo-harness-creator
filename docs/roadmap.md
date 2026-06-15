@@ -346,14 +346,21 @@ This is one of the highest-value quality areas. HarnessForge should become much
 better at improving existing instruction files without taking ownership away
 from the project.
 
+Initial slice: `harnessforge init --enhance-existing --dry-run --json` now
+emits a review plan with parsed sections, canonical section coverage,
+review-required proposed edits, placeholder patch previews, duplicate
+instruction findings, local absolute path findings, user-specific tool mandate
+findings, and verification-conflict findings before any instruction file is
+changed. Patch previews are review-only and are not applied automatically.
+
 Candidate behavior:
 
-- parse existing instruction files into recognizable sections;
+- extend section parsing beyond the current Markdown-heading pass;
 - classify project-owned rules, generated routers, stale generated blocks,
-  duplicated blocks, and conflicts;
+  and conflicts beyond the current finding set;
 - compute instruction signal-to-noise signals for common task classes and
   suggest focused topic docs when root files become dumping grounds;
-- propose patch-style edits before writing;
+- optionally apply reviewed cleanup edits after explicit patch preview approval;
 - preserve local wording unless it conflicts with a detected boundary or
   generated ownership metadata;
 - deduplicate repeated AGENTS, Claude, Gemini, and Copilot guidance;

@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import json
 import os
+import re
 import shlex
 import stat
 from datetime import UTC, datetime
@@ -17,6 +18,50 @@ from .paths import is_inside_root
 from .redact import redact_local_paths
 
 TEMPLATE_ROOT = files("harnessforge").joinpath("templates")
+ENHANCE_PLAN_SCHEMA_VERSION = "harnessforge.enhanceExistingPlan.v1"
+CANONICAL_INSTRUCTION_SECTIONS = (
+    "Project overview",
+    "Build and test commands",
+    "Code style guidelines",
+    "Testing instructions",
+    "Security considerations",
+)
+CANONICAL_SECTION_ALIASES = {
+    "Project overview": (
+        "project overview",
+        "overview",
+        "purpose",
+        "project purpose",
+    ),
+    "Build and test commands": (
+        "build and test commands",
+        "build",
+        "test commands",
+        "commands",
+        "setup",
+        "first-run commands",
+        "first run commands",
+    ),
+    "Code style guidelines": (
+        "code style guidelines",
+        "code style",
+        "style",
+        "development guidelines",
+        "implementation guidelines",
+    ),
+    "Testing instructions": (
+        "testing instructions",
+        "testing",
+        "verification",
+        "checks",
+    ),
+    "Security considerations": (
+        "security considerations",
+        "security",
+        "security boundary",
+        "security boundaries",
+    ),
+}
 PLATFORM_CONTRACTS = ("cross-platform", "macos-only", "windows-only", "linux-only")
 REVIEW_REQUIRED_FILES = (
     "docs/harness/change-contract.md",
@@ -923,6 +968,637 @@ def _enhanced_instruction_content(
     return f"{stripped}\n\n{addendum}\n"
 
 
+def build_enhance_existing_plan(
+    profile: ProjectProfile,
+    *,
+    agent_file: str,
+    writes: tuple[WriteResult, ...] = (),
+    project_context_markdown: str | None = None,
+    enabled: bool = True,
+) -> dict[str, object]:
+    agent_file = _validate_agent_file(agent_file)
+    root = profile.root
+    project_context = (
+        project_context_markdown
+        if project_context_markdown is not None
+        else _project_context_markdown(profile)
+    )
+    write_statuses = {
+        _relative_path(write.path, root): write.status
+        for write in writes
+    }
+    existing_files = _existing_enhanceable_instruction_files(root, agent_file)
+    duplicate_map = _duplicate_instruction_paragraphs(existing_files)
+    files = [
+        _enhance_plan_file(
+            root,
+            relative_path,
+            agent_file=agent_file,
+            project_context_markdown=project_context,
+            write_status=write_statuses.get(relative_path),
+            duplicate_map=duplicate_map,
+        )
+        for relative_path in sorted(existing_files)
+    ]
+    total_findings = sum(len(item["findings"]) for item in files)
+    total_proposed_edits = sum(len(item["proposedEdits"]) for item in files)
+    total_patch_previews = sum(
+        1
+        for item in files
+        for edit in item["proposedEdits"]
+        if "patchPreview" in edit
+    )
+    total_missing_sections = sum(
+        len(item["sectionCoverage"].get("missing", [])) for item in files
+    )
+    return {
+        "schemaVersion": ENHANCE_PLAN_SCHEMA_VERSION,
+        "enabled": enabled,
+        "target": {
+            "name": profile.name,
+            "root": None,
+        },
+        "agentFile": agent_file,
+        "summary": {
+            "files": len(files),
+            "wouldEnhance": sum(1 for item in files if item["status"] == "would_enhance"),
+            "alreadyEnhanced": sum(
+                1 for item in files if item["status"] == "already_enhanced"
+            ),
+            "reviewFindings": total_findings,
+            "proposedEdits": total_proposed_edits,
+            "patchPreviews": total_patch_previews,
+            "missingSections": total_missing_sections,
+        },
+        "files": files,
+    }
+
+
+def empty_enhance_existing_plan(
+    profile: ProjectProfile,
+    *,
+    agent_file: str,
+) -> dict[str, object]:
+    return {
+        "schemaVersion": ENHANCE_PLAN_SCHEMA_VERSION,
+        "enabled": False,
+        "target": {
+            "name": profile.name,
+            "root": None,
+        },
+        "agentFile": _validate_agent_file(agent_file),
+        "summary": {
+            "files": 0,
+            "wouldEnhance": 0,
+            "alreadyEnhanced": 0,
+            "reviewFindings": 0,
+            "proposedEdits": 0,
+            "patchPreviews": 0,
+            "missingSections": 0,
+        },
+        "files": [],
+    }
+
+
+def _existing_enhanceable_instruction_files(
+    root: Path,
+    agent_file: str,
+) -> dict[str, str]:
+    files: dict[str, str] = {}
+    for relative_path in _enhanceable_instruction_paths(agent_file):
+        path = root / relative_path
+        if not path.exists() or not path.is_file() or not is_inside_root(path, root):
+            continue
+        try:
+            files[relative_path] = path.read_text(encoding="utf-8")
+        except (OSError, UnicodeDecodeError):
+            files[relative_path] = ""
+    return files
+
+
+def _enhance_plan_file(
+    root: Path,
+    relative_path: str,
+    *,
+    agent_file: str,
+    project_context_markdown: str,
+    write_status: str | None,
+    duplicate_map: dict[str, set[str]],
+) -> dict[str, object]:
+    path = root / relative_path
+    try:
+        content = path.read_text(encoding="utf-8")
+        unreadable = False
+    except (OSError, UnicodeDecodeError):
+        content = ""
+        unreadable = True
+    addendum = _instruction_addendum(
+        relative_path,
+        agent_file,
+        project_context_markdown=project_context_markdown,
+    )
+    already_enhanced = "HarnessForge Quality Addendum" in content
+    status = write_status
+    if status is None:
+        status = "already_enhanced" if already_enhanced or not addendum else "would_enhance"
+    findings = _instruction_findings(
+        relative_path,
+        content,
+        duplicate_map=duplicate_map,
+        unreadable=unreadable,
+    )
+    sections = _instruction_sections(content)
+    section_coverage = _instruction_section_coverage(
+        relative_path,
+        agent_file=agent_file,
+        content=content,
+        sections=sections,
+    )
+    proposed_edits: list[dict[str, object]] = []
+    if status == "would_enhance" and addendum and not already_enhanced:
+        proposed_edits.append(
+            {
+                "action": "append_quality_addendum",
+                "insertion": "end_of_file",
+                "reviewRequired": True,
+                "patchPreview": _patch_preview(
+                    {
+                        "operation": "append",
+                        "anchor": "end_of_file",
+                        "addedLines": [
+                            "## HarnessForge Quality Addendum",
+                            "",
+                            "<generated-review-guidance>",
+                        ],
+                    }
+                ),
+                "summary": (
+                    "Append HarnessForge review guidance while preserving "
+                    "project-owned text."
+                ),
+            }
+        )
+    proposed_edits.extend(_section_proposed_edits(section_coverage))
+    proposed_edits.extend(_finding_proposed_edits(findings))
+    return {
+        "path": relative_path,
+        "status": status,
+        "ownership": "project-owned",
+        "sections": sections,
+        "sectionCoverage": section_coverage,
+        "classifications": _instruction_classifications(relative_path, content),
+        "signalToNoise": {
+            "lineCount": len(content.splitlines()),
+            "sectionCount": len(sections),
+            "findingCount": len(findings),
+            "duplicateBlockCount": sum(
+                1
+                for paragraph in _normalized_paragraphs(content)
+                if relative_path in duplicate_map.get(paragraph, set())
+            ),
+        },
+        "findings": findings,
+        "proposedEdits": proposed_edits,
+    }
+
+
+def _instruction_sections(content: str) -> list[dict[str, object]]:
+    sections: list[dict[str, object]] = []
+    for index, line in enumerate(content.splitlines(), 1):
+        match = re.match(r"^(#{1,6})\s+(.+?)\s*$", line)
+        if match:
+            sections.append(
+                {
+                    "title": match.group(2).strip(),
+                    "level": len(match.group(1)),
+                    "startLine": index,
+                }
+            )
+    if not sections and content.strip():
+        return [{"title": "(intro)", "level": 0, "startLine": 1}]
+    return sections
+
+
+def _instruction_section_coverage(
+    relative_path: str,
+    *,
+    agent_file: str,
+    content: str,
+    sections: list[dict[str, object]],
+) -> dict[str, object]:
+    if relative_path == agent_file:
+        present = {
+            canonical
+            for section in sections
+            if (
+                canonical := _canonical_section_for_title(
+                    str(section.get("title", ""))
+                )
+            )
+        }
+        return {
+            "recommendedShape": "canonical_instruction",
+            "required": list(CANONICAL_INSTRUCTION_SECTIONS),
+            "present": [
+                section
+                for section in CANONICAL_INSTRUCTION_SECTIONS
+                if section in present
+            ],
+            "missing": [
+                section
+                for section in CANONICAL_INSTRUCTION_SECTIONS
+                if section not in present
+            ],
+            "extraHeadings": [
+                str(section.get("title", ""))
+                for section in sections
+                if str(section.get("title", "")) != "(intro)"
+                and not _canonical_section_for_title(str(section.get("title", "")))
+            ],
+        }
+    has_canonical_route = agent_file in content
+    return {
+        "recommendedShape": "platform_router",
+        "required": ["Canonical instruction route"],
+        "present": ["Canonical instruction route"] if has_canonical_route else [],
+        "missing": [] if has_canonical_route else ["Canonical instruction route"],
+        "extraHeadings": [
+            str(section.get("title", ""))
+            for section in sections
+            if str(section.get("title", "")) != "(intro)"
+        ],
+    }
+
+
+def _canonical_section_for_title(title: str) -> str | None:
+    normalized_title = _normalize_heading(title)
+    for section, aliases in CANONICAL_SECTION_ALIASES.items():
+        for alias in aliases:
+            if normalized_title == _normalize_heading(alias):
+                return section
+    return None
+
+
+def _normalize_heading(value: str) -> str:
+    return re.sub(r"[^a-z0-9]+", " ", value.casefold()).strip()
+
+
+def _section_proposed_edits(
+    section_coverage: dict[str, object],
+) -> list[dict[str, object]]:
+    proposals: list[dict[str, object]] = []
+    for section in section_coverage.get("missing", []):
+        if section == "Canonical instruction route":
+            proposals.append(
+                {
+                    "action": "add_canonical_instruction_route",
+                    "section": section,
+                    "insertion": "reviewed_location",
+                    "reviewRequired": True,
+                    "patchPreview": _patch_preview(
+                        {
+                            "operation": "insert",
+                            "anchor": "reviewed_location",
+                            "addedLines": [
+                                "Follow the canonical repo instructions in "
+                                "`<agent-file>`.",
+                            ],
+                        }
+                    ),
+                    "summary": (
+                        "Route this platform-specific instruction file to the "
+                        "canonical repo instruction file."
+                    ),
+                }
+            )
+            continue
+        proposals.append(
+            {
+                "action": "add_missing_section",
+                "section": section,
+                "insertion": "reviewed_location",
+                "reviewRequired": True,
+                "patchPreview": _patch_preview(
+                    {
+                        "operation": "insert",
+                        "anchor": "reviewed_location",
+                        "addedLines": [
+                            f"## {section}",
+                            "",
+                            "- TODO: Add project-specific guidance or route "
+                            "to an existing project document.",
+                        ],
+                    }
+                ),
+                "summary": (
+                    "Add this project-owned section or route it to an "
+                    "existing project document."
+                ),
+            }
+        )
+    return proposals
+
+
+def _finding_proposed_edits(
+    findings: list[dict[str, object]],
+) -> list[dict[str, object]]:
+    proposals: list[dict[str, object]] = []
+    for finding in findings:
+        finding_type = str(finding.get("type", ""))
+        if finding_type == "local_absolute_path":
+            proposals.append(
+                {
+                    "action": "generalize_local_absolute_path",
+                    "findingType": finding_type,
+                    "reviewRequired": True,
+                    "patchPreview": _patch_preview(
+                        {
+                            "operation": "replace_redacted_pattern",
+                            "removed": "[REDACTED_LOCAL_ABSOLUTE_PATH]",
+                            "added": "<repo-relative-path-or-setup-variable>",
+                        }
+                    ),
+                    "summary": (
+                        "Replace machine-local absolute paths with "
+                        "repo-relative paths or documented setup variables."
+                    ),
+                }
+            )
+        elif finding_type == "user_specific_tool_mandate":
+            proposals.append(
+                {
+                    "action": "replace_user_specific_tool_mandate",
+                    "findingType": finding_type,
+                    "reviewRequired": True,
+                    "patchPreview": _patch_preview(
+                        {
+                            "operation": "replace_reviewed_text",
+                            "removed": "[LOCAL_TOOL_MANDATE]",
+                            "added": (
+                                "Describe required project-owned tools or "
+                                "optional local helpers."
+                            ),
+                        }
+                    ),
+                    "summary": (
+                        "Replace local tool mandates with project-owned "
+                        "tooling requirements or optional guidance."
+                    ),
+                }
+            )
+        elif finding_type == "verification_conflict":
+            proposals.append(
+                {
+                    "action": "replace_verification_conflict",
+                    "findingType": finding_type,
+                    "reviewRequired": True,
+                    "patchPreview": _patch_preview(
+                        {
+                            "operation": "replace_reviewed_text",
+                            "removed": "[VERIFICATION_CONFLICT]",
+                            "added": (
+                                "Run the smallest relevant documented "
+                                "verification command."
+                            ),
+                        }
+                    ),
+                    "summary": (
+                        "Replace guidance that discourages checks with the "
+                        "project's supported verification commands."
+                    ),
+                }
+            )
+        elif finding_type == "duplicated_instruction_block":
+            proposals.append(
+                {
+                    "action": "consolidate_duplicate_instruction_block",
+                    "findingType": finding_type,
+                    "reviewRequired": True,
+                    "patchPreview": _patch_preview(
+                        {
+                            "operation": "remove_duplicate_or_replace_with_route",
+                            "removed": "[DUPLICATED_INSTRUCTION_BLOCK]",
+                            "added": (
+                                "Route to the canonical instruction section "
+                                "or topic document."
+                            ),
+                        }
+                    ),
+                    "summary": (
+                        "Keep one authoritative copy and route duplicate "
+                        "instruction text to it."
+                    ),
+                    "count": finding.get("count", 1),
+                }
+            )
+        elif finding_type == "instruction_bloat":
+            proposals.append(
+                {
+                    "action": "move_detail_to_topic_docs",
+                    "findingType": finding_type,
+                    "reviewRequired": True,
+                    "patchPreview": _patch_preview(
+                        {
+                            "operation": "extract_to_topic_doc",
+                            "removed": "[DETAILED_INSTRUCTION_BLOCKS]",
+                            "added": (
+                                "Keep a short route to the new topic document."
+                            ),
+                        }
+                    ),
+                    "summary": (
+                        "Move durable detail into topic docs and keep the "
+                        "instruction file as a short router."
+                    ),
+                }
+            )
+        elif finding_type == "unreadable_instruction_file":
+            proposals.append(
+                {
+                    "action": "review_unreadable_instruction_file",
+                    "findingType": finding_type,
+                    "reviewRequired": True,
+                    "patchPreview": _patch_preview(
+                        {
+                            "operation": "manual_review_required",
+                            "removed": "",
+                            "added": (
+                                "Fix encoding or permissions before proposing "
+                                "instruction edits."
+                            ),
+                        }
+                    ),
+                    "summary": (
+                        "Review file encoding or permissions before "
+                        "HarnessForge proposes instruction edits."
+                    ),
+                }
+            )
+    return proposals
+
+
+def _patch_preview(hunk: dict[str, object]) -> dict[str, object]:
+    return {
+        "format": "reviewed_hunks",
+        "reviewOnly": True,
+        "applySupported": False,
+        "hunks": [hunk],
+        "notes": [
+            "Preview uses placeholders and must be reviewed before any manual edit.",
+            "HarnessForge does not apply cleanup previews automatically.",
+        ],
+    }
+
+
+def _instruction_classifications(relative_path: str, content: str) -> list[str]:
+    classifications = ["project_owned"]
+    if relative_path in {"AGENTS.md", "CLAUDE.md", "GEMINI.md"}:
+        classifications.append("root_instruction")
+    if relative_path.startswith(".claude/") or relative_path.startswith(".gemini/"):
+        classifications.append("agent_specific_overlay")
+    if "HarnessForge Quality Addendum" in content:
+        classifications.append("harnessforge_enhanced")
+    return classifications
+
+
+def _instruction_findings(
+    relative_path: str,
+    content: str,
+    *,
+    duplicate_map: dict[str, set[str]],
+    unreadable: bool,
+) -> list[dict[str, object]]:
+    findings: list[dict[str, object]] = []
+    if unreadable:
+        findings.append(
+            _finding(
+                "unreadable_instruction_file",
+                "blocker",
+                "Instruction file could not be read as UTF-8.",
+            )
+        )
+        return findings
+    if _contains_local_absolute_path(content):
+        findings.append(
+            _finding(
+                "local_absolute_path",
+                "review",
+                "Instruction file contains a machine-local absolute path.",
+            )
+        )
+    if _contains_user_specific_tool_mandate(content):
+        findings.append(
+            _finding(
+                "user_specific_tool_mandate",
+                "review",
+                "Instruction file appears to mandate a user-specific local tool.",
+            )
+        )
+    if _contains_verification_conflict(content):
+        findings.append(
+            _finding(
+                "verification_conflict",
+                "review",
+                "Instruction file appears to discourage running project checks.",
+            )
+        )
+    duplicate_count = sum(
+        1
+        for paragraph in _normalized_paragraphs(content)
+        if relative_path in duplicate_map.get(paragraph, set())
+    )
+    if duplicate_count:
+        findings.append(
+            _finding(
+                "duplicated_instruction_block",
+                "review",
+                "Instruction file duplicates guidance found in another instruction file.",
+                count=duplicate_count,
+            )
+        )
+    if len(content.splitlines()) > 160 or len(content) > 12000:
+        findings.append(
+            _finding(
+                "instruction_bloat",
+                "review",
+                "Instruction file is large enough to consider routing detail to topic docs.",
+            )
+        )
+    return findings
+
+
+def _finding(
+    finding_type: str,
+    severity: str,
+    message: str,
+    **extra: object,
+) -> dict[str, object]:
+    payload: dict[str, object] = {
+        "type": finding_type,
+        "severity": severity,
+        "message": message,
+    }
+    payload.update(extra)
+    return payload
+
+
+def _contains_local_absolute_path(content: str) -> bool:
+    return bool(
+        re.search(r"(?i)(/Users/|/home/|[A-Z]:\\Users\\)", content)
+    )
+
+
+def _contains_user_specific_tool_mandate(content: str) -> bool:
+    lowered = content.casefold()
+    has_tool = "agy" in lowered or "antigravity" in lowered
+    has_mandate = any(
+        word in lowered
+        for word in ("must", "always", "mandatory", "required", "only use")
+    )
+    return has_tool and has_mandate
+
+
+def _contains_verification_conflict(content: str) -> bool:
+    lowered = content.casefold()
+    return any(
+        phrase in lowered
+        for phrase in (
+            "never run tests",
+            "do not run tests",
+            "don't run tests",
+            "skip tests",
+        )
+    )
+
+
+def _duplicate_instruction_paragraphs(files: dict[str, str]) -> dict[str, set[str]]:
+    locations: dict[str, set[str]] = {}
+    for relative_path, content in files.items():
+        for paragraph in _normalized_paragraphs(content):
+            locations.setdefault(paragraph, set()).add(relative_path)
+    return {
+        paragraph: paths
+        for paragraph, paths in locations.items()
+        if len(paths) > 1
+    }
+
+
+def _normalized_paragraphs(content: str) -> set[str]:
+    paragraphs: set[str] = set()
+    for paragraph in re.split(r"\n\s*\n", content):
+        normalized = " ".join(paragraph.split()).casefold()
+        if len(normalized) >= 80 and not normalized.startswith("#"):
+            paragraphs.add(normalized)
+    return paragraphs
+
+
+def _relative_path(path: Path, root: Path) -> str:
+    try:
+        return path.resolve().relative_to(root.resolve()).as_posix()
+    except ValueError:
+        return redact_local_paths(str(path))
+
+
 def _enhanceable_instruction_paths(agent_file: str) -> set[str]:
     return {
         agent_file,
@@ -1280,6 +1956,7 @@ def _manifest_content(
             "harnessforge effectiveness",
             "harnessforge session",
             "harnessforge report",
+            "enhance-existing --dry-run --json",
             "harnessforge plan",
         ],
         "docs/harness/first-agent-task.md": [

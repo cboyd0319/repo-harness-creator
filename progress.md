@@ -109,6 +109,24 @@ maintenance loop.
   structural index, verify evidence, effectiveness evidence, first-agent task
   status, and platform contract into a read-only JSON or Markdown review
   artifact without running target commands.
+- Added the first improved `--enhance-existing` review slice. `harnessforge
+  init --enhance-existing --dry-run --json` now emits a target-relative plan
+  with parsed instruction sections, proposed addendum edits, duplicate
+  instruction findings, local absolute path findings, user-specific tool
+  mandate findings, and verification-conflict findings before changing
+  project-owned instruction files.
+- Deepened the `--enhance-existing` review plan with canonical section
+  coverage, missing-section and proposed-edit counts, and review-required
+  proposals to add missing instruction sections, route platform-specific
+  instruction files, generalize local paths, replace local tool mandates,
+  resolve verification conflicts, consolidate duplicated guidance, and move
+  bloated detail to topic docs without writing cleanup edits automatically.
+- Added placeholder patch previews to `--enhance-existing` proposed edits.
+  Dry-run JSON now reports patch-preview counts and sanitized review-only
+  hunks for missing sections, platform routes, local path cleanup, local tool
+  mandate replacement, verification-conflict replacement, duplicate
+  consolidation, bloated instruction extraction, and unreadable-file review.
+  HarnessForge still does not apply cleanup previews automatically.
 - Re-ran a deeper read-only comparison against `agent-governance-toolkit`.
   Accepted the small, durable pieces that fit this repo now: contribution
   policy, PR template, stronger security scope, `.gitignore` hygiene, and

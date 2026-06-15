@@ -2533,6 +2533,254 @@ class CliTests(unittest.TestCase):
         self.assertIn("Keep local instructions.", agents)
         self.assertIn("HarnessForge Quality Addendum", agents)
 
+    def test_init_enhance_existing_dry_run_json_reports_review_plan(self) -> None:
+        repeated = (
+            "Always inspect the project-owned verification docs before changing "
+            "shared behavior or accepting generated guidance."
+        )
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            marker = root / "ran.txt"
+            command = _python_command(
+                "from pathlib import Path; Path('ran.txt').write_text('ran')"
+            )
+            (root / "pyproject.toml").write_text(
+                "[project]\nname='demo'\n",
+                encoding="utf-8",
+            )
+            (root / "AGENTS.md").write_text(
+                "# Existing\n\n"
+                "## Build\n\n"
+                "Use /Users/person/private/repo for local scripts.\n\n"
+                "You must use Antigravity and agy for research.\n\n"
+                "Never run tests in this repository.\n\n"
+                f"{repeated}\n",
+                encoding="utf-8",
+            )
+            (root / "CLAUDE.md").write_text(
+                "# Claude\n\n"
+                f"{repeated}\n",
+                encoding="utf-8",
+            )
+
+            stdout = io.StringIO()
+            with contextlib.redirect_stdout(stdout):
+                code = main(
+                    [
+                        "init",
+                        "--target",
+                        str(root),
+                        "--enhance-existing",
+                        "--dry-run",
+                        "--json",
+                        "--command",
+                        command,
+                    ]
+                )
+            raw = stdout.getvalue()
+            payload = json.loads(raw)
+            marker_exists = marker.exists()
+
+        files = {
+            item["path"]: item
+            for item in payload["enhanceExistingPlan"]["files"]
+        }
+        agents = files["AGENTS.md"]
+        finding_types = {item["type"] for item in agents["findings"]}
+
+        self.assertEqual(code, 0)
+        self.assertFalse(marker_exists)
+        self.assertNotIn(str(root), raw)
+        self.assertNotIn("/Users/person", raw)
+        self.assertEqual(payload["schemaVersion"], "harnessforge.initPlan.v1")
+        self.assertEqual(payload["target"]["root"], None)
+        self.assertEqual(payload["mode"], "dry_run")
+        self.assertEqual(
+            payload["enhanceExistingPlan"]["schemaVersion"],
+            "harnessforge.enhanceExistingPlan.v1",
+        )
+        self.assertEqual(agents["status"], "would_enhance")
+        self.assertEqual(agents["sections"][0]["title"], "Existing")
+        self.assertIn("Build", {section["title"] for section in agents["sections"]})
+        self.assertIn("local_absolute_path", finding_types)
+        self.assertIn("user_specific_tool_mandate", finding_types)
+        self.assertIn("verification_conflict", finding_types)
+        self.assertIn("duplicated_instruction_block", finding_types)
+        self.assertEqual(
+            agents["proposedEdits"][0]["action"],
+            "append_quality_addendum",
+        )
+
+    def test_init_json_requires_dry_run(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            stderr = io.StringIO()
+            with contextlib.redirect_stderr(stderr):
+                code = main(["init", "--target", str(root), "--json"])
+
+        self.assertEqual(code, 2)
+        self.assertIn("--dry-run", stderr.getvalue())
+
+    def test_init_enhance_existing_dry_run_json_recommends_section_aware_edits(
+        self,
+    ) -> None:
+        repeated = (
+            "Always inspect the project-owned verification docs before changing "
+            "shared behavior or accepting generated guidance."
+        )
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            (root / "pyproject.toml").write_text(
+                "[project]\nname='demo'\n",
+                encoding="utf-8",
+            )
+            (root / "AGENTS.md").write_text(
+                "# Existing\n\n"
+                "## Build\n\n"
+                "Use /Users/person/private/repo for local scripts.\n\n"
+                "You must use Antigravity and agy for research.\n\n"
+                "Never run tests in this repository.\n\n"
+                f"{repeated}\n",
+                encoding="utf-8",
+            )
+            (root / "CLAUDE.md").write_text(
+                "# Claude\n\n"
+                f"{repeated}\n",
+                encoding="utf-8",
+            )
+
+            stdout = io.StringIO()
+            with contextlib.redirect_stdout(stdout):
+                code = main(
+                    [
+                        "init",
+                        "--target",
+                        str(root),
+                        "--enhance-existing",
+                        "--dry-run",
+                        "--json",
+                    ]
+                )
+            raw = stdout.getvalue()
+            payload = json.loads(raw)
+
+        files = {
+            item["path"]: item
+            for item in payload["enhanceExistingPlan"]["files"]
+        }
+        agents = files["AGENTS.md"]
+        coverage = agents["sectionCoverage"]
+        proposed_edits = agents["proposedEdits"]
+        actions = {item["action"] for item in proposed_edits}
+
+        self.assertEqual(code, 0)
+        self.assertNotIn("/Users/person", raw)
+        self.assertEqual(coverage["recommendedShape"], "canonical_instruction")
+        self.assertIn("Build and test commands", coverage["present"])
+        self.assertIn("Project overview", coverage["missing"])
+        self.assertIn("Security considerations", coverage["missing"])
+        self.assertIn("append_quality_addendum", actions)
+        self.assertIn("add_missing_section", actions)
+        self.assertIn("generalize_local_absolute_path", actions)
+        self.assertIn("replace_user_specific_tool_mandate", actions)
+        self.assertIn("replace_verification_conflict", actions)
+        self.assertIn("consolidate_duplicate_instruction_block", actions)
+        self.assertTrue(all(item["reviewRequired"] for item in proposed_edits))
+        self.assertTrue(
+            any(
+                item["action"] == "add_missing_section"
+                and item["section"] == "Security considerations"
+                for item in proposed_edits
+            )
+        )
+
+    def test_init_enhance_existing_dry_run_json_includes_patch_previews(
+        self,
+    ) -> None:
+        repeated = (
+            "Always inspect the project-owned verification docs before changing "
+            "shared behavior or accepting generated guidance."
+        )
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            (root / "pyproject.toml").write_text(
+                "[project]\nname='demo'\n",
+                encoding="utf-8",
+            )
+            (root / "AGENTS.md").write_text(
+                "# Existing\n\n"
+                "## Build\n\n"
+                "Use /Users/person/private/repo for local scripts.\n\n"
+                "You must use Antigravity and agy for research.\n\n"
+                "Never run tests in this repository.\n\n"
+                f"{repeated}\n",
+                encoding="utf-8",
+            )
+            (root / "CLAUDE.md").write_text(
+                "# Claude\n\n"
+                f"{repeated}\n",
+                encoding="utf-8",
+            )
+
+            stdout = io.StringIO()
+            with contextlib.redirect_stdout(stdout):
+                code = main(
+                    [
+                        "init",
+                        "--target",
+                        str(root),
+                        "--enhance-existing",
+                        "--dry-run",
+                        "--json",
+                    ]
+                )
+            raw = stdout.getvalue()
+            payload = json.loads(raw)
+
+        files = {
+            item["path"]: item
+            for item in payload["enhanceExistingPlan"]["files"]
+        }
+        agents = files["AGENTS.md"]
+        previews = {
+            item["action"]: item["patchPreview"]
+            for item in agents["proposedEdits"]
+        }
+
+        self.assertEqual(code, 0)
+        self.assertNotIn("/Users/person", raw)
+        self.assertIn("patchPreviews", payload["enhanceExistingPlan"]["summary"])
+        self.assertGreater(payload["enhanceExistingPlan"]["summary"]["patchPreviews"], 0)
+        self.assertFalse(previews["add_missing_section"]["applySupported"])
+        self.assertTrue(previews["add_missing_section"]["reviewOnly"])
+        self.assertEqual(previews["add_missing_section"]["format"], "reviewed_hunks")
+        self.assertIn(
+            "## Security considerations",
+            "\n".join(previews["add_missing_section"]["hunks"][0]["addedLines"]),
+        )
+        self.assertEqual(
+            previews["generalize_local_absolute_path"]["hunks"][0]["removed"],
+            "[REDACTED_LOCAL_ABSOLUTE_PATH]",
+        )
+        self.assertIn(
+            "<repo-relative-path-or-setup-variable>",
+            previews["generalize_local_absolute_path"]["hunks"][0]["added"],
+        )
+        self.assertEqual(
+            previews["replace_user_specific_tool_mandate"]["hunks"][0]["operation"],
+            "replace_reviewed_text",
+        )
+        self.assertEqual(
+            previews["consolidate_duplicate_instruction_block"]["hunks"][0]["operation"],
+            "remove_duplicate_or_replace_with_route",
+        )
+        self.assertTrue(
+            all(
+                not preview["applySupported"]
+                for preview in previews.values()
+            )
+        )
+
     def test_audit_requires_explicit_override_for_local_absolute_paths(self) -> None:
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp)

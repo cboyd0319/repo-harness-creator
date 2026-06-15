@@ -215,6 +215,7 @@
       "harnessforge index",
       "harnessforge effectiveness",
       "harnessforge report",
+      "enhance-existing --dry-run --json",
       "self-healing workflow"
     ],
     "docs/harness/change-contract.md": [

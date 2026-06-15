@@ -120,6 +120,14 @@ intentionally deferred, and when release-prep scope changes.
 Run `harnessforge update --target . --apply` only when you want safe missing-file
 corrections. Existing files are preserved unless `--force` is passed.
 
+Before enhancing project-owned instruction files, run
+`harnessforge init --target . --enhance-existing --dry-run --json`. The plan
+reports proposed addendum writes, canonical section coverage,
+review-required section/finding cleanup edits, placeholder patch previews, and
+findings for duplicate instructions, local absolute paths, user-specific tool
+mandates, and verification conflicts before files are changed. Patch previews
+are review-only and are not applied automatically.
+
 Optional workflow scaffolds are project-owned generated files. They are separate
 from the published HarnessForge Action runtime and from HarnessForge's live
 repository maintenance workflows.

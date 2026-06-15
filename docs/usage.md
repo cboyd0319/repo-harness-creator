@@ -255,12 +255,18 @@ Use `--enhance-existing` when an existing instruction file should keep its
 project text but receive a reviewed HarnessForge quality addendum:
 
 ```bash
+harnessforge init --target /path/to/repo --enhance-existing --dry-run --json
 harnessforge init --target /path/to/repo --enhance-existing
 ```
 
 The addendum routes agents to the canonical harness files and adds
 smallest-correct-change guidance for assumptions, speculative scope,
-dependencies, simplification ceilings, and focused verification.
+dependencies, simplification ceilings, and focused verification. The dry-run
+JSON plan reports parsed sections, canonical section coverage, review-required
+proposed edits, placeholder patch previews, duplicated instruction blocks,
+local absolute paths, user-specific tool mandates, and verification conflicts
+before any project-owned instruction file is changed. Patch previews are
+review-only and are not applied automatically.
 
 Use `--force` only after reviewing the target diff:
 

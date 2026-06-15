@@ -125,6 +125,14 @@ does not run those checks.
 `update` reports recommended safe corrections unless `--apply` is passed.
 Existing files are skipped unless `--force` is passed.
 
+Before enhancing project-owned instruction files, run
+`harnessforge init --target . --enhance-existing --dry-run --json`. The plan
+reports proposed addendum writes, canonical section coverage,
+review-required section/finding cleanup edits, placeholder patch previews, and
+findings for duplicate instructions, local absolute paths, user-specific tool
+mandates, and verification conflicts before files are changed. Patch previews
+are review-only and are not applied automatically.
+
 `verify --json` defaults to read-only plan mode and is documented in
 `verify-json-contract.md`, with schema and example artifacts beside it. It
 reports detected or explicit checks without running target repository commands.

@@ -20,7 +20,13 @@ from .effectiveness import (
     build_effectiveness_assessment,
     format_effectiveness_assessment,
 )
-from .generate import PLATFORM_CONTRACTS, REVIEW_REQUIRED_FILES, create_harness
+from .generate import (
+    PLATFORM_CONTRACTS,
+    REVIEW_REQUIRED_FILES,
+    build_enhance_existing_plan,
+    create_harness,
+    empty_enhance_existing_plan,
+)
 from .indexer import build_index_report, format_index_report
 from .models import DriftResult, ProjectProfile, WriteResult
 from .planner import build_diff_plan, diff_plan_to_dict, format_diff_plan
@@ -168,6 +174,11 @@ def build_parser() -> argparse.ArgumentParser:
         help="append reviewed HarnessForge guidance to existing instruction files",
     )
     init.add_argument("--dry-run", action="store_true")
+    init.add_argument(
+        "--json",
+        action="store_true",
+        help="write the dry-run init plan as JSON",
+    )
     init.set_defaults(func=_init)
 
     audit = subparsers.add_parser("audit", help="score a repository harness")
@@ -440,6 +451,8 @@ def _quickstart(args: argparse.Namespace) -> int:
 
 
 def _init(args: argparse.Namespace) -> int:
+    if args.json and not args.dry_run:
+        raise ValueError("init --json currently requires --dry-run")
     profile, results = create_harness(
         args.target,
         agent_file=args.agent_file,
@@ -453,6 +466,14 @@ def _init(args: argparse.Namespace) -> int:
         with_self_heal_workflow=args.with_self_heal_workflow,
         platform_contract=args.platform_contract,
     )
+    if args.json:
+        print(
+            json.dumps(
+                _init_plan_to_dict(profile, results, args),
+                indent=2,
+            )
+        )
+        return 0
     print(f"Target: {profile.name}")
     print(f"Detected stack: {profile.stack}")
     print("Verification commands:")
@@ -468,6 +489,45 @@ def _init(args: argparse.Namespace) -> int:
     for warning in _workflow_warnings(args.with_ci_workflow, args.with_self_heal_workflow):
         print(warning)
     return 0
+
+
+def _init_plan_to_dict(
+    profile: ProjectProfile,
+    results: tuple[WriteResult, ...],
+    args: argparse.Namespace,
+) -> dict[str, object]:
+    enhance_plan = (
+        build_enhance_existing_plan(
+            profile,
+            agent_file=args.agent_file,
+            writes=results,
+        )
+        if args.enhance_existing
+        else empty_enhance_existing_plan(profile, agent_file=args.agent_file)
+    )
+    return {
+        "schemaVersion": "harnessforge.initPlan.v1",
+        "mode": "dry_run",
+        "target": {
+            "name": profile.name,
+            "root": None,
+        },
+        "detectedStack": profile.stack,
+        "execution": {
+            "commandsExecuted": False,
+            "writesPerformed": False,
+        },
+        "verificationCommands": list(profile.verification_commands),
+        "writes": [
+            {
+                "path": _relative(result.path, profile.root),
+                "status": result.status,
+                "reason": result.reason,
+            }
+            for result in results
+        ],
+        "enhanceExistingPlan": enhance_plan,
+    }
 
 
 def _audit(args: argparse.Namespace) -> int:
@@ -863,7 +923,7 @@ def _append_cli_section(lines: list[str], title: str, values: tuple[str, ...]) -
 
 def _relative(path: Path, root: Path) -> str:
     try:
-        return str(path.resolve().relative_to(root.resolve()))
+        return path.resolve().relative_to(root.resolve()).as_posix()
     except ValueError:
         return redact_local_paths(str(path))
 

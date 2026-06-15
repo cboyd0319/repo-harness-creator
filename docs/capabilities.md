@@ -28,6 +28,11 @@ boundaries it preserves. See [Usage](usage.md) for commands and
 - Can append a reviewed HarnessForge quality addendum to existing instruction
   files with `--enhance-existing`, including smallest-correct-change discipline
   for assumptions, scope, dependencies, and verification.
+- Can produce an `--enhance-existing --dry-run --json` review plan that parses
+  existing instruction sections, reports canonical section coverage, proposes
+  review-required section/finding cleanup edits with placeholder patch
+  previews, and flags duplicate guidance, local absolute paths, user-specific
+  tool mandates, and verification conflicts before writing.
 - Audits harness structure and reports actionable failures.
 - Reports generated-file drift and static readiness without running target
   project commands.

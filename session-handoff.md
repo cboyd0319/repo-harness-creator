@@ -174,6 +174,15 @@ and advanced product modes.
   path. It composes readiness, audit, generated drift, index, verify evidence,
   effectiveness evidence, first-agent task status, and platform contract into
   JSON or Markdown without running target commands.
+- Current enhance-existing review-plan implementation adds
+  `init --enhance-existing --dry-run --json`. It parses existing instruction
+  sections, reports canonical section coverage, counts missing sections and
+  proposed edits, and emits review-required proposals for missing sections,
+  platform-router routes, local paths, local tool mandates, verification
+  conflicts, duplicate guidance, bloated instruction files, and unreadable
+  files. Proposed edits include sanitized placeholder patch previews and
+  patch-preview counts. HarnessForge does not write project-owned cleanup edits
+  automatically.
 - Current sensor registry implementation adds a review-required generated
   `docs/harness/sensor-registry.md`, manifest required-file and snippet
   coverage, generated ownership metadata, and live harness ownership/source/
