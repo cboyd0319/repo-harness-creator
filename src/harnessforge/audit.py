@@ -215,6 +215,7 @@ def _load_known_files(root: Path, manifest: dict[str, Any]) -> dict[str, str]:
         "docs/action.md",
         "pyproject.toml",
         "package.json",
+        "Package.swift",
         "go.mod",
         "Cargo.toml",
         "pom.xml",
@@ -228,6 +229,7 @@ def _load_known_files(root: Path, manifest: dict[str, Any]) -> dict[str, str]:
         ".nvmrc",
         ".tool-versions",
         "Dockerfile",
+        "Containerfile",
         ".devcontainer/devcontainer.json",
         "feature_list.json",
         "feature-list.json",
@@ -743,6 +745,7 @@ def _environment_checks(
     runtime_files = (
         "pyproject.toml",
         "package.json",
+        "Package.swift",
         "go.mod",
         "Cargo.toml",
         "pom.xml",
@@ -755,12 +758,13 @@ def _environment_checks(
         ".nvmrc",
         ".tool-versions",
         "Dockerfile",
+        "Containerfile",
         ".devcontainer/devcontainer.json",
     )
     manifest_text = files.get("docs/harness/manifest.json", "")
     explicit_generic_profile = any(
         f'"detectedStack": "{stack}"' in manifest_text
-        for stack in ("generic", "docs", "monorepo")
+        for stack in ("generic", "docs", "monorepo", "shell", "swift")
     )
     environment_candidates = [
         _manifest_agent_file(manifest),

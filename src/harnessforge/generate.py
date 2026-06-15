@@ -412,11 +412,25 @@ def _project_context_markdown(profile: ProjectProfile) -> str:
         for component in profile.components
         if " (" in component
     }
+    component_text = "\n".join(profile.components)
+    languages = set(profile.languages)
     if profile.stack == "rust" or "rust" in profile.languages:
         signals.append(
             "- Rust workspace or crate detected. Treat `Cargo.toml`, "
             "`Cargo.lock`, and `rust-toolchain.toml` as primary build and\n"
             "  reproducibility inputs when present."
+        )
+    if profile.stack == "swift" or "swift" in languages:
+        signals.append(
+            "- Swift Package Manager surface detected. Treat `Package.swift`, "
+            "`Package.resolved`, Xcode toolchain selection, and Apple platform\n"
+            "  availability as build-contract inputs."
+        )
+    if profile.stack == "python" or "python" in languages:
+        signals.append(
+            "- Python surface detected. Inspect `pyproject.toml`, lockfiles, "
+            "test configuration, and the nearest package boundary before\n"
+            "  choosing Python checks."
         )
     if profile.stack == "bazel" or "bazel" in profile.languages:
         signals.append(
@@ -455,6 +469,31 @@ def _project_context_markdown(profile: ProjectProfile) -> str:
             "- Documentation or site-generation surfaces detected. Inspect the "
             "nearest docs build targets before changing generated docs or\n"
             "  published site content."
+        )
+    if "terraform" in languages:
+        signals.append(
+            "- Terraform or infrastructure files detected. Treat provider, "
+            "state, secret, cost, and environment changes as review-sensitive."
+        )
+    if "shell" in languages:
+        signals.append(
+            "- Shell entrypoints detected. Quote paths, preserve spaces, use "
+            "strict error handling, and run syntax or harness checks before\n"
+            "  claiming shell behavior is safe."
+        )
+    if "Dockerfile" in component_text or "Containerfile" in component_text or {
+        "Dockerfile",
+        "Containerfile",
+    } & set(profile.runtime_files):
+        signals.append(
+            "- Container image definitions detected. Treat base images, build "
+            "context, network access, mounted secrets, and published tags as\n"
+            "  security-sensitive."
+        )
+    if any(path == "src-tauri" or path.startswith("src-tauri/") for path in component_paths):
+        signals.append(
+            "- Tauri desktop surface detected. Coordinate frontend, Rust, "
+            "packaging, platform permissions, and updater behavior together."
         )
     if "Cargo.toml [workspace]" in profile.workspace_markers:
         signals.append(

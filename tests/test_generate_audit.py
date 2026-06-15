@@ -635,6 +635,55 @@ class GenerateAuditTests(unittest.TestCase):
             ).passed
         )
 
+    def test_generated_swift_and_shell_repos_supply_environment_evidence(self) -> None:
+        cases = (
+            (
+                "swift",
+                {
+                    "Package.swift": "// swift-tools-version: 6.2\n",
+                    "Makefile": ".PHONY: test\n\ntest:\n\t@swift test\n",
+                },
+            ),
+            (
+                "shell",
+                {
+                    "fix_app.sh": "#!/usr/bin/env bash\n",
+                    "tools/validate_harness.sh": "#!/usr/bin/env bash\n",
+                },
+            ),
+        )
+        for expected_stack, files in cases:
+            with self.subTest(expected_stack=expected_stack):
+                with tempfile.TemporaryDirectory() as tmp:
+                    root = Path(tmp)
+                    for relative_path, content in files.items():
+                        path = root / relative_path
+                        path.parent.mkdir(parents=True, exist_ok=True)
+                        path.write_text(content, encoding="utf-8")
+                    create_harness(root)
+
+                    result = audit_target(root)
+                    manifest = json.loads(
+                        (root / "docs/harness/manifest.json").read_text(
+                            encoding="utf-8"
+                        )
+                    )
+                    environment = next(
+                        domain
+                        for domain in result.domains
+                        if domain.name == "environment"
+                    )
+
+                self.assertEqual(manifest["detectedStack"], expected_stack)
+                self.assertTrue(
+                    next(
+                        check
+                        for check in environment.checks
+                        if check.message
+                        == "Runtime manifest or explicit generic profile is discoverable"
+                    ).passed
+                )
+
     def test_generated_nested_monorepo_without_root_manifest_audits(self) -> None:
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp)
@@ -782,6 +831,11 @@ class GenerateAuditTests(unittest.TestCase):
             (root / "MODULE.bazel").write_text("", encoding="utf-8")
             (root / ".bazelrc").write_text("common --announce_rc\n", encoding="utf-8")
             (root / ".bazelversion").write_text("9.1.1\n", encoding="utf-8")
+            (root / "Package.swift").write_text(
+                "// swift-tools-version: 6.2\n",
+                encoding="utf-8",
+            )
+            (root / "Dockerfile").write_text("FROM python:3.13-slim\n", encoding="utf-8")
             (root / "action.yml").write_text("runs:\n  using: composite\n", encoding="utf-8")
             (root / ".claude").mkdir()
             (root / ".claude" / "CLAUDE.md").write_text("# Claude\n", encoding="utf-8")
@@ -792,6 +846,17 @@ class GenerateAuditTests(unittest.TestCase):
             )
             (root / "scripts" / "release").mkdir(parents=True)
             (root / "scripts" / "release" / "BUILD").write_text("", encoding="utf-8")
+            (root / "scripts" / "release" / "publish.sh").write_text(
+                "#!/usr/bin/env bash\n",
+                encoding="utf-8",
+            )
+            (root / "src-tauri").mkdir()
+            (root / "src-tauri" / "Cargo.toml").write_text(
+                "[package]\nname='desktop'\nversion='0.1.0'\n",
+                encoding="utf-8",
+            )
+            (root / "infra").mkdir()
+            (root / "infra" / "main.tf").write_text("terraform {}\n", encoding="utf-8")
             (root / "third_party" / "vendor").mkdir(parents=True)
             (root / "third_party" / "vendor" / "BUILD").write_text("", encoding="utf-8")
             (root / "scripts" / "docs").mkdir(parents=True)
@@ -800,11 +865,16 @@ class GenerateAuditTests(unittest.TestCase):
             agents = (root / "AGENTS.md").read_text(encoding="utf-8")
 
         self.assertIn("Rust workspace", agents)
+        self.assertIn("Swift Package Manager", agents)
         self.assertIn("Bazel markers", agents)
         self.assertIn("Bazel runtime routing files", agents)
         self.assertIn("vendored components", agents)
         self.assertIn("Release or package scripts", agents)
         self.assertIn("Documentation or site-generation", agents)
+        self.assertIn("Terraform or infrastructure files", agents)
+        self.assertIn("Shell entrypoints", agents)
+        self.assertIn("Container image definitions", agents)
+        self.assertIn("Tauri desktop surface", agents)
         self.assertIn("JavaScript or TypeScript subprojects", agents)
         self.assertIn("GitHub Action surface", agents)
         self.assertIn("Existing hidden agent instruction files", agents)

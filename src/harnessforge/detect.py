@@ -47,6 +47,7 @@ COMPONENT_MARKERS = {
     "Gemfile",
     "Makefile",
     "MODULE.bazel",
+    "Package.swift",
     "Pipfile",
     "REPO.bazel",
     "WORKSPACE",
@@ -54,6 +55,8 @@ COMPONENT_MARKERS = {
     "composer.json",
     "build.gradle",
     "build.gradle.kts",
+    "Containerfile",
+    "Dockerfile",
     "global.json",
     "go.mod",
     "go.work",
@@ -149,6 +152,9 @@ def detect_project(
             "global.json",
             "composer.json",
             "Gemfile",
+            "Makefile",
+            "Package.swift",
+            "Package.resolved",
             "validate.sh",
             "MODULE.bazel",
             "MODULE.bazel.lock",
@@ -158,6 +164,7 @@ def detect_project(
             "pants.toml",
             "terragrunt.hcl",
             "Dockerfile",
+            "Containerfile",
             ".devcontainer/devcontainer.json",
         )
         if file in file_set
@@ -237,6 +244,10 @@ def _detect_languages(
         languages.add("typescript")
     if {"pyproject.toml", "requirements.txt", "setup.py"} & file_set or ".py" in suffixes:
         languages.add("python")
+    if "Package.swift" in file_set or ".swift" in suffixes:
+        languages.add("swift")
+    if {".sh", ".bash", ".zsh", ".command"} & suffixes:
+        languages.add("shell")
     if {".cc", ".cpp", ".cxx", ".c", ".h", ".hpp"} & suffixes:
         languages.add("cpp")
     if {".bzl", ".scl"} & suffixes or any(
@@ -315,6 +326,8 @@ def _detect_package_managers(
         managers.append("pipenv")
     if "Cargo.toml" in filenames:
         managers.append("cargo")
+    if "Package.swift" in filenames:
+        managers.append("swiftpm")
     if "go.mod" in filenames:
         managers.append("go")
     if "pom.xml" in filenames:
@@ -508,6 +521,8 @@ def _primary_stack(
 ) -> str:
     if "Cargo.toml" in file_set:
         return "rust"
+    if "Package.swift" in file_set:
+        return "swift"
     if {"MODULE.bazel", "REPO.bazel", "WORKSPACE", "WORKSPACE.bazel"} & file_set:
         return "bazel"
     if "pants.toml" in file_set:
@@ -523,6 +538,8 @@ def _primary_stack(
         if "typescript" in languages:
             return "typescript"
         return "node"
+    if _nested_component_count(file_set) >= 2 and languages != {"terraform"}:
+        return "monorepo"
     if _looks_like_docs_site(file_set):
         return "docs"
     if {"pyproject.toml", "requirements.txt", "setup.py"} & file_set:
@@ -543,18 +560,18 @@ def _primary_stack(
         return "php"
     if "Gemfile" in file_set:
         return "ruby"
-    if _nested_component_count(file_set) >= 2 and languages != {"terraform"}:
-        return "monorepo"
     priority = [
         ("python", "python"),
         ("go", "go"),
         ("rust", "rust"),
+        ("swift", "swift"),
         ("java", "java"),
         ("dotnet", "dotnet"),
         ("php", "php"),
         ("ruby", "ruby"),
         ("terraform", "terraform"),
         ("docs", "docs"),
+        ("shell", "shell"),
     ]
     for language, stack in priority:
         if language in languages:
@@ -589,7 +606,7 @@ def _verification_commands(
     stack: str,
 ) -> tuple[str, ...]:
     commands: list[str] = []
-    commands.extend(_make_commands(file_set))
+    commands.extend(_make_commands(root, file_set))
     commands.extend(_validation_script_commands(file_set))
     if package_json:
         commands.extend(_node_commands(package_json, package_managers))
@@ -601,6 +618,8 @@ def _verification_commands(
         commands.append("go test ./...")
     if stack == "rust":
         commands.extend(_rust_commands(root, file_set, cargo_toml))
+    if stack == "swift":
+        commands.extend(_swift_commands(file_set, has_make_command=bool(commands)))
     if stack == "java":
         if "pom.xml" in file_set:
             commands.append("mvn test")
@@ -634,7 +653,7 @@ def _verification_commands(
     return tuple(commands)
 
 
-def _make_commands(file_set: set[str]) -> list[str]:
+def _make_commands(root: Path, file_set: set[str]) -> list[str]:
     makefile = (
         "Makefile"
         if "Makefile" in file_set
@@ -644,15 +663,57 @@ def _make_commands(file_set: set[str]) -> list[str]:
     )
     if not makefile:
         return []
-    # Keep this intentionally simple and side-effect-light.
-    return ["make check"]
+    targets = _makefile_targets(root / makefile, root)
+    commands: list[str] = []
+    for target in ("check", "test", "validate", "lint"):
+        if target in targets:
+            commands.append(f"make {target}")
+    return commands[:2]
+
+
+def _makefile_targets(path: Path, root: Path) -> set[str]:
+    if not is_inside_root(path, root):
+        return set()
+    try:
+        text = path.read_text(encoding="utf-8")
+    except (OSError, UnicodeDecodeError):
+        return set()
+    targets: set[str] = set()
+    for line in text.splitlines():
+        if line.startswith(("\t", " ")):
+            continue
+        match = re.match(r"^([A-Za-z0-9_.-]+(?:\s+[A-Za-z0-9_.-]+)*)\s*:", line)
+        if not match:
+            continue
+        for target in match.group(1).split():
+            if target.startswith(".") or "%" in target:
+                continue
+            targets.add(target)
+    return targets
 
 
 def _validation_script_commands(file_set: set[str]) -> list[str]:
-    for script in ("validate.sh", "check.sh", "test.sh"):
+    commands: list[str] = []
+    for script in (
+        "validate.sh",
+        "check.sh",
+        "test.sh",
+        "tools/validate_harness.sh",
+        "tools/check_harness_docs.sh",
+        "scripts/check_harness_docs.sh",
+        "tools/test_dependency_parsing.sh",
+    ):
         if script in file_set:
-            return [f"./{script}"]
-    return []
+            commands.append(f"./{script}")
+    return commands[:3]
+
+
+def _swift_commands(file_set: set[str], *, has_make_command: bool) -> list[str]:
+    if "Package.swift" not in file_set or has_make_command:
+        return []
+    if any(file.startswith("Tests/") for file in file_set):
+        return ["swift test"]
+    return ["swift build"]
 
 
 def _node_commands(
@@ -724,6 +785,11 @@ def _rust_toolchain_components(root: Path, file_set: set[str]) -> set[str]:
 def _nested_component_commands(root: Path, file_set: set[str]) -> list[str]:
     commands: list[str] = []
     has_root_cargo = "Cargo.toml" in file_set
+    nested_pyproject_dirs = {
+        Path(file_name).parent.as_posix()
+        for file_name in file_set
+        if Path(file_name).name == "pyproject.toml" and len(Path(file_name).parts) > 1
+    }
     for file_name in sorted(file_set):
         path = Path(file_name)
         if len(path.parts) <= 1:
@@ -740,10 +806,24 @@ def _nested_component_commands(root: Path, file_set: set[str]) -> list[str]:
                     _component_node_commands(quoted_directory, package_json, manager)
                 )
         elif path.name == "pyproject.toml":
-            commands.append(f"python -m compileall {quoted_directory}")
-            if f"{directory}/tests" in _top_level_directories(file_set, directory):
+            pyproject = _read_toml(root / path, root)
+            python_prefix = _nested_python_runner_prefix(directory, file_set)
+            commands.append(
+                f"{python_prefix}python -m compileall {quoted_directory}"
+            )
+            test_directory = _nested_python_test_directory(
+                file_set,
+                directory,
+                allow_repo_test_dirs=len(nested_pyproject_dirs) == 1,
+            )
+            if test_directory and _uses_pytest(file_set, pyproject):
                 commands.append(
-                    f"python -m unittest discover -s {quoted_directory}/tests"
+                    f"{python_prefix}python -m pytest {shlex.quote(test_directory)}"
+                )
+            elif test_directory:
+                commands.append(
+                    f"{python_prefix}python -m unittest discover -s "
+                    f"{shlex.quote(test_directory)}"
                 )
         elif path.name == "Cargo.toml" and not has_root_cargo:
             commands.append(f"cargo test --manifest-path {quoted_directory}/Cargo.toml")
@@ -786,6 +866,29 @@ def _top_level_directories(file_set: set[str], directory: str) -> set[str]:
         for file in file_set
         if file.startswith(prefix) and Path(file.removeprefix(prefix)).parts
     }
+
+
+def _nested_python_runner_prefix(directory: str, file_set: set[str]) -> str:
+    if "uv.lock" in file_set or f"{directory}/uv.lock" in file_set:
+        return f"uv run --project {shlex.quote(directory)} "
+    if f"{directory}/poetry.lock" in file_set:
+        return "poetry run "
+    if f"{directory}/Pipfile.lock" in file_set:
+        return "pipenv run "
+    return ""
+
+
+def _nested_python_test_directory(
+    file_set: set[str], directory: str, *, allow_repo_test_dirs: bool
+) -> str:
+    candidates = [f"{directory}/tests"]
+    if allow_repo_test_dirs:
+        candidates.extend(("scripts/tests", "tests"))
+    directories = {str(Path(file).parent) for file in file_set if file.endswith(".py")}
+    for candidate in candidates:
+        if any(path == candidate or path.startswith(f"{candidate}/") for path in directories):
+            return candidate
+    return ""
 
 
 def _component_node_manager(directory: str, file_set: set[str]) -> str:

@@ -1,6 +1,6 @@
 # Progress
 
-Last Updated: 2026-06-14 UTC
+Last Updated: 2026-06-15 UTC
 
 ## Current Objective
 
@@ -231,6 +231,18 @@ maintenance loop.
   files are preserved by default; `--enhance-existing` appends reviewed
   addenda without replacing project text. Missing verification now produces a
   failing review-required placeholder instead of a successful echo.
+- Completed the next reference-repo quality exercise against
+  agent-governance-toolkit, apple-container, Bluepeak-AI, JobSentinel,
+  nhl-betting-analytics, persona, RunHaven, rustguard, and
+  WormsWMD-macOS-Fix. Accepted generic fixes: docs-heavy multi-component repos
+  now detect as monorepos, Swift Package Manager repos detect as `swift`, shell
+  projects can use repo-local validation scripts, Makefile commands are based
+  on declared targets, nested uv Python projects can route pytest to a single
+  repo-level `scripts/tests` tree, and generated context now calls out Swift,
+  Python, shell, Terraform, container image, and Tauri surfaces. Shadow audits
+  now report remaining quality issues as project-owned stale manifests, local
+  absolute scratch paths, or existing content drift instead of silently
+  rewriting target repos.
 - Completed a deeper generated-surface review across every template, a rendered
   default harness, a rendered custom-agent harness, optional workflow scaffolds,
   and the published Action docs. Live HarnessForge self-heal/research workflow

@@ -1,6 +1,6 @@
 # Session Handoff
 
-Last Updated: 2026-06-14 UTC
+Last Updated: 2026-06-15 UTC
 
 ## Current Objective
 
@@ -53,6 +53,25 @@ and the required AGENTS instruction format.
 ## Blockers
 
 - No known blockers.
+- Current expanded reference-repo quality batch ran shadow generation and
+  content review against agent-governance-toolkit, apple-container,
+  Bluepeak-AI, JobSentinel, nhl-betting-analytics, persona, RunHaven,
+  rustguard, and WormsWMD-macOS-Fix. Accepted fixes: docs-heavy
+  multi-component repos now detect as monorepos, Swift Package Manager repos
+  detect as `swift`, shell projects can use repo-local validation scripts,
+  Makefile commands are inferred only from declared targets, nested uv Python
+  projects can route pytest to a single repo-level `scripts/tests` tree, and
+  generated/enhanced context now calls out Swift, Python, shell, Terraform,
+  container image, and Tauri surfaces. Current shadow outcomes: AGT is
+  `monorepo`; apple-container is `swift` with `make check` and `make test`;
+  Bluepeak is `monorepo` with backend pytest and frontend checks; JobSentinel
+  retains npm plus Tauri Cargo checks; NHL includes Cargo, harness-doc, and uv
+  pytest checks; Worms is `shell` with its harness and dependency-parsing
+  checks. Remaining low shadow scores are project-owned stale manifests,
+  PowerShell entrypoint drift, existing absolute scratch paths, or existing
+  snippet drift that HarnessForge reports rather than silently rewriting.
+  Current verification passes full unit discovery with 130 tests, compile, pin
+  check, JSON validation, self-audit `100/100`, and diff hygiene.
 - Current reference-repo quality batch completed the VexShield and Bazel
   generated-content exercises with manual ideal harness sketches and temporary
   shadow generation. Accepted fixes: stronger root-first and priority-based

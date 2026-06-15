@@ -116,6 +116,79 @@ class DetectProjectTests(unittest.TestCase):
         self.assertIn("./validate.sh", profile.verification_commands)
         self.assertNotIn("bundle exec rake test", profile.verification_commands)
 
+    def test_makefile_commands_use_declared_targets_only(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            (root / "Makefile").write_text(
+                ".PHONY: build test\n\nbuild:\n\t@true\n\ntest:\n\t@true\n",
+                encoding="utf-8",
+            )
+
+            profile = detect_project(root)
+
+        self.assertIn("make test", profile.verification_commands)
+        self.assertNotIn("make check", profile.verification_commands)
+
+    def test_detects_swift_package_and_make_test(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            (root / "Package.swift").write_text(
+                "// swift-tools-version: 6.2\n",
+                encoding="utf-8",
+            )
+            (root / "Sources" / "App").mkdir(parents=True)
+            (root / "Sources" / "App" / "main.swift").write_text(
+                "print(\"hello\")\n",
+                encoding="utf-8",
+            )
+            (root / "Tests" / "AppTests").mkdir(parents=True)
+            (root / "Tests" / "AppTests" / "AppTests.swift").write_text(
+                "import Testing\n",
+                encoding="utf-8",
+            )
+            (root / "Makefile").write_text(
+                ".PHONY: all test\n\nall:\n\t@true\n\ntest:\n\t@swift test\n",
+                encoding="utf-8",
+            )
+
+            profile = detect_project(root)
+
+        self.assertEqual(profile.stack, "swift")
+        self.assertIn("swift", profile.languages)
+        self.assertIn("swiftpm", profile.package_managers)
+        self.assertIn(". (Makefile, Package.swift)", profile.components)
+        self.assertIn("make test", profile.verification_commands)
+        self.assertNotIn("swift test", profile.verification_commands)
+        self.assertNotIn("make check", profile.verification_commands)
+
+    def test_shell_project_uses_repo_validation_script(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            (root / "fix_app.sh").write_text("#!/usr/bin/env bash\n", encoding="utf-8")
+            (root / "tools").mkdir()
+            (root / "tools" / "validate_harness.sh").write_text(
+                "#!/usr/bin/env bash\n",
+                encoding="utf-8",
+            )
+            (root / "tools" / "test_dependency_parsing.sh").write_text(
+                "#!/usr/bin/env bash\n",
+                encoding="utf-8",
+            )
+
+            profile = detect_project(root)
+
+        self.assertEqual(profile.stack, "shell")
+        self.assertIn("shell", profile.languages)
+        self.assertIn("./tools/validate_harness.sh", profile.verification_commands)
+        self.assertIn(
+            "./tools/test_dependency_parsing.sh",
+            profile.verification_commands,
+        )
+        self.assertNotIn(
+            "No project verification check detected",
+            "\n".join(profile.verification_commands),
+        )
+
     def test_root_jvm_manifest_takes_priority_over_python_helpers(self) -> None:
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp)
@@ -193,6 +266,92 @@ class DetectProjectTests(unittest.TestCase):
             "No project verification check detected",
             "\n".join(profile.verification_commands),
         )
+
+    def test_nested_uv_python_project_uses_repo_pytest_directory(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            (root / "uv.lock").write_text("", encoding="utf-8")
+            (root / "models").mkdir()
+            (root / "models" / "pyproject.toml").write_text(
+                "[project]\nname='models'\n\n[dependency-groups]\n"
+                "dev = ['pytest>=8']\n",
+                encoding="utf-8",
+            )
+            (root / "scripts" / "tests").mkdir(parents=True)
+            (root / "scripts" / "tests" / "test_model.py").write_text(
+                "def test_model():\n    assert True\n",
+                encoding="utf-8",
+            )
+
+            profile = detect_project(root)
+
+        self.assertIn(
+            "uv run --project models python -m compileall models",
+            profile.verification_commands,
+        )
+        self.assertIn(
+            "uv run --project models python -m pytest scripts/tests",
+            profile.verification_commands,
+        )
+        self.assertNotIn(
+            "python -m unittest discover -s scripts/tests",
+            profile.verification_commands,
+        )
+
+    def test_root_scripts_tests_are_not_assigned_to_many_python_packages(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            (root / "packages" / "one").mkdir(parents=True)
+            (root / "packages" / "one" / "pyproject.toml").write_text(
+                "[project]\nname='one'\n\n[dependency-groups]\n"
+                "dev = ['pytest>=8']\n",
+                encoding="utf-8",
+            )
+            (root / "packages" / "two").mkdir(parents=True)
+            (root / "packages" / "two" / "pyproject.toml").write_text(
+                "[project]\nname='two'\n\n[dependency-groups]\n"
+                "dev = ['pytest>=8']\n",
+                encoding="utf-8",
+            )
+            (root / "scripts" / "tests").mkdir(parents=True)
+            (root / "scripts" / "tests" / "test_cli.py").write_text(
+                "def test_cli():\n    assert True\n",
+                encoding="utf-8",
+            )
+
+            profile = detect_project(root)
+
+        self.assertNotIn(
+            "python -m pytest scripts/tests",
+            profile.verification_commands,
+        )
+
+    def test_docs_heavy_multi_component_repo_detects_monorepo(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            (root / "mkdocs.yml").write_text("site_name: demo\n", encoding="utf-8")
+            for index in range(6):
+                (root / "docs").mkdir(exist_ok=True)
+                (root / "docs" / f"page-{index}.md").write_text(
+                    "# Page\n",
+                    encoding="utf-8",
+                )
+            (root / "packages" / "cli").mkdir(parents=True)
+            (root / "packages" / "cli" / "pyproject.toml").write_text(
+                "[project]\nname='cli'\n",
+                encoding="utf-8",
+            )
+            (root / "sdks" / "node").mkdir(parents=True)
+            (root / "sdks" / "node" / "package.json").write_text(
+                json.dumps({"scripts": {"test": "node --test"}}),
+                encoding="utf-8",
+            )
+
+            profile = detect_project(root)
+
+        self.assertEqual(profile.stack, "monorepo")
+        self.assertIn("packages/cli (pyproject.toml)", profile.components)
+        self.assertIn("sdks/node (package.json)", profile.components)
 
     def test_detects_javascript_workspace_and_orchestrator_markers(self) -> None:
         with tempfile.TemporaryDirectory() as tmp:
