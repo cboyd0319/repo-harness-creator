@@ -219,6 +219,18 @@ def build_parser() -> argparse.ArgumentParser:
     enhance.add_argument("--agent-file", default="AGENTS.md")
     enhance.add_argument("--package-manager")
     enhance.add_argument("--command", dest="commands", action="append", default=[])
+    enhance.add_argument(
+        "--max-files",
+        type=int,
+        default=4000,
+        help="maximum number of repository files to scan for the review plan",
+    )
+    enhance.add_argument(
+        "--component-limit",
+        type=int,
+        default=80,
+        help="maximum number of detected components to include in the review plan",
+    )
     enhance.add_argument("--json", action="store_true")
     enhance.set_defaults(func=_enhance)
 
@@ -914,19 +926,23 @@ def _enhance(args: argparse.Namespace) -> int:
         args.target,
         explicit_package_manager=args.package_manager,
         explicit_commands=tuple(args.commands),
+        max_files=args.max_files,
+        max_components=args.component_limit,
     )
     plan = build_enhance_existing_plan(profile, agent_file=args.agent_file)
-    payload = _enhance_command_to_dict(profile, plan)
+    nested_plan = build_nested_instruction_plan(profile)
+    payload = _enhance_command_to_dict(profile, plan, nested_plan)
     if args.json:
         print(json.dumps(payload, indent=2))
     else:
-        print(_format_enhance_plan(profile, plan))
+        print(_format_enhance_plan(profile, plan, nested_plan))
     return 0
 
 
 def _enhance_command_to_dict(
     profile: ProjectProfile,
     plan: dict[str, object],
+    nested_plan: dict[str, object],
 ) -> dict[str, object]:
     return {
         "schemaVersion": "harnessforge.enhanceCommand.v1",
@@ -941,6 +957,8 @@ def _enhance_command_to_dict(
             "writesPerformed": False,
         },
         "verificationCommands": list(profile.verification_commands),
+        "repositoryScan": _scan_to_dict(profile),
+        "nestedInstructionPlan": nested_plan,
         "enhanceExistingPlan": plan,
     }
 
@@ -948,6 +966,7 @@ def _enhance_command_to_dict(
 def _format_enhance_plan(
     profile: ProjectProfile,
     plan: dict[str, object],
+    nested_plan: dict[str, object],
 ) -> str:
     summary = plan.get("summary", {})
     files = plan.get("files", [])
@@ -960,6 +979,10 @@ def _format_enhance_plan(
         f"Review findings: {_summary_value(summary, 'reviewFindings')}",
         f"Proposed edits: {_summary_value(summary, 'proposedEdits')}",
         f"Patch previews: {_summary_value(summary, 'patchPreviews')}",
+        "Nested AGENTS.md candidates: "
+        f"{nested_plan.get('candidateCount', 0)}",
+        "Omitted nested AGENTS.md candidates: "
+        f"{nested_plan.get('omittedCandidateCount', 0)}",
         "No files were changed.",
     ]
     if not files:
@@ -1573,6 +1596,11 @@ def _format_quickstart(
     )
     _append_cli_section(
         lines,
+        "Omitted nested AGENTS.md candidates",
+        _omitted_nested_instruction_candidate_lines(nested_plan),
+    )
+    _append_cli_section(
+        lines,
         "Generated files needing project review",
         review_placeholders,
     )
@@ -1704,15 +1732,19 @@ def _verification_command_details_to_dict(
 
 
 def _nested_instruction_lines(profile: ProjectProfile) -> tuple[str, ...]:
-    candidates = _nested_instruction_candidate_lines(
-        build_nested_instruction_plan(profile)
-    )
-    if not candidates:
+    plan = build_nested_instruction_plan(profile)
+    candidates = _nested_instruction_candidate_lines(plan)
+    omitted = _omitted_nested_instruction_candidate_lines(plan)
+    if not candidates and not omitted:
         return ()
-    return (
-        "REVIEW REQUIRED nested AGENTS.md candidates:",
-        *(f"  - {candidate}" for candidate in candidates),
-    )
+    lines: list[str] = []
+    if candidates:
+        lines.append("REVIEW REQUIRED nested AGENTS.md candidates:")
+        lines.extend(f"  - {candidate}" for candidate in candidates)
+    if omitted:
+        lines.append("REVIEW REQUIRED omitted nested AGENTS.md candidates:")
+        lines.extend(f"  - {candidate}" for candidate in omitted)
+    return tuple(lines)
 
 
 def _nested_instruction_candidate_lines(plan: dict[str, object]) -> tuple[str, ...]:
@@ -1728,6 +1760,26 @@ def _nested_instruction_candidate_lines(plan: dict[str, object]) -> tuple[str, .
     ]
     if plan.get("candidateListTruncated"):
         lines.append("... more candidates in JSON output")
+    return tuple(lines)
+
+
+def _omitted_nested_instruction_candidate_lines(
+    plan: dict[str, object],
+) -> tuple[str, ...]:
+    if plan.get("status") != "review_required":
+        return ()
+    candidates = plan.get("omittedCandidateComponents", [])
+    if not isinstance(candidates, list):
+        return ()
+    lines = [
+        str(item["instructionPath"])
+        for item in candidates[:10]
+        if isinstance(item, dict) and isinstance(item.get("instructionPath"), str)
+    ]
+    if plan.get("omittedCandidateListTruncated"):
+        lines.append("... more omitted candidates in JSON output")
+    if lines and plan.get("omittedGuidance"):
+        lines.append(str(plan["omittedGuidance"]))
     return tuple(lines)
 
 

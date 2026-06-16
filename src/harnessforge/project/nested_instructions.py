@@ -62,34 +62,30 @@ def build_nested_instruction_plan(
         for component in (_component_record(value) for value in profile.components)
         if component["path"] not in {"", "."}
     ]
+    omitted_components = [
+        component
+        for component in (
+            _component_record(value) for value in profile.component_overflow
+        )
+        if component["path"] not in {"", "."}
+    ]
     signals = _nested_instruction_signals(profile, components, existing)
     candidates = []
+    omitted_candidates = []
     if signals:
-        ranked_components = sorted(
-            (
-                _ranked_component(profile, component)
-                for component in components
-                if not _has_nested_agent(existing, component["path"])
-            ),
-            key=_rank_sort_key,
+        candidates = _candidate_records(
+            _ranked_components(profile, components, existing),
+            recommended_action="review_required",
         )
-        for rank, ranked in enumerate(ranked_components, start=1):
-            component = ranked["component"]
-            path = component["path"]
-            candidates.append(
-                {
-                    "path": path,
-                    "instructionPath": f"{path}/AGENTS.md",
-                    "rank": rank,
-                    "reason": _candidate_reason(component, ranked["rankSignals"]),
-                    "rankSignals": ranked["rankSignals"],
-                    "reviewFocus": ranked["reviewFocus"],
-                    "recommendedAction": "review_required",
-                }
-            )
+        omitted_candidates = _candidate_records(
+            _ranked_components(profile, omitted_components, existing),
+            recommended_action="raise_component_limit_or_review_manually",
+        )
     return {
         "schemaVersion": SCHEMA_VERSION,
-        "status": "review_required" if candidates else "no_action",
+        "status": (
+            "review_required" if candidates or omitted_candidates else "no_action"
+        ),
         "writeByDefault": False,
         "rootAgentsPresent": "AGENTS.md" in profile.files,
         "monorepoSignals": signals,
@@ -97,12 +93,22 @@ def build_nested_instruction_plan(
         "existingNestedAgentCount": len(existing),
         "candidateComponents": candidates[:candidate_limit],
         "candidateCount": len(candidates),
+        "omittedCandidateComponents": omitted_candidates[:candidate_limit],
+        "omittedCandidateCount": len(omitted_candidates),
         "candidateLimit": candidate_limit,
         "candidateListTruncated": len(candidates) > candidate_limit,
+        "omittedCandidateListTruncated": len(omitted_candidates) > candidate_limit,
         "guidance": (
             "Use root AGENTS.md as a short repo-wide router. Add nested "
             "AGENTS.md only for meaningful components whose stack, commands, "
             "ownership, constraints, or verification differ."
+        ),
+        "omittedGuidance": (
+            "Omitted candidates came from the component inventory overflow. "
+            "Raise --component-limit or review the omitted paths manually before "
+            "adding nested instruction files."
+            if omitted_candidates
+            else ""
         ),
     }
 
@@ -143,6 +149,44 @@ def _nested_instruction_signals(
 def _has_nested_agent(existing: list[str], component: str) -> bool:
     prefix = component.rstrip("/") + "/"
     return any(path.startswith(prefix) for path in existing)
+
+
+def _ranked_components(
+    profile: ProjectProfile,
+    components: list[dict[str, Any]],
+    existing: list[str],
+) -> list[dict[str, Any]]:
+    return sorted(
+        (
+            _ranked_component(profile, component)
+            for component in components
+            if not _has_nested_agent(existing, component["path"])
+        ),
+        key=_rank_sort_key,
+    )
+
+
+def _candidate_records(
+    ranked_components: list[dict[str, Any]],
+    *,
+    recommended_action: str,
+) -> list[dict[str, Any]]:
+    records: list[dict[str, Any]] = []
+    for rank, ranked in enumerate(ranked_components, start=1):
+        component = ranked["component"]
+        path = component["path"]
+        records.append(
+            {
+                "path": path,
+                "instructionPath": f"{path}/AGENTS.md",
+                "rank": rank,
+                "reason": _candidate_reason(component, ranked["rankSignals"]),
+                "rankSignals": ranked["rankSignals"],
+                "reviewFocus": ranked["reviewFocus"],
+                "recommendedAction": recommended_action,
+            }
+        )
+    return records
 
 
 def _ranked_component(

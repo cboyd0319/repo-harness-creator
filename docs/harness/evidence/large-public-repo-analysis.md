@@ -1,6 +1,6 @@
 # Large Public Repo Analysis
 
-Generated: 2026-06-16T19:14:20+00:00
+Generated: 2026-06-16T19:33:03+00:00
 
 ## Boundary
 
@@ -29,9 +29,9 @@ Generated: 2026-06-16T19:14:20+00:00
 
 | Repo | Status | Stack | Tracked | Eligible | Scanned | Skipped | Coverage | Components | Docs | Verification | Nested Plan | Top Gaps |
 | --- | --- | --- | ---: | ---: | ---: | ---: | --- | ---: | ---: | --- | --- | --- |
-| `kubernetes-kubernetes` | `analyzed` | `go` | 30513 | 30461 | 20000 | 52 | `budget_limited` | 44/44 | 2/103 | 21 test | 43 candidates | file_scan_truncated, file_coverage_budget_limited, nested_agents_review_needed, no_existing_sbom_detected |
-| `microsoft-vscode` | `analyzed` | `typescript-react` | 15783 | 15407 | 15407 | 376 | `budget_limited` | 80/145 | 4/67 | 17 build,static-analysis,test | 77 candidates | file_coverage_budget_limited, component_scan_truncated, nested_agents_review_needed, no_existing_sbom_detected |
-| `bazelbuild-bazel` | `analyzed` | `bazel` | 13265 | 8333 | 8333 | 4932 | `complete` | 80/186 | 3/79 | 1 test | 79 candidates | component_scan_truncated, nested_agents_review_needed |
+| `kubernetes-kubernetes` | `analyzed` | `go` | 30513 | 30461 | 20000 | 52 | `budget_limited` | 44/44 | 2/103 | 21 test | 43 candidates, 0 omitted | file_scan_truncated, file_coverage_budget_limited, nested_agents_review_needed, no_existing_sbom_detected |
+| `microsoft-vscode` | `analyzed` | `typescript-react` | 15783 | 15407 | 15407 | 376 | `budget_limited` | 80/145 | 4/67 | 17 build,static-analysis,test | 77 candidates, 65 omitted | file_coverage_budget_limited, component_scan_truncated, nested_agents_review_needed, no_existing_sbom_detected |
+| `bazelbuild-bazel` | `analyzed` | `bazel` | 13265 | 8333 | 8333 | 4932 | `complete` | 80/186 | 3/79 | 1 test | 79 candidates, 106 omitted | component_scan_truncated, nested_agents_review_needed |
 
 ## Nested Instruction Candidate Examples
 
@@ -58,6 +58,7 @@ Generated: 2026-06-16T19:14:20+00:00
 - `test/monaco`
 - `remote`
 - ... 69 more candidates in JSON report
+- ... 65 omitted candidates; raise `--component-limit` or review the JSON report
 
 ### `bazelbuild-bazel`
 
@@ -70,3 +71,4 @@ Generated: 2026-06-16T19:14:20+00:00
 - `src/tools/workspacelog`
 - `src/main/starlark/builtins_bzl`
 - ... 71 more candidates in JSON report
+- ... 106 omitted candidates; raise `--component-limit` or review the JSON report

@@ -190,14 +190,19 @@ monorepo scopes.
   coverage; `.harnessforge/` scratch checkouts are ignored by repo detection.
   Refreshed field evidence no longer reports `generator_default_scan_limit`.
 - Nested instruction planning now uses shared product code through
-  `harnessforge.nestedInstructionPlan.v1`. `report`, `quickstart`, and
-  `init --dry-run` surface review-required nested `AGENTS.md` candidates for
-  monorepos without writing nested instruction files by default. The field
-  analyzer consumes the same planner.
+  `harnessforge.nestedInstructionPlan.v1`. `report`, `index`, `enhance`,
+  `quickstart`, and `init --dry-run` surface review-required nested
+  `AGENTS.md` candidates for monorepos without writing nested instruction
+  files by default. The field analyzer consumes the same planner.
 - Nested instruction candidate ranking now uses component-local `localDocs`,
   verification command attribution, and workflow path/working-directory
   signals. Candidate JSON includes compact `rankSignals` and `reviewFocus`
   while keeping nested `AGENTS.md` writes disabled by default.
+- Component-overflow-derived nested instruction candidates now remain separate
+  under `omittedCandidateComponents`, `omittedCandidateCount`,
+  `omittedCandidateListTruncated`, and `omittedGuidance`. This keeps normal
+  candidate lists bounded while telling maintainers when to raise
+  `--component-limit` or manually review omitted component scopes.
 - `docs/roadmap.md` now includes an accepted research-backed harness token
   economics task requiring receipts on whether comprehensive repo harnesses
   increase or decrease agent token consumption before generated sizing or
@@ -301,6 +306,13 @@ monorepo scopes.
   passed. Refreshed Kubernetes, VS Code, and Bazel field evidence analyzed 3/3
   repos with zero failures and ranked candidates using local docs,
   verification sources, and workflow routing signals.
+- Current nested-plan index/enhance verification: focused CLI and field
+  analyzer regressions passed with 6 tests after fixing the overflow fixture;
+  full unit discovery passed with 304 tests;
+  refreshed field evidence analyzed Kubernetes, VS Code, and Bazel with 3/3
+  successful repos and zero failures. The persisted field report now shows
+  normal and omitted nested candidate counts, including VS Code `77/65` and
+  Bazel `79/106` candidates/omitted at the default 80-component cap.
 - Current README pass verification: required README manifest snippet check
   passed with no missing snippets; duplicate literal prose scan found no
   repeated meaningful lines; `tests.test_generate_audit` passed with 59 tests;
@@ -377,9 +389,12 @@ monorepo scopes.
 - `docs/roadmap.md`
 - `docs/usage.md`
 - `src/harnessforge/project/nested_instructions.py`
+- `src/harnessforge/project/indexer.py`
+- `src/harnessforge/cli.py`
 - `scripts/analyze_large_public_repos.py`
 - `docs/harness/evidence/evidence-log.md`
 - `tests/test_cli.py`
+- `tests/test_large_public_repo_analysis.py`
 
 ## Blockers
 
@@ -391,6 +406,5 @@ monorepo scopes.
 
 ## Next Step
 
-Surface the ranked nested instruction plan in `index` and `enhance`, then use
-component overflow data to make omitted candidate review more deterministic
-without increasing default generated harness size.
+Continue the accepted backlog with script cleanup and organization unless the
+user chooses to expand the remaining large public repo field corpus first.

@@ -6,6 +6,7 @@ from typing import Any
 
 from .detect import COMPONENT_MARKERS
 from .file_coverage import build_file_coverage_report
+from .nested_instructions import build_nested_instruction_plan
 from ..core.models import ProjectProfile
 from ..core.paths import is_inside_root, path_from_relative_text
 
@@ -229,6 +230,7 @@ def build_index_report(profile: ProjectProfile) -> dict[str, Any]:
     review_required = _review_required_records(records)
     components = _component_records(profile.components)
     component_overflow = _component_overflow_report(profile)
+    nested_instruction_plan = build_nested_instruction_plan(profile)
     verification_commands = _verification_command_report(profile)
     language_breakdown = _language_breakdown(records)
     entrypoints = _entrypoints(records, profile.verification_commands)
@@ -283,6 +285,7 @@ def build_index_report(profile: ProjectProfile) -> dict[str, Any]:
         "fileClasses": class_totals,
         "components": components,
         "componentOverflow": component_overflow,
+        "nestedInstructionPlan": nested_instruction_plan,
         "verificationCommands": verification_commands,
         "manifests": manifests,
         "entrypoints": entrypoints,
@@ -388,6 +391,19 @@ def format_index_report(report: dict[str, Any]) -> str:
         lines.append("Review required:")
         for item in report["reviewRequired"][:10]:
             lines.append(f"  - {item['path']}: {item['reason']}")
+    nested_plan = report["nestedInstructionPlan"]
+    if nested_plan["status"] == "review_required":
+        lines.append("")
+        lines.append("Nested AGENTS.md candidates:")
+        for item in nested_plan["candidateComponents"][:10]:
+            lines.append(f"  - {item['instructionPath']}: {item['reason']}")
+        omitted = nested_plan["omittedCandidateCount"]
+        if omitted:
+            lines.append(
+                "  - REVIEW REQUIRED: "
+                f"{omitted} candidate(s) omitted by component limit; "
+                "raise --component-limit or review JSON output."
+            )
     if report["warnings"]:
         lines.append("")
         lines.append("Warnings:")

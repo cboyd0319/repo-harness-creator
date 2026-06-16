@@ -34,7 +34,7 @@
     "normalHarnessGenerationNetworkAccess": false,
     "targetWritesPerformed": false
   },
-  "generatedAt": "2026-06-16T19:14:20+00:00",
+  "generatedAt": "2026-06-16T19:33:03+00:00",
   "mode": "real_public_repo_field_analysis",
   "repositories": [
     {
@@ -698,6 +698,10 @@
           "multiple nested component manifests",
           "4+ detected component boundaries"
         ],
+        "omittedCandidateComponents": [],
+        "omittedCandidateCount": 0,
+        "omittedCandidateListTruncated": false,
+        "omittedGuidance": "",
         "rootAgentsPresent": true,
         "schemaVersion": "harnessforge.nestedInstructionPlan.v1",
         "status": "review_required",
@@ -1997,6 +2001,308 @@
           "component inventory truncated",
           "existing nested AGENTS.md"
         ],
+        "omittedCandidateComponents": [
+          {
+            "instructionPath": "extensions/copilot/chat-lib/AGENTS.md",
+            "path": "extensions/copilot/chat-lib",
+            "rank": 1,
+            "rankSignals": [
+              "verification source: extensions/copilot/chat-lib/package.json",
+              "workflow routing: .github/workflows/chat-lib-package.yml",
+              "local docs: extensions/copilot/chat-lib/README.md",
+              "boundary markers: package.json"
+            ],
+            "reason": "component ranked for nested instructions by verification source: extensions/copilot/chat-lib/package.json; workflow routing: .github/workflows/chat-lib-package.yml; local docs: extensions/copilot/chat-lib/README.md",
+            "recommendedAction": "raise_component_limit_or_review_manually",
+            "reviewFocus": [
+              "verification",
+              "workflow-routing",
+              "local-docs",
+              "boundary-markers"
+            ]
+          },
+          {
+            "instructionPath": ".vscode/extensions/vscode-selfhost-test-provider/AGENTS.md",
+            "path": ".vscode/extensions/vscode-selfhost-test-provider",
+            "rank": 2,
+            "rankSignals": [
+              "verification source: .vscode/extensions/vscode-selfhost-test-provider/package.json",
+              "boundary markers: package.json"
+            ],
+            "reason": "component ranked for nested instructions by verification source: .vscode/extensions/vscode-selfhost-test-provider/package.json; boundary markers: package.json",
+            "recommendedAction": "raise_component_limit_or_review_manually",
+            "reviewFocus": [
+              "verification",
+              "boundary-markers"
+            ]
+          },
+          {
+            "instructionPath": "extensions/css-language-features/server/AGENTS.md",
+            "path": "extensions/css-language-features/server",
+            "rank": 3,
+            "rankSignals": [
+              "verification source: extensions/css-language-features/server/package.json",
+              "boundary markers: package.json"
+            ],
+            "reason": "component ranked for nested instructions by verification source: extensions/css-language-features/server/package.json; boundary markers: package.json",
+            "recommendedAction": "raise_component_limit_or_review_manually",
+            "reviewFocus": [
+              "verification",
+              "boundary-markers"
+            ]
+          },
+          {
+            "instructionPath": "extensions/html-language-features/server/AGENTS.md",
+            "path": "extensions/html-language-features/server",
+            "rank": 4,
+            "rankSignals": [
+              "verification source: extensions/html-language-features/server/package.json",
+              "boundary markers: package.json"
+            ],
+            "reason": "component ranked for nested instructions by verification source: extensions/html-language-features/server/package.json; boundary markers: package.json",
+            "recommendedAction": "raise_component_limit_or_review_manually",
+            "reviewFocus": [
+              "verification",
+              "boundary-markers"
+            ]
+          },
+          {
+            "instructionPath": "extensions/terminal-suggest/AGENTS.md",
+            "path": "extensions/terminal-suggest",
+            "rank": 5,
+            "rankSignals": [
+              "local docs: extensions/terminal-suggest/README.md",
+              "local docs: extensions/terminal-suggest/src/fig/README.md",
+              "boundary markers: package.json"
+            ],
+            "reason": "component ranked for nested instructions by local docs: extensions/terminal-suggest/README.md; local docs: extensions/terminal-suggest/src/fig/README.md; boundary markers: package.json",
+            "recommendedAction": "raise_component_limit_or_review_manually",
+            "reviewFocus": [
+              "local-docs",
+              "boundary-markers"
+            ]
+          },
+          {
+            "instructionPath": "extensions/typescript-language-features/AGENTS.md",
+            "path": "extensions/typescript-language-features",
+            "rank": 6,
+            "rankSignals": [
+              "local docs: extensions/typescript-language-features/README.md",
+              "local docs: extensions/typescript-language-features/web/README.md",
+              "boundary markers: package.json"
+            ],
+            "reason": "component ranked for nested instructions by local docs: extensions/typescript-language-features/README.md; local docs: extensions/typescript-language-features/web/README.md; boundary markers: package.json",
+            "recommendedAction": "raise_component_limit_or_review_manually",
+            "reviewFocus": [
+              "local-docs",
+              "boundary-markers"
+            ]
+          },
+          {
+            "instructionPath": "extensions/copilot/test/AGENTS.md",
+            "path": "extensions/copilot/test",
+            "rank": 7,
+            "rankSignals": [
+              "local docs: extensions/copilot/test/simulation/fixtures/edit/markdown/README.md",
+              "local docs: extensions/copilot/test/simulation/tools/README.md",
+              "boundary markers: requirements.txt"
+            ],
+            "reason": "component ranked for nested instructions by local docs: extensions/copilot/test/simulation/fixtures/edit/markdown/README.md; local docs: extensions/copilot/test/simulation/tools/README.md; boundary markers: requirements.txt",
+            "recommendedAction": "raise_component_limit_or_review_manually",
+            "reviewFocus": [
+              "local-docs",
+              "boundary-markers"
+            ]
+          },
+          {
+            "instructionPath": "extensions/references-view/AGENTS.md",
+            "path": "extensions/references-view",
+            "rank": 8,
+            "rankSignals": [
+              "local docs: extensions/references-view/README.md",
+              "boundary markers: package.json"
+            ],
+            "reason": "component ranked for nested instructions by local docs: extensions/references-view/README.md; boundary markers: package.json",
+            "recommendedAction": "raise_component_limit_or_review_manually",
+            "reviewFocus": [
+              "local-docs",
+              "boundary-markers"
+            ]
+          },
+          {
+            "instructionPath": "extensions/search-result/AGENTS.md",
+            "path": "extensions/search-result",
+            "rank": 9,
+            "rankSignals": [
+              "local docs: extensions/search-result/README.md",
+              "boundary markers: package.json"
+            ],
+            "reason": "component ranked for nested instructions by local docs: extensions/search-result/README.md; boundary markers: package.json",
+            "recommendedAction": "raise_component_limit_or_review_manually",
+            "reviewFocus": [
+              "local-docs",
+              "boundary-markers"
+            ]
+          },
+          {
+            "instructionPath": "extensions/simple-browser/AGENTS.md",
+            "path": "extensions/simple-browser",
+            "rank": 10,
+            "rankSignals": [
+              "local docs: extensions/simple-browser/README.md",
+              "boundary markers: package.json"
+            ],
+            "reason": "component ranked for nested instructions by local docs: extensions/simple-browser/README.md; boundary markers: package.json",
+            "recommendedAction": "raise_component_limit_or_review_manually",
+            "reviewFocus": [
+              "local-docs",
+              "boundary-markers"
+            ]
+          },
+          {
+            "instructionPath": "extensions/theme-seti/AGENTS.md",
+            "path": "extensions/theme-seti",
+            "rank": 11,
+            "rankSignals": [
+              "local docs: extensions/theme-seti/README.md",
+              "boundary markers: package.json"
+            ],
+            "reason": "component ranked for nested instructions by local docs: extensions/theme-seti/README.md; boundary markers: package.json",
+            "recommendedAction": "raise_component_limit_or_review_manually",
+            "reviewFocus": [
+              "local-docs",
+              "boundary-markers"
+            ]
+          },
+          {
+            "instructionPath": "extensions/typescript-basics/AGENTS.md",
+            "path": "extensions/typescript-basics",
+            "rank": 12,
+            "rankSignals": [
+              "local docs: extensions/typescript-basics/syntaxes/Readme.md",
+              "boundary markers: package.json"
+            ],
+            "reason": "component ranked for nested instructions by local docs: extensions/typescript-basics/syntaxes/Readme.md; boundary markers: package.json",
+            "recommendedAction": "raise_component_limit_or_review_manually",
+            "reviewFocus": [
+              "local-docs",
+              "boundary-markers"
+            ]
+          },
+          {
+            "instructionPath": "extensions/json-language-features/server/AGENTS.md",
+            "path": "extensions/json-language-features/server",
+            "rank": 13,
+            "rankSignals": [
+              "local docs: extensions/json-language-features/server/README.md",
+              "boundary markers: package.json"
+            ],
+            "reason": "component ranked for nested instructions by local docs: extensions/json-language-features/server/README.md; boundary markers: package.json",
+            "recommendedAction": "raise_component_limit_or_review_manually",
+            "reviewFocus": [
+              "local-docs",
+              "boundary-markers"
+            ]
+          },
+          {
+            "instructionPath": "extensions/copilot/.vscode/extensions/visualization-runner/AGENTS.md",
+            "path": "extensions/copilot/.vscode/extensions/visualization-runner",
+            "rank": 14,
+            "rankSignals": [
+              "local docs: extensions/copilot/.vscode/extensions/visualization-runner/README.md",
+              "boundary markers: package.json"
+            ],
+            "reason": "component ranked for nested instructions by local docs: extensions/copilot/.vscode/extensions/visualization-runner/README.md; boundary markers: package.json",
+            "recommendedAction": "raise_component_limit_or_review_manually",
+            "reviewFocus": [
+              "local-docs",
+              "boundary-markers"
+            ]
+          },
+          {
+            "instructionPath": "extensions/copilot/src/extension/typescriptContext/serverPlugin/AGENTS.md",
+            "path": "extensions/copilot/src/extension/typescriptContext/serverPlugin",
+            "rank": 15,
+            "rankSignals": [
+              "local docs: extensions/copilot/src/extension/typescriptContext/serverPlugin/fixtures/readme.md",
+              "boundary markers: package.json"
+            ],
+            "reason": "component ranked for nested instructions by local docs: extensions/copilot/src/extension/typescriptContext/serverPlugin/fixtures/readme.md; boundary markers: package.json",
+            "recommendedAction": "raise_component_limit_or_review_manually",
+            "reviewFocus": [
+              "local-docs",
+              "boundary-markers"
+            ]
+          },
+          {
+            "instructionPath": "extensions/razor/AGENTS.md",
+            "path": "extensions/razor",
+            "rank": 16,
+            "rankSignals": [
+              "boundary markers: package.json"
+            ],
+            "reason": "component ranked for nested instructions by boundary markers: package.json",
+            "recommendedAction": "raise_component_limit_or_review_manually",
+            "reviewFocus": [
+              "boundary-markers"
+            ]
+          },
+          {
+            "instructionPath": "extensions/restructuredtext/AGENTS.md",
+            "path": "extensions/restructuredtext",
+            "rank": 17,
+            "rankSignals": [
+              "boundary markers: package.json"
+            ],
+            "reason": "component ranked for nested instructions by boundary markers: package.json",
+            "recommendedAction": "raise_component_limit_or_review_manually",
+            "reviewFocus": [
+              "boundary-markers"
+            ]
+          },
+          {
+            "instructionPath": "extensions/ruby/AGENTS.md",
+            "path": "extensions/ruby",
+            "rank": 18,
+            "rankSignals": [
+              "boundary markers: package.json"
+            ],
+            "reason": "component ranked for nested instructions by boundary markers: package.json",
+            "recommendedAction": "raise_component_limit_or_review_manually",
+            "reviewFocus": [
+              "boundary-markers"
+            ]
+          },
+          {
+            "instructionPath": "extensions/rust/AGENTS.md",
+            "path": "extensions/rust",
+            "rank": 19,
+            "rankSignals": [
+              "boundary markers: package.json"
+            ],
+            "reason": "component ranked for nested instructions by boundary markers: package.json",
+            "recommendedAction": "raise_component_limit_or_review_manually",
+            "reviewFocus": [
+              "boundary-markers"
+            ]
+          },
+          {
+            "instructionPath": "extensions/scss/AGENTS.md",
+            "path": "extensions/scss",
+            "rank": 20,
+            "rankSignals": [
+              "boundary markers: package.json"
+            ],
+            "reason": "component ranked for nested instructions by boundary markers: package.json",
+            "recommendedAction": "raise_component_limit_or_review_manually",
+            "reviewFocus": [
+              "boundary-markers"
+            ]
+          }
+        ],
+        "omittedCandidateCount": 65,
+        "omittedCandidateListTruncated": true,
+        "omittedGuidance": "Omitted candidates came from the component inventory overflow. Raise --component-limit or review the omitted paths manually before adding nested instruction files.",
         "rootAgentsPresent": true,
         "schemaVersion": "harnessforge.nestedInstructionPlan.v1",
         "status": "review_required",
@@ -3151,6 +3457,304 @@
           "4+ detected component boundaries",
           "component inventory truncated"
         ],
+        "omittedCandidateComponents": [
+          {
+            "instructionPath": "site/AGENTS.md",
+            "path": "site",
+            "rank": 1,
+            "rankSignals": [
+              "workflow routing: .github/workflows/trigger-docs-update.yml",
+              "local docs: site/en/docs/android-build-performance.md",
+              "local docs: site/en/docs/android-instrumentation-test.md",
+              "local docs: site/en/docs/android-ndk.md",
+              "boundary markers: BUILD",
+              "lower priority: docs/example path"
+            ],
+            "reason": "component ranked for nested instructions by workflow routing: .github/workflows/trigger-docs-update.yml; local docs: site/en/docs/android-build-performance.md; local docs: site/en/docs/android-instrumentation-test.md",
+            "recommendedAction": "raise_component_limit_or_review_manually",
+            "reviewFocus": [
+              "workflow-routing",
+              "local-docs",
+              "boundary-markers"
+            ]
+          },
+          {
+            "instructionPath": "scripts/docs/AGENTS.md",
+            "path": "scripts/docs",
+            "rank": 2,
+            "rankSignals": [
+              "local docs: scripts/docs/README.md",
+              "local docs: scripts/docs/testdata/expected_output/doc.md",
+              "local docs: scripts/docs/testdata/expected_output/markdown_with_html.md",
+              "boundary markers: BUILD",
+              "lower priority: docs/example path"
+            ],
+            "reason": "component ranked for nested instructions by local docs: scripts/docs/README.md; local docs: scripts/docs/testdata/expected_output/doc.md; local docs: scripts/docs/testdata/expected_output/markdown_with_html.md",
+            "recommendedAction": "raise_component_limit_or_review_manually",
+            "reviewFocus": [
+              "local-docs",
+              "boundary-markers"
+            ]
+          },
+          {
+            "instructionPath": "scripts/packages/AGENTS.md",
+            "path": "scripts/packages",
+            "rank": 3,
+            "rankSignals": [
+              "local docs: scripts/packages/chocolatey/ReadMe.md",
+              "local docs: scripts/packages/msi/README.md",
+              "boundary markers: BUILD"
+            ],
+            "reason": "component ranked for nested instructions by local docs: scripts/packages/chocolatey/ReadMe.md; local docs: scripts/packages/msi/README.md; boundary markers: BUILD",
+            "recommendedAction": "raise_component_limit_or_review_manually",
+            "reviewFocus": [
+              "local-docs",
+              "boundary-markers"
+            ]
+          },
+          {
+            "instructionPath": "docs/AGENTS.md",
+            "path": "docs",
+            "rank": 4,
+            "rankSignals": [
+              "workflow routing: .github/workflows/scorecard.yml",
+              "workflow routing: .github/workflows/trigger-docs-update.yml",
+              "boundary markers: BUILD.bazel",
+              "lower priority: docs/example path"
+            ],
+            "reason": "component ranked for nested instructions by workflow routing: .github/workflows/scorecard.yml; workflow routing: .github/workflows/trigger-docs-update.yml; boundary markers: BUILD.bazel",
+            "recommendedAction": "raise_component_limit_or_review_manually",
+            "reviewFocus": [
+              "workflow-routing",
+              "boundary-markers"
+            ]
+          },
+          {
+            "instructionPath": "tools/cpp/AGENTS.md",
+            "path": "tools/cpp",
+            "rank": 5,
+            "rankSignals": [
+              "local docs: tools/cpp/modules_tools/README.md",
+              "boundary markers: BUILD"
+            ],
+            "reason": "component ranked for nested instructions by local docs: tools/cpp/modules_tools/README.md; boundary markers: BUILD",
+            "recommendedAction": "raise_component_limit_or_review_manually",
+            "reviewFocus": [
+              "local-docs",
+              "boundary-markers"
+            ]
+          },
+          {
+            "instructionPath": "tools/cpp/modules_tools/AGENTS.md",
+            "path": "tools/cpp/modules_tools",
+            "rank": 6,
+            "rankSignals": [
+              "local docs: tools/cpp/modules_tools/README.md",
+              "boundary markers: BUILD"
+            ],
+            "reason": "component ranked for nested instructions by local docs: tools/cpp/modules_tools/README.md; boundary markers: BUILD",
+            "recommendedAction": "raise_component_limit_or_review_manually",
+            "reviewFocus": [
+              "local-docs",
+              "boundary-markers"
+            ]
+          },
+          {
+            "instructionPath": "examples/AGENTS.md",
+            "path": "examples",
+            "rank": 7,
+            "rankSignals": [
+              "local docs: examples/Readme.md",
+              "local docs: examples/cpp/README.md",
+              "local docs: examples/java-native/README.md",
+              "boundary markers: BUILD",
+              "lower priority: docs/example path"
+            ],
+            "reason": "component ranked for nested instructions by local docs: examples/Readme.md; local docs: examples/cpp/README.md; local docs: examples/java-native/README.md",
+            "recommendedAction": "raise_component_limit_or_review_manually",
+            "reviewFocus": [
+              "local-docs",
+              "boundary-markers"
+            ]
+          },
+          {
+            "instructionPath": "site/en/AGENTS.md",
+            "path": "site/en",
+            "rank": 8,
+            "rankSignals": [
+              "local docs: site/en/docs/android-build-performance.md",
+              "local docs: site/en/docs/android-instrumentation-test.md",
+              "local docs: site/en/docs/android-ndk.md",
+              "boundary markers: BUILD.bazel",
+              "lower priority: docs/example path"
+            ],
+            "reason": "component ranked for nested instructions by local docs: site/en/docs/android-build-performance.md; local docs: site/en/docs/android-instrumentation-test.md; local docs: site/en/docs/android-ndk.md",
+            "recommendedAction": "raise_component_limit_or_review_manually",
+            "reviewFocus": [
+              "local-docs",
+              "boundary-markers"
+            ]
+          },
+          {
+            "instructionPath": "scripts/release/AGENTS.md",
+            "path": "scripts/release",
+            "rank": 9,
+            "rankSignals": [
+              "boundary markers: BUILD"
+            ],
+            "reason": "component ranked for nested instructions by boundary markers: BUILD",
+            "recommendedAction": "raise_component_limit_or_review_manually",
+            "reviewFocus": [
+              "boundary-markers"
+            ]
+          },
+          {
+            "instructionPath": "scripts/zsh_completion/AGENTS.md",
+            "path": "scripts/zsh_completion",
+            "rank": 10,
+            "rankSignals": [
+              "boundary markers: BUILD"
+            ],
+            "reason": "component ranked for nested instructions by boundary markers: BUILD",
+            "recommendedAction": "raise_component_limit_or_review_manually",
+            "reviewFocus": [
+              "boundary-markers"
+            ]
+          },
+          {
+            "instructionPath": "tools/allowlists/AGENTS.md",
+            "path": "tools/allowlists",
+            "rank": 11,
+            "rankSignals": [
+              "boundary markers: BUILD"
+            ],
+            "reason": "component ranked for nested instructions by boundary markers: BUILD",
+            "recommendedAction": "raise_component_limit_or_review_manually",
+            "reviewFocus": [
+              "boundary-markers"
+            ]
+          },
+          {
+            "instructionPath": "tools/android/AGENTS.md",
+            "path": "tools/android",
+            "rank": 12,
+            "rankSignals": [
+              "boundary markers: BUILD"
+            ],
+            "reason": "component ranked for nested instructions by boundary markers: BUILD",
+            "recommendedAction": "raise_component_limit_or_review_manually",
+            "reviewFocus": [
+              "boundary-markers"
+            ]
+          },
+          {
+            "instructionPath": "tools/aquery_differ/AGENTS.md",
+            "path": "tools/aquery_differ",
+            "rank": 13,
+            "rankSignals": [
+              "boundary markers: BUILD"
+            ],
+            "reason": "component ranked for nested instructions by boundary markers: BUILD",
+            "recommendedAction": "raise_component_limit_or_review_manually",
+            "reviewFocus": [
+              "boundary-markers"
+            ]
+          },
+          {
+            "instructionPath": "tools/bash/AGENTS.md",
+            "path": "tools/bash",
+            "rank": 14,
+            "rankSignals": [
+              "boundary markers: BUILD"
+            ],
+            "reason": "component ranked for nested instructions by boundary markers: BUILD",
+            "recommendedAction": "raise_component_limit_or_review_manually",
+            "reviewFocus": [
+              "boundary-markers"
+            ]
+          },
+          {
+            "instructionPath": "tools/build_defs/AGENTS.md",
+            "path": "tools/build_defs",
+            "rank": 15,
+            "rankSignals": [
+              "boundary markers: BUILD"
+            ],
+            "reason": "component ranked for nested instructions by boundary markers: BUILD",
+            "recommendedAction": "raise_component_limit_or_review_manually",
+            "reviewFocus": [
+              "boundary-markers"
+            ]
+          },
+          {
+            "instructionPath": "tools/build_rules/AGENTS.md",
+            "path": "tools/build_rules",
+            "rank": 16,
+            "rankSignals": [
+              "boundary markers: BUILD"
+            ],
+            "reason": "component ranked for nested instructions by boundary markers: BUILD",
+            "recommendedAction": "raise_component_limit_or_review_manually",
+            "reviewFocus": [
+              "boundary-markers"
+            ]
+          },
+          {
+            "instructionPath": "tools/buildstamp/AGENTS.md",
+            "path": "tools/buildstamp",
+            "rank": 17,
+            "rankSignals": [
+              "boundary markers: BUILD"
+            ],
+            "reason": "component ranked for nested instructions by boundary markers: BUILD",
+            "recommendedAction": "raise_component_limit_or_review_manually",
+            "reviewFocus": [
+              "boundary-markers"
+            ]
+          },
+          {
+            "instructionPath": "tools/compliance/AGENTS.md",
+            "path": "tools/compliance",
+            "rank": 18,
+            "rankSignals": [
+              "boundary markers: BUILD"
+            ],
+            "reason": "component ranked for nested instructions by boundary markers: BUILD",
+            "recommendedAction": "raise_component_limit_or_review_manually",
+            "reviewFocus": [
+              "boundary-markers"
+            ]
+          },
+          {
+            "instructionPath": "tools/coverage/AGENTS.md",
+            "path": "tools/coverage",
+            "rank": 19,
+            "rankSignals": [
+              "boundary markers: BUILD"
+            ],
+            "reason": "component ranked for nested instructions by boundary markers: BUILD",
+            "recommendedAction": "raise_component_limit_or_review_manually",
+            "reviewFocus": [
+              "boundary-markers"
+            ]
+          },
+          {
+            "instructionPath": "tools/ctexplain/AGENTS.md",
+            "path": "tools/ctexplain",
+            "rank": 20,
+            "rankSignals": [
+              "boundary markers: BUILD"
+            ],
+            "reason": "component ranked for nested instructions by boundary markers: BUILD",
+            "recommendedAction": "raise_component_limit_or_review_manually",
+            "reviewFocus": [
+              "boundary-markers"
+            ]
+          }
+        ],
+        "omittedCandidateCount": 106,
+        "omittedCandidateListTruncated": true,
+        "omittedGuidance": "Omitted candidates came from the component inventory overflow. Raise --component-limit or review the omitted paths manually before adding nested instruction files.",
         "rootAgentsPresent": true,
         "schemaVersion": "harnessforge.nestedInstructionPlan.v1",
         "status": "review_required",

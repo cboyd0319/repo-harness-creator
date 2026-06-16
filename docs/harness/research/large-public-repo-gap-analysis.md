@@ -172,8 +172,9 @@ Definition of done:
 ### 4. Nested Instruction Planning Is A Product Feature
 
 Severity: high for large monorepo quality; medium for default generation
-safety. Status: ranked advisory product implementation for report and dry-run
-flows; index and enhance integration remain follow-up work.
+safety.
+
+Status: ranked advisory product implementation for report, index, enhance, and dry-run flows.
 
 Observed: all three repos produced nested instruction candidates. VS Code also
 has existing nested `AGENTS.md` files.
@@ -187,13 +188,14 @@ Implemented deterministic fix:
 - Rank candidates with component-local docs, verification command source
   attribution, workflow path filters, and workflow working-directory signals.
 - Include compact `rankSignals` and `reviewFocus` fields for scoped review.
-- Surface the plan in `report`, `quickstart --json`, and
+- Surface the plan in `report`, `index`, `enhance`, `quickstart --json`, and
   `init --dry-run --json`.
+- Keep overflow-derived candidates under separate omitted-candidate fields so
+  maintainers can raise `--component-limit` or review omitted paths manually.
 - Never write nested `AGENTS.md` by default.
 
 Remaining deterministic follow-up:
 
-- Surface the plan in `index` and `enhance`.
 - When writes are later supported, require explicit path selection and
   confirmation.
 
@@ -305,9 +307,8 @@ Definition of done:
    overflow, and `--component-limit`.
 4. Done for initial product surfaces: promote nested instruction planning from
    the field script into product code.
-5. Done for report and dry-run flows: surface nested plans in report,
-   quickstart, and init dry-run JSON. Enhance and index integration remain
-   follow-up work.
+5. Done for report, index, enhance, and dry-run flows: surface nested plans in
+   report, index, enhance, quickstart, and init dry-run JSON.
 6. Done for initial verification metadata: add verification command
    classification and source attribution to `index`, `report`, generated
    manifests, and large-public-repo field evidence.
@@ -317,7 +318,9 @@ Definition of done:
 8. Done for nested candidate ranking: use local docs, verification attribution,
    and workflow routing to prioritize review-required nested instruction
    candidates.
-9. Expand the real public corpus run after each deterministic slice.
+9. Done for omitted candidate review: use component overflow data in separate
+   omitted nested-candidate fields without changing default generated files.
+10. Expand the real public corpus run after each deterministic slice.
 
 ## Optional Adapters
 

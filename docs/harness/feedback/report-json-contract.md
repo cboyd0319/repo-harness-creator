@@ -93,6 +93,12 @@ Candidate records include:
   cover, such as `verification`, `workflow-routing`, `local-docs`, and
   `boundary-markers`.
 
+When component detection is capped, overflow-derived candidates stay separate
+under `omittedCandidateComponents` with `omittedCandidateCount`,
+`omittedCandidateListTruncated`, and `omittedGuidance`. This keeps the normal
+candidate list stable while telling maintainers when to raise
+`--component-limit` or manually review omitted paths.
+
 Ranking uses detected component boundaries, existing nested instruction files,
 component-local docs, verification command attribution, and workflow path or
 working-directory signals. It does not parse private source text, execute

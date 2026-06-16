@@ -80,9 +80,9 @@ class LargePublicRepoAnalysisTests(unittest.TestCase):
                     "--repo",
                     "sample-monorepo",
                     "--max-files",
-                    "4",
+                    "5",
                     "--component-limit",
-                    "3",
+                    "2",
                     "--json-report",
                     str(json_report),
                     "--markdown-report",
@@ -106,10 +106,10 @@ class LargePublicRepoAnalysisTests(unittest.TestCase):
             self.assertFalse(payload["execution"]["networkAccess"])
             self.assertEqual(repo["status"], "analyzed")
             self.assertTrue(repo["headMatchesPinnedRef"])
-            self.assertEqual(repo["dryRunGeneration"]["requestedFileScanLimit"], 4)
-            self.assertEqual(repo["dryRunGeneration"]["fileScanLimit"], 4)
-            self.assertEqual(repo["dryRunGeneration"]["requestedComponentLimit"], 3)
-            self.assertEqual(repo["dryRunGeneration"]["componentLimit"], 3)
+            self.assertEqual(repo["dryRunGeneration"]["requestedFileScanLimit"], 5)
+            self.assertEqual(repo["dryRunGeneration"]["fileScanLimit"], 5)
+            self.assertEqual(repo["dryRunGeneration"]["requestedComponentLimit"], 2)
+            self.assertEqual(repo["dryRunGeneration"]["componentLimit"], 2)
             self.assertTrue(repo["dryRunGeneration"]["usesRequestedFileScanLimit"])
             self.assertFalse(repo["dryRunGeneration"]["usesDefaultFileScanLimit"])
             self.assertIn(
@@ -155,11 +155,24 @@ class LargePublicRepoAnalysisTests(unittest.TestCase):
             self.assertEqual(repo["nestedInstructionPlan"]["status"], "review_required")
             self.assertFalse(repo["nestedInstructionPlan"]["writeByDefault"])
             self.assertGreater(repo["nestedInstructionPlan"]["candidateCount"], 0)
+            self.assertGreater(
+                repo["nestedInstructionPlan"]["omittedCandidateCount"],
+                0,
+            )
+            self.assertEqual(
+                repo["nestedInstructionPlan"]["omittedCandidateComponents"][0][
+                    "recommendedAction"
+                ],
+                "raise_component_limit_or_review_manually",
+            )
             self.assertIn(
                 "nested_agents_review_needed",
                 {gap["code"] for gap in repo["qualityGaps"]},
             )
-            self.assertIn("Nested `AGENTS.md` entries", markdown_report.read_text(encoding="utf-8"))
+            markdown = markdown_report.read_text(encoding="utf-8")
+            self.assertIn("Nested `AGENTS.md` entries", markdown)
+            self.assertIn("omitted candidates", markdown)
+            self.assertIn("raise `--component-limit`", markdown)
             self.assertNotRegex(json_report.read_text(encoding="utf-8"), str(tmp_path))
 
     def _write_sample_repo(self, root: Path) -> None:
@@ -180,7 +193,10 @@ class LargePublicRepoAnalysisTests(unittest.TestCase):
                 json.dumps({"name": f"@sample/{package}"}),
                 encoding="utf-8",
             )
-            (package_root / "index.ts").write_text("export const ok = true\n", encoding="utf-8")
+            (package_root / "zz-extra.ts").write_text(
+                "export const ok = true\n",
+                encoding="utf-8",
+            )
         (root / "README.md").write_text("# Sample\n", encoding="utf-8")
         self._git(root, "init")
         self._git(root, "add", ".")

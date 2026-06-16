@@ -297,11 +297,8 @@ Implemented follow-on:
 
 - Workflow path-filter and working-directory evidence now improve nested
   instruction candidate ranking when workflow files mention component paths.
-
-Remaining:
-
 - Use component overflow to improve nested instruction candidate ranking and
-  generated component guidance without increasing default generated size.
+  omitted candidate review without increasing default generated size.
 
 ### Verification Command Classification
 
@@ -818,7 +815,9 @@ Quality checks should include:
 
 ### Real Large Public Repo Field Corpus
 
-Status: first repo-local field slice implemented; product follow-up accepted.
+Status: first repo-local field slice implemented; deterministic product
+follow-up implemented for current report, index, enhance, quickstart, and
+dry-run surfaces.
 
 The deterministic `harnessforge corpus` command remains offline. Separately,
 this repo now has `docs/harness/research/large-public-repo-corpus.json` and
@@ -828,25 +827,34 @@ against real large public GitHub repositories. The script clones only with
 does not run target commands, and writes compact evidence reports under
 `docs/harness/evidence/`.
 
-First field run:
+Field evidence so far:
 
 - selected Kubernetes, VS Code, and Bazel from the 13-repo corpus;
 - all three cloned and analyzed successfully;
 - Kubernetes hit the 20,000-file scan limit with 30,513 tracked files;
 - VS Code and Bazel hit the bounded component inventory limit;
-- all three exposed the current `create_harness(..., dry_run=True)` default
-  4,000-file scan as a large-repo quality gap;
-- all three produced review-required nested `AGENTS.md` candidate scopes.
+- all three originally exposed the `create_harness(..., dry_run=True)` default
+  4,000-file scan as a large-repo quality gap; explicit scan-limit support now
+  closes that deterministic gap;
+- all three produce review-required nested `AGENTS.md` candidate scopes;
+- VS Code and Bazel now also expose omitted nested candidate scopes from
+  component inventory overflow without increasing default generated harness
+  size.
 
 Accepted product follow-up:
 
-- analyze the real corpus evidence and produce a HarnessForge gap analysis
-  that separates deterministic fixes, review-required heuristics, optional
-  adapters, and release-prep evidence needs;
-- add a large-repo scan control or index-reuse path to generation dry-runs;
-- add nested instruction-scope planning to large-repo analysis, dry-run init,
-  enhance, and report flows;
+- implemented: analyze the real corpus evidence and produce a HarnessForge gap
+  analysis that separates deterministic fixes, review-required heuristics,
+  optional adapters, and release-prep evidence needs;
+- implemented: add a large-repo scan control to generation dry-runs;
+- implemented: add nested instruction-scope planning to large-repo analysis,
+  dry-run init, quickstart, report, index, and enhance flows;
+- implemented: keep component-overflow-derived nested candidates separate with
+  explicit omitted-candidate fields and `--component-limit` guidance;
 - keep nested `AGENTS.md` writes review-required and off by default;
+- optional optimization: reuse a detected profile or persisted structural
+  index across repeated report, quickstart, generation, and enhance planning
+  if repeated scan cost becomes measurable;
 - continue expanding field runs across the remaining pinned repos before
   release.
 
@@ -874,6 +882,8 @@ Current implemented slice:
   maintenance, platform routing, and general guidance;
 - emits `ruleLifecycle` source, applicability, owner, and retirement guidance
   for accepted durable rules;
+- reports repository scan coverage plus ranked nested instruction candidates,
+  including omitted candidates when the component inventory is capped;
 - keeps patch previews review-only and never rewrites existing instruction
   files automatically.
 
@@ -1168,17 +1178,24 @@ Done when:
 10. Implemented first slice: large public repo gap analysis captured
    deterministic fixes, review-required heuristics, optional adapters, and
    release-prep evidence needs.
-11. Next accepted large-repo quality work: implement generation max-file/index
-   reuse and review-required nested `AGENTS.md` scope planning.
-12. Release-prep field evidence: re-run real-repo quality passes against
+11. Implemented: `index` and `enhance` surface the ranked nested instruction
+   plan, and component-overflow candidates stay under omitted-candidate fields
+   with `--component-limit` guidance.
+12. Current deterministic large-repo slice is verified. Next accepted backlog
+   item is script cleanup and organization unless the maintainer chooses to
+   expand the remaining large public repo field corpus first.
+13. Release-prep field evidence: re-run real-repo quality passes against
    RunHaven, selected sibling repos, and the remaining large public corpus.
-13. Current accepted backlog is complete. Resume release prep and keep new
-   findings in the roadmap only after maintainers accept them as product work.
-14. Keep the generated target wording advisory unless the repo owner opts into
+14. Remaining accepted backlog: script cleanup and organization. Resume
+   release prep after that cleanup or when the maintainer explicitly moves it
+   past the release boundary.
+15. Keep new findings in the roadmap only after maintainers accept them as
+   product work.
+16. Keep the generated target wording advisory unless the repo owner opts into
    the Action, and continue quality passes against real repositories.
-15. Keep the pinned public-repo quality corpus and generated-artifact scorer
+17. Keep the pinned public-repo quality corpus and generated-artifact scorer
    green as quality and detection gates evolve.
-16. Previously completed: policy preset report status, evidence-gated
+18. Previously completed: policy preset report status, evidence-gated
    feature-state and instruction-quality reporting, read-only SBOM adapter
    status, expanded policy presets, interactive quickstart decision plan, and
    source package reorganization.

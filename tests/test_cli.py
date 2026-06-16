@@ -403,6 +403,11 @@ class CliTests(unittest.TestCase):
         self.assertEqual(payload["schemaVersion"], "harnessforge.index.v1")
         self.assertEqual(payload["target"]["root"], None)
         self.assertEqual(payload["detectedStack"], "python")
+        self.assertEqual(
+            payload["nestedInstructionPlan"]["schemaVersion"],
+            "harnessforge.nestedInstructionPlan.v1",
+        )
+        self.assertEqual(payload["nestedInstructionPlan"]["status"], "no_action")
         self.assertFalse(payload["execution"]["commandsExecuted"])
         self.assertFalse(payload["execution"]["writesPerformed"])
         self.assertGreaterEqual(payload["summary"]["fileCount"], 9)
@@ -467,6 +472,90 @@ class CliTests(unittest.TestCase):
         self.assertTrue(
             any(item["language"] == "python" for item in payload["languageBreakdown"])
         )
+
+    def test_index_json_reports_nested_instruction_overflow_candidates(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            (root / "package.json").write_text(
+                json.dumps(
+                    {
+                        "name": "demo",
+                        "workspaces": ["packages/*"],
+                        "scripts": {"test": "node --test"},
+                    }
+                ),
+                encoding="utf-8",
+            )
+            for package in ("api", "web"):
+                package_root = root / "packages" / package
+                package_root.mkdir(parents=True)
+                (package_root / "package.json").write_text(
+                    json.dumps(
+                        (
+                            {
+                                "name": package,
+                                "scripts": {"test": "vitest"},
+                            }
+                            if package == "web"
+                            else {"name": package}
+                        )
+                    ),
+                    encoding="utf-8",
+                )
+            (root / "packages" / "web" / "README.md").write_text(
+                "# Web\n",
+                encoding="utf-8",
+            )
+            (root / ".github" / "workflows").mkdir(parents=True)
+            (root / ".github" / "workflows" / "web.yml").write_text(
+                "name: web\n"
+                "on:\n"
+                "  pull_request:\n"
+                "    paths:\n"
+                "      - packages/web/**\n"
+                "jobs:\n"
+                "  web:\n"
+                "    defaults:\n"
+                "      run:\n"
+                "        working-directory: packages/web\n",
+                encoding="utf-8",
+            )
+            stdout = io.StringIO()
+            with contextlib.redirect_stdout(stdout):
+                code = main(
+                    [
+                        "index",
+                        "--target",
+                        str(root),
+                        "--json",
+                        "--component-limit",
+                        "2",
+                    ]
+                )
+            payload = json.loads(stdout.getvalue())
+
+        plan = payload["nestedInstructionPlan"]
+        self.assertEqual(code, 0)
+        self.assertEqual(plan["status"], "review_required")
+        self.assertFalse(plan["writeByDefault"])
+        self.assertEqual(plan["candidateCount"], 1)
+        self.assertEqual(plan["candidateComponents"][0]["path"], "packages/api")
+        self.assertEqual(plan["omittedCandidateCount"], 1)
+        omitted = plan["omittedCandidateComponents"][0]
+        self.assertEqual(omitted["path"], "packages/web")
+        self.assertEqual(
+            omitted["recommendedAction"],
+            "raise_component_limit_or_review_manually",
+        )
+        self.assertIn(
+            "verification source: packages/web/package.json",
+            omitted["rankSignals"],
+        )
+        self.assertIn(
+            "workflow routing: .github/workflows/web.yml",
+            omitted["rankSignals"],
+        )
+        self.assertIn("Raise --component-limit", plan["omittedGuidance"])
 
     def test_index_json_accepts_explicit_file_scan_limit(self) -> None:
         with tempfile.TemporaryDirectory() as tmp:
@@ -4546,6 +4635,69 @@ class CliTests(unittest.TestCase):
         self.assertIn("patchPreviews", payload["enhanceExistingPlan"]["summary"])
         self.assertIn("local_absolute_path", {item["type"] for item in agents["findings"]})
 
+    def test_enhance_json_reports_nested_instruction_plan(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            (root / "package.json").write_text(
+                json.dumps(
+                    {
+                        "name": "demo",
+                        "workspaces": ["packages/*"],
+                        "scripts": {"test": "node --test"},
+                    }
+                ),
+                encoding="utf-8",
+            )
+            (root / "AGENTS.md").write_text(
+                "# Existing\n\n## Verification\n\nRun the project checks.\n",
+                encoding="utf-8",
+            )
+            for package in ("api", "web"):
+                package_root = root / "packages" / package
+                package_root.mkdir(parents=True)
+                (package_root / "package.json").write_text(
+                    json.dumps(
+                        (
+                            {
+                                "name": package,
+                                "scripts": {"test": "vitest"},
+                            }
+                            if package == "web"
+                            else {"name": package}
+                        )
+                    ),
+                    encoding="utf-8",
+                )
+            (root / "packages" / "web" / "README.md").write_text(
+                "# Web\n",
+                encoding="utf-8",
+            )
+            stdout = io.StringIO()
+            with contextlib.redirect_stdout(stdout):
+                code = main(
+                    [
+                        "enhance",
+                        "--target",
+                        str(root),
+                        "--json",
+                        "--component-limit",
+                        "2",
+                    ]
+                )
+            payload = json.loads(stdout.getvalue())
+
+        plan = payload["nestedInstructionPlan"]
+        self.assertEqual(code, 0)
+        self.assertEqual(payload["repositoryScan"]["componentScan"]["limit"], 2)
+        self.assertEqual(plan["status"], "review_required")
+        self.assertEqual(plan["candidateCount"], 1)
+        self.assertEqual(plan["omittedCandidateCount"], 1)
+        self.assertEqual(
+            plan["omittedCandidateComponents"][0]["path"],
+            "packages/web",
+        )
+        self.assertFalse(plan["writeByDefault"])
+
     def test_enhance_text_summarizes_existing_instruction_plan(
         self,
     ) -> None:
@@ -4571,6 +4723,8 @@ class CliTests(unittest.TestCase):
         self.assertIn("Enhance review for ", output)
         self.assertIn("Mode: review only", output)
         self.assertIn("Files reviewed: 1", output)
+        self.assertIn("Nested AGENTS.md candidates: 0", output)
+        self.assertIn("Omitted nested AGENTS.md candidates: 0", output)
         self.assertIn("AGENTS.md", output)
         self.assertIn("verification_conflict", output)
         self.assertIn("add_missing_section", output)

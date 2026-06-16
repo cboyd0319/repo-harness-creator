@@ -86,6 +86,8 @@ primary languages, component candidates, source-of-truth docs, manifest kinds,
 entrypoints, boundary examples, attributed verification commands,
 review-required files, unknowns, and existing SBOM evidence. It does not
 summarize private code or run target commands.
+It also includes the ranked `nestedInstructionPlan`, including separate
+omitted-candidate guidance when the component inventory is capped.
 `sourceOfTruth` is intentionally limited to root instructions, root project
 docs, high-signal global docs, and structured spec systems. Component-local
 READMEs and docs stay discoverable under `localDocs` so startup guidance does
@@ -433,6 +435,7 @@ project text but receive a reviewed HarnessForge quality addendum:
 ```bash
 harnessforge enhance --target /path/to/repo
 harnessforge enhance --target /path/to/repo --json
+harnessforge enhance --target /path/to/repo --json --max-files 20000 --component-limit 200
 harnessforge init --target /path/to/repo --enhance-existing --dry-run --json
 harnessforge init --target /path/to/repo --enhance-existing
 ```
@@ -447,8 +450,10 @@ before any project-owned instruction file is changed. Patch previews are
 review-only and are not applied automatically.
 
 Use `enhance` for the review-only command surface. It reports the same existing
-instruction plan without writing files. Use `init --enhance-existing` only when
-you are ready to append the reviewed HarnessForge quality addendum.
+instruction plan, repository scan coverage, and ranked nested instruction plan
+without writing files. Use `--max-files` and `--component-limit` for large-repo
+review parity with `index` and `report`. Use `init --enhance-existing` only
+when you are ready to append the reviewed HarnessForge quality addendum.
 
 Use `--force` only after reviewing the target diff:
 

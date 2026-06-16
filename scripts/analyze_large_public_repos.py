@@ -818,6 +818,7 @@ def format_markdown_report(payload: dict[str, Any]) -> str:
         gaps = ", ".join(gap["code"] for gap in repo["qualityGaps"][:4]) or "none"
         verification = repo["verificationCommands"]["summary"]
         verification_classes = ",".join(sorted(verification["classes"])) or "none"
+        nested_plan = repo["nestedInstructionPlan"]
         lines.append(
             f"| `{repo['id']}` | `analyzed` | `{repo['detected']['stack']}` | "
             f"{repo['trackedFileCount']} | "
@@ -830,7 +831,8 @@ def format_markdown_report(payload: dict[str, Any]) -> str:
             f"{repo['indexSummary']['sourceOfTruthCount']}/"
             f"{repo['indexSummary']['localDocCount']} | "
             f"{verification['commandCount']} {verification_classes} | "
-            f"{repo['nestedInstructionPlan']['candidateCount']} candidates | "
+            f"{nested_plan['candidateCount']} candidates"
+            f", {nested_plan.get('omittedCandidateCount', 0)} omitted | "
             f"{gaps} |"
         )
     lines.extend(["", "## Nested Instruction Candidate Examples", ""])
@@ -846,6 +848,12 @@ def format_markdown_report(payload: dict[str, Any]) -> str:
         if repo["nestedInstructionPlan"]["candidateCount"] > len(candidates):
             remaining = repo["nestedInstructionPlan"]["candidateCount"] - len(candidates)
             lines.append(f"- ... {remaining} more candidates in JSON report")
+        omitted = repo["nestedInstructionPlan"].get("omittedCandidateCount", 0)
+        if omitted:
+            lines.append(
+                f"- ... {omitted} omitted candidates; raise `--component-limit` "
+                "or review the JSON report"
+            )
         lines.append("")
     return "\n".join(lines).rstrip() + "\n"
 
