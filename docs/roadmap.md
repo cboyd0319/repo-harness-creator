@@ -979,18 +979,20 @@ Implemented shape:
    reviewed maturity/report expectations.
 9. Implemented first slice: real large public repo field corpus and analysis
    runner, with initial Kubernetes, VS Code, and Bazel evidence.
-10. Next accepted large-repo quality work: analyze the real corpus evidence
-   and create a HarnessForge gap analysis, then implement generation
-   max-file/index reuse and review-required nested `AGENTS.md` scope planning.
-11. Release-prep field evidence: re-run real-repo quality passes against
+10. Implemented first slice: large public repo gap analysis captured
+   deterministic fixes, review-required heuristics, optional adapters, and
+   release-prep evidence needs.
+11. Next accepted large-repo quality work: implement generation max-file/index
+   reuse and review-required nested `AGENTS.md` scope planning.
+12. Release-prep field evidence: re-run real-repo quality passes against
    RunHaven, selected sibling repos, and the remaining large public corpus.
-12. Current accepted backlog is complete. Resume release prep and keep new
+13. Current accepted backlog is complete. Resume release prep and keep new
    findings in the roadmap only after maintainers accept them as product work.
-13. Keep the generated target wording advisory unless the repo owner opts into
+14. Keep the generated target wording advisory unless the repo owner opts into
    the Action, and continue quality passes against real repositories.
-14. Keep the pinned public-repo quality corpus and generated-artifact scorer
+15. Keep the pinned public-repo quality corpus and generated-artifact scorer
    green as quality and detection gates evolve.
-15. Previously completed: policy preset report status, evidence-gated
+16. Previously completed: policy preset report status, evidence-gated
    feature-state and instruction-quality reporting, read-only SBOM adapter
    status, expanded policy presets, interactive quickstart decision plan, and
    source package reorganization.

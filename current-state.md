@@ -4,10 +4,10 @@ Last Updated: 2026-06-16 UTC
 
 ## Current Objective
 
-Large public repo field-corpus work is complete when HarnessForge has a
-repo-local real public GitHub corpus, an explicit networked analysis runner,
-ignored public checkouts, compact evidence reports, nested `AGENTS.md`
-candidate detection for monorepos, focused tests, and self-audit evidence.
+Large public repo gap-analysis work is complete when HarnessForge has a
+repo-local gap analysis from the real public corpus evidence, with deterministic
+fixes, review-required heuristics, optional adapters, and release-prep evidence
+needs separated clearly.
 
 ## Product State
 
@@ -174,6 +174,10 @@ candidate detection for monorepos, focused tests, and self-audit evidence.
   gaps: generation dry-runs need a large-repo `max-files` or index-reuse path,
   and large monorepos need review-required nested `AGENTS.md` scope planning in
   product report/dry-run flows.
+- `docs/harness/research/large-public-repo-gap-analysis.md` now turns that
+  field evidence into a build-order gap analysis. It separates deterministic
+  product fixes from review-required heuristics, optional adapters, and
+  release-prep evidence needs.
 
 ## Trusted Verification
 
@@ -234,6 +238,9 @@ candidate detection for monorepos, focused tests, and self-audit evidence.
   artifacts found no machine-local path text; focused pin/corpus tests passed
   with 27 tests; `./init.sh` passed with 290 tests, pin check, research source
   check, and self-audit `100/100`.
+- Current gap-analysis verification: `docs/harness/research/large-public-repo-gap-analysis.md`
+  was checked against the field evidence JSON and roadmap source; JSON
+  validation and diff hygiene passed.
 - Current cleanup pass removed ignored local artifacts: `__pycache__`, `*.pyc`,
   `.DS_Store`, `.pytest_cache`, `htmlcov`, and `.coverage` if present.
 - Current known local verification gap: `pwsh -NoProfile -File ./init.ps1`
@@ -250,6 +257,7 @@ candidate detection for monorepos, focused tests, and self-audit evidence.
 - `docs/harness/research/`
 - `docs/harness/evidence/large-public-repo-analysis.md`
 - `docs/harness/evidence/large-public-repo-analysis.json`
+- `docs/harness/research/large-public-repo-gap-analysis.md`
 - `scripts/analyze_large_public_repos.py`
 - `tests/test_large_public_repo_analysis.py`
 - `.gitignore`
@@ -268,7 +276,6 @@ candidate detection for monorepos, focused tests, and self-audit evidence.
 
 ## Next Step
 
-Analyze the large public repo corpus evidence and write a HarnessForge gap
-analysis that separates deterministic fixes, review-required heuristics,
-optional adapters, and release-prep evidence needs. Prioritize making
-HarnessForge handle large existing repositories deterministically and easily.
+Implement the first deterministic large-repo quality fix: generation dry-runs
+should accept or reuse the same `max-files` scan context as index/report so
+large repos do not fall back to the default 4,000-file generation scan.

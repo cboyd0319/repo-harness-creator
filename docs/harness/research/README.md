@@ -20,6 +20,7 @@ sibling-repo examples into instructions.
 | `source-record-example.json` | Shared generated contract | Review-required starter record for project-owned provenance |
 | `large-public-repo-corpus.json` | Human-maintained | Real large public GitHub repo field corpus for explicit networked analysis |
 | `large-codebase-indexing-research.md` | Human-maintained | Research note for large-repo analysis and indexing strategy |
+| `large-public-repo-gap-analysis.md` | Human-maintained | Gap analysis from real large public repo field evidence |
 | `reference-mining-notes.md` | Human-maintained | Mined ideas from sibling repos and public harness references |
 | `remaining-ideas-research.md` | Human-maintained | Compact outcome of remaining-ideas research and future candidates |
 

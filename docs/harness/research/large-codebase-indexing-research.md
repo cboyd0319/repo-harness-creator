@@ -14,6 +14,8 @@ defines a repo-local corpus of real large public GitHub repositories.
 `scripts/analyze_large_public_repos.py` clones into the ignored
 `.harnessforge/large-public-repos/` tree only when `--clone` is supplied, then
 writes compact evidence reports under `docs/harness/evidence/`.
+See `large-public-repo-gap-analysis.md` for the current gap analysis and
+build-order recommendations from that field evidence.
 
 This note responds to the current product risk: HarnessForge must understand
 large existing repositories much better before it can generate or improve a
