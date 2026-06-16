@@ -112,6 +112,15 @@ class LargePublicRepoAnalysisTests(unittest.TestCase):
                 "file_scan_truncated",
                 {gap["code"] for gap in repo["qualityGaps"]},
             )
+            self.assertEqual(repo["fileCoverage"]["status"], "budget_limited")
+            self.assertIn(
+                "file_coverage_budget_limited",
+                {gap["code"] for gap in repo["qualityGaps"]},
+            )
+            self.assertIn(
+                "file_discovery_priority",
+                {item["code"] for item in payload["crossRepoFindings"]},
+            )
             self.assertNotIn(
                 "generator_default_scan_limit",
                 {gap["code"] for gap in repo["qualityGaps"]},

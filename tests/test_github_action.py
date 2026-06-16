@@ -299,6 +299,10 @@ class GitHubActionTests(unittest.TestCase):
         self.assertEqual(payload["schemaVersion"], "harnessforge.report.v1")
         self.assertEqual(payload["execution"]["commandsExecuted"], False)
         self.assertEqual(payload["readiness"]["verdict"], "ready")
+        self.assertEqual(
+            payload["index"]["fileCoverage"]["schemaVersion"],
+            "harnessforge.fileCoverage.v1",
+        )
         self.assertEqual(payload["skillWiring"]["status"], "wired")
         self.assertEqual(payload["docsFanout"]["diff"]["status"], "unavailable")
         self.assertEqual(payload["docsFanout"]["contract"]["verdict"], "warning")
@@ -320,6 +324,7 @@ class GitHubActionTests(unittest.TestCase):
         self.assertIn("Skill wiring", summary_text)
         self.assertIn("First-agent lifecycle", summary_text)
         self.assertIn("Repo map", summary_text)
+        self.assertIn("File coverage", summary_text)
         self.assertIn("Feature state", summary_text)
         self.assertIn("Observability", summary_text)
         self.assertIn("Index adapters", summary_text)

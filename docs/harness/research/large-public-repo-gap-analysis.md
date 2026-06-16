@@ -80,8 +80,8 @@ Definition of done:
 
 Verification: the 2026-06-16 field refresh across Kubernetes, VS Code, and
 Bazel shows dry-run generation using the requested 20,000-file scan limit for
-all three repositories. The remaining cross-repo finding is nested instruction
-planning.
+all three repositories. Remaining cross-repo findings are nested instruction
+planning and deterministic file-discovery priority ordering.
 
 ### 2. File Discovery Needs Large-Repo Coverage Signals
 
@@ -91,16 +91,25 @@ Observed: Kubernetes has 30,513 tracked files and still hit the 20,000-file
 scan limit. The current scanner reports truncation, but it cannot yet tell the
 user which high-signal categories were definitely covered.
 
-Deterministic fix:
+Implemented deterministic fix:
 
 - Use git tracked-file inventory when available as a read-only file count and
   coverage source.
 - Keep the standard-library filesystem walk for non-git targets.
-- Split discovery into deterministic passes:
+- `index --json`, `report --json`, `quickstart --json`, and
+  `init --dry-run --json` expose `harnessforge.fileCoverage.v1` with scanned
+  count, total tracked count when known, inventory source, category coverage,
+  omitted examples, and warnings.
+- The GitHub Action report summary includes file coverage.
+- The large-public-repo field analyzer records file-coverage status and reports
+  `file_coverage_budget_limited` when a capped scan misses tracked categories.
+- Keep target-relative paths only.
+
+Remaining optimization:
+
+- Split future discovery into deterministic priority passes:
   root instruction/runtime files, workflow files, manifests, source-of-truth
   docs, SBOM files, then remaining files up to budget.
-- Report coverage by category rather than only one truncation boolean.
-- Keep target-relative paths only.
 
 Definition of done:
 
@@ -108,6 +117,13 @@ Definition of done:
   budget-limited.
 - `index`, `report`, `quickstart`, and `init --dry-run --json` expose the same
   coverage model.
+
+Verification: the 2026-06-16 field refresh across Kubernetes, VS Code, and
+Bazel reports `harnessforge.fileCoverage.v1` for all three repositories. All
+three remain `budget_limited`, which confirms reporting is implemented and the
+next improvement is deterministic priority ordering before representative
+source/test scanning; the field report tracks that remaining work as
+`file_discovery_priority`.
 
 ### 3. Component Inventory Needs Ranking And Overflow
 

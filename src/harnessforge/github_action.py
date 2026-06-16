@@ -583,6 +583,12 @@ def _report_summary_markdown(payload: dict[str, Any]) -> str:
     latest_verify = payload["verifyEvidence"]["latest"]
     verify_status = latest_verify["verdict"] if latest_verify else "missing"
     repo_map = payload["index"]["repoMap"]["summary"]
+    file_coverage = payload["index"]["fileCoverage"]
+    total_files = (
+        file_coverage["totalFileCount"]
+        if file_coverage["totalFileCount"] is not None
+        else "unknown"
+    )
     lines = [
         "| Signal | Value |",
         "| --- | --- |",
@@ -620,6 +626,9 @@ def _report_summary_markdown(payload: dict[str, Any]) -> str:
         "| Repo map | "
         f"`{repo_map['componentCount']}` components, "
         f"`{repo_map['sourceOfTruthCount']}` source docs |",
+        "| File coverage | "
+        f"`{file_coverage['scannedFileCount']}` scanned / `{total_files}` total "
+        f"from `{file_coverage['inventorySource']}` |",
         f"| SBOM files | `{repo_map['sbomCount']}` |",
     ]
     if payload["nextActions"]:

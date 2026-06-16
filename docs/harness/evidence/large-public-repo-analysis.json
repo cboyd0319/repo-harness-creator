@@ -18,6 +18,10 @@
     {
       "code": "nested_agents_plan",
       "message": "large monorepos produce review-required nested AGENTS.md candidates; keep them advisory and improve ranking before any explicit write mode."
+    },
+    {
+      "code": "file_discovery_priority",
+      "message": "file coverage is now visible, and sampled large repos still show budget-limited categories; improve deterministic priority ordering before representative source/test scanning."
     }
   ],
   "execution": {
@@ -29,7 +33,7 @@
     "normalHarnessGenerationNetworkAccess": false,
     "targetWritesPerformed": false
   },
-  "generatedAt": "2026-06-16T17:20:16+00:00",
+  "generatedAt": "2026-06-16T17:42:48+00:00",
   "mode": "real_public_repo_field_analysis",
   "repositories": [
     {
@@ -107,6 +111,21 @@
           "skipped": 1,
           "would_write": 37
         }
+      },
+      "fileCoverage": {
+        "budgetLimitedCategories": [
+          "runtime_manifests",
+          "source_of_truth",
+          "source",
+          "tests",
+          "remaining"
+        ],
+        "coverageComplete": false,
+        "inventorySource": "git_tracked",
+        "scannedFileCount": 20000,
+        "schemaVersion": "harnessforge.fileCoverage.v1",
+        "status": "budget_limited",
+        "totalFileCount": 30513
       },
       "head": "e7c90e9b46be42a1980342991c3c87ae626c69e4",
       "headMatchesPinnedRef": true,
@@ -267,6 +286,11 @@
           "code": "file_scan_truncated",
           "message": "structural scan covered 20000 files with max-files 20000, while git tracks 30513",
           "severity": "high"
+        },
+        {
+          "code": "file_coverage_budget_limited",
+          "message": "bounded scan did not cover all tracked file categories: runtime_manifests, source_of_truth, source, tests, remaining",
+          "severity": "medium"
         },
         {
           "code": "nested_agents_review_needed",
@@ -587,6 +611,21 @@
           "would_write": 36
         }
       },
+      "fileCoverage": {
+        "budgetLimitedCategories": [
+          "runtime_manifests",
+          "source_of_truth",
+          "source",
+          "tests",
+          "remaining"
+        ],
+        "coverageComplete": false,
+        "inventorySource": "git_tracked",
+        "scannedFileCount": 15407,
+        "schemaVersion": "harnessforge.fileCoverage.v1",
+        "status": "budget_limited",
+        "totalFileCount": 15783
+      },
       "head": "dd4cdfe836fb285070017f95eff22f2cecb03b49",
       "headMatchesPinnedRef": true,
       "id": "microsoft-vscode",
@@ -751,6 +790,11 @@
       },
       "pinnedRef": "dd4cdfe836fb285070017f95eff22f2cecb03b49",
       "qualityGaps": [
+        {
+          "code": "file_coverage_budget_limited",
+          "message": "bounded scan did not cover all tracked file categories: runtime_manifests, source_of_truth, source, tests, remaining",
+          "severity": "medium"
+        },
         {
           "code": "component_scan_truncated",
           "message": "component inventory reached the bounded component limit",
@@ -1060,6 +1104,20 @@
           "would_write": 37
         }
       },
+      "fileCoverage": {
+        "budgetLimitedCategories": [
+          "source_of_truth",
+          "source",
+          "tests",
+          "remaining"
+        ],
+        "coverageComplete": false,
+        "inventorySource": "git_tracked",
+        "scannedFileCount": 8333,
+        "schemaVersion": "harnessforge.fileCoverage.v1",
+        "status": "budget_limited",
+        "totalFileCount": 13265
+      },
       "head": "b1eed3b9a51e86b605f58b3182ab97feb2f1a939",
       "headMatchesPinnedRef": true,
       "id": "bazelbuild-bazel",
@@ -1216,6 +1274,11 @@
       },
       "pinnedRef": "b1eed3b9a51e86b605f58b3182ab97feb2f1a939",
       "qualityGaps": [
+        {
+          "code": "file_coverage_budget_limited",
+          "message": "bounded scan did not cover all tracked file categories: source_of_truth, source, tests, remaining",
+          "severity": "medium"
+        },
         {
           "code": "component_scan_truncated",
           "message": "component inventory reached the bounded component limit",
@@ -1434,6 +1497,7 @@
     "missing": 0,
     "qualityGapCounts": {
       "component_scan_truncated": 2,
+      "file_coverage_budget_limited": 3,
       "file_scan_truncated": 1,
       "nested_agents_review_needed": 3,
       "no_existing_sbom_detected": 2

@@ -62,9 +62,13 @@ harnessforge index --target /path/to/repo --max-files 20000 --json
 ```
 
 The default index scans up to 4,000 files for fast first-pass analysis. Use
-`--max-files` for larger repositories. The JSON report also states when the
-bounded component inventory was truncated, so humans can add important omitted
-boundaries to `docs/harness/boundaries/component-inventory.md`.
+`--max-files` for larger repositories. The JSON report includes
+`fileCoverage`: when the target is a git checkout, HarnessForge compares the
+bounded scan against `git ls-files` and reports scanned versus tracked files by
+category. For non-git targets it reports coverage from the bounded filesystem
+scan. The JSON report also states when the bounded component inventory was
+truncated, so humans can add important omitted boundaries to
+`docs/harness/boundaries/component-inventory.md`.
 
 `index --json` includes a compact `repoMap` built from the structural index:
 primary languages, component candidates, source-of-truth docs, manifest kinds,
@@ -111,8 +115,9 @@ fan-out routing status. It also includes instruction-quality and context-budget
 signals for startup instruction files, the compact repo-map summary from
 `index`, policy preset recommendations, feature-state scope, runtime/process
 observability, optional index-adapter status, repo-local harness skill wiring,
-SBOM adapter status, and review-required nested `AGENTS.md` scope candidates
-for monorepos. It also reports accepted high-risk surface review evidence,
+file-coverage status, SBOM adapter status, and review-required nested
+`AGENTS.md` scope candidates for monorepos. It also reports accepted high-risk
+surface review evidence,
 separates unresolved actionable review work from accepted advisory inventory in
 `reviewWork`, and includes an evidence-gated maturity level from `generated` to
 `measured` without treating structural audit score as proof of real-agent

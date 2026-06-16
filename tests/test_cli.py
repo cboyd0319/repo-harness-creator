@@ -455,6 +455,48 @@ class CliTests(unittest.TestCase):
         self.assertEqual(payload["limits"]["maxFiles"], 3)
         self.assertIn("3-file detection limit", " ".join(payload["warnings"]))
 
+    def test_index_json_reports_git_tracked_file_coverage_when_scan_limited(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            (root / "README.md").write_text("# Demo\n", encoding="utf-8")
+            (root / "package.json").write_text('{"scripts":{"test":"node --test"}}\n', encoding="utf-8")
+            (root / ".github" / "workflows").mkdir(parents=True)
+            (root / ".github" / "workflows" / "ci.yml").write_text("name: CI\n", encoding="utf-8")
+            (root / "src").mkdir()
+            (root / "src" / "app.py").write_text("print('ok')\n", encoding="utf-8")
+            (root / "tests").mkdir()
+            (root / "tests" / "test_app.py").write_text("def test_ok(): assert True\n", encoding="utf-8")
+            _git(root, "init")
+            _git(root, "add", ".")
+            stdout = io.StringIO()
+            with contextlib.redirect_stdout(stdout):
+                code = main(
+                    [
+                        "index",
+                        "--target",
+                        str(root),
+                        "--max-files",
+                        "3",
+                        "--json",
+                    ]
+                )
+
+            payload = json.loads(stdout.getvalue())
+
+        coverage = payload["fileCoverage"]
+        categories = {item["id"]: item for item in coverage["categories"]}
+        self.assertEqual(code, 0)
+        self.assertEqual(coverage["schemaVersion"], "harnessforge.fileCoverage.v1")
+        self.assertEqual(coverage["inventorySource"], "git_tracked")
+        self.assertEqual(coverage["fileScanLimit"], 3)
+        self.assertEqual(coverage["scannedFileCount"], 3)
+        self.assertEqual(coverage["totalFileCount"], 5)
+        self.assertFalse(coverage["coverageComplete"])
+        self.assertEqual(categories["runtime_manifests"]["totalFiles"], 1)
+        self.assertEqual(categories["workflows"]["totalFiles"], 1)
+        self.assertTrue(any(item["budgetLimited"] for item in coverage["categories"]))
+        self.assertIn("budget-limited", "\n".join(payload["warnings"]))
+
     def test_init_dry_run_json_accepts_explicit_file_scan_limit(self) -> None:
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp)
@@ -479,6 +521,14 @@ class CliTests(unittest.TestCase):
         self.assertEqual(payload["repositoryScan"]["maxFiles"], 3)
         self.assertEqual(payload["repositoryScan"]["fileCount"], 3)
         self.assertTrue(payload["repositoryScan"]["truncated"])
+        self.assertEqual(
+            payload["repositoryScan"]["coverage"]["schemaVersion"],
+            "harnessforge.fileCoverage.v1",
+        )
+        self.assertEqual(
+            payload["repositoryScan"]["coverage"]["inventorySource"],
+            "filesystem_scan",
+        )
 
     def test_init_dry_run_json_reports_nested_instruction_plan(self) -> None:
         with tempfile.TemporaryDirectory() as tmp:
@@ -1009,6 +1059,10 @@ class CliTests(unittest.TestCase):
         self.assertEqual(payload["drift"]["summary"]["actionable"], 0)
         self.assertIn("fileCount", payload["index"]["summary"])
         self.assertIn("repoMap", payload["index"])
+        self.assertEqual(
+            payload["index"]["fileCoverage"]["schemaVersion"],
+            "harnessforge.fileCoverage.v1",
+        )
         self.assertIn("sbomCount", payload["index"]["summary"])
         self.assertEqual(payload["verifyEvidence"]["latest"]["verdict"], "passed")
         self.assertEqual(payload["effectiveness"]["verdict"], "blocked")

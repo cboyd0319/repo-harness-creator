@@ -46,6 +46,7 @@ from .project.finalize_review import (
     build_review_finalization_plan,
     format_review_finalization_plan,
 )
+from .project.file_coverage import build_file_coverage_report
 from .project.indexer import build_index_report, format_index_report
 from .project.nested_instructions import build_nested_instruction_plan
 from .project.planner import build_diff_plan, diff_plan_to_dict, format_diff_plan
@@ -1598,6 +1599,7 @@ def _scan_to_dict(profile: ProjectProfile) -> dict[str, object]:
         "fileCount": len(profile.files),
         "maxFiles": profile.file_scan_limit,
         "truncated": profile.file_scan_truncated,
+        "coverage": build_file_coverage_report(profile),
     }
 
 

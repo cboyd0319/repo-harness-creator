@@ -150,6 +150,13 @@ def build_report(
 
 def format_report(payload: dict[str, Any]) -> str:
     instruction_average = payload["instructionQuality"]["summary"]["averageScore"]
+    file_coverage = payload["index"]["fileCoverage"]
+    total_files = (
+        file_coverage["totalFileCount"]
+        if file_coverage["totalFileCount"] is not None
+        else "unknown"
+    )
+    coverage_status = "complete" if file_coverage["coverageComplete"] else "budget-limited"
     lines = [
         "# HarnessForge Report",
         "",
@@ -193,17 +200,21 @@ def format_report(payload: dict[str, Any]) -> str:
         f"- Manifests: {payload['index']['summary']['manifestCount']}",
         f"- Source-of-truth docs: {payload['index']['summary']['sourceOfTruthCount']}",
         f"- SBOM files: {payload['index']['summary']['sbomCount']}",
-            f"- Repo-map unknowns: {len(payload['index']['repoMap']['unknowns'])}",
-            "",
-            "## Nested Instruction Plan",
-            "",
-            f"- Status: `{payload['nestedInstructionPlan']['status']}`",
-            "- Write by default: "
-            f"`{str(payload['nestedInstructionPlan']['writeByDefault']).lower()}`",
-            f"- Candidates: {payload['nestedInstructionPlan']['candidateCount']}",
-            f"- Existing nested agents: {payload['nestedInstructionPlan']['existingNestedAgentCount']}",
-            "",
-            "## Verify Evidence",
+        f"- Repo-map unknowns: {len(payload['index']['repoMap']['unknowns'])}",
+        "- File coverage: "
+        f"`{file_coverage['scannedFileCount']}` scanned / "
+        f"`{total_files}` total from `{file_coverage['inventorySource']}` "
+        f"({coverage_status})",
+        "",
+        "## Nested Instruction Plan",
+        "",
+        f"- Status: `{payload['nestedInstructionPlan']['status']}`",
+        "- Write by default: "
+        f"`{str(payload['nestedInstructionPlan']['writeByDefault']).lower()}`",
+        f"- Candidates: {payload['nestedInstructionPlan']['candidateCount']}",
+        f"- Existing nested agents: {payload['nestedInstructionPlan']['existingNestedAgentCount']}",
+        "",
+        "## Verify Evidence",
         "",
     ]
     latest = payload["verifyEvidence"]["latest"]
@@ -420,6 +431,7 @@ def _index_summary(index: dict[str, Any]) -> dict[str, Any]:
         "summary": index["summary"],
         "warnings": index["warnings"],
         "fileClasses": index["fileClasses"],
+        "fileCoverage": index["fileCoverage"],
         "repoMap": index["repoMap"],
         "sbom": index["sbom"],
         "sourceOfTruth": index["sourceOfTruth"][:10],

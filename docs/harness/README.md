@@ -114,13 +114,16 @@ first, skips prompts without a TTY, and asks before writing in a real terminal.
 
 `index --json` is a read-only structural repo map. It reports file class,
 language, manifest, component, source-of-truth, entrypoint, generated, vendor,
-workflow, SBOM, review-required, and compact `repoMap` signals without command
-execution, writes, local absolute paths, code excerpts, embeddings, or network
-access. Existing SPDX and CycloneDX-style SBOM files are cited as evidence;
-HarnessForge does not generate SBOMs in normal read-only flows. The default
-file scan limit is 4,000 files; pass `--max-files` for deeper large-repo
-analysis. Component inventories remain bounded and report truncation so omitted
-boundaries can be reviewed and added manually.
+workflow, SBOM, review-required, compact `repoMap`, and `fileCoverage` signals
+without command execution, writes, local absolute paths, code excerpts,
+embeddings, or network access. For git checkouts, `fileCoverage` compares the
+bounded scan against `git ls-files` by category so large-repo reports do not
+look complete when the scan is capped. Existing SPDX and CycloneDX-style SBOM
+files are cited as evidence; HarnessForge does not generate SBOMs in normal
+read-only flows. The default file scan limit is 4,000 files; pass
+`--max-files` for deeper large-repo analysis. Component inventories remain
+bounded and report truncation so omitted boundaries can be reviewed and added
+manually.
 
 `effectiveness --json` is a read-only assessor for stored real-agent or
 benchmark evidence. It scans target-contained

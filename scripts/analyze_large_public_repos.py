@@ -343,6 +343,7 @@ def analyze_repo(
                 "sourceOfTruth": index["repoMap"]["sourceOfTruth"][:12],
                 "unknowns": index["repoMap"]["unknowns"][:12],
             },
+            "fileCoverage": file_coverage_summary(index["fileCoverage"]),
             "readiness": {
                 "verdict": readiness["verdict"],
                 "warnings": readiness["warnings"][:12],
@@ -519,6 +520,22 @@ def quality_gaps(
                 ),
             }
         )
+    if not index["fileCoverage"]["coverageComplete"]:
+        budget_limited = [
+            category["id"]
+            for category in index["fileCoverage"]["categories"]
+            if category["budgetLimited"]
+        ]
+        gaps.append(
+            {
+                "code": "file_coverage_budget_limited",
+                "severity": "medium",
+                "message": (
+                    "bounded scan did not cover all tracked file categories: "
+                    + ", ".join(budget_limited[:6])
+                ),
+            }
+        )
     if profile.component_scan_truncated:
         gaps.append(
             {
@@ -602,6 +619,21 @@ def cross_repo_findings(results: list[dict[str, Any]]) -> list[dict[str, str]]:
                     "large monorepos produce review-required nested AGENTS.md "
                     "candidates; keep them advisory and improve ranking before "
                     "any explicit write mode."
+                ),
+            }
+        )
+    if any(
+        gap["code"] == "file_coverage_budget_limited"
+        for result in results
+        for gap in result.get("qualityGaps", [])
+    ):
+        findings.append(
+            {
+                "code": "file_discovery_priority",
+                "message": (
+                    "file coverage is now visible, and sampled large repos still "
+                    "show budget-limited categories; improve deterministic "
+                    "priority ordering before representative source/test scanning."
                 ),
             }
         )
@@ -713,14 +745,14 @@ def format_markdown_report(payload: dict[str, Any]) -> str:
             "",
             "## Repository Results",
             "",
-            "| Repo | Status | Stack | Tracked | Scanned | Components | Nested Plan | Top Gaps |",
-            "| --- | --- | --- | ---: | ---: | ---: | --- | --- |",
+            "| Repo | Status | Stack | Tracked | Scanned | Coverage | Components | Nested Plan | Top Gaps |",
+            "| --- | --- | --- | ---: | ---: | --- | ---: | --- | --- |",
         ]
     )
     for repo in payload["repositories"]:
         if repo["status"] != "analyzed":
             lines.append(
-                f"| `{repo['id']}` | `{repo['status']}` | n/a | 0 | 0 | 0 | n/a | "
+                f"| `{repo['id']}` | `{repo['status']}` | n/a | 0 | 0 | n/a | 0 | n/a | "
                 f"{repo['qualityGaps'][0]['message']} |"
             )
             continue
@@ -729,6 +761,7 @@ def format_markdown_report(payload: dict[str, Any]) -> str:
             f"| `{repo['id']}` | `analyzed` | `{repo['detected']['stack']}` | "
             f"{repo['trackedFileCount']} | "
             f"{repo['indexSummary']['fileCount']} | "
+            f"`{repo['fileCoverage']['status']}` | "
             f"{repo['detected']['componentCount']} | "
             f"{repo['nestedInstructionPlan']['candidateCount']} candidates | "
             f"{gaps} |"
@@ -748,6 +781,23 @@ def format_markdown_report(payload: dict[str, Any]) -> str:
             lines.append(f"- ... {remaining} more candidates in JSON report")
         lines.append("")
     return "\n".join(lines).rstrip() + "\n"
+
+
+def file_coverage_summary(file_coverage: dict[str, Any]) -> dict[str, Any]:
+    budget_limited = [
+        category["id"]
+        for category in file_coverage["categories"]
+        if category["budgetLimited"]
+    ]
+    return {
+        "schemaVersion": file_coverage["schemaVersion"],
+        "inventorySource": file_coverage["inventorySource"],
+        "scannedFileCount": file_coverage["scannedFileCount"],
+        "totalFileCount": file_coverage["totalFileCount"],
+        "coverageComplete": file_coverage["coverageComplete"],
+        "status": "complete" if file_coverage["coverageComplete"] else "budget_limited",
+        "budgetLimitedCategories": budget_limited[:12],
+    }
 
 
 def display_path(path: Path, root: Path) -> str:

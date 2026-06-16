@@ -22,7 +22,7 @@ Downstream tools and GitHub Action summaries may rely on these fields:
 | `reviewWork` | Separates unresolved actionable review work from accepted advisory inventory |
 | `audit` | Structural score, bottleneck, failed checks, and recommendations |
 | `drift` | Generated-file drift summary and recommended actions |
-| `index` | Structural index summary, compact repo map, SBOM evidence, and source-of-truth docs |
+| `index` | Structural index summary, compact repo map, file coverage, SBOM evidence, and source-of-truth docs |
 | `nestedInstructionPlan` | Review-required nested `AGENTS.md` candidates for monorepos; never default writes |
 | `verifyEvidence` | Stored full or compact verify evidence inventory |
 | `effectiveness` | Stored real-agent or benchmark evidence assessment summary |
@@ -53,6 +53,20 @@ but accepted by target-contained evidence, such as
 actionable review work. Do not treat accepted advisory surfaces as unresolved
 work unless the target repo changes the underlying workflow, instruction,
 container, hook, or tool boundary.
+
+## File Coverage
+
+`index.fileCoverage` has schema `harnessforge.fileCoverage.v1`. It reports the
+bounded scan limit, scanned file count, total tracked file count when known,
+inventory source, category coverage, omitted examples, and warnings.
+
+For git checkouts, `inventorySource` is `git_tracked` and `totalFileCount` is
+based on `git ls-files`. For non-git targets, `inventorySource` is
+`filesystem_scan`; `totalFileCount` is `null` when the filesystem scan was
+truncated.
+
+Do not treat `index.summary.fileCount` as total repository size when
+`index.fileCoverage.coverageComplete` is `false`.
 
 ## Verify Evidence
 

@@ -5,6 +5,7 @@ from pathlib import Path, PurePosixPath
 from typing import Any
 
 from .detect import COMPONENT_MARKERS
+from .file_coverage import build_file_coverage_report
 from ..core.models import ProjectProfile
 from ..core.paths import is_inside_root, path_from_relative_text
 
@@ -230,10 +231,12 @@ def build_index_report(profile: ProjectProfile) -> dict[str, Any]:
     entrypoints = _entrypoints(records, profile.verification_commands)
     sboms = _sbom_records(records)
     total_bytes = sum(record["bytes"] for record in records)
+    file_coverage = build_file_coverage_report(profile)
     if profile.file_scan_truncated:
         warnings.append(
             f"File scan reached the {profile.file_scan_limit}-file detection limit."
         )
+    warnings.extend(file_coverage["warnings"])
     if profile.component_scan_truncated:
         warnings.append(
             "Component inventory reached the "
@@ -287,6 +290,7 @@ def build_index_report(profile: ProjectProfile) -> dict[str, Any]:
             review_required=review_required,
             sboms=sboms,
         ),
+        "fileCoverage": file_coverage,
         "reviewRequired": review_required,
         "limits": {
             "maxFiles": profile.file_scan_limit,
@@ -299,6 +303,13 @@ def build_index_report(profile: ProjectProfile) -> dict[str, Any]:
 
 
 def format_index_report(report: dict[str, Any]) -> str:
+    file_coverage = report["fileCoverage"]
+    total_files = (
+        file_coverage["totalFileCount"]
+        if file_coverage["totalFileCount"] is not None
+        else "unknown"
+    )
+    coverage_status = "complete" if file_coverage["coverageComplete"] else "budget-limited"
     lines = [
         f"Repo index: {report['target']['name']}",
         f"Detected stack: {report['detectedStack']}",
@@ -306,6 +317,11 @@ def format_index_report(report: dict[str, Any]) -> str:
             "Files: "
             f"{report['summary']['fileCount']} "
             f"({report['summary']['byteCount']} bytes)"
+        ),
+        (
+            "File coverage: "
+            f"{file_coverage['scannedFileCount']} scanned / {total_files} total "
+            f"from {file_coverage['inventorySource']} ({coverage_status})"
         ),
         f"Components: {report['summary']['componentCount']}",
         "",

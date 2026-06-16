@@ -229,6 +229,37 @@ Useful repo-map fields:
 The repo map should be deterministic, compact, and reviewable. It should never
 commit embeddings, private code summaries, or machine-local paths by default.
 
+### Deterministic Large-Repo File Discovery Priority
+
+Status: accepted, not started.
+
+The 2026-06-16 Kubernetes, VS Code, and Bazel field refresh shows
+`harnessforge.fileCoverage.v1` is now visible, but all three sampled large
+repos still have budget-limited file categories. The next indexing improvement
+is deterministic priority ordering before representative source/test scanning.
+
+Scope:
+
+- CLI/runtime: improve `detect_project` or index discovery ordering so root
+  instructions, runtime files, workflows, source-of-truth docs, harness docs,
+  manifests, and SBOM evidence are scanned before broad source/test examples.
+- Generated target harness: no new default files unless the improved signal
+  changes generated guidance quality.
+- GitHub Action: report and release-check paths should inherit the same
+  deterministic discovery behavior through shared library code.
+- Tests/fixtures: cover capped scans where high-signal files would otherwise
+  appear after many source files.
+- Security/privacy: keep paths target-relative, avoid code excerpts and
+  embeddings, and do not add network access.
+
+Definition of done:
+
+- Large-repo field evidence shows fewer high-signal categories marked
+  budget-limited at the same `--max-files` value.
+- `fileCoverage.categories[*]` distinguishes budget limits from intentionally
+  skipped categories if the scanner excludes tracked vendor/generated files.
+- Generated guidance quality improves without increasing default harness size.
+
 ### SBOM-Aware Indexing
 
 Status: default detection of existing SPDX and CycloneDX-style SBOM files is
