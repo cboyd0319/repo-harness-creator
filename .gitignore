@@ -53,6 +53,7 @@ ENV/
 build/
 dist/
 pip-wheel-metadata/
+.harnessforge/
 htmlcov/
 .coverage
 .coverage.*

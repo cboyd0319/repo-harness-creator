@@ -1,0 +1,1373 @@
+{
+  "corpus": {
+    "analysisFocus": [
+      "large-file-scan-limits",
+      "component-boundary-detection",
+      "verification-command-quality",
+      "source-of-truth-routing",
+      "existing-instruction-quality",
+      "nested-agents-monorepo-instruction-scopes",
+      "sbom-detection",
+      "generated-dry-run-quality"
+    ],
+    "configuredRepos": 13,
+    "lastReviewed": "2026-06-16",
+    "schemaVersion": "harnessforge.largePublicRepoCorpus.v1"
+  },
+  "crossRepoFindings": [
+    {
+      "code": "generator_max_files_option",
+      "message": "init and dry-run generation need an explicit max-files or index-reuse path for very large repositories."
+    },
+    {
+      "code": "nested_agents_plan",
+      "message": "large monorepos should get a review-required nested AGENTS.md plan instead of only a root instruction file."
+    }
+  ],
+  "execution": {
+    "checkoutRoot": ".harnessforge/large-public-repos/checkouts",
+    "commandsExecuted": true,
+    "maxFiles": 20000,
+    "missingReposAreCloned": false,
+    "networkAccess": false,
+    "normalHarnessGenerationNetworkAccess": false,
+    "targetWritesPerformed": false
+  },
+  "generatedAt": "2026-06-16T16:35:13+00:00",
+  "mode": "real_public_repo_field_analysis",
+  "repositories": [
+    {
+      "analysisFocus": [
+        "verification-command-quality",
+        "workflow-surface-detection",
+        "nested-agents-monorepo-instruction-scopes"
+      ],
+      "audit": {
+        "bottleneck": "tools",
+        "failedCheckCount": 63,
+        "overall": 7
+      },
+      "categories": [
+        "go-service",
+        "very-large",
+        "monorepo",
+        "cloud-native"
+      ],
+      "checkout": {
+        "clonedThisRun": false,
+        "message": "existing checkout reused",
+        "status": "available"
+      },
+      "detected": {
+        "componentCount": 44,
+        "componentScanLimit": 80,
+        "componentScanTruncated": false,
+        "fileScanLimit": 20000,
+        "fileScanTruncated": true,
+        "languages": [
+          "go",
+          "python",
+          "shell"
+        ],
+        "packageManagers": [
+          "go"
+        ],
+        "routingMarkers": [
+          "AGENTS.md"
+        ],
+        "runtimeFiles": [
+          "go.mod",
+          "go.work"
+        ],
+        "stack": "go",
+        "verificationCommands": [
+          "go test ./...",
+          "go test ./hack/tools/...",
+          "go test ./hack/tools/golangci-lint/...",
+          "go test ./hack/tools/instrumentation/...",
+          "go test ./staging/src/k8s.io/api/...",
+          "go test ./staging/src/k8s.io/apiextensions-apiserver/...",
+          "go test ./staging/src/k8s.io/apimachinery/...",
+          "go test ./staging/src/k8s.io/apiserver/...",
+          "go test ./staging/src/k8s.io/cli-runtime/...",
+          "go test ./staging/src/k8s.io/client-go/...",
+          "go test ./staging/src/k8s.io/cloud-provider/...",
+          "go test ./staging/src/k8s.io/cluster-bootstrap/..."
+        ],
+        "workspaceMarkers": [
+          "go.work",
+          "multiple nested component manifests"
+        ]
+      },
+      "dryRunGeneration": {
+        "fileScanLimit": 4000,
+        "fileScanTruncated": true,
+        "plannedWriteCount": 38,
+        "status": "planned",
+        "usesDefaultFileScanLimit": true,
+        "writeStatusCounts": {
+          "skipped": 1,
+          "would_write": 37
+        }
+      },
+      "head": "e7c90e9b46be42a1980342991c3c87ae626c69e4",
+      "headMatchesPinnedRef": true,
+      "id": "kubernetes-kubernetes",
+      "indexSummary": {
+        "byteCount": 188333831,
+        "componentCount": 44,
+        "componentsTruncated": false,
+        "fileCount": 20000,
+        "manifestCount": 55,
+        "reviewRequiredCount": 0,
+        "sbomCount": 0,
+        "sourceOfTruthCount": 102,
+        "truncated": true
+      },
+      "nestedInstructionPlan": {
+        "candidateComponents": [
+          {
+            "path": "hack/tools",
+            "reason": "component has its own manifest or boundary signal",
+            "recommendedAction": "review_required"
+          },
+          {
+            "path": "cluster/addons/addon-manager",
+            "reason": "component has its own manifest or boundary signal",
+            "recommendedAction": "review_required"
+          },
+          {
+            "path": "cluster/images/etcd-version-monitor",
+            "reason": "component has its own manifest or boundary signal",
+            "recommendedAction": "review_required"
+          },
+          {
+            "path": "cluster/images/kubemark",
+            "reason": "component has its own manifest or boundary signal",
+            "recommendedAction": "review_required"
+          },
+          {
+            "path": "hack/tools/golangci-lint",
+            "reason": "component has its own manifest or boundary signal",
+            "recommendedAction": "review_required"
+          },
+          {
+            "path": "hack/tools/instrumentation",
+            "reason": "component has its own manifest or boundary signal",
+            "recommendedAction": "review_required"
+          },
+          {
+            "path": "cluster/addons/dns/coredns",
+            "reason": "component has its own manifest or boundary signal",
+            "recommendedAction": "review_required"
+          },
+          {
+            "path": "cluster/addons/dns/kube-dns",
+            "reason": "component has its own manifest or boundary signal",
+            "recommendedAction": "review_required"
+          },
+          {
+            "path": "cluster/gce/gci/mounter",
+            "reason": "component has its own manifest or boundary signal",
+            "recommendedAction": "review_required"
+          },
+          {
+            "path": "staging/src/k8s.io/api",
+            "reason": "component has its own manifest or boundary signal",
+            "recommendedAction": "review_required"
+          },
+          {
+            "path": "staging/src/k8s.io/apiextensions-apiserver",
+            "reason": "component has its own manifest or boundary signal",
+            "recommendedAction": "review_required"
+          },
+          {
+            "path": "staging/src/k8s.io/apimachinery",
+            "reason": "component has its own manifest or boundary signal",
+            "recommendedAction": "review_required"
+          },
+          {
+            "path": "staging/src/k8s.io/apiserver",
+            "reason": "component has its own manifest or boundary signal",
+            "recommendedAction": "review_required"
+          },
+          {
+            "path": "staging/src/k8s.io/cli-runtime",
+            "reason": "component has its own manifest or boundary signal",
+            "recommendedAction": "review_required"
+          },
+          {
+            "path": "staging/src/k8s.io/client-go",
+            "reason": "component has its own manifest or boundary signal",
+            "recommendedAction": "review_required"
+          },
+          {
+            "path": "staging/src/k8s.io/cloud-provider",
+            "reason": "component has its own manifest or boundary signal",
+            "recommendedAction": "review_required"
+          },
+          {
+            "path": "staging/src/k8s.io/cluster-bootstrap",
+            "reason": "component has its own manifest or boundary signal",
+            "recommendedAction": "review_required"
+          },
+          {
+            "path": "staging/src/k8s.io/code-generator",
+            "reason": "component has its own manifest or boundary signal",
+            "recommendedAction": "review_required"
+          },
+          {
+            "path": "staging/src/k8s.io/component-base",
+            "reason": "component has its own manifest or boundary signal",
+            "recommendedAction": "review_required"
+          },
+          {
+            "path": "staging/src/k8s.io/component-helpers",
+            "reason": "component has its own manifest or boundary signal",
+            "recommendedAction": "review_required"
+          }
+        ],
+        "candidateCount": 20,
+        "existingNestedAgentCount": 0,
+        "existingNestedAgents": [],
+        "guidance": "Use root AGENTS.md as a short repo-wide router. Add nested AGENTS.md only for meaningful components whose stack, commands, ownership, constraints, or verification differ.",
+        "rootAgentsPresent": true,
+        "status": "review_required",
+        "writeByDefault": false
+      },
+      "pinnedRef": "e7c90e9b46be42a1980342991c3c87ae626c69e4",
+      "qualityGaps": [
+        {
+          "code": "file_scan_truncated",
+          "message": "structural scan covered 20000 files with max-files 20000, while git tracks 30513",
+          "severity": "high"
+        },
+        {
+          "code": "generator_default_scan_limit",
+          "message": "dry-run generation is still limited to the default 4000-file scan",
+          "severity": "high"
+        },
+        {
+          "code": "nested_agents_review_needed",
+          "message": "monorepo-style component boundaries should receive a reviewed nested instruction plan",
+          "severity": "medium"
+        },
+        {
+          "code": "no_existing_sbom_detected",
+          "message": "no SPDX or CycloneDX SBOM file was detected",
+          "severity": "low"
+        }
+      ],
+      "readiness": {
+        "blockedReasons": [],
+        "reviewStatusSummary": {
+          "acceptedAdvisory": 0,
+          "pendingReview": 9,
+          "total": 9
+        },
+        "runnableChecks": [
+          "go test ./...",
+          "go test ./hack/tools/...",
+          "go test ./hack/tools/golangci-lint/...",
+          "go test ./hack/tools/instrumentation/...",
+          "go test ./staging/src/k8s.io/api/...",
+          "go test ./staging/src/k8s.io/apiextensions-apiserver/...",
+          "go test ./staging/src/k8s.io/apimachinery/...",
+          "go test ./staging/src/k8s.io/apiserver/...",
+          "go test ./staging/src/k8s.io/cli-runtime/...",
+          "go test ./staging/src/k8s.io/client-go/...",
+          "go test ./staging/src/k8s.io/cloud-provider/...",
+          "go test ./staging/src/k8s.io/cluster-bootstrap/..."
+        ],
+        "verdict": "warning",
+        "warnings": [
+          "governance inventory detected 8 permission, environment, or agent-control surface(s).",
+          "instruction quality warning: AGENTS.md is needs_review (score 70/100)."
+        ]
+      },
+      "repoMap": {
+        "components": [
+          {
+            "confidence": "high",
+            "markers": [
+              "go.mod",
+              "go.work"
+            ],
+            "path": ".",
+            "source": "manifest"
+          },
+          {
+            "confidence": "high",
+            "markers": [
+              "go.mod",
+              "go.work"
+            ],
+            "path": "hack/tools",
+            "source": "manifest"
+          },
+          {
+            "confidence": "high",
+            "markers": [
+              "Dockerfile",
+              "Makefile"
+            ],
+            "path": "cluster/addons/addon-manager",
+            "source": "manifest"
+          },
+          {
+            "confidence": "high",
+            "markers": [
+              "Dockerfile",
+              "Makefile"
+            ],
+            "path": "cluster/images/etcd-version-monitor",
+            "source": "manifest"
+          },
+          {
+            "confidence": "high",
+            "markers": [
+              "Dockerfile",
+              "Makefile"
+            ],
+            "path": "cluster/images/kubemark",
+            "source": "manifest"
+          },
+          {
+            "confidence": "high",
+            "markers": [
+              "go.mod",
+              "go.work"
+            ],
+            "path": "hack/tools/golangci-lint",
+            "source": "manifest"
+          },
+          {
+            "confidence": "high",
+            "markers": [
+              "go.mod",
+              "go.work"
+            ],
+            "path": "hack/tools/instrumentation",
+            "source": "manifest"
+          },
+          {
+            "confidence": "high",
+            "markers": [
+              "Makefile"
+            ],
+            "path": "cluster/addons/dns/coredns",
+            "source": "manifest"
+          },
+          {
+            "confidence": "high",
+            "markers": [
+              "Makefile"
+            ],
+            "path": "cluster/addons/dns/kube-dns",
+            "source": "manifest"
+          },
+          {
+            "confidence": "high",
+            "markers": [
+              "Dockerfile",
+              "Makefile"
+            ],
+            "path": "cluster/gce/gci/mounter",
+            "source": "manifest"
+          },
+          {
+            "confidence": "high",
+            "markers": [
+              "go.mod"
+            ],
+            "path": "staging/src/k8s.io/api",
+            "source": "manifest"
+          },
+          {
+            "confidence": "high",
+            "markers": [
+              "go.mod"
+            ],
+            "path": "staging/src/k8s.io/apiextensions-apiserver",
+            "source": "manifest"
+          }
+        ],
+        "primaryLanguages": [
+          {
+            "files": 11233,
+            "language": "go"
+          },
+          {
+            "files": 260,
+            "language": "docs"
+          },
+          {
+            "files": 207,
+            "language": "shell"
+          },
+          {
+            "files": 8,
+            "language": "dockerfile"
+          },
+          {
+            "files": 6,
+            "language": "make"
+          }
+        ],
+        "sourceOfTruth": [
+          {
+            "kind": "agent-instructions",
+            "path": "AGENTS.md",
+            "reason": "Agent instruction surface."
+          },
+          {
+            "kind": "project-doc",
+            "path": "README.md",
+            "reason": "High-signal project documentation name."
+          },
+          {
+            "kind": "project-doc",
+            "path": "third_party/forked/gonum/graph/README.md",
+            "reason": "High-signal project documentation name."
+          },
+          {
+            "kind": "project-doc",
+            "path": "third_party/gimme/README.md",
+            "reason": "High-signal project documentation name."
+          },
+          {
+            "kind": "project-doc",
+            "path": "api/api-rules/README.md",
+            "reason": "High-signal project documentation name."
+          },
+          {
+            "kind": "project-doc",
+            "path": "api/openapi-spec/README.md",
+            "reason": "High-signal project documentation name."
+          },
+          {
+            "kind": "project-doc",
+            "path": "CHANGELOG/README.md",
+            "reason": "High-signal project documentation name."
+          },
+          {
+            "kind": "project-doc",
+            "path": "cluster/README.md",
+            "reason": "High-signal project documentation name."
+          },
+          {
+            "kind": "project-doc",
+            "path": "cluster/addons/README.md",
+            "reason": "High-signal project documentation name."
+          },
+          {
+            "kind": "project-doc",
+            "path": "cluster/addons/addon-manager/README.md",
+            "reason": "High-signal project documentation name."
+          }
+        ],
+        "unknowns": [
+          "No existing project-owned SBOM detected."
+        ]
+      },
+      "repository": "kubernetes/kubernetes",
+      "status": "analyzed",
+      "trackedFileCount": 30513,
+      "url": "https://github.com/kubernetes/kubernetes"
+    },
+    {
+      "analysisFocus": [
+        "existing-instruction-quality",
+        "verification-command-quality",
+        "nested-agents-monorepo-instruction-scopes"
+      ],
+      "audit": {
+        "bottleneck": "tools",
+        "failedCheckCount": 61,
+        "overall": 7
+      },
+      "categories": [
+        "typescript-app",
+        "very-large",
+        "monorepo",
+        "desktop-app"
+      ],
+      "checkout": {
+        "clonedThisRun": false,
+        "message": "existing checkout reused",
+        "status": "available"
+      },
+      "detected": {
+        "componentCount": 80,
+        "componentScanLimit": 80,
+        "componentScanTruncated": true,
+        "fileScanLimit": 20000,
+        "fileScanTruncated": false,
+        "languages": [
+          "cpp",
+          "go",
+          "java",
+          "javascript",
+          "php",
+          "python",
+          "ruby",
+          "rust",
+          "shell",
+          "swift",
+          "typescript"
+        ],
+        "packageManagers": [
+          "npm",
+          "cargo",
+          "maven"
+        ],
+        "routingMarkers": [
+          ".github/workflows",
+          ".github/workflows path filters",
+          ".github/workflows working-directory",
+          ".devcontainer",
+          "AGENTS.md",
+          ".github/copilot-instructions.md"
+        ],
+        "runtimeFiles": [
+          ".nvmrc",
+          "package.json",
+          ".devcontainer/devcontainer.json"
+        ],
+        "stack": "typescript-react",
+        "verificationCommands": [
+          "npm test",
+          "npm --prefix .eslint-plugin-local run typecheck",
+          "npm --prefix .vscode/extensions/vscode-selfhost-test-provider test",
+          "cargo test --manifest-path cli/Cargo.toml",
+          "npm --prefix extensions/copilot/chat-lib test",
+          "npm --prefix extensions/copilot/chat-lib run build",
+          "npm --prefix extensions/copilot run typecheck",
+          "npm --prefix extensions/copilot run lint",
+          "npm --prefix extensions/copilot test",
+          "npm --prefix extensions/copilot run build",
+          "npm --prefix extensions/css-language-features test",
+          "npm --prefix extensions/css-language-features/server test"
+        ],
+        "workspaceMarkers": [
+          "multiple nested component manifests"
+        ]
+      },
+      "dryRunGeneration": {
+        "fileScanLimit": 4000,
+        "fileScanTruncated": true,
+        "plannedWriteCount": 38,
+        "status": "planned",
+        "usesDefaultFileScanLimit": true,
+        "writeStatusCounts": {
+          "skipped": 2,
+          "would_write": 36
+        }
+      },
+      "head": "dd4cdfe836fb285070017f95eff22f2cecb03b49",
+      "headMatchesPinnedRef": true,
+      "id": "microsoft-vscode",
+      "indexSummary": {
+        "byteCount": 482098536,
+        "componentCount": 80,
+        "componentsTruncated": true,
+        "fileCount": 15407,
+        "manifestCount": 120,
+        "reviewRequiredCount": 0,
+        "sbomCount": 0,
+        "sourceOfTruthCount": 62,
+        "truncated": false
+      },
+      "nestedInstructionPlan": {
+        "candidateComponents": [
+          {
+            "path": ".devcontainer",
+            "reason": "component has its own manifest or boundary signal",
+            "recommendedAction": "review_required"
+          },
+          {
+            "path": ".eslint-plugin-local",
+            "reason": "component has its own manifest or boundary signal",
+            "recommendedAction": "review_required"
+          },
+          {
+            "path": "cli",
+            "reason": "component has its own manifest or boundary signal",
+            "recommendedAction": "review_required"
+          },
+          {
+            "path": "remote",
+            "reason": "component has its own manifest or boundary signal",
+            "recommendedAction": "review_required"
+          },
+          {
+            "path": "scripts",
+            "reason": "component has its own manifest or boundary signal",
+            "recommendedAction": "review_required"
+          },
+          {
+            "path": "test",
+            "reason": "component has its own manifest or boundary signal",
+            "recommendedAction": "review_required"
+          },
+          {
+            "path": "extensions/bat",
+            "reason": "component has its own manifest or boundary signal",
+            "recommendedAction": "review_required"
+          },
+          {
+            "path": "extensions/clojure",
+            "reason": "component has its own manifest or boundary signal",
+            "recommendedAction": "review_required"
+          },
+          {
+            "path": "extensions/coffeescript",
+            "reason": "component has its own manifest or boundary signal",
+            "recommendedAction": "review_required"
+          },
+          {
+            "path": "extensions/configuration-editing",
+            "reason": "component has its own manifest or boundary signal",
+            "recommendedAction": "review_required"
+          },
+          {
+            "path": "extensions/cpp",
+            "reason": "component has its own manifest or boundary signal",
+            "recommendedAction": "review_required"
+          },
+          {
+            "path": "extensions/csharp",
+            "reason": "component has its own manifest or boundary signal",
+            "recommendedAction": "review_required"
+          },
+          {
+            "path": "extensions/css",
+            "reason": "component has its own manifest or boundary signal",
+            "recommendedAction": "review_required"
+          },
+          {
+            "path": "extensions/css-language-features",
+            "reason": "component has its own manifest or boundary signal",
+            "recommendedAction": "review_required"
+          },
+          {
+            "path": "extensions/dart",
+            "reason": "component has its own manifest or boundary signal",
+            "recommendedAction": "review_required"
+          },
+          {
+            "path": "extensions/debug-auto-launch",
+            "reason": "component has its own manifest or boundary signal",
+            "recommendedAction": "review_required"
+          },
+          {
+            "path": "extensions/debug-server-ready",
+            "reason": "component has its own manifest or boundary signal",
+            "recommendedAction": "review_required"
+          },
+          {
+            "path": "extensions/diff",
+            "reason": "component has its own manifest or boundary signal",
+            "recommendedAction": "review_required"
+          },
+          {
+            "path": "extensions/docker",
+            "reason": "component has its own manifest or boundary signal",
+            "recommendedAction": "review_required"
+          },
+          {
+            "path": "extensions/dotenv",
+            "reason": "component has its own manifest or boundary signal",
+            "recommendedAction": "review_required"
+          }
+        ],
+        "candidateCount": 20,
+        "existingNestedAgentCount": 7,
+        "existingNestedAgents": [
+          "extensions/copilot/src/extension/chatSessions/claude/AGENTS.md",
+          "extensions/copilot/src/extension/chatSessions/copilotcli/AGENTS.md",
+          "extensions/copilot/src/platform/authentication/common/AGENTS.md",
+          "src/vs/platform/agentHost/common/state/AGENTS.md",
+          "src/vs/platform/agentHost/test/node/AGENTS.md",
+          "src/vs/sessions/browser/parts/mobile/contributions/AGENTS.md",
+          "src/vs/workbench/contrib/imageCarousel/AGENTS.md"
+        ],
+        "guidance": "Use root AGENTS.md as a short repo-wide router. Add nested AGENTS.md only for meaningful components whose stack, commands, ownership, constraints, or verification differ.",
+        "rootAgentsPresent": true,
+        "status": "review_required",
+        "writeByDefault": false
+      },
+      "pinnedRef": "dd4cdfe836fb285070017f95eff22f2cecb03b49",
+      "qualityGaps": [
+        {
+          "code": "component_scan_truncated",
+          "message": "component inventory reached the bounded component limit",
+          "severity": "high"
+        },
+        {
+          "code": "generator_default_scan_limit",
+          "message": "dry-run generation is still limited to the default 4000-file scan",
+          "severity": "high"
+        },
+        {
+          "code": "nested_agents_review_needed",
+          "message": "monorepo-style component boundaries should receive a reviewed nested instruction plan",
+          "severity": "medium"
+        },
+        {
+          "code": "no_existing_sbom_detected",
+          "message": "no SPDX or CycloneDX SBOM file was detected",
+          "severity": "low"
+        }
+      ],
+      "readiness": {
+        "blockedReasons": [],
+        "reviewStatusSummary": {
+          "acceptedAdvisory": 0,
+          "pendingReview": 48,
+          "total": 48
+        },
+        "runnableChecks": [
+          "npm test",
+          "npm --prefix .eslint-plugin-local run typecheck",
+          "npm --prefix .vscode/extensions/vscode-selfhost-test-provider test",
+          "cargo test --manifest-path cli/Cargo.toml",
+          "npm --prefix extensions/copilot/chat-lib test",
+          "npm --prefix extensions/copilot/chat-lib run build",
+          "npm --prefix extensions/copilot run typecheck",
+          "npm --prefix extensions/copilot run lint",
+          "npm --prefix extensions/copilot test",
+          "npm --prefix extensions/copilot run build",
+          "npm --prefix extensions/css-language-features test",
+          "npm --prefix extensions/css-language-features/server test"
+        ],
+        "verdict": "warning",
+        "warnings": [
+          "workflow inventory detected 15 repo workflow definition(s); review before agent use.",
+          "governance inventory detected 8 permission, environment, or agent-control surface(s).",
+          "instruction quality warning: AGENTS.md is needs_review (score 60/100).",
+          "instruction quality warning: .github/copilot-instructions.md is needs_review (score 62/100).",
+          "instruction budget warning: .github/copilot-instructions.md is over hard budget (1541 words, 153 lines, 10432 bytes).",
+          "GitHub agent setup workflow detected; review runner, permissions, and credential scope."
+        ]
+      },
+      "repoMap": {
+        "components": [
+          {
+            "confidence": "high",
+            "markers": [
+              "package.json"
+            ],
+            "path": ".",
+            "source": "manifest"
+          },
+          {
+            "confidence": "high",
+            "markers": [
+              "Dockerfile"
+            ],
+            "path": ".devcontainer",
+            "source": "manifest"
+          },
+          {
+            "confidence": "high",
+            "markers": [
+              "package.json"
+            ],
+            "path": ".eslint-plugin-local",
+            "source": "manifest"
+          },
+          {
+            "confidence": "high",
+            "markers": [
+              "Cargo.toml"
+            ],
+            "path": "cli",
+            "source": "manifest"
+          },
+          {
+            "confidence": "high",
+            "markers": [
+              "package.json"
+            ],
+            "path": "extensions",
+            "source": "manifest"
+          },
+          {
+            "confidence": "high",
+            "markers": [
+              "package.json"
+            ],
+            "path": "remote",
+            "source": "manifest"
+          },
+          {
+            "confidence": "high",
+            "markers": [
+              "package.json"
+            ],
+            "path": "scripts",
+            "source": "manifest"
+          },
+          {
+            "confidence": "high",
+            "markers": [
+              "package.json"
+            ],
+            "path": "test",
+            "source": "manifest"
+          },
+          {
+            "confidence": "high",
+            "markers": [
+              "package.json"
+            ],
+            "path": "extensions/bat",
+            "source": "manifest"
+          },
+          {
+            "confidence": "high",
+            "markers": [
+              "package.json"
+            ],
+            "path": "extensions/clojure",
+            "source": "manifest"
+          },
+          {
+            "confidence": "high",
+            "markers": [
+              "package.json"
+            ],
+            "path": "extensions/coffeescript",
+            "source": "manifest"
+          },
+          {
+            "confidence": "high",
+            "markers": [
+              "package.json"
+            ],
+            "path": "extensions/configuration-editing",
+            "source": "manifest"
+          }
+        ],
+        "primaryLanguages": [
+          {
+            "files": 11076,
+            "language": "typescript"
+          },
+          {
+            "files": 455,
+            "language": "docs"
+          },
+          {
+            "files": 129,
+            "language": "javascript"
+          },
+          {
+            "files": 81,
+            "language": "rust"
+          },
+          {
+            "files": 73,
+            "language": "python"
+          }
+        ],
+        "sourceOfTruth": [
+          {
+            "kind": "agent-instructions",
+            "path": "AGENTS.md",
+            "reason": "Agent instruction surface."
+          },
+          {
+            "kind": "project-doc",
+            "path": "README.md",
+            "reason": "High-signal project documentation name."
+          },
+          {
+            "kind": "project-doc",
+            "path": "src/vs/base/browser/ui/codicons/codicon/README.md",
+            "reason": "High-signal project documentation name."
+          },
+          {
+            "kind": "project-doc",
+            "path": "src/vs/editor/test/node/diffing/README.md",
+            "reason": "High-signal project documentation name."
+          },
+          {
+            "kind": "project-doc",
+            "path": "src/vs/platform/agentHost/node/codex/protocol/generated/README.md",
+            "reason": "High-signal project documentation name."
+          },
+          {
+            "kind": "project-doc",
+            "path": "src/vs/sessions/README.md",
+            "reason": "High-signal project documentation name."
+          },
+          {
+            "kind": "project-doc",
+            "path": "src/vs/sessions/test/e2e/README.md",
+            "reason": "High-signal project documentation name."
+          },
+          {
+            "kind": "project-doc",
+            "path": "src/vs/workbench/contrib/terminalContrib/README.md",
+            "reason": "High-signal project documentation name."
+          },
+          {
+            "kind": "project-doc",
+            "path": "src/vscode-dts/README.md",
+            "reason": "High-signal project documentation name."
+          },
+          {
+            "kind": "agent-instructions",
+            "path": ".github/copilot-instructions.md",
+            "reason": "Agent instruction surface."
+          }
+        ],
+        "unknowns": [
+          "No existing project-owned SBOM detected."
+        ]
+      },
+      "repository": "microsoft/vscode",
+      "status": "analyzed",
+      "trackedFileCount": 15783,
+      "url": "https://github.com/microsoft/vscode"
+    },
+    {
+      "analysisFocus": [
+        "source-of-truth-routing",
+        "component-boundary-detection",
+        "verification-command-quality"
+      ],
+      "audit": {
+        "bottleneck": "tools",
+        "failedCheckCount": 65,
+        "overall": 7
+      },
+      "categories": [
+        "java",
+        "starlark",
+        "very-large",
+        "build-system"
+      ],
+      "checkout": {
+        "clonedThisRun": false,
+        "message": "existing checkout reused",
+        "status": "available"
+      },
+      "detected": {
+        "componentCount": 80,
+        "componentScanLimit": 80,
+        "componentScanTruncated": true,
+        "fileScanLimit": 20000,
+        "fileScanTruncated": false,
+        "languages": [
+          "bazel",
+          "cpp",
+          "go",
+          "java",
+          "javascript",
+          "python",
+          "shell",
+          "starlark"
+        ],
+        "packageManagers": [
+          "maven",
+          "gradle"
+        ],
+        "routingMarkers": [
+          ".github/workflows",
+          ".github/workflows path filters",
+          ".devcontainer",
+          "AGENTS.md",
+          ".bazelrc",
+          ".bazelversion"
+        ],
+        "runtimeFiles": [
+          ".bazelrc",
+          ".bazelversion",
+          "pyproject.toml",
+          "MODULE.bazel",
+          "MODULE.bazel.lock",
+          ".devcontainer/devcontainer.json"
+        ],
+        "stack": "bazel",
+        "verificationCommands": [
+          "bazel test //..."
+        ],
+        "workspaceMarkers": [
+          "MODULE.bazel",
+          "multiple nested component manifests"
+        ]
+      },
+      "dryRunGeneration": {
+        "fileScanLimit": 4000,
+        "fileScanTruncated": true,
+        "plannedWriteCount": 38,
+        "status": "planned",
+        "usesDefaultFileScanLimit": true,
+        "writeStatusCounts": {
+          "skipped": 1,
+          "would_write": 37
+        }
+      },
+      "head": "b1eed3b9a51e86b605f58b3182ab97feb2f1a939",
+      "headMatchesPinnedRef": true,
+      "id": "bazelbuild-bazel",
+      "indexSummary": {
+        "byteCount": 164334239,
+        "componentCount": 80,
+        "componentsTruncated": true,
+        "fileCount": 8333,
+        "manifestCount": 120,
+        "reviewRequiredCount": 0,
+        "sbomCount": 1,
+        "sourceOfTruthCount": 27,
+        "truncated": false
+      },
+      "nestedInstructionPlan": {
+        "candidateComponents": [
+          {
+            "path": "docs",
+            "reason": "component has its own manifest or boundary signal",
+            "recommendedAction": "review_required"
+          },
+          {
+            "path": "examples",
+            "reason": "component has its own manifest or boundary signal",
+            "recommendedAction": "review_required"
+          },
+          {
+            "path": "scripts",
+            "reason": "component has its own manifest or boundary signal",
+            "recommendedAction": "review_required"
+          },
+          {
+            "path": "site",
+            "reason": "component has its own manifest or boundary signal",
+            "recommendedAction": "review_required"
+          },
+          {
+            "path": "src",
+            "reason": "component has its own manifest or boundary signal",
+            "recommendedAction": "review_required"
+          },
+          {
+            "path": "third_party",
+            "reason": "component has its own manifest or boundary signal",
+            "recommendedAction": "review_required"
+          },
+          {
+            "path": "tools",
+            "reason": "component has its own manifest or boundary signal",
+            "recommendedAction": "review_required"
+          },
+          {
+            "path": "examples/cpp",
+            "reason": "component has its own manifest or boundary signal",
+            "recommendedAction": "review_required"
+          },
+          {
+            "path": "examples/gen",
+            "reason": "component has its own manifest or boundary signal",
+            "recommendedAction": "review_required"
+          },
+          {
+            "path": "examples/go",
+            "reason": "component has its own manifest or boundary signal",
+            "recommendedAction": "review_required"
+          },
+          {
+            "path": "examples/java-native",
+            "reason": "component has its own manifest or boundary signal",
+            "recommendedAction": "review_required"
+          },
+          {
+            "path": "examples/java-starlark",
+            "reason": "component has its own manifest or boundary signal",
+            "recommendedAction": "review_required"
+          },
+          {
+            "path": "examples/py",
+            "reason": "component has its own manifest or boundary signal",
+            "recommendedAction": "review_required"
+          },
+          {
+            "path": "examples/py_native",
+            "reason": "component has its own manifest or boundary signal",
+            "recommendedAction": "review_required"
+          },
+          {
+            "path": "examples/shell",
+            "reason": "component has its own manifest or boundary signal",
+            "recommendedAction": "review_required"
+          },
+          {
+            "path": "scripts/docs",
+            "reason": "component has its own manifest or boundary signal",
+            "recommendedAction": "review_required"
+          },
+          {
+            "path": "scripts/packages",
+            "reason": "component has its own manifest or boundary signal",
+            "recommendedAction": "review_required"
+          },
+          {
+            "path": "scripts/release",
+            "reason": "component has its own manifest or boundary signal",
+            "recommendedAction": "review_required"
+          },
+          {
+            "path": "scripts/zsh_completion",
+            "reason": "component has its own manifest or boundary signal",
+            "recommendedAction": "review_required"
+          },
+          {
+            "path": "site/en",
+            "reason": "component has its own manifest or boundary signal",
+            "recommendedAction": "review_required"
+          }
+        ],
+        "candidateCount": 20,
+        "existingNestedAgentCount": 0,
+        "existingNestedAgents": [],
+        "guidance": "Use root AGENTS.md as a short repo-wide router. Add nested AGENTS.md only for meaningful components whose stack, commands, ownership, constraints, or verification differ.",
+        "rootAgentsPresent": true,
+        "status": "review_required",
+        "writeByDefault": false
+      },
+      "pinnedRef": "b1eed3b9a51e86b605f58b3182ab97feb2f1a939",
+      "qualityGaps": [
+        {
+          "code": "component_scan_truncated",
+          "message": "component inventory reached the bounded component limit",
+          "severity": "high"
+        },
+        {
+          "code": "generator_default_scan_limit",
+          "message": "dry-run generation is still limited to the default 4000-file scan",
+          "severity": "high"
+        },
+        {
+          "code": "nested_agents_review_needed",
+          "message": "monorepo-style component boundaries should receive a reviewed nested instruction plan",
+          "severity": "medium"
+        }
+      ],
+      "readiness": {
+        "blockedReasons": [],
+        "reviewStatusSummary": {
+          "acceptedAdvisory": 0,
+          "pendingReview": 16,
+          "total": 16
+        },
+        "runnableChecks": [
+          "bazel test //..."
+        ],
+        "verdict": "warning",
+        "warnings": [
+          "workflow inventory detected 9 repo workflow definition(s); review before agent use.",
+          "governance inventory detected 1 permission, environment, or agent-control surface(s)."
+        ]
+      },
+      "repoMap": {
+        "components": [
+          {
+            "confidence": "high",
+            "markers": [
+              "BUILD",
+              "MODULE.bazel",
+              "pyproject.toml",
+              "requirements.txt"
+            ],
+            "path": ".",
+            "source": "manifest"
+          },
+          {
+            "confidence": "high",
+            "markers": [
+              "BUILD.bazel"
+            ],
+            "path": "docs",
+            "source": "manifest"
+          },
+          {
+            "confidence": "high",
+            "markers": [
+              "BUILD"
+            ],
+            "path": "examples",
+            "source": "manifest"
+          },
+          {
+            "confidence": "high",
+            "markers": [
+              "BUILD"
+            ],
+            "path": "scripts",
+            "source": "manifest"
+          },
+          {
+            "confidence": "high",
+            "markers": [
+              "BUILD"
+            ],
+            "path": "site",
+            "source": "manifest"
+          },
+          {
+            "confidence": "high",
+            "markers": [
+              "BUILD"
+            ],
+            "path": "src",
+            "source": "manifest"
+          },
+          {
+            "confidence": "high",
+            "markers": [
+              "BUILD"
+            ],
+            "path": "third_party",
+            "source": "manifest"
+          },
+          {
+            "confidence": "high",
+            "markers": [
+              "BUILD"
+            ],
+            "path": "tools",
+            "source": "manifest"
+          },
+          {
+            "confidence": "high",
+            "markers": [
+              "BUILD"
+            ],
+            "path": "examples/cpp",
+            "source": "manifest"
+          },
+          {
+            "confidence": "high",
+            "markers": [
+              "BUILD"
+            ],
+            "path": "examples/gen",
+            "source": "manifest"
+          },
+          {
+            "confidence": "high",
+            "markers": [
+              "BUILD"
+            ],
+            "path": "examples/go",
+            "source": "manifest"
+          },
+          {
+            "confidence": "high",
+            "markers": [
+              "BUILD"
+            ],
+            "path": "examples/java-native",
+            "source": "manifest"
+          }
+        ],
+        "primaryLanguages": [
+          {
+            "files": 1315,
+            "language": "java"
+          },
+          {
+            "files": 298,
+            "language": "shell"
+          },
+          {
+            "files": 287,
+            "language": "cpp"
+          },
+          {
+            "files": 280,
+            "language": "starlark"
+          },
+          {
+            "files": 279,
+            "language": "docs"
+          }
+        ],
+        "sourceOfTruth": [
+          {
+            "kind": "agent-instructions",
+            "path": "AGENTS.md",
+            "reason": "Agent instruction surface."
+          },
+          {
+            "kind": "project-doc",
+            "path": "README.md",
+            "reason": "High-signal project documentation name."
+          },
+          {
+            "kind": "project-doc",
+            "path": "src/tools/diskcache/README.md",
+            "reason": "High-signal project documentation name."
+          },
+          {
+            "kind": "project-doc",
+            "path": "src/tools/execlog/README.md",
+            "reason": "High-signal project documentation name."
+          },
+          {
+            "kind": "project-doc",
+            "path": "src/tools/remote/README.md",
+            "reason": "High-signal project documentation name."
+          },
+          {
+            "kind": "project-doc",
+            "path": "src/tools/workspacelog/README.md",
+            "reason": "High-signal project documentation name."
+          },
+          {
+            "kind": "project-doc",
+            "path": "src/main/java/net/starlark/java/annot/README.md",
+            "reason": "High-signal project documentation name."
+          },
+          {
+            "kind": "project-doc",
+            "path": "src/main/starlark/builtins_bzl/README.md",
+            "reason": "High-signal project documentation name."
+          },
+          {
+            "kind": "project-doc",
+            "path": "src/test/py/bazel/testdata/bazel_external_repository_test/README.md",
+            "reason": "High-signal project documentation name."
+          },
+          {
+            "kind": "project-doc",
+            "path": "src/test/shell/bazel/testdata/README.md",
+            "reason": "High-signal project documentation name."
+          }
+        ],
+        "unknowns": []
+      },
+      "repository": "bazelbuild/bazel",
+      "status": "analyzed",
+      "trackedFileCount": 13265,
+      "url": "https://github.com/bazelbuild/bazel"
+    }
+  ],
+  "schemaVersion": "harnessforge.largePublicRepoAnalysis.v1",
+  "summary": {
+    "analyzed": 3,
+    "failed": 0,
+    "missing": 0,
+    "qualityGapCounts": {
+      "component_scan_truncated": 2,
+      "file_scan_truncated": 1,
+      "generator_default_scan_limit": 3,
+      "nested_agents_review_needed": 3,
+      "no_existing_sbom_detected": 2
+    },
+    "selected": 3,
+    "withNestedAgentCandidates": 3,
+    "withNestedAgents": 1
+  }
+}

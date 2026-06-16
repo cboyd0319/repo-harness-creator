@@ -669,6 +669,40 @@ Quality checks should include:
 - useful verification placeholders when no repo-owned check is detected;
 - stable generated artifact snapshots for representative fixtures.
 
+### Real Large Public Repo Field Corpus
+
+Status: first repo-local field slice implemented; product follow-up accepted.
+
+The deterministic `harnessforge corpus` command remains offline. Separately,
+this repo now has `docs/harness/research/large-public-repo-corpus.json` and
+`scripts/analyze_large_public_repos.py` for explicit maintainer-run analysis
+against real large public GitHub repositories. The script clones only with
+`--clone`, writes checkouts under ignored `.harnessforge/large-public-repos/`,
+does not run target commands, and writes compact evidence reports under
+`docs/harness/evidence/`.
+
+First field run:
+
+- selected Kubernetes, VS Code, and Bazel from the 13-repo corpus;
+- all three cloned and analyzed successfully;
+- Kubernetes hit the 20,000-file scan limit with 30,513 tracked files;
+- VS Code and Bazel hit the bounded component inventory limit;
+- all three exposed the current `create_harness(..., dry_run=True)` default
+  4,000-file scan as a large-repo quality gap;
+- all three produced review-required nested `AGENTS.md` candidate scopes.
+
+Accepted product follow-up:
+
+- analyze the real corpus evidence and produce a HarnessForge gap analysis
+  that separates deterministic fixes, review-required heuristics, optional
+  adapters, and release-prep evidence needs;
+- add a large-repo scan control or index-reuse path to generation dry-runs;
+- add nested instruction-scope planning to large-repo analysis, dry-run init,
+  enhance, and report flows;
+- keep nested `AGENTS.md` writes review-required and off by default;
+- continue expanding field runs across the remaining pinned repos before
+  release.
+
 ### Better `--enhance-existing` Mode
 
 This is one of the highest-value quality areas. HarnessForge should become much
@@ -943,16 +977,20 @@ Implemented shape:
    fixture with existing routers, CI workflow, multiple container runtime
    files, `current-state.md`, first-agent evidence, high-risk acceptance, and
    reviewed maturity/report expectations.
-9. Release-prep field evidence: re-run real-repo quality passes against
-   RunHaven and selected sibling repos during release prep or the next
-   field-testing batch.
-10. Current accepted backlog is complete. Resume release prep and keep new
+9. Implemented first slice: real large public repo field corpus and analysis
+   runner, with initial Kubernetes, VS Code, and Bazel evidence.
+10. Next accepted large-repo quality work: analyze the real corpus evidence
+   and create a HarnessForge gap analysis, then implement generation
+   max-file/index reuse and review-required nested `AGENTS.md` scope planning.
+11. Release-prep field evidence: re-run real-repo quality passes against
+   RunHaven, selected sibling repos, and the remaining large public corpus.
+12. Current accepted backlog is complete. Resume release prep and keep new
    findings in the roadmap only after maintainers accept them as product work.
-11. Keep the generated target wording advisory unless the repo owner opts into
+13. Keep the generated target wording advisory unless the repo owner opts into
    the Action, and continue quality passes against real repositories.
-12. Keep the pinned public-repo quality corpus and generated-artifact scorer
+14. Keep the pinned public-repo quality corpus and generated-artifact scorer
    green as quality and detection gates evolve.
-13. Previously completed: policy preset report status, evidence-gated
+15. Previously completed: policy preset report status, evidence-gated
    feature-state and instruction-quality reporting, read-only SBOM adapter
    status, expanded policy presets, interactive quickstart decision plan, and
    source package reorganization.

@@ -51,6 +51,9 @@ route the change through `change-contract.md` and `verification-matrix.md`.
   nested components unless the task needs it and the command is documented.
 - Preserve platform parity for macOS 15+, Windows 11+, Ubuntu 22.04+, and Python
   3.13+ where the component uses Python.
+- For monorepos, keep root `AGENTS.md` as a repo-wide router. Add nested
+  `AGENTS.md` files only after review shows a component has distinct stack,
+  command, ownership, constraint, or verification needs.
 
 ## Project Assets
 
@@ -136,6 +139,11 @@ work as pre-release product shaping.
   project-owned source provenance.
 - `docs/harness/research/large-codebase-indexing-research.md`: repo-local research note
   for large existing repo analysis and future `harnessforge index` design.
+- `docs/harness/research/large-public-repo-corpus.json`: repo-local field corpus of
+  real large public GitHub repositories used for explicit networked analysis.
+- `scripts/analyze_large_public_repos.py`: repo-local field-analysis runner that
+  reuses or clones ignored public checkouts, performs static HarnessForge
+  analysis, and reports large-repo gaps without running target commands.
 - `docs/harness/state/first-agent-task.md`: generated first-agent harness improvement
   task that asks the first agent in a newly harnessed repo to deepen component,
   verification, source-of-truth, evidence, and security guidance.

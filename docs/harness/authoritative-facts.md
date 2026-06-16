@@ -39,6 +39,7 @@ surfaces listed in the routing table when the change affects them.
 | Current work state and evidence | `feature_list.json`, `current-state.md`, `docs/harness/evidence/evidence-log.md` | Use the specific file that owns the fact. Do not update state files as a routine bundle. |
 | Verification commands and recurring gates | `docs/harness/feedback/verification-matrix.md`, `docs/harness/feedback/sensor-registry.md`, root entrypoints | Update only when a command, owner, or gate changes. |
 | Research source allowlist, directory policy, and review evidence | `docs/harness/research/README.md`, `docs/harness/research/research-sources.json`, `docs/harness/research/research-sources.lock.json`, `docs/harness/research/sources.md` | Do not paste source catalogs into other docs. |
+| Real large public repo field corpus and analysis evidence | `docs/harness/research/large-public-repo-corpus.json`, `scripts/analyze_large_public_repos.py`, `docs/harness/evidence/large-public-repo-analysis.md` | Keep public checkouts ignored and treat findings as release-prep evidence until promoted into roadmap/code/tests. |
 
 ## Change-To-Docs Routing
 
@@ -53,6 +54,7 @@ surfaces listed in the routing table when the change affects them.
 | Audit/report scoring change | `docs/capabilities.md` or `docs/usage.md` if user-visible, scoring/report tests, `docs/harness/manifest.json` only for snippet contract | README unless positioning changes |
 | Platform, dependency, workflow, or pin change | `docs/harness/boundaries/dependency-change-policy.md`, `pins.toml`, `scripts/check_pins.py`, relevant workflow/docs | Roadmap unless it changes accepted scope |
 | Research source, directory policy, or source policy change | `docs/harness/research/README.md`, `docs/harness/research/sources.md`, `docs/harness/research/research-sources.json`, lock file, research check | CLI docs unless command behavior changes |
+| Real large public repo field-analysis change | `docs/harness/research/large-codebase-indexing-research.md`, focused script tests, latest compact evidence report when rerun | Generated target docs, Action docs, or normal offline corpus unless product behavior changes |
 | Release-prep evidence change | `docs/harness/release/release-controls.md` when the release process changes, `docs/harness/evidence/evidence-log.md` when evidence must be preserved | Generated templates unless release guidance changes; state files unless stopping, handing off, or changing the objective |
 
 ## State File Write Thresholds

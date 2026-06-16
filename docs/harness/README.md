@@ -156,6 +156,13 @@ stack-specific context, generated content, local-path hygiene, and quality
 checks stay above the current threshold. It does not clone repositories, use
 network access, execute target commands, or write outside the temporary root.
 
+For release-prep field evidence against real large public repositories, use
+`scripts/analyze_large_public_repos.py`. It is repo-local, clones only with
+`--clone`, stores checkouts under ignored `.harnessforge/large-public-repos/`,
+and reports product gaps such as scan truncation and nested `AGENTS.md`
+candidate scopes. It is not part of generated target harnesses or the
+composite Action.
+
 `plan` is a read-only diff-aware verification planner. It uses `git diff` to
 map changed files to detected or explicit project verification checks, but it
 does not run those checks.

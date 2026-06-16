@@ -4,12 +4,10 @@ Last Updated: 2026-06-16 UTC
 
 ## Current Objective
 
-Research directory README work is complete when the repo-local
-`docs/harness/research/README.md` exists, generated target harnesses receive a
-compact portable research README, product-local research allowlists stay out of
-target repos, generated Markdown budgets still pass, focused verification
-passes, and the result is committed and pushed to `main`. Release prep resumes
-next.
+Large public repo field-corpus work is complete when HarnessForge has a
+repo-local real public GitHub corpus, an explicit networked analysis runner,
+ignored public checkouts, compact evidence reports, nested `AGENTS.md`
+candidate detection for monorepos, focused tests, and self-audit evidence.
 
 ## Product State
 
@@ -163,6 +161,19 @@ next.
   `docs/harness/research/README.md` that points to `sources.md`,
   `research-inbox.md`, and source-record schema/example files while keeping
   HarnessForge product-level research allowlists out of target repos.
+- `docs/harness/research/large-public-repo-corpus.json` now defines a
+  13-repo real large public GitHub field corpus separate from the offline
+  fixture corpus used by `harnessforge corpus`.
+- `scripts/analyze_large_public_repos.py` analyzes existing or explicitly
+  cloned public checkouts under ignored `.harnessforge/large-public-repos/`.
+  It does not run target commands, keeps reports target-relative, detects
+  existing nested `AGENTS.md`, and emits review-required nested instruction
+  scope candidates instead of writing nested files by default.
+- Initial field evidence covered Kubernetes, VS Code, and Bazel. All three
+  cloned and analyzed successfully. The run exposed accepted product follow-up
+  gaps: generation dry-runs need a large-repo `max-files` or index-reuse path,
+  and large monorepos need review-required nested `AGENTS.md` scope planning in
+  product report/dry-run flows.
 
 ## Trusted Verification
 
@@ -215,6 +226,14 @@ next.
   and `tests.test_pins` passed with 100 tests; `scripts/refresh_research.py
   --root . --check` passed; self-audit passed at `100/100`; `git diff --check`
   passed; `./init.sh` passed with 287 tests and self-audit `100/100`.
+- Current large public repo field-corpus verification: corpus JSON and field
+  evidence JSON parse cleanly; `scripts/analyze_large_public_repos.py --list
+  --json` passed; real analysis against Kubernetes, VS Code, and Bazel passed
+  with three analyzed repos and zero failed repos; focused large-corpus and
+  public-corpus tests passed with 5 tests; local-path scan across new required
+  artifacts found no machine-local path text; focused pin/corpus tests passed
+  with 27 tests; `./init.sh` passed with 290 tests, pin check, research source
+  check, and self-audit `100/100`.
 - Current cleanup pass removed ignored local artifacts: `__pycache__`, `*.pyc`,
   `.DS_Store`, `.pytest_cache`, `htmlcov`, and `.coverage` if present.
 - Current known local verification gap: `pwsh -NoProfile -File ./init.ps1`
@@ -229,6 +248,11 @@ next.
 - `current-state.md`
 - `docs/capabilities.md`
 - `docs/harness/research/`
+- `docs/harness/evidence/large-public-repo-analysis.md`
+- `docs/harness/evidence/large-public-repo-analysis.json`
+- `scripts/analyze_large_public_repos.py`
+- `tests/test_large_public_repo_analysis.py`
+- `.gitignore`
 - `src/harnessforge/templates/`
 - `src/harnessforge/generation/generate.py`
 - `src/harnessforge/core/harness_paths.py`
@@ -244,4 +268,7 @@ next.
 
 ## Next Step
 
-Commit and push the research README work, then resume release prep.
+Analyze the large public repo corpus evidence and write a HarnessForge gap
+analysis that separates deterministic fixes, review-required heuristics,
+optional adapters, and release-prep evidence needs. Prioritize making
+HarnessForge handle large existing repositories deterministically and easily.

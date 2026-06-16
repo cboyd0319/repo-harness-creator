@@ -1,0 +1,129 @@
+{
+  "schemaVersion": "harnessforge.largePublicRepoCorpus.v1",
+  "lastReviewed": "2026-06-16",
+  "purpose": "Repo-local field corpus for testing HarnessForge against real large public repositories. This is separate from the deterministic offline fixture corpus used by harnessforge corpus.",
+  "networkBoundary": {
+    "defaultBehavior": "No network access. The analysis script only clones when --clone is supplied.",
+    "checkoutRoot": ".harnessforge/large-public-repos/checkouts",
+    "ignoredCheckoutRoot": true,
+    "normalHarnessGeneration": "No network access and no public-repo clone dependency.",
+    "generatedTargetHarness": "Not copied into generated target repositories.",
+    "githubAction": "Not invoked by the composite Action."
+  },
+  "analysisFocus": [
+    "large-file-scan-limits",
+    "component-boundary-detection",
+    "verification-command-quality",
+    "source-of-truth-routing",
+    "existing-instruction-quality",
+    "nested-agents-monorepo-instruction-scopes",
+    "sbom-detection",
+    "generated-dry-run-quality"
+  ],
+  "repos": [
+    {
+      "id": "torvalds-linux",
+      "repository": "torvalds/linux",
+      "url": "https://github.com/torvalds/linux",
+      "pinnedRef": "6b5a2b7d9bc156e505f09e698d85d6a1547c1206",
+      "categories": ["c-cpp-project", "very-large", "monorepo", "kernel"],
+      "analysisFocus": ["component-boundary-detection", "large-file-scan-limits", "source-of-truth-routing"]
+    },
+    {
+      "id": "llvm-llvm-project",
+      "repository": "llvm/llvm-project",
+      "url": "https://github.com/llvm/llvm-project",
+      "pinnedRef": "4646ad852eccd8d728e9896258eed678112144dd",
+      "categories": ["c-cpp-project", "very-large", "monorepo", "compiler"],
+      "analysisFocus": ["nested-agents-monorepo-instruction-scopes", "component-boundary-detection", "large-file-scan-limits"]
+    },
+    {
+      "id": "kubernetes-kubernetes",
+      "repository": "kubernetes/kubernetes",
+      "url": "https://github.com/kubernetes/kubernetes",
+      "pinnedRef": "e7c90e9b46be42a1980342991c3c87ae626c69e4",
+      "categories": ["go-service", "very-large", "monorepo", "cloud-native"],
+      "analysisFocus": ["verification-command-quality", "workflow-surface-detection", "nested-agents-monorepo-instruction-scopes"]
+    },
+    {
+      "id": "microsoft-vscode",
+      "repository": "microsoft/vscode",
+      "url": "https://github.com/microsoft/vscode",
+      "pinnedRef": "dd4cdfe836fb285070017f95eff22f2cecb03b49",
+      "categories": ["typescript-app", "very-large", "monorepo", "desktop-app"],
+      "analysisFocus": ["existing-instruction-quality", "verification-command-quality", "nested-agents-monorepo-instruction-scopes"]
+    },
+    {
+      "id": "tensorflow-tensorflow",
+      "repository": "tensorflow/tensorflow",
+      "url": "https://github.com/tensorflow/tensorflow",
+      "pinnedRef": "3fe7e52c8ffe58aea4f18653695a944dec0a2229",
+      "categories": ["python-package", "c-cpp-project", "very-large", "ml"],
+      "analysisFocus": ["large-file-scan-limits", "component-boundary-detection", "verification-command-quality"]
+    },
+    {
+      "id": "pytorch-pytorch",
+      "repository": "pytorch/pytorch",
+      "url": "https://github.com/pytorch/pytorch",
+      "pinnedRef": "9ca9ea5d5f13c600b08a34b9b013d12e9baa801c",
+      "categories": ["python-package", "c-cpp-project", "very-large", "ml"],
+      "analysisFocus": ["large-file-scan-limits", "component-boundary-detection", "generated-dry-run-quality"]
+    },
+    {
+      "id": "rust-lang-rust",
+      "repository": "rust-lang/rust",
+      "url": "https://github.com/rust-lang/rust",
+      "pinnedRef": "89a99936d9e76a50e8df622e7242190841fd871b",
+      "categories": ["rust-cli", "very-large", "monorepo", "compiler"],
+      "analysisFocus": ["nested-agents-monorepo-instruction-scopes", "component-boundary-detection", "verification-command-quality"]
+    },
+    {
+      "id": "dotnet-runtime",
+      "repository": "dotnet/runtime",
+      "url": "https://github.com/dotnet/runtime",
+      "pinnedRef": "49fd16601e6727b939c517693aa187f508664762",
+      "categories": ["dotnet-project", "very-large", "monorepo", "runtime"],
+      "analysisFocus": ["component-boundary-detection", "verification-command-quality", "nested-agents-monorepo-instruction-scopes"]
+    },
+    {
+      "id": "elastic-elasticsearch",
+      "repository": "elastic/elasticsearch",
+      "url": "https://github.com/elastic/elasticsearch",
+      "pinnedRef": "00b5e380d1e98f26fd916e4e634082c3f868b105",
+      "categories": ["jvm-project", "very-large", "distributed-system"],
+      "analysisFocus": ["verification-command-quality", "source-of-truth-routing", "generated-dry-run-quality"]
+    },
+    {
+      "id": "apache-spark",
+      "repository": "apache/spark",
+      "url": "https://github.com/apache/spark",
+      "pinnedRef": "f49ca1497fe8d1a50e58f2f11457640369aa4568",
+      "categories": ["jvm-project", "python-package", "very-large", "data-platform"],
+      "analysisFocus": ["component-boundary-detection", "verification-command-quality", "source-of-truth-routing"]
+    },
+    {
+      "id": "bazelbuild-bazel",
+      "repository": "bazelbuild/bazel",
+      "url": "https://github.com/bazelbuild/bazel",
+      "pinnedRef": "b1eed3b9a51e86b605f58b3182ab97feb2f1a939",
+      "categories": ["java", "starlark", "very-large", "build-system"],
+      "analysisFocus": ["source-of-truth-routing", "component-boundary-detection", "verification-command-quality"]
+    },
+    {
+      "id": "ansible-ansible",
+      "repository": "ansible/ansible",
+      "url": "https://github.com/ansible/ansible",
+      "pinnedRef": "d772fe65b73e3032f88a9915111b58e743af9d9f",
+      "categories": ["python-package", "large", "automation"],
+      "analysisFocus": ["existing-instruction-quality", "verification-command-quality", "source-of-truth-routing"]
+    },
+    {
+      "id": "apple-swift",
+      "repository": "apple/swift",
+      "url": "https://github.com/apple/swift",
+      "pinnedRef": "719fef5457a12689bdf3f7513b52d8c50e1029e5",
+      "categories": ["swift-package", "c-cpp-project", "very-large", "compiler"],
+      "analysisFocus": ["component-boundary-detection", "large-file-scan-limits", "nested-agents-monorepo-instruction-scopes"]
+    }
+  ]
+}

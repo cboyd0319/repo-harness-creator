@@ -587,6 +587,22 @@ class PinCheckTests(unittest.TestCase):
             workflow,
         )
 
+    def test_pin_check_ignores_local_harnessforge_checkouts(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            (root / "pyproject.toml").write_text(
+                "[build-system]\nrequires=['setuptools==82.0.1']\n",
+                encoding="utf-8",
+            )
+            checkout = root / ".harnessforge/large-public-repos/checkouts/demo"
+            checkout.mkdir(parents=True)
+            (checkout / "requirements.txt").write_text("requests>=2\n", encoding="utf-8")
+            (checkout / "Dockerfile").write_text("FROM python:3.13\n", encoding="utf-8")
+
+            failures = check_root(root)
+
+        self.assertEqual(failures, [])
+
 
 def _multiline_run_first_commands(text: str) -> list[tuple[int, str]]:
     lines = text.splitlines()

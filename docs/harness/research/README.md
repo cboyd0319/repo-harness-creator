@@ -18,6 +18,7 @@ sibling-repo examples into instructions.
 | `research-inbox.md` | Generated | Human-readable review inbox rendered from the lock file |
 | `source-record.schema.json` | Shared generated contract | Schema for project-owned provenance records in generated target harnesses |
 | `source-record-example.json` | Shared generated contract | Review-required starter record for project-owned provenance |
+| `large-public-repo-corpus.json` | Human-maintained | Real large public GitHub repo field corpus for explicit networked analysis |
 | `large-codebase-indexing-research.md` | Human-maintained | Research note for large-repo analysis and indexing strategy |
 | `reference-mining-notes.md` | Human-maintained | Mined ideas from sibling repos and public harness references |
 | `remaining-ideas-research.md` | Human-maintained | Compact outcome of remaining-ideas research and future candidates |
@@ -37,6 +38,9 @@ sibling-repo examples into instructions.
 - Sibling repos are idea-mining references only. They become generated defaults
   only when the idea is generalized, reviewed, tested, and bounded by the
   generated-target contract.
+- The real large public repo corpus is repo-local field evidence. Its checkout
+  root is ignored under `.harnessforge/large-public-repos/`, and the analysis
+  script clones only when the maintainer explicitly passes `--clone`.
 
 ## Update Rules
 
@@ -63,6 +67,7 @@ python3 -m json.tool docs/harness/research/research-sources.json >/dev/null
 python3 -m json.tool docs/harness/research/research-sources.lock.json >/dev/null
 python3 -m json.tool docs/harness/research/source-record.schema.json >/dev/null
 python3 -m json.tool docs/harness/research/source-record-example.json >/dev/null
+PYTHONPATH=src:. python3 scripts/analyze_large_public_repos.py --list --json
 ```
 
 Also run the narrow docs or harness checks required by the changed owner

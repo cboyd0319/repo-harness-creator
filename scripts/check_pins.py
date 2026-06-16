@@ -62,6 +62,7 @@ NON_REGISTRY_PREFIXES = (
 )
 SCAN_SKIP_DIRS = {
     ".git",
+    ".harnessforge",
     ".mypy_cache",
     ".nox",
     ".pytest_cache",

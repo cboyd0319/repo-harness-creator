@@ -9,6 +9,12 @@ implemented as `harnessforge index --target . --json`. Large repos can raise
 the file scan limit with `--max-files`; bounded component inventories now
 report truncation instead of silently hiding omitted boundaries.
 
+Field evidence note: `docs/harness/research/large-public-repo-corpus.json`
+defines a repo-local corpus of real large public GitHub repositories.
+`scripts/analyze_large_public_repos.py` clones into the ignored
+`.harnessforge/large-public-repos/` tree only when `--clone` is supplied, then
+writes compact evidence reports under `docs/harness/evidence/`.
+
 This note responds to the current product risk: HarnessForge must understand
 large existing repositories much better before it can generate or improve a
 high-quality harness for them.
@@ -116,6 +122,21 @@ Using the repo map to enrich generated instructions and `--enhance-existing`
 addenda should stay cited, compact, and review-required so it improves harness
 quality without turning instruction files into code summaries.
 
+### Phase 2B: Nested Instruction Scope Plan
+
+Status: accepted field-test gap.
+
+Large monorepos often need a short root `AGENTS.md` plus nested `AGENTS.md`
+files only where component stack, commands, ownership, constraints, or
+verification differ. HarnessForge should not write nested instruction files by
+default, but it should detect existing nested `AGENTS.md` files, identify
+candidate component scopes, and emit a review-required nested-instructions
+plan during large-repo analysis, `init --dry-run`, `enhance`, and report flows.
+
+The first real field run against Kubernetes, VS Code, and Bazel showed nested
+instruction candidates in all three repositories. That makes nested scope
+planning a quality feature, not a generated default.
+
 ### Phase 3: Optional External Adapters
 
 Status: future explicit opt-in.
@@ -165,3 +186,8 @@ Any future HarnessForge index should be:
 - Which confidence model is useful enough without pretending to be exact?
 - Which optional adapters measurably improve generated harness quality enough
   to justify the extra project review surface?
+- Should `init` and `create_harness(..., dry_run=True)` accept `--max-files` or
+  reuse a persisted structural index so generated guidance does not fall back
+  to the default 4,000-file scan on very large repositories?
+- What threshold should promote nested instruction candidates from advisory
+  report evidence into a review-required generated placeholder?
