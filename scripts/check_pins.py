@@ -217,6 +217,8 @@ def _check_action_pins(root: Path) -> list[str]:
     if workflows.exists():
         files.extend(sorted(workflows.glob("*.yml")))
         files.extend(sorted(workflows.glob("*.yaml")))
+        files.extend(sorted(workflows.glob("*.yml.disabled")))
+        files.extend(sorted(workflows.glob("*.yaml.disabled")))
     failures: list[str] = []
     for path in files:
         if not path.exists():

@@ -267,8 +267,8 @@ def _load_known_files(root: Path, manifest: dict[str, Any]) -> dict[str, str]:
         "init.ps1",
         "scripts/check_pins.py",
         "scripts/refresh_research.py",
-        ".github/workflows/ci.yml",
-        ".github/workflows/harness-self-heal.yml",
+        ".github/workflows/ci.yml.disabled",
+        ".github/workflows/harness-self-heal.yml.disabled",
         "docs/harness/README.md",
         "docs/harness/authoritative-facts.md",
         "docs/harness/manifest.json",
@@ -604,12 +604,17 @@ def _generated_target_boundary_check(
         in {
             "docs/harness/operations/self-healing.md",
             ".github/workflows/harness-self-heal.yml",
+            ".github/workflows/harness-self-heal.yml.disabled",
         }
     )
     if "docs/harness/operations/self-healing.md" in files:
         leaked.append("docs/harness/operations/self-healing.md")
-    if ".github/workflows/harness-self-heal.yml" in files:
-        leaked.append(".github/workflows/harness-self-heal.yml")
+    for self_heal_path in (
+        ".github/workflows/harness-self-heal.yml",
+        ".github/workflows/harness-self-heal.yml.disabled",
+    ):
+        if self_heal_path in files:
+            leaked.append(self_heal_path)
     manifest_text = json.dumps(manifest, sort_keys=True)
     if "with-self-heal-workflow" in manifest_text:
         leaked.append("with-self-heal-workflow")
@@ -996,8 +1001,8 @@ def _environment_checks(
         "action.yml",
         "docs/action.md",
         "pyproject.toml",
-        ".github/workflows/ci.yml",
-        ".github/workflows/harness-self-heal.yml",
+        ".github/workflows/ci.yml.disabled",
+        ".github/workflows/harness-self-heal.yml.disabled",
         "docs/harness/README.md",
         first_existing_key(files, "component_inventory"),
         "docs/harness/manifest.json",
@@ -1169,7 +1174,7 @@ def _feedback_checks(files: dict[str, str], link_failures: list[str]) -> list[Ch
         ),
         _check(not link_failures, "Local Markdown links resolve", "; ".join(link_failures[:3])),
         _check(
-            ".github/workflows/ci.yml" in files
+            ".github/workflows/ci.yml.disabled" in files
             or "init.sh" in files
             or "init.ps1" in files,
             "At least one local or CI feedback entrypoint exists",

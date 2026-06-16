@@ -4,7 +4,6 @@
   <img src="docs/assets/logo.png" alt="HarnessForge logo" width="180">
 </p>
 
-[![CI](https://github.com/cboyd0319/harnessforge/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/cboyd0319/harnessforge/actions/workflows/ci.yml)
 [![Python 3.13+](https://img.shields.io/badge/python-3.13%2B-3776AB)](pyproject.toml)
 [![License: MIT](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
 
@@ -14,7 +13,9 @@
 > HarnessForge has not been deployed and has no external users yet. CLI
 > contracts, generated file layouts, report schemas, GitHub Action behavior,
 > and docs may change without backward-compatibility guarantees until
-> maintainers declare an explicit release boundary.
+> maintainers declare an explicit release boundary. Automatic GitHub Actions
+> workflows are disabled during alpha to avoid runner cost while commits are
+> frequent.
 
 Give AI coding agents a real repo harness, not just another prompt.
 

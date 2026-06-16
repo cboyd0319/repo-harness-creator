@@ -55,9 +55,9 @@ refresh command without `--check` only when fetching research metadata. Run
 the pin check when dependencies, workflows, Action metadata, or packaging
 configuration change.
 
-Prefer local verification and local commits during active work. Push only at an
-explicit batch boundary, release point, or user request because remote CI has
-real cost.
+Prefer local verification and local commits during active work. Automatic
+GitHub Actions workflows are parked with `.disabled` suffixes during
+alpha/pre-release to avoid runner cost while commits are frequent.
 
 ## Code style guidelines
 
@@ -108,7 +108,8 @@ Rules:
 ## Testing instructions
 
 - Use the smallest reliable check that proves the changed surface.
-- Prefer local linting, tests, pin checks, and audit before remote CI.
+- Prefer local linting, tests, pin checks, and audit. Re-enable remote CI only
+  at an explicit release-prep boundary.
 - Add focused tests for CLI behavior, filesystem writes, scoring, Action
   behavior, research refresh, and cross-platform paths.
 - For behavior changes, prefer a separate test-design step when practical.

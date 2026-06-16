@@ -54,13 +54,13 @@ On Windows:
 The local harness check runs the package doctor, bytecode compilation, unit
 tests, pin checks, research source checks, and a self-audit.
 
-Prefer local checks and local commits during active work. Push only at an
-explicit batch boundary, release point, or user request because remote CI has
-real cost.
+Prefer local checks and local commits during active work. Automatic GitHub
+Actions workflows are parked during alpha/pre-release to avoid runner cost
+while commits are frequent.
 
-The default push/PR CI path runs Ubuntu 22.04 with Python 3.13.14. Use the
-manual `workflow_dispatch` CI run for macOS and Windows platform confirmation
-at release or risk-based checkpoints.
+The parked workflow definitions under `.github/workflows/*.disabled` keep the
+reviewed CI and self-heal commands available for later release prep. Restore a
+`.yml` suffix only when maintainers intentionally re-enable remote checks.
 
 ## Focused Checks
 

@@ -131,6 +131,11 @@ monorepo scopes.
   `.agents/skills/harness`, fails on unstaged or untracked output, and uses
   signed-off commits. Generated target-repo templates still keep the generic
   audit default and do not receive repo-local self-healing.
+- Automatic GitHub Actions workflows are parked during alpha/pre-release to
+  avoid runner cost while commits are frequent. The reviewed workflow
+  definitions live at `.github/workflows/ci.yml.disabled` and
+  `.github/workflows/harness-self-heal.yml.disabled`; restore runnable `.yml`
+  suffixes only at an intentional release-prep boundary.
 - The main README has been reorganized around the public product questions:
   what HarnessForge is, why repo owners want it, what makes it useful, and the
   repo-local versus generated versus Action boundaries. The duplicate
@@ -216,6 +221,10 @@ monorepo scopes.
   63 tests; full unit discovery passed with 287 tests; compileall, pin check,
   research source check, JSON validation, self-audit `100/100`, and `./init.sh`
   passed.
+- Current Actions parking verification: focused pins, generated-audit, and
+  Action tests passed with 110 tests; `scripts/check_pins.py --root .` passed
+  while scanning parked workflow definitions; self-audit stayed `100/100`;
+  JSON validation and diff hygiene passed.
 - Current README pass verification: required README manifest snippet check
   passed with no missing snippets; duplicate literal prose scan found no
   repeated meaningful lines; `tests.test_generate_audit` passed with 59 tests;

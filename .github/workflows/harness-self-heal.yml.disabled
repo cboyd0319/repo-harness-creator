@@ -1,3 +1,5 @@
+# Disabled during alpha/pre-release to avoid scheduled runner cost.
+# Restore the .yml suffix only when maintainers intentionally re-enable it.
 name: Harness Self Heal
 
 on:

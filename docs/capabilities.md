@@ -221,12 +221,14 @@ See
 
 ## Repo-Local Self-Healing
 
-This repository has its own local maintenance workflows. Those workflows are
-repo-local and are not the generated harness for other repositories.
+This repository has its own local maintenance workflow definitions. Those
+definitions are repo-local and are not the generated harness for other
+repositories.
 
-The scheduled workflow in
-[../.github/workflows/harness-self-heal.yml](../.github/workflows/harness-self-heal.yml)
-refreshes research metadata, applies only safe harness updates, runs
+The self-heal workflow is parked during alpha/pre-release at
+[../.github/workflows/harness-self-heal.yml.disabled](../.github/workflows/harness-self-heal.yml.disabled)
+to avoid scheduled runner cost. If maintainers later restore the `.yml` suffix,
+it refreshes research metadata, applies only safe harness updates, runs
 verification, and opens a pull request when changes are detected. It does not
 silently mutate `main`.
 

@@ -8,7 +8,7 @@ SCHEMA_VERSION = "harnessforge.observability.v1"
 RUNTIME_SIGNALS = (
     ("init.sh", "startup-entrypoint"),
     ("init.ps1", "startup-entrypoint"),
-    (".github/workflows/ci.yml", "ci-verification"),
+    (".github/workflows/ci.yml.disabled", "parked-ci-verification"),
     ("scripts/check_pins.py", "pin-check"),
     ("scripts/refresh_research.py", "source-refresh-check"),
     ("tests", "test-suite"),

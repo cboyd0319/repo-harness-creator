@@ -1,3 +1,5 @@
+# Disabled during alpha/pre-release to avoid runner cost on frequent commits.
+# Restore the .yml suffix only when maintainers intentionally re-enable CI.
 name: CI
 
 on:

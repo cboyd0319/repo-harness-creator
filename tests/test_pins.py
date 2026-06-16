@@ -479,7 +479,9 @@ class PinCheckTests(unittest.TestCase):
 
     def test_multiline_workflow_shell_blocks_fail_fast(self) -> None:
         root = Path(__file__).resolve().parents[1]
-        workflows = sorted((root / ".github/workflows").glob("*.yml"))
+        workflows_root = root / ".github/workflows"
+        workflows = sorted(workflows_root.glob("*.yml"))
+        workflows.extend(sorted(workflows_root.glob("*.yml.disabled")))
 
         for workflow in workflows:
             with self.subTest(workflow=workflow.name):
@@ -493,7 +495,7 @@ class PinCheckTests(unittest.TestCase):
 
     def test_read_only_ci_checkout_does_not_persist_credentials(self) -> None:
         root = Path(__file__).resolve().parents[1]
-        lines = (root / ".github/workflows/ci.yml").read_text(
+        lines = (root / ".github/workflows/ci.yml.disabled").read_text(
             encoding="utf-8"
         ).splitlines()
         checkout_line = next(
@@ -509,7 +511,9 @@ class PinCheckTests(unittest.TestCase):
 
     def test_ci_cancels_superseded_runs(self) -> None:
         root = Path(__file__).resolve().parents[1]
-        workflow = (root / ".github/workflows/ci.yml").read_text(encoding="utf-8")
+        workflow = (root / ".github/workflows/ci.yml.disabled").read_text(
+            encoding="utf-8"
+        )
 
         self.assertIn("concurrency:", workflow)
         self.assertIn("github.event.pull_request.number || github.ref", workflow)
@@ -517,7 +521,9 @@ class PinCheckTests(unittest.TestCase):
 
     def test_ci_matches_local_verification_gate_shape(self) -> None:
         root = Path(__file__).resolve().parents[1]
-        workflow = (root / ".github/workflows/ci.yml").read_text(encoding="utf-8")
+        workflow = (root / ".github/workflows/ci.yml.disabled").read_text(
+            encoding="utf-8"
+        )
 
         self.assertIn("timeout-minutes: 20", workflow)
         self.assertIn("timeout-minutes: 30", workflow)
@@ -530,7 +536,9 @@ class PinCheckTests(unittest.TestCase):
 
     def test_ci_keeps_platform_checks_manual(self) -> None:
         root = Path(__file__).resolve().parents[1]
-        workflow = (root / ".github/workflows/ci.yml").read_text(encoding="utf-8")
+        workflow = (root / ".github/workflows/ci.yml.disabled").read_text(
+            encoding="utf-8"
+        )
 
         self.assertIn("workflow_dispatch:", workflow)
         self.assertIn("if: github.event_name == 'workflow_dispatch'", workflow)
@@ -539,9 +547,9 @@ class PinCheckTests(unittest.TestCase):
 
     def test_self_heal_stages_generated_root_and_template_files(self) -> None:
         root = Path(__file__).resolve().parents[1]
-        workflow = (root / ".github/workflows/harness-self-heal.yml").read_text(
-            encoding="utf-8"
-        )
+        workflow = (
+            root / ".github/workflows/harness-self-heal.yml.disabled"
+        ).read_text(encoding="utf-8")
         self.assertIn('cron: "0 12 * * 1"', workflow)
         git_add_line = next(
             line.strip()
@@ -568,9 +576,9 @@ class PinCheckTests(unittest.TestCase):
 
     def test_self_heal_uses_confirmed_signed_reviewable_writes(self) -> None:
         root = Path(__file__).resolve().parents[1]
-        workflow = (root / ".github/workflows/harness-self-heal.yml").read_text(
-            encoding="utf-8"
-        )
+        workflow = (
+            root / ".github/workflows/harness-self-heal.yml.disabled"
+        ).read_text(encoding="utf-8")
 
         self.assertIn(
             "python -m harnessforge update --target . --apply --yes --agent-file AGENTS.md",

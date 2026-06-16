@@ -249,13 +249,13 @@ is too narrow or too broad.
 Use the entrypoint no-env mode for credential-free local verification when
 reviewing trust-boundary changes.
 
-The scheduled self-healing workflow refreshes `research-inbox.md`, applies safe
-missing-file harness updates, verifies the repo, and opens a pull request when
-there is a reviewable change.
+The self-healing workflow definition is parked as
+`.github/workflows/harness-self-heal.yml.disabled` during alpha/pre-release to
+avoid scheduled runner cost while commits are frequent. If re-enabled later, it
+is HarnessForge-maintainer automation for this repository only.
 
-That scheduled workflow is HarnessForge-maintainer automation for this
-repository. It is separate from the published composite Action and from the
-optional CI scaffold generated into target repositories.
+That parked workflow is separate from the published composite Action and from
+the optional CI scaffold generated into target repositories.
 
 ## When To Add Harness
 
