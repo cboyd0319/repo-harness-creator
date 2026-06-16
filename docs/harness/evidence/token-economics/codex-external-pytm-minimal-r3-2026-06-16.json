@@ -1,0 +1,86 @@
+{
+  "agent": {
+    "model": "configured-default-unrecorded",
+    "name": "Codex CLI isolated",
+    "provider": "OpenAI",
+    "version": "0.140.0"
+  },
+  "context": {
+    "contextWindowTokens": null,
+    "dynamicContextChars": 530,
+    "lazyLoadedFiles": [],
+    "loadedHarnessChars": 378,
+    "startupFiles": [
+      "AGENTS.md"
+    ],
+    "staticPrefixChars": 378
+  },
+  "evidenceRefs": [
+    "docs/harness/evidence/token-economics/codex-external-pytm-minimal-r3-2026-06-16.json",
+    "docs/harness/evidence/evidence-log.md"
+  ],
+  "harnessProfile": {
+    "changedSurfaces": [
+      "AGENTS.md"
+    ],
+    "description": "Short root instruction surface plus external pytm source and focused tests.",
+    "name": "minimal"
+  },
+  "limitations": [
+    "External public repo scratch copy from OWASP pytm commit e452aaf, not an upstream issue or pull request.",
+    "Seeded source regression removed helper response linking, so the task is not benchmark-held-out.",
+    "Human review verified raw file_change events were limited to pytm/flows.py and focused post-run verification passed with 4 tests.",
+    "Repairs varied slightly in implementation shape while preserving the helper API and passing the focused behavior contract.",
+    "Codex JSONL did not emit the configured model name in this run.",
+    "Prompt/cache state from nearby runs may affect cached input buckets.",
+    "Raw JSONL contains local scratch paths and remains ignored under .harnessforge/."
+  ],
+  "mechanism": {
+    "expectedExecutionEffect": "improve",
+    "expectedTokenEffect": "mixed",
+    "name": "verification_feedback",
+    "notes": "External pytm scratch repair used focused pytest feedback first, profile-specific startup routing, per-run scratch HOME and CODEX_HOME, ignore-user-config, ignore-rules, disabled hooks/plugins/memories/apps/multi_agent, and workspace-write sandboxing.",
+    "risk": "Richer startup guidance can add context reads without improving a focused source repair."
+  },
+  "outcome": {
+    "completed": true,
+    "failureMode": null,
+    "qualityScore": 1.0,
+    "verificationVerdict": "passed",
+    "worstCaseQuality": 1.0
+  },
+  "promotionStatus": "inconclusive",
+  "recordedAt": "2026-06-16T22:30:00Z",
+  "schemaVersion": "harnessforge.tokenEconomicsMetric.v1",
+  "target": {
+    "commit": "pytm-e452aaf-scratch-external-2026-06-16-minimal-r3",
+    "platform": "macOS-26.5.1-arm64-arm-64bit-Mach-O",
+    "repoLabel": "owasp-pytm-scratch-external-repair"
+  },
+  "task": {
+    "category": "external-implementation-repair",
+    "description": "Fix the failing pytm focused test in this external scratch copy. Follow the repository startup path for the current profile. Start by running `python -m pytest -q tests/test_flows_helpers.py` to observe the failure; this session PATH points `python` to the prepared scratch venv. Then make the smallest source-only Python change needed. Do not edit tests or docs unless the failure proves they are wrong. Rerun the same focused test. Do not commit or push. Final answer: one sentence with the changed file and verification result.",
+    "heldOut": false,
+    "id": "token-economics.external-pytm.minimal.r3"
+  },
+  "tokens": {
+    "cacheReadInput": 60544,
+    "cacheWriteInput": null,
+    "output": 1640,
+    "reasoningOutput": 189,
+    "source": "agent_usage_report",
+    "startupInput": 109095,
+    "total": 110924,
+    "uncachedRepeatedInput": null
+  },
+  "trajectory": {
+    "durationSeconds": 37.948,
+    "editCalls": 1,
+    "fileReads": 7,
+    "retries": 0,
+    "searchCalls": 1,
+    "toolCalls": 13,
+    "turns": 1,
+    "verificationRuns": 2
+  }
+}

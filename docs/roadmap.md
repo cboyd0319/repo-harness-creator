@@ -703,6 +703,14 @@ Initial research slice:
   token-economics unittest module. Minimal had the lowest median visible tokens
   on this batch, while moderate and comprehensive loaded about `101K` harness
   chars without improving final quality.
+- An external OWASP pytm repair batch is committed with three repeats per
+  profile. The prompt did not name the seeded `pytm.flows` source regression;
+  all nine runs changed only `pytm/flows.py`, passed
+  `python -m pytest -q tests/test_flows_helpers.py`, and received human review
+  for source-only scope and behavior-preserving repair shape. Minimal had the
+  lowest median visible tokens and duration on this external seeded repair,
+  moderate had one long trajectory, and comprehensive loaded more harness
+  guidance without improving final quality.
 
 Remaining closure work:
 
@@ -713,7 +721,8 @@ Remaining closure work:
   as API-level cost supplements; the first repo-local normalizer is
   `scripts/normalize_token_trace.py --source codex-jsonl`;
 - run controlled minimal, moderate, and comprehensive harness task traces on
-  true held-out or external representative repos with human quality review;
+  true held-out tasks and broader representative repos with human quality
+  review;
 - keep the isolated trace runner so user-level skills, plugins, hooks, memory,
   and other non-target startup context do not enter the trace unless recorded
   as part of the harness under test;
@@ -1305,7 +1314,9 @@ Done when:
    added a focused header regression, and refreshed `.gitignore` hygiene.
 13. Accepted before release prep: complete Harness Token Economics Research
    before changing generated harness sizing, routing, summarization, or lazy
-   loading behavior.
+   loading behavior. Initial Codex JSONL traces now include orientation, local
+   repair, unrevealed local failure, and external OWASP pytm repair batches;
+   true held-out and broader multi-repo evidence remain open.
 14. Accepted before release prep: finish Kubernetes-scale discovery ranking,
    generated guidance quality improvements, and expanded large-public-repo
    field runs.

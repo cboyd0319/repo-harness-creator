@@ -306,6 +306,17 @@ by the maintainer.
   `41.097` seconds. This result is still `inconclusive`, but it contrasts with
   the explicit duration-override batch: minimal was cheapest here, while
   moderate was cheapest when the prompt named the desired behavior.
+- An external OWASP pytm repair batch is now recorded from ignored scratch
+  copies of public commit `e452aaf`. Three repeats each ran under minimal,
+  moderate, and comprehensive scratch profiles against the focused
+  `python -m pytest -q tests/test_flows_helpers.py` contract. All nine runs
+  changed only `pytm/flows.py`, passed the focused pytest module with 4 tests,
+  and received human review for source-only scope and behavior-preserving
+  repair shape. Median totals were minimal `110,924`, moderate `133,320`, and
+  comprehensive `138,835` visible tokens; median durations were minimal
+  `37.801`, moderate `39.238`, and comprehensive `44.365` seconds. This is the
+  first external-real-repo repair evidence, but it remains `inconclusive`
+  because the regression was seeded rather than true held-out.
 - Research refresh now allows normal fetch mode to regenerate stale generated
   lock and inbox files after source allowlist changes while keeping
   `--check` strict about generated-output consistency.
@@ -555,6 +566,20 @@ by the maintainer.
   passed with 10 tests; full unit discovery passed with 311 tests; compileall,
   research source check, JSON validation, diff hygiene, and self-audit
   `100/100` passed.
+- Current external pytm repair verification: isolated
+  minimal/moderate/comprehensive `codex exec --json --ephemeral
+  --ignore-user-config --ignore-rules --disable hooks --disable plugins
+  --disable memories --disable apps --disable multi_agent --sandbox
+  workspace-write` runs completed three repeats each against ignored OWASP pytm
+  scratch copies. Raw-trace review found no non-target user-level
+  skill/plugin loading or secret-shaped strings; raw file-change events touched
+  only `pytm/flows.py`. Scratch target post-checks passed in all nine targets
+  with `python -m pytest -q tests/test_flows_helpers.py`; nine normalized
+  records were generated under `docs/harness/evidence/token-economics/`.
+  Focused token-economics/local-entrypoint tests passed with 10 tests; full
+  unit discovery passed with 311 tests; compileall, research source check,
+  JSON validation, durable local-path scan, diff hygiene, and self-audit
+  `100/100` passed after the external batch.
 - Current known local verification gap: `pwsh -NoProfile -File ./init.ps1`
   cannot run in this shell because PowerShell command execution fails before
   repo code loads with a .NET `System.IO.FileLoadException`. `pwsh -v` reports
@@ -568,47 +593,8 @@ by the maintainer.
 - `feature_list.json`
 - `docs/roadmap.md`
 - `docs/harness/evidence/evidence-log.md`
-- `docs/harness/evidence/token-economics/codex-jsonl-smoke-2026-06-16.json`
-- `docs/harness/evidence/token-economics/codex-isolated-profile-comprehensive-r1-2026-06-16.json`
-- `docs/harness/evidence/token-economics/codex-isolated-profile-comprehensive-r2-2026-06-16.json`
-- `docs/harness/evidence/token-economics/codex-isolated-implementation-comprehensive-r1-2026-06-16.json`
-- `docs/harness/evidence/token-economics/codex-isolated-implementation-minimal-r1-2026-06-16.json`
-- `docs/harness/evidence/token-economics/codex-isolated-implementation-moderate-r1-2026-06-16.json`
-- `docs/harness/evidence/token-economics/codex-representative-duration-comprehensive-r1-2026-06-16.json`
-- `docs/harness/evidence/token-economics/codex-representative-duration-comprehensive-r2-2026-06-16.json`
-- `docs/harness/evidence/token-economics/codex-representative-duration-comprehensive-r3-2026-06-16.json`
-- `docs/harness/evidence/token-economics/codex-representative-duration-minimal-r1-2026-06-16.json`
-- `docs/harness/evidence/token-economics/codex-representative-duration-minimal-r2-2026-06-16.json`
-- `docs/harness/evidence/token-economics/codex-representative-duration-minimal-r3-2026-06-16.json`
-- `docs/harness/evidence/token-economics/codex-representative-duration-moderate-r1-2026-06-16.json`
-- `docs/harness/evidence/token-economics/codex-representative-duration-moderate-r2-2026-06-16.json`
-- `docs/harness/evidence/token-economics/codex-representative-duration-moderate-r3-2026-06-16.json`
-- `docs/harness/evidence/token-economics/codex-unknown-failure-comprehensive-r1-2026-06-16.json`
-- `docs/harness/evidence/token-economics/codex-unknown-failure-comprehensive-r2-2026-06-16.json`
-- `docs/harness/evidence/token-economics/codex-unknown-failure-comprehensive-r3-2026-06-16.json`
-- `docs/harness/evidence/token-economics/codex-unknown-failure-minimal-r1-2026-06-16.json`
-- `docs/harness/evidence/token-economics/codex-unknown-failure-minimal-r2-2026-06-16.json`
-- `docs/harness/evidence/token-economics/codex-unknown-failure-minimal-r3-2026-06-16.json`
-- `docs/harness/evidence/token-economics/codex-unknown-failure-moderate-r1-2026-06-16.json`
-- `docs/harness/evidence/token-economics/codex-unknown-failure-moderate-r2-2026-06-16.json`
-- `docs/harness/evidence/token-economics/codex-unknown-failure-moderate-r3-2026-06-16.json`
-- `docs/harness/evidence/token-economics/codex-isolated-profile-minimal-r1-2026-06-16.json`
-- `docs/harness/evidence/token-economics/codex-isolated-profile-minimal-r2-2026-06-16.json`
-- `docs/harness/evidence/token-economics/codex-isolated-profile-moderate-r1-2026-06-16.json`
-- `docs/harness/evidence/token-economics/codex-isolated-profile-moderate-r2-2026-06-16.json`
-- `docs/harness/research/README.md`
+- `docs/harness/evidence/token-economics/codex-external-pytm-*-2026-06-16.json`
 - `docs/harness/research/harness-token-economics-research.md`
-- `docs/harness/research/research-inbox.md`
-- `docs/harness/research/research-sources.json`
-- `docs/harness/research/research-sources.lock.json`
-- `docs/harness/research/sources.md`
-- `docs/harness/research/token-economics-metric.schema.json`
-- `scripts/normalize_token_trace.py`
-- `scripts/refresh_research.py`
-- `src/harnessforge/evidence/token_economics.py`
-- `src/harnessforge/templates/research-sources.json.tmpl`
-- `tests/test_refresh_research.py`
-- `tests/test_token_economics.py`
 
 ## Blockers
 
@@ -623,7 +609,8 @@ by the maintainer.
 Continue the Harness Token Economics Research item by running controlled
 minimal, moderate, and comprehensive harness task traces using
 `harnessforge.tokenEconomicsMetric.v1`. The next useful slice is true held-out
-or external-real-repo repair evidence with human quality review. Keep the
+repair evidence or a second external ecosystem, preferably a TypeScript
+monorepo or larger public checkout, with human quality review. Keep the
 isolated Codex runner so non-target skills/plugins/hooks/memory do not enter
 the traces. Add Claude Code OpenTelemetry only when native Codex JSONL is
 insufficient for cache-creation or tool-span buckets. Release prep should
