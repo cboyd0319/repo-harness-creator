@@ -1,0 +1,91 @@
+{
+  "agent": {
+    "model": "configured-default-unrecorded",
+    "name": "Codex CLI isolated",
+    "provider": "OpenAI",
+    "version": "0.140.0"
+  },
+  "context": {
+    "contextWindowTokens": null,
+    "dynamicContextChars": 205,
+    "lazyLoadedFiles": [
+      "AGENTS.md",
+      "README.md"
+    ],
+    "loadedHarnessChars": 755,
+    "startupFiles": [
+      "AGENTS.md"
+    ],
+    "staticPrefixChars": 657
+  },
+  "evidenceRefs": [
+    "docs/harness/evidence/token-economics/codex-isolated-profile-minimal-r2-2026-06-16.json",
+    "docs/harness/evidence/evidence-log.md"
+  ],
+  "harnessProfile": {
+    "changedSurfaces": [
+      "AGENTS.md",
+      "CLAUDE.md",
+      "GEMINI.md",
+      ".github/copilot-instructions.md"
+    ],
+    "description": "Self-contained root instruction surface plus simple platform routers.",
+    "name": "minimal"
+  },
+  "limitations": [
+    "Tiny read-only orientation task; not a held-out implementation benchmark.",
+    "Profile roots are ignored scratch fixtures, not long-lived target repositories.",
+    "Codex JSONL did not emit the configured model name in this run.",
+    "Prompt/cache state from nearby runs may affect cached input buckets.",
+    "No project verification command was run because the task explicitly prohibited tests.",
+    "Raw JSONL contains local working-directory output and remains ignored under .harnessforge/."
+  ],
+  "mechanism": {
+    "expectedExecutionEffect": "improve",
+    "expectedTokenEffect": "mixed",
+    "name": "instruction_routing",
+    "notes": "Runner used scratch HOME and CODEX_HOME, ignore-user-config, ignore-rules, and disabled hooks/plugins/memories/apps/multi_agent.",
+    "risk": "Minimal startup guidance may omit generated state or review placeholders."
+  },
+  "outcome": {
+    "completed": true,
+    "failureMode": null,
+    "qualityScore": 1.0,
+    "verificationVerdict": "not_run",
+    "worstCaseQuality": 1.0
+  },
+  "promotionStatus": "inconclusive",
+  "recordedAt": "2026-06-16T21:08:00Z",
+  "schemaVersion": "harnessforge.tokenEconomicsMetric.v1",
+  "target": {
+    "commit": "scratch-isolated-profile-comparison-2026-06-16-minimal-r2",
+    "platform": "macOS-26.5.1-arm64-arm-64bit-Mach-O",
+    "repoLabel": "token-economics-demo"
+  },
+  "task": {
+    "category": "read-only-orientation",
+    "description": "Read the repo instructions and the fewest files needed. Do not edit files. Do not run project tests. Answer with exactly two bullets: first, the project verification command; second, the current next step.",
+    "heldOut": false,
+    "id": "token-economics.profile-orientation.minimal.r2"
+  },
+  "tokens": {
+    "cacheReadInput": 4864,
+    "cacheWriteInput": null,
+    "output": 360,
+    "reasoningOutput": 90,
+    "source": "agent_usage_report",
+    "startupInput": 24770,
+    "total": 25220,
+    "uncachedRepeatedInput": null
+  },
+  "trajectory": {
+    "durationSeconds": null,
+    "editCalls": 0,
+    "fileReads": 2,
+    "retries": 0,
+    "searchCalls": 0,
+    "toolCalls": 3,
+    "turns": 1,
+    "verificationRuns": 0
+  }
+}

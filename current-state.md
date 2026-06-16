@@ -259,6 +259,17 @@ by the maintainer.
   `codex exec --ignore-user-config`, some raw traces loaded a user-level
   orientation skill outside the target and raw `pwd` output contained local
   working-directory paths. No profile-comparison metric records were promoted.
+- A clean isolated Codex profile comparison is now recorded. The runner used
+  scratch `HOME` and `CODEX_HOME`, symlinked auth only, `--ignore-user-config`,
+  `--ignore-rules`, disabled hooks/plugins/memories/apps/multi-agent features,
+  read-only sandboxing, and ignored scratch target roots. Six normalized
+  minimal/moderate/comprehensive orientation records are committed under
+  `docs/harness/evidence/token-economics/`. Totals were minimal
+  `24,728-25,220`, moderate `27,729-28,905`, and comprehensive
+  `27,734-27,883` visible tokens. The result remains `inconclusive` for
+  product behavior because the task was a tiny non-held-out read-only
+  orientation task, but it proves clean profile tracing and shows stored
+  harness size is not the same as loaded context.
 - Research refresh now allows normal fetch mode to regenerate stale generated
   lock and inbox files after source allowlist changes while keeping
   `--check` strict about generated-output consistency.
@@ -461,6 +472,16 @@ by the maintainer.
   roots, but raw-trace review found non-target user-level skill loading in some
   runs. The attempted comparison was recorded as rejected evidence and no
   normalized profile records were committed.
+- Current isolated profile-comparison verification: isolated
+  minimal/moderate/comprehensive `codex exec --json --ephemeral
+  --ignore-user-config --ignore-rules --disable hooks --disable plugins
+  --disable memories --disable apps --disable multi_agent --sandbox read-only`
+  runs completed for two repeats. Raw-trace review found no user-level
+  skill/plugin leakage. Six normalized profile records parse as JSON and passed
+  local-path scans. Focused parser/local-entrypoint tests passed with 9 tests;
+  full unit discovery passed with 310 tests; compileall, research source
+  check, diff hygiene, and self-audit `100/100` passed. The raw JSONL remains
+  ignored under `.harnessforge/`.
 - Current known local verification gap: `pwsh -NoProfile -File ./init.ps1`
   cannot run in this shell because PowerShell command execution fails before
   repo code loads with a .NET `System.IO.FileLoadException`. `pwsh -v` reports
@@ -475,6 +496,12 @@ by the maintainer.
 - `docs/roadmap.md`
 - `docs/harness/evidence/evidence-log.md`
 - `docs/harness/evidence/token-economics/codex-jsonl-smoke-2026-06-16.json`
+- `docs/harness/evidence/token-economics/codex-isolated-profile-comprehensive-r1-2026-06-16.json`
+- `docs/harness/evidence/token-economics/codex-isolated-profile-comprehensive-r2-2026-06-16.json`
+- `docs/harness/evidence/token-economics/codex-isolated-profile-minimal-r1-2026-06-16.json`
+- `docs/harness/evidence/token-economics/codex-isolated-profile-minimal-r2-2026-06-16.json`
+- `docs/harness/evidence/token-economics/codex-isolated-profile-moderate-r1-2026-06-16.json`
+- `docs/harness/evidence/token-economics/codex-isolated-profile-moderate-r2-2026-06-16.json`
 - `docs/harness/research/README.md`
 - `docs/harness/research/harness-token-economics-research.md`
 - `docs/harness/research/research-inbox.md`
@@ -492,10 +519,6 @@ by the maintainer.
 ## Blockers
 
 - No product blockers.
-- Controlled token-economics profile comparisons are blocked in this local
-  Codex environment until the runner can disable or isolate user-level skills,
-  plugins, hooks, memory, and other non-target startup context, or until those
-  surfaces are explicitly recorded as part of the harness under test.
 - Local PowerShell command execution is blocked by a host .NET assembly-load
   error before repo code runs; use direct Python/POSIX verification until the
   local `pwsh` runtime is repaired or run `init.ps1` on a healthy Windows or
@@ -505,12 +528,9 @@ by the maintainer.
 
 Continue the Harness Token Economics Research item by running controlled
 minimal, moderate, and comprehensive harness task traces using
-`harnessforge.tokenEconomicsMetric.v1`. First establish a clean trace runner
-that prevents non-target user-level skills/plugins/hooks/memory from entering
-the run, or records those surfaces explicitly as the harness under test. Then
-repeat one low-risk task across the three profiles in isolated roots, normalize
-each Codex JSONL trace with `scripts/normalize_token_trace.py --source
-codex-jsonl`, and compare tokens, tool calls, retries, verification result,
-elapsed time, and human quality review. Release prep should remain last and
-should start only after accepted non-release work is closed or explicitly
-deferred by the maintainer.
+`harnessforge.tokenEconomicsMetric.v1`. Expand beyond the initial read-only
+orientation task to representative implementation or repair tasks that include
+edits, verification, retries, elapsed time, and human quality review. Keep the
+isolated Codex runner so non-target skills/plugins/hooks/memory do not enter
+the traces. Release prep should remain last and should start only after
+accepted non-release work is closed or explicitly deferred by the maintainer.

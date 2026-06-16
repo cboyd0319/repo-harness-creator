@@ -161,6 +161,45 @@ plugins, hooks, memory, or other non-target startup context from entering the
 trace, or it needs to record those surfaces explicitly as the harness under
 test.
 
+## Initial Clean Profile Comparison
+
+The first clean minimal/moderate/comprehensive comparison used scratch `HOME`
+and `CODEX_HOME`, symlinked auth only, `--ignore-user-config`,
+`--ignore-rules`, disabled hooks/plugins/memories/apps/multi-agent features,
+read-only sandboxing, and ignored scratch target roots. Raw JSONL traces remain
+ignored under `.harnessforge/`; only normalized metric records are committed.
+
+Task: read the repo instructions and the fewest needed files, do not edit, do
+not run tests, and answer with the project verification command plus current
+next step.
+
+| Profile | Repeat | Loaded harness chars | Input | Cached input | Output | Reasoning output | Total | Tool calls | File reads |
+| --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
+| minimal | 1 | 755 | 24,458 | 14,080 | 224 | 46 | 24,728 | 2 | 1 |
+| minimal | 2 | 755 | 24,770 | 4,864 | 360 | 90 | 25,220 | 3 | 2 |
+| moderate | 1 | 7,617 | 28,449 | 15,104 | 408 | 48 | 28,905 | 4 | 3 |
+| moderate | 2 | 7,617 | 27,172 | 15,104 | 427 | 130 | 27,729 | 3 | 2 |
+| comprehensive | 1 | 7,617 | 27,334 | 15,616 | 342 | 58 | 27,734 | 3 | 2 |
+| comprehensive | 2 | 7,617 | 27,349 | 15,616 | 412 | 122 | 27,883 | 3 | 2 |
+
+Initial interpretation:
+
+- The full generated harness storage size did not determine task tokens. The
+  comprehensive profile stored far more files than moderate, but the agent
+  loaded the same startup/state files for this orientation task.
+- Minimal used fewer loaded harness chars but did not always produce the lowest
+  total visible tokens because cache state, tool trajectory, and model behavior
+  varied across repeats.
+- Moderate and comprehensive were close on this task because both routed to
+  `current-state.md` and `feature_list.json`.
+- The evidence supports the router hypothesis for this narrow task: actual
+  loaded context matters more than total generated artifact size.
+
+This comparison remains `inconclusive` for product behavior. It is a
+read-only, non-held-out orientation task and does not measure edits,
+verification loops, retries, implementation quality, or worst-case failure
+cost.
+
 ## Required Trace Evidence Still Missing
 
 The accepted backlog item is not complete until HarnessForge has representative

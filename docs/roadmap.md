@@ -678,6 +678,13 @@ Initial research slice:
   because some Codex traces loaded non-target user-level skill context even
   with user config ignored. Controlled profile evidence now requires a clean
   trace runner or explicit recording of those non-target surfaces.
+- The clean-runner requirement has an initial local answer: scratch `HOME` and
+  `CODEX_HOME`, symlinked auth only, ignored config/rules, disabled
+  hooks/plugins/memories/apps/multi-agent features, and read-only sandboxing.
+  The first two-repeat read-only orientation comparison is committed under
+  `docs/harness/evidence/token-economics/`. It remains inconclusive for
+  product behavior because it does not cover edits, verification loops,
+  retries, or held-out implementation quality.
 
 Remaining closure work:
 
@@ -688,10 +695,10 @@ Remaining closure work:
   as API-level cost supplements; the first repo-local normalizer is
   `scripts/normalize_token_trace.py --source codex-jsonl`;
 - run controlled minimal, moderate, and comprehensive harness task traces on
-  representative repos;
-- ensure the trace runner disables or isolates user-level skills, plugins,
-  hooks, memory, and other non-target startup context, or records those
-  surfaces as part of the harness under test;
+  representative repos and implementation or repair tasks;
+- keep the isolated trace runner so user-level skills, plugins, hooks, memory,
+  and other non-target startup context do not enter the trace unless recorded
+  as part of the harness under test;
 - capture provider-reported or agent-reported token buckets, cache reads and
   writes, tool calls, retries, verification results, elapsed time, and quality
   review;
