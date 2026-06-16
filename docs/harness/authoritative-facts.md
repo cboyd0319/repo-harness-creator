@@ -11,12 +11,12 @@ surfaces listed in the routing table when the change affects them.
 | Boundary Type | Default Owner |
 | --- | --- |
 | Local repo harness | `docs/harness/README.md`, `docs/harness/boundaries/component-inventory.md` |
-| Generated target harness | `src/harnessforge/templates/`, `src/harnessforge/generate.py`, generated manifest metadata |
+| Generated target harness | `src/harnessforge/templates/`, `src/harnessforge/generation/`, generated manifest metadata |
 | CLI/runtime behavior | `src/harnessforge/cli.py`, command modules, focused CLI tests |
 | Existing project files | `harnessforge enhance`, generated addenda, and project-owned instruction files |
 | GitHub Action | `action.yml`, `src/harnessforge/github_action.py`, `docs/action.md` |
 | Optional workflow scaffolds | Generated CI workflow template and manifest ownership metadata |
-| Tests and fixture corpus | `tests/`, `src/harnessforge/public_repo_corpus.py` |
+| Tests and fixture corpus | `tests/`, `src/harnessforge/generation/public_repo_corpus.py` |
 | Release/package surface | `docs/harness/release/release-controls.md`, package metadata, release evidence |
 | Research and source ledger | `docs/harness/research/research-sources.json`, lock file, `docs/harness/research/sources.md` |
 | Security and privacy | `docs/harness/boundaries/security-boundary-map.md`, `feature-privacy-labels.json` |
@@ -34,7 +34,7 @@ surfaces listed in the routing table when the change affects them.
 | GitHub Action inputs, outputs, and command modes | `action.yml`, `src/harnessforge/github_action.py`, and Action tests | Summarize in `docs/action.md` only. |
 | Generated file list, required snippets, and local self-audit contract | `docs/harness/manifest.json` | Avoid duplicating snippet lists elsewhere. |
 | Generated target content | `src/harnessforge/templates/` and generator tests | Update public docs only when user-visible generated behavior changes. |
-| Audit scoring and report interpretation | `src/harnessforge/audit.py`, `src/harnessforge/evidence/report.py`, and tests | Keep scoring caveats in `docs/capabilities.md` and `docs/usage.md` short. |
+| Audit scoring and report interpretation | `src/harnessforge/assessment/audit.py`, `src/harnessforge/evidence/report.py`, and tests | Keep scoring caveats in `docs/capabilities.md` and `docs/usage.md` short. |
 | Accepted roadmap and backlog boundary | `docs/roadmap.md` | Reference from state files instead of duplicating full lists. |
 | Current work state and evidence | `feature_list.json`, `current-state.md`, `docs/harness/evidence/evidence-log.md` | Use the specific file that owns the fact. Do not update state files as a routine bundle. |
 | Verification commands and recurring gates | `docs/harness/feedback/verification-matrix.md`, `docs/harness/feedback/sensor-registry.md`, root entrypoints | Update only when a command, owner, or gate changes. |

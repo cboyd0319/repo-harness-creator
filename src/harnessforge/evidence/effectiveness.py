@@ -4,8 +4,8 @@ import json
 from pathlib import Path
 from typing import Any
 
-from ..models import ProjectProfile
-from ..paths import is_absolute_path_text, is_inside_root, path_from_relative_text
+from ..core.models import ProjectProfile
+from ..core.paths import is_absolute_path_text, is_inside_root, path_from_relative_text
 
 ASSESSMENT_SCHEMA_VERSION = "harnessforge.effectivenessAssessment.v1"
 EVIDENCE_SCHEMA_VERSION = "harnessforge.effectivenessEvidence.v1"

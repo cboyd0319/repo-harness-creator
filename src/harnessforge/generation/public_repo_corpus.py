@@ -6,11 +6,11 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
 
-from .audit import audit_target
-from .detect import MISSING_VERIFICATION_COMMAND, detect_project
+from ..assessment.audit import audit_target
+from ..core.harness_paths import HARNESS_SKILL_PATH, harness_path
+from ..project.detect import MISSING_VERIFICATION_COMMAND, detect_project
+from ..project.indexer import build_index_report
 from .generate import create_harness
-from .harness_paths import HARNESS_SKILL_PATH, harness_path
-from .indexer import build_index_report
 
 SCHEMA_VERSION = "harnessforge.publicRepoCorpus.v1"
 SOURCE_REVIEW_DATE = "2026-06-15"
@@ -480,6 +480,12 @@ def build_public_repo_corpus_report() -> dict[str, Any]:
             "reviewedAt": SOURCE_REVIEW_DATE,
             "pinSource": "git ls-remote <repository> HEAD",
             "networkRequiredForNormalCheck": False,
+        },
+        "refreshPlan": {
+            "script": "scripts/refresh_public_repo_corpus.py",
+            "metadataCheck": "PYTHONPATH=src:. python3 scripts/refresh_public_repo_corpus.py",
+            "remoteVerify": "PYTHONPATH=src:. python3 scripts/refresh_public_repo_corpus.py --verify-remote",
+            "normalCorpusNetworkAccess": False,
         },
         "execution": {
             "networkAccess": False,

@@ -2,31 +2,26 @@
 
 ## Project overview
 
-HarnessForge is a Python 3.13+ CLI and composite GitHub Action for
-creating, assessing, and safely updating AI coding-agent harnesses in arbitrary
-repositories.
+HarnessForge is a Python 3.13+ CLI and composite GitHub Action for creating,
+assessing, and safely updating AI coding-agent harnesses in arbitrary repos.
 
-Core harness contract: instructions, tools, environment, state, and feedback
-are all required. Keep instructions map-like, tool access sufficient but least
-privileged, environment facts self-describing, state current across sessions,
-and verification commands explicit. Feedback usually has the best return, so
-fix missing or weak checks before adding broader process.
+Core harness contract: instructions, tools, environment, state, and feedback.
 Changing instruction, tool, filesystem, git, startup, verification, hook, lint,
-or evaluator surfaces changes the effective agent. Treat those as harness
-product changes.
+or evaluator surfaces changes the effective agent.
 
 Startup path:
 
 1. Confirm the working directory.
 2. Read this file, `current-state.md`, and `feature_list.json`.
-3. Read `README.md` only for public docs, install/usage, CLI behavior, or
+3. For harness-maintenance work, use `.agents/skills/harness/SKILL.md`.
+4. Read `README.md` only for public docs, install/usage, CLI behavior, or
    product-positioning changes.
-4. Read `docs/harness/README.md` and
+5. Read `docs/harness/README.md` and
    `docs/harness/authoritative-facts.md` for harness-doc, generated-output,
    scoring, report, or maintenance-policy changes.
-5. Read `docs/roadmap.md` before selecting, deferring, or reshaping backlog,
+6. Read `docs/roadmap.md` before selecting, deferring, or reshaping backlog,
    release-prep, or product-scope work.
-6. Check `docs/harness/boundaries/component-inventory.md` before changing
+7. Check `docs/harness/boundaries/component-inventory.md` before changing
    component boundaries, generated files, or verification routing.
 
 This repo is itself a harnessed project. Keep root instructions short and place
@@ -55,11 +50,10 @@ PYTHONPATH=src:. python3 -m harnessforge audit --target . --min-score 85
 PYTHONPATH=src:. python3 scripts/refresh_research.py --root . --check
 ```
 
-Run `python3 scripts/refresh_research.py --root . --check` when research
-ledgers or source docs change. Run `python3 scripts/refresh_research.py --root
-.` only when refreshing fetched research metadata. Run `python3
-scripts/check_pins.py --root .` when dependencies, workflow files, Action
-metadata, or packaging configuration change.
+Run the research check when research ledgers or source docs change. Run the
+refresh command without `--check` only when fetching research metadata. Run
+the pin check when dependencies, workflows, Action metadata, or packaging
+configuration change.
 
 Prefer local verification and local commits during active work. Push only at an
 explicit batch boundary, release point, or user request because remote CI has
@@ -74,28 +68,25 @@ real cost.
 - Prefer the smallest correct change. Preserve user changes and dirty work.
 - Treat generated templates, audit scoring, docs, and workflows as product
   code.
-- HarnessForge has not been deployed and has no external users. Do not preserve
-  backward compatibility with previous generated artifacts, CLI shapes, report
-  schemas, manifests, docs layouts, or Action behavior unless a maintainer
-  explicitly sets a release boundary. Prefer the clean product contract over
-  migration shims.
-- Keep platform-specific instruction routers short. They should point to the
-  canonical repo instructions instead of duplicating durable rules.
+- HarnessForge has not been deployed and has no external users. Prefer the
+  clean product contract over backward compatibility until a maintainer sets a
+  release boundary.
+- Keep platform-specific instruction routers short; point to canonical repo
+  instructions instead of duplicating durable rules.
 - Keep generated artifacts portable. Do not commit machine-specific or
-  user-specific absolute local paths unless the user explicitly requests that
-  exact path and durable evidence records why.
+  user-specific absolute paths unless explicitly requested and evidenced.
 - If a repo contains intentionally vulnerable training, demo, or fixture code,
   preserve it unless the user explicitly requests remediation for that scope.
 - Follow `CONTRIBUTING.md`. Use signed-off commits for review commits.
-- Keep this file as a map. Move long-running policy, research, and operational
-  detail into `docs/harness/`.
+- Keep this file as a map. Put long-running policy, research, and operations
+  detail in `docs/harness/`.
 
 ### Implementation Discipline
 
 Before writing code, stop at the first rung that solves the request:
 
-1. Do not build if the goal can be met by no change, deletion, documentation,
-   configuration, or existing behavior.
+1. Do not build if no change, deletion, docs, config, or existing behavior is
+   enough.
 2. Use the standard library before custom code.
 3. Use native platform features before new libraries.
 4. Use existing project dependencies before adding dependencies.
@@ -104,33 +95,31 @@ Before writing code, stop at the first rung that solves the request:
 
 Rules:
 
-- State assumptions and tradeoffs before coding when the request is ambiguous.
+- State assumptions and tradeoffs before coding when ambiguous.
 - Do not add speculative features, configurability, abstractions, workflows, or
   dependencies.
-- Keep every changed line traceable to the current objective. Avoid drive-by
-  refactors, style churn, and unrelated cleanup.
+- Keep changed lines traceable to the objective; avoid drive-by cleanup.
 - If an intentional simplification has a known ceiling, record the ceiling and
-  the upgrade path in nearby code, docs, or handoff notes.
-- Do not cut input validation at trust boundaries, data-loss prevention,
-  security, accessibility, platform parity, or explicit user requirements.
-- Non-trivial logic needs one focused runnable check. Trivial one-line edits can
-  rely on the existing relevant check.
+  upgrade path.
+- Do not cut validation at trust boundaries, data-loss prevention, security,
+  accessibility, platform parity, or explicit requirements.
+- Non-trivial logic needs one focused runnable check.
 
 ## Testing instructions
 
 - Use the smallest reliable check that proves the changed surface.
 - Prefer local linting, tests, pin checks, and audit before remote CI.
 - Add focused tests for CLI behavior, filesystem writes, scoring, Action
-  behavior, research refresh logic, and cross-platform path handling.
+  behavior, research refresh, and cross-platform paths.
 - For behavior changes, prefer a separate test-design step when practical.
   Reject stubbed, assertion-free, or shortcut tests, and confirm new tests fail
   before implementation when that failure is reliable and cheap to reproduce.
 - Verify generated files work for POSIX and Windows paths.
 - Do not claim authoritative product quality from structural checks alone. Real
   agent effectiveness still needs representative task runs.
-- Definition Of Done: behavior is implemented, focused verification ran,
-  generated files and docs match the CLI, self-audit stays above threshold, and
-  skipped OS-specific checks are recorded with risk.
+- Definition Of Done: behavior implemented, focused verification ran,
+  generated files/docs match the CLI, self-audit passes, and skipped
+  OS-specific checks are recorded with risk.
 - End of Session: do not recreate separate root `progress.md` or
   `session-handoff.md`; use `current-state.md` for current objective and
   restart context. Do not update `feature_list.json`, `current-state.md`, and
@@ -144,14 +133,14 @@ Rules:
 
 ## Security considerations
 
-- People run this code on personal machines and private repositories. Default
-  to the most secure and easiest behavior for every edge case. When those
-  conflict, security wins and the error message must explain the safe next step.
+- People run this code on personal machines and private repos. Default to the
+  safest easy behavior; when ease and security conflict, security wins and the
+  error must explain the safe next step.
 - Never overwrite target repository files unless the user passes `--force`.
 - Reject unsafe generated paths, traversal, absolute instruction filenames, and
   symlink escapes outside the target repository.
-- Redact common local home paths from durable output, and treat committed
-  absolute local paths as audit failures unless explicitly requested.
+- Redact common home paths from durable output; treat committed absolute local
+  paths as audit failures unless explicitly requested.
 - Use latest stable supported packages with hard pins. Direct dependencies use
   exact versions; external GitHub Actions use full-length commit SHAs with
   version comments.

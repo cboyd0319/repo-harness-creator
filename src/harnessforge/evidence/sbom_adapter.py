@@ -3,7 +3,7 @@ from __future__ import annotations
 from pathlib import PurePosixPath
 from typing import Any
 
-from ..models import ProjectProfile
+from ..core.models import ProjectProfile
 
 SCHEMA_VERSION = "harnessforge.sbomAdapter.v1"
 

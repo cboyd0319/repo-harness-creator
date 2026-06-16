@@ -8,17 +8,21 @@ from pathlib import Path
 from typing import Any
 from urllib.parse import unquote
 
-from .harness_paths import (
+from ..core.harness_paths import (
     CANONICAL_HARNESS_PATHS,
     HARNESS_SKILL_PATH,
     any_existing_key,
     first_existing_key,
     first_existing_text,
 )
-from .models import AuditResult, CheckResult, DomainScore
-from .paths import is_absolute_path_text, is_inside_root, path_from_relative_text
-from .redact import redact_local_paths
-from .spec_system import SpecSystemReport, analyze_spec_system, instruction_routes_to_specs
+from ..core.models import AuditResult, CheckResult, DomainScore
+from ..core.paths import is_absolute_path_text, is_inside_root, path_from_relative_text
+from ..core.redact import redact_local_paths
+from ..project.spec_system import (
+    SpecSystemReport,
+    analyze_spec_system,
+    instruction_routes_to_specs,
+)
 
 DOMAIN_ORDER = (
     "instructions",
@@ -59,6 +63,9 @@ def audit_target(
     manifest_failures = _manifest_failures(root, manifest)
     link_failures = _local_markdown_link_failures(root, files)
     layout_failures = _top_level_harness_layout_failures(root)
+    source_layout_failures = _harnessforge_source_layout_failures(
+        root, files, manifest
+    )
     local_path_failures = (
         []
         if allow_local_absolute_paths
@@ -77,6 +84,7 @@ def audit_target(
                 manifest,
                 local_path_failures,
                 layout_failures,
+                source_layout_failures,
                 allow_local_absolute_paths=allow_local_absolute_paths,
             ),
         ),
@@ -656,6 +664,24 @@ def _harnessforge_fact_map_check(
     )
 
 
+def _harnessforge_source_package_check(
+    files: dict[str, str],
+    manifest: dict[str, Any],
+    source_layout_failures: list[str],
+) -> CheckResult:
+    if not _is_harnessforge_product_repo(files, manifest):
+        return _check(
+            True,
+            "HarnessForge source uses organized package boundaries",
+            "not the HarnessForge product repo",
+        )
+    return _check(
+        not source_layout_failures,
+        "HarnessForge source uses organized package boundaries",
+        "; ".join(source_layout_failures[:3]),
+    )
+
+
 def _is_harnessforge_product_repo(
     files: dict[str, str], manifest: dict[str, Any]
 ) -> bool:
@@ -1146,6 +1172,7 @@ def _scope_checks(
     manifest: dict[str, Any],
     local_path_failures: list[str],
     layout_failures: list[str],
+    source_layout_failures: list[str],
     *,
     allow_local_absolute_paths: bool,
 ) -> list[CheckResult]:
@@ -1197,6 +1224,9 @@ def _scope_checks(
             "Harness docs use the organized directory layout",
             "; ".join(layout_failures[:3]),
         ),
+        _harnessforge_source_package_check(
+            files, manifest, source_layout_failures
+        ),
         _check(
             "../HarnessForge" not in all_text
             and "PYTHONPATH=../HarnessForge" not in all_text,
@@ -1208,6 +1238,28 @@ def _scope_checks(
         _contains(contract, ("Acceptance Criteria", "Acceptance criteria"), "Acceptance criteria are explicit"),
         _contains_all(contract, ("Verification", "Rollback"), "Verification and rollback are captured"),
         _contains(feature + all_text, ("dependencies", "one objective", "one feature", "Current Objective"), "Work dependencies or one-objective rule are present"),
+    ]
+
+
+def _harnessforge_source_layout_failures(
+    root: Path, files: dict[str, str], manifest: dict[str, Any]
+) -> list[str]:
+    if not _is_harnessforge_product_repo(files, manifest):
+        return []
+    source_dir = root / "src/harnessforge"
+    if not source_dir.is_dir():
+        return []
+    allowed = {"__init__.py", "__main__.py", "cli.py", "github_action.py"}
+    failures = [
+        path.name
+        for path in sorted(source_dir.glob("*.py"), key=lambda item: item.name)
+        if path.name not in allowed
+    ]
+    return [
+        "move src/harnessforge/"
+        + name
+        + " into assessment, core, project, generation, or evidence"
+        for name in failures
     ]
 
 
@@ -1258,25 +1310,26 @@ def _lifecycle_checks(
         if name
     )
     generated_target = _is_generated_target_manifest(manifest)
-    roadmap_path = roadmap_harness_path or (
-        "docs/harness/state/roadmap.md" if generated_target else "docs/roadmap.md"
-    )
+    product_repo = _is_harnessforge_product_repo(files, manifest)
+    if product_repo and "docs/roadmap.md" in files:
+        roadmap_path = "docs/roadmap.md"
+        roadmap_snippets = ("Roadmap", "Surface Impact Checklist", "Suggested Build Order")
+    else:
+        roadmap_path = roadmap_harness_path or (
+            "docs/harness/state/roadmap.md" if generated_target else "docs/roadmap.md"
+        )
+        roadmap_snippets = (
+            ("Harness Roadmap", "Status Lifecycle", "Roadmap Items")
+            if roadmap_harness_path or generated_target
+            else ("Roadmap", "Surface Impact Checklist", "Suggested Build Order")
+        )
     roadmap_text = files.get(roadmap_path, "")
-    roadmap_snippets = (
-        ("Harness Roadmap", "Status Lifecycle", "Roadmap Items")
-        if roadmap_harness_path or generated_target
-        else ("Roadmap", "Surface Impact Checklist", "Suggested Build Order")
-    )
     return [
         _check(bool(current_state), "Current state file exists"),
         _contains(instructions, ("End Of Session", "End of Session", "Before ending"), "End-of-session routine is documented"),
         _contains(lifecycle_text, ("restart", "restartable", "Next Session"), "Clean restart path is documented"),
         _check(bool(first_agent_path), "First-agent harness improvement task exists"),
-        _contains_all(
-            files.get(first_agent_path or "", ""),
-            ("First-Agent", "REVIEW REQUIRED", "verification matrix"),
-            "First-agent task is review-oriented",
-        ),
+        _first_agent_task_review_check(files, first_agent_path),
         _check(bool(roadmap_text), "Harness roadmap exists"),
         _contains_all(
             roadmap_text,
@@ -1299,6 +1352,29 @@ def _lifecycle_checks(
         _check(any_existing_key(files, "entropy_control"), "Harness drift or entropy control doc exists"),
         _contains(lifecycle_text, ("update", "correction", "regular assessment", "audit"), "Ongoing update loop is documented"),
     ]
+
+
+def _first_agent_task_review_check(
+    files: dict[str, str],
+    first_agent_path: str | None,
+) -> CheckResult:
+    text = files.get(first_agent_path or "", "")
+    lower = text.lower()
+    has_contract = "first-agent" in lower and "verification matrix" in lower
+    has_review_state = any(
+        marker in lower
+        for marker in (
+            "review required",
+            "status: retired",
+            "status: completed",
+            "review has been completed",
+            "completed and recorded",
+        )
+    )
+    return _check(
+        has_contract and has_review_state,
+        "First-agent task is review-oriented",
+    )
 
 
 def _recommendations(

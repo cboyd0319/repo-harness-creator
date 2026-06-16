@@ -786,6 +786,33 @@ class CliTests(unittest.TestCase):
         self.assertEqual(
             payload["docsFanout"]["authoritativeMap"]["status"], "pending_review"
         )
+        self.assertEqual(
+            payload["featureState"]["schemaVersion"],
+            "harnessforge.featureState.v1",
+        )
+        self.assertEqual(payload["featureState"]["status"], "aligned")
+        self.assertEqual(payload["featureState"]["summary"]["activeCount"], 1)
+        self.assertEqual(
+            payload["featureState"]["scopeDrift"]["status"], "not_requested"
+        )
+        self.assertEqual(
+            payload["observability"]["schemaVersion"],
+            "harnessforge.observability.v1",
+        )
+        self.assertEqual(payload["observability"]["status"], "strong")
+        self.assertGreaterEqual(
+            payload["observability"]["summary"]["processSignalCount"], 4
+        )
+        self.assertEqual(
+            payload["indexAdapters"]["schemaVersion"],
+            "harnessforge.indexAdapters.v1",
+        )
+        self.assertEqual(
+            payload["indexAdapters"]["defaultBehavior"],
+            "standard_library_structural_index",
+        )
+        self.assertFalse(payload["indexAdapters"]["generationEnabled"])
+        self.assertTrue(payload["indexAdapters"]["explicitOptInRequired"])
         self.assertEqual(payload["docsFanout"]["surfaceCount"], 12)
         self.assertEqual(payload["docsFanout"]["coveredSurfaceCount"], 12)
         self.assertTrue(
@@ -1160,12 +1187,18 @@ class CliTests(unittest.TestCase):
         gates = {item["id"]: item for item in payload["gates"]}
         self.assertEqual(gates["verify-evidence"]["status"], "passed")
         self.assertEqual(gates["first-agent-lifecycle"]["status"], "passed")
+        self.assertEqual(gates["feature-state"]["status"], "passed")
+        self.assertEqual(gates["observability"]["status"], "passed")
         self.assertEqual(gates["effectiveness-evidence"]["status"], "warning")
         self.assertEqual(gates["sbom"]["status"], "not_required")
         self.assertIn("maturityLevel", payload["summary"])
+        self.assertEqual(payload["summary"]["featureStateStatus"], "aligned")
+        self.assertEqual(payload["summary"]["observabilityStatus"], "strong")
         self.assertIn("currentLevel", payload["sourceReport"]["maturity"])
         self.assertIn("# HarnessForge Release Check", markdown)
         self.assertIn("Maturity level:", markdown)
+        self.assertIn("Feature state:", markdown)
+        self.assertIn("Observability:", markdown)
         self.assertIn("Publishes performed: `false`", markdown)
 
     def test_plan_json_maps_changed_files_without_running_checks(self) -> None:
@@ -3113,6 +3146,17 @@ class CliTests(unittest.TestCase):
         self.assertIn("user_specific_tool_mandate", finding_types)
         self.assertIn("verification_conflict", finding_types)
         self.assertIn("duplicated_instruction_block", finding_types)
+        self.assertIn("boundary", agents["taskClassGuidance"]["taskClasses"])
+        self.assertIn("verification", agents["taskClassGuidance"]["taskClasses"])
+        self.assertEqual(agents["ruleLifecycle"]["source"], "AGENTS.md")
+        self.assertIn(
+            "the user-specific mandate is replaced by project-owned tooling guidance",
+            agents["ruleLifecycle"]["retireWhen"],
+        )
+        self.assertIn(
+            "the local path is replaced by a repo-relative path or setup variable",
+            agents["ruleLifecycle"]["retireWhen"],
+        )
         self.assertEqual(
             agents["proposedEdits"][0]["action"],
             "append_quality_addendum",
@@ -3356,6 +3400,11 @@ class CliTests(unittest.TestCase):
         )
         self.assertIn("instructionQuality", agents)
         self.assertIn("recommendations", agents["instructionQuality"])
+        self.assertIn("taskClassGuidance", agents)
+        self.assertIn("ruleLifecycle", agents)
+        self.assertIn("boundary", agents["taskClassGuidance"]["taskClasses"])
+        self.assertIn("verification", agents["taskClassGuidance"]["taskClasses"])
+        self.assertEqual(agents["ruleLifecycle"]["owner"], "project maintainer review")
         self.assertIn("patchPreviews", payload["enhanceExistingPlan"]["summary"])
         self.assertIn("local_absolute_path", {item["type"] for item in agents["findings"]})
 

@@ -12,8 +12,8 @@ from time import monotonic
 from typing import Any
 
 from .detect import MISSING_VERIFICATION_COMMAND
-from .models import ProjectProfile
-from .redact import redact_local_paths
+from ..core.models import ProjectProfile
+from ..core.redact import redact_local_paths
 
 
 SCHEMA_VERSION = "harnessforge.verify.v1"

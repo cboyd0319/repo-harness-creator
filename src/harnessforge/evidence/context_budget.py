@@ -4,7 +4,7 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
 
-from ..paths import is_inside_root, path_from_relative_text
+from ..core.paths import is_inside_root, path_from_relative_text
 
 
 INSTRUCTION_FILES = (

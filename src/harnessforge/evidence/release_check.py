@@ -4,7 +4,7 @@ from pathlib import Path
 from typing import Any
 
 from .report import build_report
-from ..reports import relative_to_target, report_path
+from ..core.reports import relative_to_target, report_path
 
 SCHEMA_VERSION = "harnessforge.releaseCheck.v1"
 DEFAULT_MIN_SCORE = 85
@@ -88,6 +88,9 @@ def format_release_check(payload: dict[str, Any]) -> str:
             f"- First-agent lifecycle: `{summary['firstAgentLifecycleStatus']}`",
             f"- Maturity level: `{summary['maturityLevel']}`",
             f"- Docs fan-out: `{summary['docsFanoutVerdict']}`",
+            f"- Feature state: `{summary['featureStateStatus']}`",
+            f"- Observability: `{summary['observabilityStatus']}`",
+            f"- Index adapters: `{summary['indexAdapterStatus']}`",
             f"- SBOM files: {summary['sbomCount']}",
             "",
             "## Gates",
@@ -143,6 +146,8 @@ def _release_gates(
         _docs_fanout_gate(report),
         _release_controls_gate(release_controls_present),
         _effectiveness_gate(report),
+        _feature_state_gate(report),
+        _observability_gate(report),
         _sbom_gate(report, require_sbom=require_sbom),
     ]
     return gates
@@ -356,6 +361,33 @@ def _sbom_gate(report: dict[str, Any], *, require_sbom: bool) -> dict[str, Any]:
     )
 
 
+def _feature_state_gate(report: dict[str, Any]) -> dict[str, Any]:
+    status = str(report["featureState"]["status"])
+    if status in {"aligned"}:
+        gate_status = "passed"
+    elif status == "absent":
+        gate_status = "warning"
+    else:
+        gate_status = "warning"
+    return _gate(
+        "feature-state",
+        gate_status,
+        f"feature-state evidence is {status}",
+        value=status,
+    )
+
+
+def _observability_gate(report: dict[str, Any]) -> dict[str, Any]:
+    status = str(report["observability"]["status"])
+    gate_status = "passed" if status == "strong" else "warning"
+    return _gate(
+        "observability",
+        gate_status,
+        f"observability evidence is {status}",
+        value=status,
+    )
+
+
 def _gate(
     gate_id: str,
     status: str,
@@ -390,6 +422,9 @@ def _summary(report: dict[str, Any]) -> dict[str, Any]:
         "instructionQualityStatus": report["instructionQuality"]["summary"]["status"],
         "firstAgentLifecycleStatus": report["firstAgentTask"]["lifecycle"]["status"],
         "docsFanoutVerdict": report["docsFanout"]["contract"]["verdict"],
+        "featureStateStatus": report["featureState"]["status"],
+        "observabilityStatus": report["observability"]["status"],
+        "indexAdapterStatus": report["indexAdapters"]["status"],
         "effectivenessVerdict": report["effectiveness"]["verdict"],
         "maturityLevel": report["maturity"]["currentLevel"],
         "maturityNextLevel": report["maturity"]["nextLevel"],

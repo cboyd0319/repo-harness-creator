@@ -6,21 +6,24 @@ from pathlib import Path
 from typing import Any
 
 from .effectiveness import build_effectiveness_assessment
+from .feature_state import build_feature_state_report
 from .first_agent import (
     analyze_first_agent_lifecycle,
     first_agent_lifecycle_to_dict,
 )
+from .index_adapters import build_index_adapter_report
 from .maturity import build_maturity_report
+from .observability import build_observability_report
 from .policy_presets import build_policy_preset_report
 from .sbom_adapter import build_sbom_adapter_plan
-from ..audit import audit_target, audit_to_dict
-from ..detect import detect_project
-from ..harness_paths import existing_harness_path, harness_path
-from ..indexer import build_index_report
-from ..planner import DiffPlanReport, build_diff_plan
-from ..readiness import inspect_readiness, readiness_to_dict
-from ..reports import report_path, relative_to_target
-from ..update import build_drift_report
+from ..assessment.audit import audit_target, audit_to_dict
+from ..core.harness_paths import existing_harness_path, harness_path
+from ..core.reports import report_path, relative_to_target
+from ..generation.update import build_drift_report
+from ..project.detect import detect_project
+from ..project.indexer import build_index_report
+from ..project.planner import DiffPlanReport, build_diff_plan
+from ..project.readiness import inspect_readiness, readiness_to_dict
 
 SCHEMA_VERSION = "harnessforge.report.v1"
 FIRST_AGENT_TASK = harness_path("first_agent_task")
@@ -88,6 +91,9 @@ def build_report(
         diff_plan,
         require_budget=require_docs_fanout_budget,
     )
+    feature_state = build_feature_state_report(profile.root, diff_plan=diff_plan)
+    observability = build_observability_report(profile.root, profile.files)
+    index_adapters = build_index_adapter_report(profile.files)
     payload = {
         "schemaVersion": SCHEMA_VERSION,
         "target": {
@@ -114,6 +120,9 @@ def build_report(
         "sbomAdapter": sbom_adapter,
         "releaseControls": _release_controls_summary(profile.root),
         "docsFanout": docs_fanout,
+        "featureState": feature_state,
+        "observability": observability,
+        "indexAdapters": index_adapters,
     }
     payload["maturity"] = build_maturity_report(payload)
     payload["nextActions"] = _next_actions(
@@ -126,6 +135,9 @@ def build_report(
         payload["maturity"],
         policy_presets,
         sbom_adapter,
+        feature_state,
+        observability,
+        index_adapters,
     )
     return payload
 
@@ -242,6 +254,24 @@ def format_report(payload: dict[str, Any]) -> str:
             f"- Diff status: `{payload['docsFanout']['diff']['status']}`",
             f"- Touched surfaces: {payload['docsFanout']['diff']['touchedSurfaceCount']}",
             f"- Duplicate fact blocks: {payload['docsFanout']['duplicateFacts']['summary']['blocks']}",
+            "",
+            "## Feature State",
+            "",
+            f"- Status: `{payload['featureState']['status']}`",
+            f"- Active features: {payload['featureState']['summary']['activeCount']}",
+            f"- Scope drift: `{payload['featureState']['scopeDrift']['status']}`",
+            "",
+            "## Observability",
+            "",
+            f"- Status: `{payload['observability']['status']}`",
+            f"- Runtime signals: {payload['observability']['summary']['runtimeSignalCount']}",
+            f"- Process signals: {payload['observability']['summary']['processSignalCount']}",
+            "",
+            "## Index Adapters",
+            "",
+            f"- Status: `{payload['indexAdapters']['status']}`",
+            f"- Artifacts: {len(payload['indexAdapters']['detectedArtifacts'])}",
+            f"- Explicit opt-in required: `{str(payload['indexAdapters']['explicitOptInRequired']).lower()}`",
             "",
             "## Next Actions",
             "",
@@ -573,10 +603,9 @@ def _surface_ids_for_file(path: str) -> set[str]:
         "gemini.md",
     }:
         surfaces.add("local_repo_harness")
-    if lower.startswith("src/harnessforge/templates/") or lower in {
-        "src/harnessforge/generate.py",
-        "src/harnessforge/public_repo_corpus.py",
-    }:
+    if lower.startswith("src/harnessforge/templates/") or lower.startswith(
+        "src/harnessforge/generation/"
+    ):
         surfaces.add("generated_harness")
     if lower.startswith("src/harnessforge/") or lower == "pyproject.toml":
         surfaces.add("cli_runtime")
@@ -758,6 +787,9 @@ def _next_actions(
     maturity: dict[str, Any],
     policy_presets: dict[str, Any],
     sbom_adapter: dict[str, Any],
+    feature_state: dict[str, Any],
+    observability: dict[str, Any],
+    index_adapters: dict[str, Any],
 ) -> list[str]:
     actions: list[str] = [
         "Run harnessforge report --target <repo> --markdown-report "
@@ -773,6 +805,9 @@ def _next_actions(
     actions.extend(first_agent["lifecycle"]["nextActions"])
     actions.extend(policy_presets["nextActions"])
     actions.extend(sbom_adapter["nextActions"])
+    actions.extend(feature_state["nextActions"])
+    actions.extend(observability["nextActions"])
+    actions.extend(index_adapters["nextActions"])
     if docs_fanout["authoritativeMap"]["status"] == "missing":
         actions.append(
             "Add docs/harness/authoritative-facts.md to reduce harness docs fan-out."

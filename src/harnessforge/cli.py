@@ -6,16 +6,11 @@ import sys
 from pathlib import Path
 
 from . import __version__
-from .audit import audit_target, audit_to_dict, format_audit, render_html_report
-from .blueprints import (
-    apply_blueprint,
-    blueprint_to_dict,
-    get_blueprint,
-    list_blueprints,
-    list_blueprints_to_dict,
-)
-from .detect import detect_project
-from .doctor import doctor_json, doctor_report, format_doctor
+from .assessment.audit import audit_target, audit_to_dict, format_audit, render_html_report
+from .core.doctor import doctor_json, doctor_report, format_doctor
+from .core.models import DriftResult, ProjectProfile, WriteResult
+from .core.redact import redact_local_paths
+from .core.reports import write_json_payload
 from .evidence.effectiveness import (
     build_effectiveness_assessment,
     format_effectiveness_assessment,
@@ -27,32 +22,41 @@ from .evidence.release_check import (
     write_markdown_release_check,
 )
 from .evidence.report import build_report, format_report, write_markdown_report
-from .generate import (
+from .generation.blueprints import (
+    apply_blueprint,
+    blueprint_to_dict,
+    get_blueprint,
+    list_blueprints,
+    list_blueprints_to_dict,
+)
+from .generation.generate import (
     PLATFORM_CONTRACTS,
     REVIEW_REQUIRED_FILES,
     build_enhance_existing_plan,
     create_harness,
     empty_enhance_existing_plan,
 )
-from .indexer import build_index_report, format_index_report
-from .models import DriftResult, ProjectProfile, WriteResult
-from .planner import build_diff_plan, diff_plan_to_dict, format_diff_plan
-from .public_repo_corpus import (
+from .generation.public_repo_corpus import (
     build_public_repo_corpus_report,
     format_public_repo_corpus_report,
 )
-from .readiness import (
+from .generation.update import build_drift_report, plan_or_apply_update
+from .project.detect import detect_project
+from .project.indexer import build_index_report, format_index_report
+from .project.planner import build_diff_plan, diff_plan_to_dict, format_diff_plan
+from .project.readiness import (
     ReadinessReport,
     format_readiness,
     inspect_readiness,
     readiness_to_dict,
 )
-from .redact import redact_local_paths
-from .reports import write_json_payload
-from .session import build_session_report, format_session_report, session_report_to_dict
-from .sync import format_sync_check, sync_check_to_dict, sync_exit_code
-from .update import build_drift_report, plan_or_apply_update
-from .verify import (
+from .project.session import (
+    build_session_report,
+    format_session_report,
+    session_report_to_dict,
+)
+from .project.sync import format_sync_check, sync_check_to_dict, sync_exit_code
+from .project.verify import (
     DEFAULT_TIMEOUT_SECONDS,
     build_verify_plan,
     format_verify_plan,

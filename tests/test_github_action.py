@@ -8,7 +8,7 @@ import tempfile
 import unittest
 from pathlib import Path
 
-from harnessforge.generate import create_harness
+from harnessforge.generation.generate import create_harness
 from harnessforge.github_action import _output, run_from_env
 
 
@@ -249,6 +249,9 @@ class GitHubActionTests(unittest.TestCase):
         self.assertIn("Instruction quality", summary_text)
         self.assertIn("First-agent lifecycle", summary_text)
         self.assertIn("Repo map", summary_text)
+        self.assertIn("Feature state", summary_text)
+        self.assertIn("Observability", summary_text)
+        self.assertIn("Index adapters", summary_text)
         self.assertIn("SBOM files", summary_text)
 
     def test_action_release_check_writes_reports_and_outputs_verdict(self) -> None:
@@ -303,6 +306,8 @@ class GitHubActionTests(unittest.TestCase):
         self.assertIn("# HarnessForge Release Check", markdown)
         self.assertIn("HarnessForge Release Check", summary_text)
         self.assertIn("Maturity level", summary_text)
+        self.assertIn("Feature state", summary_text)
+        self.assertIn("Observability", summary_text)
         self.assertIn("first-agent-lifecycle", summary_text)
 
     def test_action_sync_writes_readiness_report_and_outputs(self) -> None:

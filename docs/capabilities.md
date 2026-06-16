@@ -40,8 +40,9 @@ boundaries it preserves. See [Usage](usage.md) for commands and
 - Composes readiness, audit, generated drift, structural index, verify
   evidence, effectiveness evidence, first-agent task status, platform
   contract, docs fan-out routing status, policy preset recommendations, SBOM
-  adapter status, release-control presence, and evidence-gated maturity into
-  one read-only JSON or Markdown report.
+  adapter status, feature-state scope, runtime/process observability,
+  optional index-adapter status, release-control presence, and evidence-gated maturity
+  into one read-only JSON or Markdown report.
 - Assembles read-only release readiness gates from existing report evidence
   and the source report maturity level without publishing artifacts, tagging,
   pushing, uploading, or running target commands.
@@ -53,6 +54,9 @@ boundaries it preserves. See [Usage](usage.md) for commands and
   workflow automation.
 - Provides an offline public-repo fixture corpus for generated-content quality
   and detection regression checks without cloning public repositories.
+- Provides an explicit public-corpus refresh script that validates fixture
+  metadata offline by default and checks remote heads only with
+  `--verify-remote`.
 - Provides a composite GitHub Action for audit, init, update, sync, verify,
   report, release-check, and doctor workflows.
 

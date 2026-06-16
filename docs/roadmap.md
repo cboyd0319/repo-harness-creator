@@ -198,8 +198,9 @@ Implemented report expansion:
 - report and Action summaries include policy preset status;
 - report and release-check surfaces include release evidence automation and
   evidence-gated maturity;
-- reports include SBOM adapter status while keeping SBOM generation out of
-  normal flows.
+- reports include feature-state scope, runtime/process observability,
+  optional index-adapter status, and SBOM adapter status while keeping SBOM
+  generation and external index generation out of normal flows.
 
 ### Compact Repo Map From Index
 
@@ -509,13 +510,16 @@ bridge has been removed.
 
 ### Runtime And Process Observability
 
+Status: implemented as read-only report and release-check evidence.
+
 Add stronger guidance and reporting around observability that helps agents
 debug from evidence.
 
-Candidate behavior:
+Implemented behavior:
 
-- report whether startup, critical paths, logs, traces, health checks, or
-  benchmark scripts are discoverable;
+- `harnessforge report --json` emits `observability` with detected runtime
+  and process signals;
+- `harnessforge release-check` includes an `observability` gate;
 - distinguish runtime observability from process observability such as change
   contracts, acceptance criteria, rubrics, and evidence logs;
 - encourage agent-oriented failure messages in generated sensor guidance;
@@ -525,6 +529,9 @@ Candidate behavior:
   project-owned or explicit opt-in adapters, not generation defaults.
 
 ### Golden Public-Repo Fixture Corpus
+
+Status: implemented as an offline pinned fixture corpus with a metadata refresh
+check.
 
 Build a stable quality corpus from popular public open-source repositories.
 The corpus should test generated-content quality, not only command success.
@@ -549,6 +556,15 @@ Use pinned public commit SHAs and expected detection metadata. Normal unit tests
 should not require network access or full repository checkouts. A separate
 fetch/update script or scheduled quality job can refresh the corpus and record
 diffs for review.
+
+Implemented behavior:
+
+- `harnessforge corpus --json` runs the offline generated-content quality
+  corpus without network access;
+- `scripts/refresh_public_repo_corpus.py` validates pinned fixture metadata
+  offline by default;
+- `scripts/refresh_public_repo_corpus.py --verify-remote` is the explicit
+  owner action for networked `git ls-remote` checks.
 
 Quality checks should include:
 
@@ -580,14 +596,21 @@ Dedicated surface: `harnessforge enhance --target <repo>` and
 `harnessforge enhance --target <repo> --json` now expose the same read-only
 review plan without making users discover it through `init`.
 
-Candidate behavior:
+Current implemented slice:
+
+- reports per-file instruction-quality recommendations;
+- emits `taskClassGuidance` for verification, boundary, instruction
+  maintenance, platform routing, and general guidance;
+- emits `ruleLifecycle` source, applicability, owner, and retirement guidance
+  for accepted durable rules;
+- keeps patch previews review-only and never rewrites existing instruction
+  files automatically.
+
+Further candidate behavior:
 
 - extend section parsing beyond the current Markdown-heading pass;
 - classify project-owned rules, generated routers, stale generated blocks,
   and conflicts beyond the current finding set;
-- extend the implemented instruction signal-to-noise report into task-class
-  guidance and suggest focused topic docs when root files become dumping
-  grounds;
 - optionally apply reviewed cleanup edits after explicit patch preview approval;
 - preserve local wording unless it conflicts with a detected boundary or
   generated ownership metadata;
@@ -630,6 +653,8 @@ with a dry-run summary, then ask before writes.
 
 ### Optional Index Adapters
 
+Status: implemented as a read-only report plan and detection surface.
+
 Keep the standard-library structural index as the default. Add optional
 adapters only where they improve generated artifact quality or report evidence.
 
@@ -646,6 +671,11 @@ When adapter data materially changes generated output, HarnessForge should say
 so in dry-run, report, and readiness output. Adapter output should include
 provenance, freshness, confidence, and risks.
 
+Implemented behavior: `harnessforge report --json` emits `indexAdapters` with
+detected local tools, existing index artifacts, default behavior, adapter
+candidates, and explicit opt-in requirements. Normal generation still uses the
+standard-library structural index.
+
 ### Action Summary Polish
 
 Status: implemented for report and sync summaries.
@@ -656,7 +686,9 @@ Implemented behavior:
 
 - richer `$GITHUB_STEP_SUMMARY` output for `command: report`, including
   readiness, score, drift, docs fan-out, verify evidence, effectiveness,
-  instruction quality, first-agent lifecycle, repo-map counts, and SBOM count;
+  instruction quality, first-agent lifecycle, maturity, policy preset status,
+  SBOM adapter status, feature-state status, observability status,
+  index-adapter status, repo-map counts, and SBOM count;
 - richer `command: sync` summary with readiness, warning, review-required,
   runnable-check, instruction-quality, first-agent, and verify-evidence status;
 - existing audit and verify summaries remain concise and table-oriented.
@@ -782,13 +814,19 @@ Implemented shape:
 
 - public entrypoints and command dispatch stay top-level in `cli.py` and
   `github_action.py`;
-- generated harness creation stays in `generate.py` and templates remain under
-  `templates/`;
-- shared report-path helpers stay in `reports.py`;
+- generated harness creation, update planning, blueprint writing, and the
+  offline public-repo corpus live under `src/harnessforge/generation/`, while
+  templates remain under `src/harnessforge/templates/`;
+- shared models, path safety, redaction, report-path helpers, harness path
+  constants, and doctor checks live under `src/harnessforge/core/`;
+- repo detection, indexing, readiness, planning, session, sync, spec-system,
+  and verify helpers live under `src/harnessforge/project/`;
+- audit scoring lives under `src/harnessforge/assessment/`;
 - evidence, report composition, release-check gates, maturity, policy preset
   recommendations, SBOM adapter status, instruction quality, context budget,
-  first-agent lifecycle, governance inventory, workflow inventory, and verify
-  evidence now live under `src/harnessforge/evidence/`.
+  feature state, observability, index-adapter reporting, first-agent
+  lifecycle, governance inventory, workflow inventory, and verify evidence now
+  live under `src/harnessforge/evidence/`.
 
 ## Suggested Build Order
 
@@ -798,14 +836,16 @@ Implemented shape:
    green as quality and detection gates evolve.
 3. Expand `harnessforge report` with policy preset status. Done.
 4. Add evidence-gated feature-state and deeper instruction-quality reporting
-   to the generated-harness quality scorer.
+   to the generated-harness quality scorer. Done for report/release-check and
+   enhance review output.
 5. Design the optional SBOM adapter before adding any SBOM generation behavior.
    Done for read-only reporting; generation remains future explicit opt-in.
 6. Add expanded policy presets. Done for the initial blueprint-backed catalog.
 7. Design the interactive quickstart/init UX once the underlying decisions are
    stable. Done for the reproducible JSON decision plan and guarded TTY prompt.
 8. Reorganize `src/harnessforge/` and run focused import, CLI, Action, and
-   generator checks.
+   generator checks. Done for the package split across assessment, core,
+   project, generation, evidence, and top-level entrypoints.
 
 ## Rejected Defaults
 

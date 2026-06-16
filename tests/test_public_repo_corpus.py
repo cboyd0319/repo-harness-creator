@@ -3,8 +3,12 @@ from __future__ import annotations
 import contextlib
 import io
 import json
+import os
 import re
+import subprocess
+import sys
 import unittest
+from pathlib import Path
 
 from harnessforge.cli import main
 
@@ -45,6 +49,11 @@ class PublicRepoCorpusTests(unittest.TestCase):
         self.assertGreaterEqual(payload["summary"]["minimumScore"], 90)
         self.assertFalse(payload["coverage"]["missingCategories"])
         self.assertTrue(required_categories <= set(payload["coverage"]["categories"]))
+        self.assertEqual(
+            payload["refreshPlan"]["script"],
+            "scripts/refresh_public_repo_corpus.py",
+        )
+        self.assertFalse(payload["refreshPlan"]["normalCorpusNetworkAccess"])
         self.assertNotRegex(raw, r"/Users/|Documents/GitHub|Downloads|C:\\Users\\")
 
         for fixture in payload["fixtures"]:
@@ -73,6 +82,34 @@ class PublicRepoCorpusTests(unittest.TestCase):
         self.assertIn("Failing fixtures: 0", output)
         self.assertIn("pallets-flask", output)
         self.assertEqual(failing_code, 1)
+
+    def test_public_repo_corpus_refresh_metadata_check_is_offline(self) -> None:
+        root = Path(__file__).resolve().parents[1]
+
+        result = subprocess.run(
+            [sys.executable, "scripts/refresh_public_repo_corpus.py", "--json"],
+            cwd=root,
+            env={
+                **os.environ,
+                "PYTHONPATH": os.pathsep.join((str(root / "src"), str(root))),
+            },
+            capture_output=True,
+            text=True,
+            check=False,
+        )
+        payload = json.loads(result.stdout)
+
+        self.assertEqual(result.returncode, 0)
+        self.assertEqual(
+            payload["schemaVersion"],
+            "harnessforge.publicRepoCorpusRefresh.v1",
+        )
+        self.assertEqual(payload["mode"], "metadata_check")
+        self.assertFalse(payload["execution"]["networkAccess"])
+        self.assertFalse(payload["execution"]["commandsExecuted"])
+        self.assertEqual(payload["summary"]["errors"], 0)
+        self.assertFalse(payload["missingCategories"])
+        self.assertTrue(all(item["remote"] is None for item in payload["fixtures"]))
 
 
 if __name__ == "__main__":

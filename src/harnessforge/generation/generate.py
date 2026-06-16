@@ -11,20 +11,20 @@ from html import escape as html_escape
 from importlib.resources import files
 from pathlib import Path
 
-from . import __version__
-from .detect import MISSING_VERIFICATION_COMMAND, detect_project
-from .harness_paths import (
+from .. import __version__
+from ..core.harness_paths import (
     HARNESS_SKILL_PATH,
     HARNESS_SKILL_REFERENCE_PATH,
     harness_path,
 )
-from .evidence.instruction_quality import (
+from ..core.models import ProjectProfile, WriteResult
+from ..core.paths import is_inside_root
+from ..core.redact import redact_local_paths
+from ..evidence.instruction_quality import (
     analyze_instruction_quality,
     instruction_quality_to_dict,
 )
-from .models import ProjectProfile, WriteResult
-from .paths import is_inside_root
-from .redact import redact_local_paths
+from ..project.detect import MISSING_VERIFICATION_COMMAND, detect_project
 
 TEMPLATE_ROOT = files("harnessforge").joinpath("templates")
 ENHANCE_PLAN_SCHEMA_VERSION = "harnessforge.enhanceExistingPlan.v1"
@@ -1143,8 +1143,85 @@ def _enhance_plan_file(
         "instructionQuality": _enhance_instruction_quality_summary(
             instruction_quality
         ),
+        "taskClassGuidance": _task_class_guidance(
+            relative_path,
+            findings=findings,
+            section_coverage=section_coverage,
+        ),
+        "ruleLifecycle": _rule_lifecycle_guidance(relative_path, findings=findings),
         "findings": findings,
         "proposedEdits": proposed_edits,
+    }
+
+
+def _task_class_guidance(
+    relative_path: str,
+    *,
+    findings: list[dict[str, object]],
+    section_coverage: dict[str, object],
+) -> dict[str, object]:
+    finding_types = {str(item.get("type", "")) for item in findings}
+    missing = {
+        str(item)
+        for item in section_coverage.get("missing", [])
+        if isinstance(item, str)
+    }
+    task_classes: list[str] = []
+    recommendations: list[str] = []
+    if "verification" in missing or "verification_conflict" in finding_types:
+        task_classes.append("verification")
+        recommendations.append(
+            "Route coding, config, and generated-output work to the smallest repo-owned verification command."
+        )
+    if "constraints" in missing or "local_absolute_path" in finding_types:
+        task_classes.append("boundary")
+        recommendations.append(
+            "Move machine-local, permission, and overwrite boundaries into durable harness docs."
+        )
+    if "duplicated_instruction_block" in finding_types or "instruction_bloat" in finding_types:
+        task_classes.append("instruction-maintenance")
+        recommendations.append(
+            "Keep this file as a router and move repeated or topic-specific detail to one owner doc."
+        )
+    if relative_path != "AGENTS.md" and "Canonical instruction route" in missing:
+        task_classes.append("platform-routing")
+        recommendations.append(
+            "Make this platform-specific file route to the canonical instruction file."
+        )
+    if not recommendations:
+        task_classes.append("general")
+        recommendations.append(
+            "Preserve project-owned wording and update only the smallest accepted instruction surface."
+        )
+    return {
+        "taskClasses": list(dict.fromkeys(task_classes)),
+        "recommendations": recommendations,
+    }
+
+
+def _rule_lifecycle_guidance(
+    relative_path: str,
+    *,
+    findings: list[dict[str, object]],
+) -> dict[str, object]:
+    finding_types = {str(item.get("type", "")) for item in findings}
+    applies_when = [
+        "an agent edits repo instructions or harness docs",
+        "a maintainer accepts the rule as project-owned guidance",
+    ]
+    retire_when = [
+        "a mechanical check, test, or schema enforces the rule",
+        "the underlying tool, workflow, or boundary no longer exists",
+    ]
+    if "user_specific_tool_mandate" in finding_types:
+        retire_when.append("the user-specific mandate is replaced by project-owned tooling guidance")
+    if "local_absolute_path" in finding_types:
+        retire_when.append("the local path is replaced by a repo-relative path or setup variable")
+    return {
+        "source": relative_path,
+        "applicability": applies_when,
+        "retireWhen": retire_when,
+        "owner": "project maintainer review",
     }
 
 

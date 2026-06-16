@@ -5,8 +5,8 @@ from pathlib import Path, PurePosixPath
 from typing import Any
 
 from .detect import COMPONENT_MARKERS
-from .models import ProjectProfile
-from .paths import is_inside_root, path_from_relative_text
+from ..core.models import ProjectProfile
+from ..core.paths import is_inside_root, path_from_relative_text
 
 SCHEMA_VERSION = "harnessforge.index.v1"
 MAX_EXAMPLES = 20

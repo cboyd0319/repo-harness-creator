@@ -7,12 +7,10 @@ from collections.abc import Mapping
 from pathlib import Path
 from typing import Any
 
-from .audit import audit_target, audit_to_dict, format_audit, render_html_report
-from .detect import detect_project
-from .doctor import doctor_report, format_doctor
-from .generate import create_harness
-from .readiness import inspect_readiness
-from .redact import redact_local_paths
+from .assessment.audit import audit_target, audit_to_dict, format_audit, render_html_report
+from .core.doctor import doctor_report, format_doctor
+from .core.redact import redact_local_paths
+from .core.reports import relative_to_target, report_path, write_json_payload
 from .evidence.release_check import (
     build_release_check,
     format_release_check,
@@ -20,10 +18,12 @@ from .evidence.release_check import (
     write_markdown_release_check,
 )
 from .evidence.report import build_report, format_report, write_markdown_report
-from .reports import relative_to_target, report_path, write_json_payload
-from .sync import format_sync_check, sync_check_to_dict, sync_exit_code
-from .update import plan_or_apply_update
-from .verify import (
+from .generation.generate import create_harness
+from .generation.update import plan_or_apply_update
+from .project.detect import detect_project
+from .project.readiness import inspect_readiness
+from .project.sync import format_sync_check, sync_check_to_dict, sync_exit_code
+from .project.verify import (
     DEFAULT_TIMEOUT_SECONDS,
     build_verify_plan,
     format_verify_plan,
@@ -459,6 +459,9 @@ def _report_summary_markdown(payload: dict[str, Any]) -> str:
         f"| Maturity level | `{payload['maturity']['currentLevel']}` |",
         f"| Policy presets | `{payload['policyPresets']['status']}` ({len(payload['policyPresets']['recommendedPresets'])} recommended) |",
         f"| SBOM adapter | `{payload['sbomAdapter']['status']}` |",
+        f"| Feature state | `{payload['featureState']['status']}` |",
+        f"| Observability | `{payload['observability']['status']}` |",
+        f"| Index adapters | `{payload['indexAdapters']['status']}` |",
         f"| Repo map | `{repo_map['componentCount']}` components, `{repo_map['sourceOfTruthCount']}` source docs |",
         f"| SBOM files | `{repo_map['sbomCount']}` |",
     ]
@@ -475,6 +478,8 @@ def _release_check_summary_markdown(payload: dict[str, Any]) -> str:
         f"- Readiness: `{payload['summary']['readinessVerdict']}`",
         f"- Verify evidence: `{payload['summary']['verifyEvidenceVerdict']}`",
         f"- Maturity level: `{payload['summary']['maturityLevel']}`",
+        f"- Feature state: `{payload['summary']['featureStateStatus']}`",
+        f"- Observability: `{payload['summary']['observabilityStatus']}`",
         "",
         "| Gate | Status |",
         "| --- | --- |",

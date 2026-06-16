@@ -6,8 +6,8 @@ from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
 
-from ..harness_paths import harness_path
-from ..paths import is_absolute_path_text, is_inside_root, path_from_relative_text
+from ..core.harness_paths import harness_path
+from ..core.paths import is_absolute_path_text, is_inside_root, path_from_relative_text
 
 SCHEMA_VERSION = "harnessforge.firstAgentReview.v1"
 EVIDENCE_PATH = "docs/harness/evidence/first-agent-review.json"

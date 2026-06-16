@@ -8,8 +8,8 @@ import tempfile
 import unittest
 from pathlib import Path
 
-from harnessforge.audit import audit_target
-from harnessforge.generate import create_harness
+from harnessforge.assessment.audit import audit_target
+from harnessforge.generation.generate import create_harness
 AGENTS_SECTION_ORDER = [
     "## Project overview",
     "## Build and test commands",
@@ -990,6 +990,45 @@ class GenerateAuditTests(unittest.TestCase):
         self.assertFalse(checks["First-agent harness improvement task exists"])
         self.assertFalse(checks["Harness roadmap exists"])
 
+    def test_audit_accepts_retired_first_agent_task(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            create_harness(root, commands=("python -m compileall .",))
+            task_path = root / "docs/harness/state/first-agent-task.md"
+            task = task_path.read_text(encoding="utf-8")
+            task = task.replace(
+                "REVIEW REQUIRED: use this during the first agent session after HarnessForge\n"
+                "generates the harness. Replace or retire it after maintainers accept the\n"
+                "repo-specific harness.",
+                "Status: retired after first-agent review. Maintainers accepted the\n"
+                "repo-specific harness guidance.",
+            )
+            task_path.write_text(task, encoding="utf-8")
+            manifest_path = root / "docs/harness/manifest.json"
+            manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+            snippets = manifest["requiredHarnessSnippets"][
+                "docs/harness/state/first-agent-task.md"
+            ]
+            manifest["requiredHarnessSnippets"][
+                "docs/harness/state/first-agent-task.md"
+            ] = [
+                "Status: retired" if item == "REVIEW REQUIRED" else item
+                for item in snippets
+            ]
+            manifest_path.write_text(json.dumps(manifest, indent=2), encoding="utf-8")
+
+            result = audit_target(root)
+            lifecycle = next(
+                domain for domain in result.domains if domain.name == "lifecycle"
+            )
+            review_check = next(
+                check
+                for check in lifecycle.checks
+                if check.message == "First-agent task is review-oriented"
+            )
+
+        self.assertTrue(review_check.passed)
+
     def test_audit_flags_generated_target_repo_local_self_healing_leak(self) -> None:
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp)
@@ -1037,6 +1076,39 @@ class GenerateAuditTests(unittest.TestCase):
         self.assertLess(result.overall, 100)
         self.assertFalse(layout.passed)
         self.assertIn("stray.md", layout.detail)
+
+    def test_audit_rejects_flat_harnessforge_source_modules(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            create_harness(root, commands=("python -m compileall .",))
+            for relative_path in (
+                "action.yml",
+                "docs/action.md",
+                "src/harnessforge/cli.py",
+                "src/harnessforge/legacy.py",
+            ):
+                path = root / relative_path
+                path.parent.mkdir(parents=True, exist_ok=True)
+                path.write_text("placeholder\n", encoding="utf-8")
+            manifest_path = root / "docs/harness/manifest.json"
+            manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+            manifest["requiredFiles"].extend(
+                ["action.yml", "docs/action.md", "src/harnessforge/cli.py"]
+            )
+            manifest_path.write_text(json.dumps(manifest, indent=2), encoding="utf-8")
+
+            result = audit_target(root)
+            scope = next(domain for domain in result.domains if domain.name == "scope")
+            source_layout = next(
+                check
+                for check in scope.checks
+                if check.message
+                == "HarnessForge source uses organized package boundaries"
+            )
+
+        self.assertLess(result.overall, 100)
+        self.assertFalse(source_layout.passed)
+        self.assertIn("legacy.py", source_layout.detail)
 
     def test_audit_requires_harnessforge_product_fact_map(self) -> None:
         with tempfile.TemporaryDirectory() as tmp:
@@ -1601,7 +1673,6 @@ class GenerateAuditTests(unittest.TestCase):
             "docs/harness/feedback/verification-matrix.md",
             "docs/harness/boundaries/security-boundary-map.md",
             "docs/harness/release/release-controls.md",
-            "docs/harness/state/first-agent-task.md",
             "docs/harness/operations/agent-operating-model.md",
             "docs/harness/state/entropy-control.md",
             "docs/harness/feedback/sensor-registry.md",
@@ -1614,6 +1685,14 @@ class GenerateAuditTests(unittest.TestCase):
             live_values = live_snippets.get(file_name)
             with self.subTest(file_name=file_name):
                 self.assertEqual(live_values, snippets)
+        self.assertIn(
+            "REVIEW REQUIRED",
+            generated["requiredHarnessSnippets"]["docs/harness/state/first-agent-task.md"],
+        )
+        self.assertIn(
+            "Status: retired for this repository",
+            live_snippets["docs/harness/state/first-agent-task.md"],
+        )
 
     def test_generated_component_inventory_records_workspace_markers(self) -> None:
         with tempfile.TemporaryDirectory() as tmp:

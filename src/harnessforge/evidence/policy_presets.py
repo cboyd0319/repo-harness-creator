@@ -4,9 +4,9 @@ import json
 from pathlib import Path, PurePosixPath
 from typing import Any
 
-from ..blueprints import BLUEPRINT_ROOT, Blueprint, list_blueprints
-from ..models import ProjectProfile
-from ..paths import path_from_relative_text
+from ..core.models import ProjectProfile
+from ..core.paths import path_from_relative_text
+from ..generation.blueprints import BLUEPRINT_ROOT, Blueprint, list_blueprints
 
 SCHEMA_VERSION = "harnessforge.policyPresets.v1"
 

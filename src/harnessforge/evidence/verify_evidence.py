@@ -6,7 +6,7 @@ from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
 
-from ..paths import path_from_relative_text
+from ..core.paths import path_from_relative_text
 
 VERIFY_EVIDENCE_PREFIX = "docs/harness/evidence/"
 VERIFY_SCHEMA_VERSION = "harnessforge.verify.v1"

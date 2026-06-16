@@ -1,8 +1,10 @@
 # First-Agent Harness Improvement Task
 
-REVIEW REQUIRED: use this during the first agent session after HarnessForge
-generates the harness. Replace or retire this task after the project accepts
-the improved harness.
+Status: retired for this repository.
+
+This task remains as the generated first-agent review contract. HarnessForge's
+own repo-specific harness review has been completed and recorded in
+`docs/harness/evidence/first-agent-review.json`.
 
 ## Goal
 

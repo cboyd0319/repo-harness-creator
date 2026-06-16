@@ -124,8 +124,9 @@ on over-budget fan-out or duplicated durable fact blocks.
 
 The step summary includes readiness, audit score, generated drift, docs
 fan-out, verify/effectiveness evidence, instruction quality, first-agent
-lifecycle, maturity, policy preset status, SBOM adapter status, repo-map
-counts, and SBOM file count.
+lifecycle, maturity, policy preset status, SBOM adapter status, feature-state
+status, observability status, index-adapter status, repo-map counts, and SBOM
+file count.
 
 Upload report artifacts in the caller workflow when that is useful. The
 HarnessForge Action does not upload artifacts by default:
@@ -156,12 +157,13 @@ Assemble release readiness evidence without publishing anything:
 `command: release-check` returns `0` for passed, `1` for warning, and `2` for
 blocked. It requires current passed run-mode verify evidence, applies the
 `min-score` audit threshold, checks generated drift, first-agent lifecycle,
-instruction quality, docs fan-out, release controls, effectiveness evidence,
-and existing SBOM evidence. It also surfaces the evidence-gated maturity level
-from the source report. Use `report-command` when detection cannot infer
-repo-owned verification commands; release-check records those commands but does
-not execute them. Set `require-sbom: "true"` only when the project has opted
-into SBOM evidence as a hard release gate.
+instruction quality, docs fan-out, feature-state alignment, runtime/process
+observability, release controls, effectiveness evidence, and existing SBOM
+evidence. It also surfaces the evidence-gated maturity level from the source
+report. Use `report-command` when detection cannot infer repo-owned
+verification commands; release-check records those commands but does not
+execute them. Set `require-sbom: "true"` only when the project has opted into
+SBOM evidence as a hard release gate.
 
 The `release-verdict`, `readiness-verdict`, `docs-fanout-verdict`,
 `overall-score`, `report-json`, and `report-markdown` outputs expose the gate
@@ -295,10 +297,11 @@ can handle them consistently across Windows and POSIX jobs.
 When `GITHUB_STEP_SUMMARY` is available, the Action writes a concise Markdown
 summary. `command: report` summarizes readiness, audit score, drift, docs
 fan-out, verify evidence, effectiveness evidence, instruction quality,
-first-agent lifecycle, maturity level, repo-map component/source counts, and
-SBOM file count.
+first-agent lifecycle, maturity level, feature state, observability, index
+adapters, repo-map component/source counts, and SBOM file count.
 `command: release-check` summarizes the release verdict, audit score,
-readiness, verify evidence, maturity level, and individual release gates.
+readiness, verify evidence, maturity level, feature state, observability, and
+individual release gates.
 `command: sync` includes readiness, warning, review-required, runnable-check,
 instruction-quality, and first-agent lifecycle counts.
 

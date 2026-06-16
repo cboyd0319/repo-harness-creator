@@ -5,10 +5,10 @@ from dataclasses import dataclass
 from hashlib import sha256
 from pathlib import Path
 
-from . import __version__
-from .models import WriteResult
-from .paths import is_inside_root
-from .redact import redact_local_paths
+from .. import __version__
+from ..core.models import WriteResult
+from ..core.paths import is_inside_root
+from ..core.redact import redact_local_paths
 
 SCHEMA_VERSION = "harnessforge.blueprints.v1"
 MANIFEST_SCHEMA_VERSION = "harnessforge.blueprintManifest.v1"

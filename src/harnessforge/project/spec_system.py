@@ -5,7 +5,7 @@ import re
 from dataclasses import dataclass
 from pathlib import Path
 
-from .paths import is_absolute_path_text, is_inside_root, path_from_relative_text
+from ..core.paths import is_absolute_path_text, is_inside_root, path_from_relative_text
 
 
 @dataclass(frozen=True)

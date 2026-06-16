@@ -1,11 +1,12 @@
 # Current State
 
-Last Updated: 2026-06-15 UTC
+Last Updated: 2026-06-16 UTC
 
 ## Current Objective
 
-Close the accepted pre-release backlog and resume release prep from a clean
-docs, code, and harness boundary.
+Docs and source reorganization is complete. Resume from a clean organized
+docs/harness and `src/harnessforge/` boundary, then commit and move back to
+release prep.
 
 ## Product State
 
@@ -38,41 +39,62 @@ docs, code, and harness boundary.
 
 ## Latest Verified Work
 
-- `harnessforge report` now includes policy preset recommendations and SBOM
-  adapter status.
-- Expanded blueprint-backed policy presets cover open-source libraries,
-  internal services, monorepos, CLI/dev tools, infrastructure/IaC,
-  mobile/desktop apps, docs/research repos, legacy migrations, and
-  education/training repos in addition to the existing presets.
-- `quickstart --interactive --json` emits reproducible decisions without
-  prompts or writes. Non-JSON `--interactive` prints the dry-run summary first,
-  skips prompts without a TTY, and asks before writing in a real terminal.
-- Enhance-existing plans include per-file instruction-quality recommendations.
-- Report/evidence/policy helpers moved under `src/harnessforge/evidence/`;
-  public CLI and Action entrypoints remain top-level.
-- The docs/backlog consistency pass found no remaining accepted pre-release
-  backlog. Optional release evidence imports are tracked as release-prep
-  candidates, not current buildout blockers.
+- `docs/` is organized into top-level product docs plus `docs/harness/`.
+  `docs/harness/` uses the generated target layout: top-level `README.md`,
+  `authoritative-facts.md`, and `manifest.json`, with detail under
+  `boundaries/`, `feedback/`, `state/`, `evidence/`, `research/`,
+  `operations/`, `release/`, and `schemas/`.
+- `src/harnessforge/` is organized into top-level public entrypoints
+  `cli.py` and `github_action.py`, plus `assessment/`, `core/`, `project/`,
+  `generation/`, `evidence/`, and `templates/`.
+- Manifest, roadmap, authoritative-facts, component-inventory, and evidence
+  docs now name the organized source paths. Old flat module path references
+  were removed except for stable schema identifiers such as
+  `harnessforge.verify.v1`.
+- Self-audit now includes a HarnessForge source package boundary check so
+  stray top-level modules fail the product repo audit.
+- Feature-state scope drift now treats `feature_list.json` and
+  `current-state.md` as docs/state updates rather than `other`.
+- The repo-local harness skill is deployed at `.agents/skills/harness/`,
+  wired from `AGENTS.md`, and marked active for this repository. Generated
+  target copies still start pending first-agent review.
+- The main README has a prominent alpha/pre-release banner directly under the
+  badges.
+- `harnessforge report` now includes feature-state scope drift,
+  runtime/process observability, and optional index-adapter status. Action
+  summaries and `release-check` surface the same signals.
+- `harnessforge enhance` and `init --enhance-existing --dry-run --json` now
+  include task-class guidance and rule lifecycle metadata.
+- The public-repo corpus has an offline metadata refresh script plus explicit
+  `--verify-remote` mode for networked owner checks.
+- Audit scoring now accepts completed or retired first-agent lifecycle state
+  and correctly scores this repo's roadmap router against `docs/roadmap.md`.
+- The accepted pre-release backlog is closed. Optional package/release evidence
+  imports remain release-prep decisions, not current buildout blockers.
 
 ## Trusted Verification
 
-- `PYTHONPATH=src:. python3 -m unittest discover -s tests` passed with 261 tests.
+- `PYTHONPATH=src:. python3 -m unittest discover -s tests` passed with 265 tests.
 - `PYTHONPATH=src:. python3 scripts/check_pins.py --root .` passed.
 - `PYTHONPATH=src:. python3 scripts/refresh_research.py --root . --check`
   passed.
-- `PYTHONPATH=src:. python3 -m harnessforge audit --target . --min-score 85`
+- `PYTHONPATH=src:. python3 scripts/refresh_public_repo_corpus.py` passed.
+- `PYTHONPATH=src:. python3 -m harnessforge corpus --min-score 90` passed
+  with 13 fixtures and minimum score `100`.
+- `PYTHONPATH=src:. python3 -m harnessforge audit --target . --min-score 100`
   passed at `100/100`.
-- `PYTHONPATH=src:. python3 -m harnessforge report --target . --json` produced
-  parseable JSON.
-- `PYTHONPATH=src:. python3 -m harnessforge release-check --target . --json`
+- `PYTHONPATH=src:. python3 -m harnessforge report --target . --since HEAD --json`
+  produced parseable JSON with audit `100`, feature-state `aligned`,
+  observability `strong`, and index-adapter status `tool_available`.
+- `PYTHONPATH=src:. python3 -m harnessforge release-check --target . --since HEAD --json`
   produced parseable JSON and returned the expected strict-gate blocked exit.
 - `PYTHONPATH=src:. python3 -m harnessforge quickstart --target . --interactive --json`
   produced parseable JSON.
-- `./init.sh` passed with 261 tests and self-audit `100/100`.
-- `pwsh -NoProfile -File ./init.ps1` passed with 261 tests and self-audit
+- `./init.sh` passed with 265 tests and self-audit `100/100`.
+- `pwsh -NoProfile -File ./init.ps1` passed with 265 tests and self-audit
   `100/100`.
-- `git diff --check`, compileall, JSON validation, stale old-module-path scan,
-  and local-path scan passed.
+- `git diff --check`, compileall, JSON validation, durable-doc local-path
+  scan, and stale artifact cleanup passed.
 
 ## Touched Surfaces
 
@@ -80,11 +102,17 @@ docs, code, and harness boundary.
 - `docs/action.md`
 - `docs/capabilities.md`
 - `docs/usage.md`
-- `docs/harness/README.md`
-- `docs/harness/authoritative-facts.md`
 - `docs/harness/boundaries/component-inventory.md`
+- `docs/harness/evidence/first-agent-review.json`
 - `docs/harness/manifest.json`
-- `docs/harness/research/remaining-ideas-research.md`
+- `docs/harness/state/first-agent-task.md`
+- `docs/harness/state/roadmap.md`
+- `.agents/skills/harness/`
+- `scripts/refresh_public_repo_corpus.py`
+- `src/harnessforge/assessment/`
+- `src/harnessforge/core/`
+- `src/harnessforge/generation/`
+- `src/harnessforge/project/`
 - `src/harnessforge/`
 - `tests/`
 
@@ -94,4 +122,4 @@ docs, code, and harness boundary.
 
 ## Next Step
 
-Commit the backlog-closure changes, then begin release prep.
+Commit the backlog-closure and reorganization changes, then begin release prep.

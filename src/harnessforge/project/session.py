@@ -5,11 +5,12 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
 
-from .audit import AuditResult, audit_target
+from ..assessment.audit import audit_target
+from ..core.harness_paths import existing_harness_path
+from ..core.models import AuditResult
+from ..core.redact import redact_local_paths
 from .detect import detect_project
-from .harness_paths import existing_harness_path
 from .readiness import ReadinessReport, inspect_readiness
-from .redact import redact_local_paths
 
 SCHEMA_VERSION = "harnessforge.session.v1"
 STATE_FILES = (

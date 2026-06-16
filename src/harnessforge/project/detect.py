@@ -8,8 +8,8 @@ from pathlib import Path
 from typing import Any
 from xml.etree import ElementTree
 
-from .models import ProjectProfile
-from .paths import is_inside_root
+from ..core.models import ProjectProfile
+from ..core.paths import is_inside_root
 from .spec_system import analyze_spec_system, has_spec_system
 
 MISSING_VERIFICATION_COMMAND = (

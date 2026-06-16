@@ -100,18 +100,18 @@ work as pre-release product shaping.
 
 ## Manual Additions
 
-- `src/harnessforge/blueprints.py`: optional blueprint registry and safe
-  blueprint artifact writer. This is product code, not generated target-repo
-  template content.
-- `src/harnessforge/planner.py`: read-only diff-aware verification planner used
-  by the CLI. It maps changed files to detected or explicit project checks and
-  does not execute target commands.
-- `src/harnessforge/indexer.py`: read-only structural repo indexer used by the
-  CLI to summarize file classes, languages, manifests, components,
-  source-of-truth signals, and review-required placeholders without writes.
-- `src/harnessforge/public_repo_corpus.py`: offline public-repo fixture corpus
-  used by `harnessforge corpus` to test detection and generated-content quality
-  against pinned popular open-source repository shapes without network access.
+- `src/harnessforge/assessment/`: audit scoring and structural harness health
+  checks. This is separate from real-agent effectiveness evidence.
+- `src/harnessforge/core/`: shared data models, path safety, redaction,
+  report-path helpers, harness path constants, and doctor checks used across
+  CLI, Action, audit, and reports.
+- `src/harnessforge/project/`: read-only target-repository analysis,
+  detection, indexing, readiness, planning, session, sync, spec-system, and
+  verify helpers.
+- `src/harnessforge/generation/`: generated harness creation, optional
+  blueprint writing, update planning, and offline public-repo fixture corpus.
+  This is product code; generated target-repo content still lives under
+  `src/harnessforge/templates/`.
 - `src/harnessforge/evidence/`: report, release, readiness-signal, maturity,
   policy preset, SBOM adapter, first-agent, verify-evidence, and effectiveness
   helpers. These modules are product evidence and reporting code, not generated
@@ -136,5 +136,10 @@ work as pre-release product shaping.
 - `docs/harness/state/first-agent-task.md`: generated first-agent harness improvement
   task that asks the first agent in a newly harnessed repo to deepen component,
   verification, source-of-truth, evidence, and security guidance.
-- `src/harnessforge/sync.py`: shared read-only sync preflight payload and exit
-  code helpers used by both the CLI and composite Action.
+- `.agents/skills/harness/SKILL.md`: repo-local zero-install harness
+  maintenance skill. This repo deploys the same skill shape as generated
+  target harnesses; local differences belong in referenced repo docs, not a
+  forked skill contract.
+- `src/harnessforge/cli.py` and `src/harnessforge/github_action.py`:
+  top-level public entrypoints and dispatch surfaces. Keep command behavior in
+  the package modules they call; do not duplicate Action logic in shell.

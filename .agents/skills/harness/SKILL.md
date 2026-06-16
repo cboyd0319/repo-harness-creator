@@ -1,0 +1,54 @@
+---
+name: harness
+description: Use when maintaining, reviewing, or improving this repository's agent harness, including agent instructions, docs/harness, verification routing, first-agent review, release evidence, or the repo-local harness skill itself, without requiring HarnessForge to be installed.
+---
+
+# Harness Skill
+
+Status: active for this repository. Generated target copies start pending first-agent review.
+
+Use for instructions, `docs/harness`, state, verification routing, agent tools,
+CI/workflows, release controls, evidence, or this skill.
+
+## Zero-Install Rule
+
+Maintain the harness from repo files alone. HarnessForge CLI and the HarnessForge GitHub Action are optional owner tools, not contributor prerequisites or project source of truth. Prefer repo-owned commands, docs, tests, and maintainer decisions.
+
+## Startup
+
+1. Read `references/repo-harness.md`.
+2. Load only root files or harness docs needed for the task.
+3. Keep durable repo facts in repo-owned docs, not this skill.
+
+## Rules
+
+- Keep root instructions short; route durable detail into focused docs.
+- Update the authoritative owner first; touch only needed surfaces.
+- Do not promote HarnessForge report suggestions into project requirements
+  until repo-owned docs, tests, policy, or a maintainer accepts them.
+- Do not add machine-local paths, user-specific tool mandates, personal
+  preferences, autonomous repair workflows, credential rotation, pushes, or PRs.
+- Preserve project-owned instruction files unless explicit.
+- Treat structural scores as harness-health signals, not real-agent
+  effectiveness evidence.
+- When editing this skill, make the description the trigger contract, keep
+  `SKILL.md` lean, and ground changes in real misses, traces, or pressure prompts.
+
+## Improvement Loop
+
+1. Confirm objective and surfaces.
+2. Inspect the repo before editing generated placeholders.
+3. Prefer deleting stale guidance, merging duplicates, or tightening checks.
+4. Make the smallest harness change that prevents the miss.
+5. Validate skill frontmatter, references, and trigger behavior when `.agents/skills/` changes.
+6. Run repo-owned commands from the verification matrix.
+7. Record pass/fail, skipped checks, risk, and next step.
+8. Retire placeholders after accepted guidance moves to docs, tests, policy, or state.
+
+## Optional Owner Tools
+
+If installed, optional owner tools include `harnessforge report`,
+`harnessforge plan`, `harnessforge audit`, and `harnessforge update --drift-report`.
+
+Treat the output as advisory unless the repo owner has adopted HarnessForge or
+the HarnessForge Action as an explicit maintenance gate.

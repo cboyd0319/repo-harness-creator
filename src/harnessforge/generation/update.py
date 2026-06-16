@@ -4,10 +4,10 @@ import json
 from hashlib import sha256
 from pathlib import Path
 
-from .audit import audit_target
+from ..assessment.audit import audit_target
+from ..core.models import AuditResult, DriftResult, ProjectProfile, WriteResult
+from ..core.paths import is_absolute_path_text, is_inside_root, path_from_relative_text
 from .generate import _template_sha256, create_harness
-from .models import AuditResult, DriftResult, ProjectProfile, WriteResult
-from .paths import is_absolute_path_text, is_inside_root, path_from_relative_text
 
 
 def plan_or_apply_update(

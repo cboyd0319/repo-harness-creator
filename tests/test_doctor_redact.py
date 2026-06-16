@@ -4,8 +4,8 @@ import unittest
 from pathlib import Path
 from unittest.mock import patch
 
-from harnessforge.doctor import doctor_report
-from harnessforge.redact import redact_local_paths
+from harnessforge.core.doctor import doctor_report
+from harnessforge.core.redact import redact_local_paths
 
 
 class DoctorRedactTests(unittest.TestCase):
@@ -44,9 +44,9 @@ class DoctorRedactTests(unittest.TestCase):
 
     def test_windows_server_2025_runner_is_supported_ci_proxy(self) -> None:
         with (
-            patch("harnessforge.doctor.platform.system", return_value="Windows"),
-            patch("harnessforge.doctor.platform.release", return_value="2025"),
-            patch("harnessforge.doctor.platform.version", return_value="10.0.26100"),
+            patch("harnessforge.core.doctor.platform.system", return_value="Windows"),
+            patch("harnessforge.core.doctor.platform.release", return_value="2025"),
+            patch("harnessforge.core.doctor.platform.version", return_value="10.0.26100"),
         ):
             report = doctor_report()
 
