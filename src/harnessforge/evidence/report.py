@@ -206,6 +206,7 @@ def format_report(payload: dict[str, Any]) -> str:
         f"{payload['index']['summary']['componentTotalCount']} detected",
         f"- Manifests: {payload['index']['summary']['manifestCount']}",
         f"- Source-of-truth docs: {payload['index']['summary']['sourceOfTruthCount']}",
+        f"- Local docs: {payload['index']['summary']['localDocCount']}",
         f"- SBOM files: {payload['index']['summary']['sbomCount']}",
         f"- Verification commands: {verification['summary']['commandCount']}",
         "- Verification command classes: "
@@ -447,6 +448,7 @@ def _index_summary(index: dict[str, Any]) -> dict[str, Any]:
         "repoMap": index["repoMap"],
         "sbom": index["sbom"],
         "sourceOfTruth": index["sourceOfTruth"][:10],
+        "localDocs": index["localDocs"][:10],
         "reviewRequired": index["reviewRequired"][:10],
     }
 

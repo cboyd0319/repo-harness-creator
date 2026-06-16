@@ -1,6 +1,6 @@
 # Large Public Repo Analysis
 
-Generated: 2026-06-16T18:34:15+00:00
+Generated: 2026-06-16T18:45:45+00:00
 
 ## Boundary
 
@@ -25,11 +25,13 @@ Generated: 2026-06-16T18:34:15+00:00
 
 ## Repository Results
 
-| Repo | Status | Stack | Tracked | Eligible | Scanned | Skipped | Coverage | Components | Verification | Nested Plan | Top Gaps |
-| --- | --- | --- | ---: | ---: | ---: | ---: | --- | ---: | --- | --- | --- |
-| `kubernetes-kubernetes` | `analyzed` | `go` | 30513 | 30461 | 20000 | 52 | `budget_limited` | 44/44 | 21 test | 43 candidates | file_scan_truncated, file_coverage_budget_limited, nested_agents_review_needed, no_existing_sbom_detected |
-| `microsoft-vscode` | `analyzed` | `typescript-react` | 15783 | 15407 | 15407 | 376 | `budget_limited` | 80/145 | 17 build,static-analysis,test | 77 candidates | file_coverage_budget_limited, component_scan_truncated, nested_agents_review_needed, no_existing_sbom_detected |
-| `bazelbuild-bazel` | `analyzed` | `bazel` | 13265 | 8333 | 8333 | 4932 | `complete` | 80/186 | 1 test | 79 candidates | component_scan_truncated, nested_agents_review_needed |
+`Docs` is `sourceOfTruth/localDocs`.
+
+| Repo | Status | Stack | Tracked | Eligible | Scanned | Skipped | Coverage | Components | Docs | Verification | Nested Plan | Top Gaps |
+| --- | --- | --- | ---: | ---: | ---: | ---: | --- | ---: | ---: | --- | --- | --- |
+| `kubernetes-kubernetes` | `analyzed` | `go` | 30513 | 30461 | 20000 | 52 | `budget_limited` | 44/44 | 2/103 | 21 test | 43 candidates | file_scan_truncated, file_coverage_budget_limited, nested_agents_review_needed, no_existing_sbom_detected |
+| `microsoft-vscode` | `analyzed` | `typescript-react` | 15783 | 15407 | 15407 | 376 | `budget_limited` | 80/145 | 4/67 | 17 build,static-analysis,test | 77 candidates | file_coverage_budget_limited, component_scan_truncated, nested_agents_review_needed, no_existing_sbom_detected |
+| `bazelbuild-bazel` | `analyzed` | `bazel` | 13265 | 8333 | 8333 | 4932 | `complete` | 80/186 | 3/79 | 1 test | 79 candidates | component_scan_truncated, nested_agents_review_needed |
 
 ## Nested Instruction Candidate Examples
 

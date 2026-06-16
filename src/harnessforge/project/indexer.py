@@ -225,6 +225,7 @@ def build_index_report(profile: ProjectProfile) -> dict[str, Any]:
     class_totals = _class_totals(records)
     manifests = _manifest_records(records)
     source_of_truth = _source_of_truth_records(records)
+    local_docs = _local_doc_records(records, source_of_truth)
     review_required = _review_required_records(records)
     components = _component_records(profile.components)
     component_overflow = _component_overflow_report(profile)
@@ -272,6 +273,7 @@ def build_index_report(profile: ProjectProfile) -> dict[str, Any]:
             "componentOmittedCount": len(profile.component_overflow),
             "manifestCount": len(manifests),
             "sourceOfTruthCount": len(source_of_truth),
+            "localDocCount": len(local_docs),
             "reviewRequiredCount": len(review_required),
             "sbomCount": len(sboms),
             "truncated": profile.file_scan_truncated,
@@ -285,6 +287,7 @@ def build_index_report(profile: ProjectProfile) -> dict[str, Any]:
         "manifests": manifests,
         "entrypoints": entrypoints,
         "sourceOfTruth": source_of_truth,
+        "localDocs": local_docs,
         "sbom": sboms,
         "repoMap": _repo_map(
             profile=profile,
@@ -294,6 +297,7 @@ def build_index_report(profile: ProjectProfile) -> dict[str, Any]:
             manifests=manifests,
             entrypoints=entrypoints,
             source_of_truth=source_of_truth,
+            local_docs=local_docs,
             review_required=review_required,
             sboms=sboms,
         ),
@@ -354,6 +358,11 @@ def format_index_report(report: dict[str, Any]) -> str:
         lines.append("")
         lines.append("Source of truth:")
         for item in report["sourceOfTruth"][:10]:
+            lines.append(f"  - {item['path']}: {item['kind']}")
+    if report["localDocs"]:
+        lines.append("")
+        lines.append("Local docs:")
+        for item in report["localDocs"][:10]:
             lines.append(f"  - {item['path']}: {item['kind']}")
     if report["sbom"]:
         lines.append("")
@@ -658,7 +667,6 @@ def _source_of_truth_records(records: list[dict[str, Any]]) -> list[dict[str, st
         path = record["path"]
         pure = PurePosixPath(path)
         lower_name = pure.name.lower()
-        lower_parts = {part.lower() for part in pure.parts}
         if path in INSTRUCTION_FILES:
             result.append(
                 {
@@ -667,14 +675,12 @@ def _source_of_truth_records(records: list[dict[str, Any]]) -> list[dict[str, st
                     "reason": "Agent instruction surface.",
                 }
             )
-        elif lower_name in SOURCE_OF_TRUTH_NAMES and (
-            lower_parts & SOURCE_OF_TRUTH_PARTS or lower_name == "readme.md"
-        ):
+        elif _is_global_source_doc(pure):
             result.append(
                 {
                     "path": path,
                     "kind": "project-doc",
-                    "reason": "High-signal project documentation name.",
+                    "reason": _global_source_doc_reason(pure),
                 }
             )
         elif pure.parts and pure.parts[0] in {".specify", "specs", "aspec"}:
@@ -685,7 +691,101 @@ def _source_of_truth_records(records: list[dict[str, Any]]) -> list[dict[str, st
                     "reason": "Structured specification surface.",
                 }
             )
-    return _dedupe_records(result)[:120]
+    return sorted(
+        _dedupe_records(result),
+        key=lambda item: _source_of_truth_sort_key(item["path"], item["kind"]),
+    )[:80]
+
+
+def _local_doc_records(
+    records: list[dict[str, Any]],
+    source_of_truth: list[dict[str, str]],
+) -> list[dict[str, str]]:
+    source_paths = {item["path"] for item in source_of_truth}
+    result: list[dict[str, str]] = []
+    for record in records:
+        path = record["path"]
+        if path in source_paths or path in INSTRUCTION_FILES:
+            continue
+        pure = PurePosixPath(path)
+        lower_name = pure.name.lower()
+        lower_parts = {part.lower() for part in pure.parts}
+        if "docs/harness" in path:
+            continue
+        if lower_name in {"readme.md", "readme.rst", "readme.txt"}:
+            result.append(
+                {
+                    "path": path,
+                    "kind": "component-doc",
+                    "reason": "Local README-style component documentation.",
+                }
+            )
+        elif {"docs", "doc", "documentation"} & lower_parts and record[
+            "language"
+        ] in {"docs", "markdown"}:
+            result.append(
+                {
+                    "path": path,
+                    "kind": "local-doc",
+                    "reason": "Local documentation under a docs-style directory.",
+                }
+            )
+    return sorted(
+        _dedupe_records(result),
+        key=lambda item: (_path_depth(item["path"]), item["path"]),
+    )[:120]
+
+
+def _is_global_source_doc(path: PurePosixPath) -> bool:
+    lower_name = path.name.lower()
+    lower_parts = tuple(part.lower() for part in path.parts)
+    if "harness" in lower_parts and lower_parts[:2] == ("docs", "harness"):
+        return False
+    if len(path.parts) == 1:
+        return lower_name in SOURCE_OF_TRUTH_NAMES
+    if path.parts[0].lower() not in {"docs", "doc", "documentation"}:
+        return False
+    if lower_name in SOURCE_OF_TRUTH_NAMES and len(path.parts) <= 3:
+        return True
+    global_topics = {
+        "architecture",
+        "design",
+        "foundation",
+        "overview",
+        "product",
+        "requirements",
+        "security",
+        "vision",
+    }
+    return lower_name in {"readme.md", "readme.rst"} and bool(
+        set(lower_parts) & global_topics
+    )
+
+
+def _global_source_doc_reason(path: PurePosixPath) -> str:
+    if len(path.parts) == 1:
+        return "Root project documentation."
+    if path.name.lower() in {"readme.md", "readme.rst"}:
+        return "Global docs topic README."
+    return "High-signal project documentation name."
+
+
+def _source_of_truth_sort_key(path: str, kind: str) -> tuple[int, int, str]:
+    pure = PurePosixPath(path)
+    lower_name = pure.name.lower()
+    if kind == "agent-instructions":
+        return (0, _path_depth(path), path)
+    if len(pure.parts) == 1 and lower_name == "readme.md":
+        return (5, 0, path)
+    if len(pure.parts) == 1:
+        return (10, 0, path)
+    if kind == "spec-system":
+        return (15, _path_depth(path), path)
+    return (20, _path_depth(path), path)
+
+
+def _path_depth(path: str) -> int:
+    return len(PurePosixPath(path).parts)
 
 
 def _review_required_records(records: list[dict[str, Any]]) -> list[dict[str, str]]:
@@ -755,6 +855,7 @@ def _repo_map(
     manifests: list[dict[str, str]],
     entrypoints: list[dict[str, str]],
     source_of_truth: list[dict[str, str]],
+    local_docs: list[dict[str, str]],
     review_required: list[dict[str, str]],
     sboms: list[dict[str, str]],
 ) -> dict[str, Any]:
@@ -815,12 +916,14 @@ def _repo_map(
             ],
             "componentCount": len(components),
             "sourceOfTruthCount": len(source_of_truth),
+            "localDocCount": len(local_docs),
             "manifestCount": len(manifests),
             "sbomCount": len(sboms),
             "reviewRequiredCount": len(review_required),
         },
         "components": components[:20],
         "sourceOfTruth": source_of_truth[:10],
+        "localDocs": local_docs[:10],
         "manifestKinds": [
             {"kind": kind, "count": count}
             for kind, count in sorted(

@@ -198,6 +198,10 @@ monorepo scopes.
   economics task requiring receipts on whether comprehensive repo harnesses
   increase or decrease agent token consumption before generated sizing or
   loading behavior changes.
+- `docs/roadmap.md` now includes an accepted script cleanup and organization
+  task: inventory root and `scripts/` utilities, remove or merge stale scripts,
+  and ensure every remaining repo-local or generated script has a short
+  top-of-file purpose description.
 - Large-repo file coverage reporting now uses `harnessforge.fileCoverage.v1`.
   `index`, `report`, `quickstart`, `init --dry-run`, Action report summaries,
   and large-public-repo field evidence expose scanned count, total tracked
@@ -219,6 +223,11 @@ monorepo scopes.
   detail, and confidence. `index`, `report`, generated manifests, Action report
   summaries, quickstart/init profile JSON, and large-public-repo field evidence
   consume the metadata without executing target commands.
+- Source-of-truth detection now separates global `sourceOfTruth` docs from
+  component-local `localDocs`. `index`, `report`, compact `repoMap`, Action
+  summaries, and large-public-repo field evidence expose both counts so root
+  startup guidance stays high-signal while nested README/docs files remain
+  discoverable for scoped work.
 
 ## Trusted Verification
 
@@ -272,6 +281,15 @@ monorepo scopes.
   self-audit `100/100` passed. Refreshed Kubernetes, VS Code, and Bazel field
   evidence analyzed 3/3 repos with zero failures and records high-confidence
   source attribution for detected verification commands.
+- Current source/local-doc split verification: focused generated-audit,
+  index, Action report, large-public-repo analyzer, and public-corpus tests
+  passed with 67 tests; full unit discovery passed with 302 tests; compileall,
+  pin check, research source check, JSON validation, report JSON smoke,
+  expected-block release-check JSON smoke, durable-doc local-path scan, diff
+  hygiene, and self-audit `100/100` passed. Refreshed Kubernetes, VS Code, and
+  Bazel field evidence analyzed 3/3 repos with zero failures and now reports
+  global/local doc counts, including Kubernetes `2/103`, VS Code `4/67`, and
+  Bazel `3/79`.
 - Current README pass verification: required README manifest snippet check
   passed with no missing snippets; duplicate literal prose scan found no
   repeated meaningful lines; `tests.test_generate_audit` passed with 59 tests;
@@ -380,6 +398,6 @@ monorepo scopes.
 
 ## Next Step
 
-Continue to source-of-truth ranking versus local component docs, then use the
-ranking to improve component and nested-instruction guidance without increasing
-default generated file size.
+Use `localDocs`, verification-command metadata, and workflow path filters to
+improve nested instruction candidate ranking and scoped guidance without
+increasing default generated file size.

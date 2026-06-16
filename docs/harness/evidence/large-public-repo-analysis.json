@@ -34,7 +34,7 @@
     "normalHarnessGenerationNetworkAccess": false,
     "targetWritesPerformed": false
   },
-  "generatedAt": "2026-06-16T18:34:15+00:00",
+  "generatedAt": "2026-06-16T18:45:45+00:00",
   "mode": "real_public_repo_field_analysis",
   "repositories": [
     {
@@ -319,10 +319,11 @@
         "componentTotalCount": 44,
         "componentsTruncated": false,
         "fileCount": 20000,
+        "localDocCount": 103,
         "manifestCount": 55,
         "reviewRequiredCount": 0,
         "sbomCount": 0,
-        "sourceOfTruthCount": 100,
+        "sourceOfTruthCount": 2,
         "truncated": true
       },
       "nestedInstructionPlan": {
@@ -645,6 +646,58 @@
             "source": "manifest"
           }
         ],
+        "localDocs": [
+          {
+            "kind": "component-doc",
+            "path": "CHANGELOG/README.md",
+            "reason": "Local README-style component documentation."
+          },
+          {
+            "kind": "component-doc",
+            "path": "cluster/README.md",
+            "reason": "Local README-style component documentation."
+          },
+          {
+            "kind": "component-doc",
+            "path": "hack/README.md",
+            "reason": "Local README-style component documentation."
+          },
+          {
+            "kind": "component-doc",
+            "path": "staging/README.md",
+            "reason": "Local README-style component documentation."
+          },
+          {
+            "kind": "component-doc",
+            "path": "api/api-rules/README.md",
+            "reason": "Local README-style component documentation."
+          },
+          {
+            "kind": "component-doc",
+            "path": "api/openapi-spec/README.md",
+            "reason": "Local README-style component documentation."
+          },
+          {
+            "kind": "component-doc",
+            "path": "cluster/addons/README.md",
+            "reason": "Local README-style component documentation."
+          },
+          {
+            "kind": "component-doc",
+            "path": "cluster/log-dump/README.md",
+            "reason": "Local README-style component documentation."
+          },
+          {
+            "kind": "component-doc",
+            "path": "cmd/cloud-controller-manager/README.md",
+            "reason": "Local README-style component documentation."
+          },
+          {
+            "kind": "component-doc",
+            "path": "cmd/import-boss/README.md",
+            "reason": "Local README-style component documentation."
+          }
+        ],
         "primaryLanguages": [
           {
             "files": 11212,
@@ -676,47 +729,7 @@
           {
             "kind": "project-doc",
             "path": "README.md",
-            "reason": "High-signal project documentation name."
-          },
-          {
-            "kind": "project-doc",
-            "path": "api/api-rules/README.md",
-            "reason": "High-signal project documentation name."
-          },
-          {
-            "kind": "project-doc",
-            "path": "api/openapi-spec/README.md",
-            "reason": "High-signal project documentation name."
-          },
-          {
-            "kind": "project-doc",
-            "path": "CHANGELOG/README.md",
-            "reason": "High-signal project documentation name."
-          },
-          {
-            "kind": "project-doc",
-            "path": "cluster/README.md",
-            "reason": "High-signal project documentation name."
-          },
-          {
-            "kind": "project-doc",
-            "path": "cluster/addons/README.md",
-            "reason": "High-signal project documentation name."
-          },
-          {
-            "kind": "project-doc",
-            "path": "cluster/addons/addon-manager/README.md",
-            "reason": "High-signal project documentation name."
-          },
-          {
-            "kind": "project-doc",
-            "path": "cluster/addons/calico-policy-controller/README.md",
-            "reason": "High-signal project documentation name."
-          },
-          {
-            "kind": "project-doc",
-            "path": "cluster/addons/cluster-loadbalancing/glbc/README.md",
-            "reason": "High-signal project documentation name."
+            "reason": "Root project documentation."
           }
         ],
         "unknowns": [
@@ -1374,10 +1387,11 @@
         "componentTotalCount": 145,
         "componentsTruncated": true,
         "fileCount": 15407,
+        "localDocCount": 67,
         "manifestCount": 120,
         "reviewRequiredCount": 0,
         "sbomCount": 0,
-        "sourceOfTruthCount": 62,
+        "sourceOfTruthCount": 4,
         "truncated": false
       },
       "nestedInstructionPlan": {
@@ -1705,6 +1719,58 @@
             "source": "manifest"
           }
         ],
+        "localDocs": [
+          {
+            "kind": "component-doc",
+            "path": ".devcontainer/README.md",
+            "reason": "Local README-style component documentation."
+          },
+          {
+            "kind": "component-doc",
+            "path": ".eslint-plugin-local/README.md",
+            "reason": "Local README-style component documentation."
+          },
+          {
+            "kind": "component-doc",
+            "path": "test/README.md",
+            "reason": "Local README-style component documentation."
+          },
+          {
+            "kind": "component-doc",
+            "path": "extensions/copilot/README.md",
+            "reason": "Local README-style component documentation."
+          },
+          {
+            "kind": "component-doc",
+            "path": "extensions/css-language-features/README.md",
+            "reason": "Local README-style component documentation."
+          },
+          {
+            "kind": "component-doc",
+            "path": "extensions/emmet/README.md",
+            "reason": "Local README-style component documentation."
+          },
+          {
+            "kind": "component-doc",
+            "path": "extensions/git-base/README.md",
+            "reason": "Local README-style component documentation."
+          },
+          {
+            "kind": "component-doc",
+            "path": "extensions/git/README.md",
+            "reason": "Local README-style component documentation."
+          },
+          {
+            "kind": "component-doc",
+            "path": "extensions/github-authentication/README.md",
+            "reason": "Local README-style component documentation."
+          },
+          {
+            "kind": "component-doc",
+            "path": "extensions/github/README.md",
+            "reason": "Local README-style component documentation."
+          }
+        ],
         "primaryLanguages": [
           {
             "files": 11076,
@@ -1741,42 +1807,12 @@
           {
             "kind": "project-doc",
             "path": "README.md",
-            "reason": "High-signal project documentation name."
+            "reason": "Root project documentation."
           },
           {
             "kind": "project-doc",
-            "path": ".github/skills/auto-perf-optimize/scratchpad/README.md",
-            "reason": "High-signal project documentation name."
-          },
-          {
-            "kind": "project-doc",
-            "path": ".github/skills/heap-snapshot-analysis/scratchpad/README.md",
-            "reason": "High-signal project documentation name."
-          },
-          {
-            "kind": "project-doc",
-            "path": ".devcontainer/README.md",
-            "reason": "High-signal project documentation name."
-          },
-          {
-            "kind": "project-doc",
-            "path": "src/vs/base/browser/ui/codicons/codicon/README.md",
-            "reason": "High-signal project documentation name."
-          },
-          {
-            "kind": "project-doc",
-            "path": "src/vs/editor/test/node/diffing/README.md",
-            "reason": "High-signal project documentation name."
-          },
-          {
-            "kind": "project-doc",
-            "path": "src/vs/platform/agentHost/node/codex/protocol/generated/README.md",
-            "reason": "High-signal project documentation name."
-          },
-          {
-            "kind": "project-doc",
-            "path": "src/vs/sessions/README.md",
-            "reason": "High-signal project documentation name."
+            "path": "SECURITY.md",
+            "reason": "Root project documentation."
           }
         ],
         "unknowns": [
@@ -2337,10 +2373,11 @@
         "componentTotalCount": 186,
         "componentsTruncated": true,
         "fileCount": 8333,
+        "localDocCount": 79,
         "manifestCount": 120,
         "reviewRequiredCount": 0,
         "sbomCount": 1,
-        "sourceOfTruthCount": 27,
+        "sourceOfTruthCount": 3,
         "truncated": false
       },
       "nestedInstructionPlan": {
@@ -2638,6 +2675,58 @@
             "source": "manifest"
           }
         ],
+        "localDocs": [
+          {
+            "kind": "component-doc",
+            "path": "examples/Readme.md",
+            "reason": "Local README-style component documentation."
+          },
+          {
+            "kind": "component-doc",
+            "path": "examples/cpp/README.md",
+            "reason": "Local README-style component documentation."
+          },
+          {
+            "kind": "component-doc",
+            "path": "examples/java-native/README.md",
+            "reason": "Local README-style component documentation."
+          },
+          {
+            "kind": "component-doc",
+            "path": "examples/java-starlark/README.md",
+            "reason": "Local README-style component documentation."
+          },
+          {
+            "kind": "component-doc",
+            "path": "examples/shell/README.md",
+            "reason": "Local README-style component documentation."
+          },
+          {
+            "kind": "component-doc",
+            "path": "scripts/docs/README.md",
+            "reason": "Local README-style component documentation."
+          },
+          {
+            "kind": "component-doc",
+            "path": "scripts/fish/README.md",
+            "reason": "Local README-style component documentation."
+          },
+          {
+            "kind": "component-doc",
+            "path": "third_party/ijar/README.txt",
+            "reason": "Local README-style component documentation."
+          },
+          {
+            "kind": "component-doc",
+            "path": "scripts/packages/chocolatey/ReadMe.md",
+            "reason": "Local README-style component documentation."
+          },
+          {
+            "kind": "component-doc",
+            "path": "scripts/packages/msi/README.md",
+            "reason": "Local README-style component documentation."
+          }
+        ],
         "primaryLanguages": [
           {
             "files": 1315,
@@ -2669,47 +2758,12 @@
           {
             "kind": "project-doc",
             "path": "README.md",
-            "reason": "High-signal project documentation name."
+            "reason": "Root project documentation."
           },
           {
             "kind": "project-doc",
-            "path": "src/tools/diskcache/README.md",
-            "reason": "High-signal project documentation name."
-          },
-          {
-            "kind": "project-doc",
-            "path": "src/tools/execlog/README.md",
-            "reason": "High-signal project documentation name."
-          },
-          {
-            "kind": "project-doc",
-            "path": "src/tools/remote/README.md",
-            "reason": "High-signal project documentation name."
-          },
-          {
-            "kind": "project-doc",
-            "path": "src/tools/workspacelog/README.md",
-            "reason": "High-signal project documentation name."
-          },
-          {
-            "kind": "project-doc",
-            "path": "src/main/java/net/starlark/java/annot/README.md",
-            "reason": "High-signal project documentation name."
-          },
-          {
-            "kind": "project-doc",
-            "path": "src/main/starlark/builtins_bzl/README.md",
-            "reason": "High-signal project documentation name."
-          },
-          {
-            "kind": "project-doc",
-            "path": "src/test/py/bazel/testdata/bazel_external_repository_test/README.md",
-            "reason": "High-signal project documentation name."
-          },
-          {
-            "kind": "project-doc",
-            "path": "src/test/shell/bazel/testdata/README.md",
-            "reason": "High-signal project documentation name."
+            "path": "SECURITY.md",
+            "reason": "Root project documentation."
           }
         ],
         "unknowns": [],

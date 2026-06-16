@@ -85,6 +85,10 @@ primary languages, component candidates, source-of-truth docs, manifest kinds,
 entrypoints, boundary examples, attributed verification commands,
 review-required files, unknowns, and existing SBOM evidence. It does not
 summarize private code or run target commands.
+`sourceOfTruth` is intentionally limited to root instructions, root project
+docs, high-signal global docs, and structured spec systems. Component-local
+READMEs and docs stay discoverable under `localDocs` so startup guidance does
+not get polluted by nested package documentation.
 
 Existing SPDX or CycloneDX-style SBOM files are detected and cited under
 `sbom`. HarnessForge does not generate SBOMs during normal `init`, `inspect`,

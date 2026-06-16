@@ -325,6 +325,27 @@ Remaining:
 - Feed command metadata into nested instruction candidate ranking without
   increasing default generated file size.
 
+### Source-Of-Truth And Local Docs Split
+
+Status: initial split implemented.
+
+Large repositories contain many README and docs files that are useful locally
+but noisy as repo-wide startup guidance. HarnessForge now keeps global
+source-of-truth docs separate from component-local docs.
+
+Implemented behavior:
+
+- `sourceOfTruth` is limited to root instruction files, root project docs,
+  high-signal global docs, and structured spec-system files.
+- Component-local READMEs and docs are reported under `localDocs`.
+- `index --json`, report JSON, compact `repoMap`, Action summaries, and
+  large-public-repo field evidence expose source-doc and local-doc counts.
+
+Remaining:
+
+- Use `localDocs`, verification-command metadata, and workflow path filters to
+  improve nested instruction candidate ranking and scoped guidance.
+
 ### SBOM-Aware Indexing
 
 Status: default detection of existing SPDX and CycloneDX-style SBOM files is
@@ -1073,6 +1094,45 @@ Implemented shape:
   feature state, observability, index-adapter reporting, first-agent
   lifecycle, governance inventory, workflow inventory, and verify evidence now
   live under `src/harnessforge/evidence/`.
+
+### Script Cleanup And Organization
+
+Status: accepted, not started.
+
+Do a serious cleanup and reorganization pass across repository scripts. Every
+script that remains should have a short top-of-file description explaining what
+the script is and what it does.
+
+Scope:
+
+- inventory root scripts and `scripts/` utilities;
+- delete or merge scripts that are stale, duplicated, one-off, or better
+  represented as CLI commands;
+- group remaining scripts by purpose when that improves discoverability without
+  adding ceremony;
+- ensure every remaining script starts with a compact description comment or
+  docstring;
+- keep command examples and docs aligned with any path moves.
+
+Boundary:
+
+- Local repo harness: update verification routing, pin checks, manifest
+  snippets, docs, and tests for any script path changes.
+- HarnessForge generator/deployed harness: generated target scripts such as
+  POSIX/PowerShell init entrypoints and generated pin checks should also carry
+  brief purpose descriptions.
+- GitHub Action: update Action internals only if a moved script is referenced
+  by Action docs, tests, or parked workflow definitions.
+- Backward compatibility: not required during alpha/pre-release, but path
+  changes must be reflected everywhere before commit.
+
+Done when:
+
+- no script remains without a short purpose header;
+- obsolete scripts are removed or folded into the CLI;
+- docs, parked workflows, tests, manifest snippets, and generated templates
+  reference the new script locations;
+- focused script-path, generated-harness, pin, and self-audit checks pass.
 
 ## Suggested Build Order
 

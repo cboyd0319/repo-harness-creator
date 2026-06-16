@@ -364,6 +364,7 @@ def analyze_repo(
                 "primaryLanguages": index["repoMap"]["summary"]["primaryLanguages"],
                 "components": index["repoMap"]["components"][:12],
                 "sourceOfTruth": index["repoMap"]["sourceOfTruth"][:12],
+                "localDocs": index["repoMap"]["localDocs"][:12],
                 "verification": index["repoMap"]["verification"],
                 "unknowns": index["repoMap"]["unknowns"][:12],
             },
@@ -801,14 +802,16 @@ def format_markdown_report(payload: dict[str, Any]) -> str:
             "",
             "## Repository Results",
             "",
-            "| Repo | Status | Stack | Tracked | Eligible | Scanned | Skipped | Coverage | Components | Verification | Nested Plan | Top Gaps |",
-            "| --- | --- | --- | ---: | ---: | ---: | ---: | --- | ---: | --- | --- | --- |",
+            "`Docs` is `sourceOfTruth/localDocs`.",
+            "",
+            "| Repo | Status | Stack | Tracked | Eligible | Scanned | Skipped | Coverage | Components | Docs | Verification | Nested Plan | Top Gaps |",
+            "| --- | --- | --- | ---: | ---: | ---: | ---: | --- | ---: | ---: | --- | --- | --- |",
         ]
     )
     for repo in payload["repositories"]:
         if repo["status"] != "analyzed":
             lines.append(
-                f"| `{repo['id']}` | `{repo['status']}` | n/a | 0 | 0 | 0 | 0 | n/a | 0 | n/a | n/a | "
+                f"| `{repo['id']}` | `{repo['status']}` | n/a | 0 | 0 | 0 | 0 | n/a | 0 | n/a | n/a | n/a | "
                 f"{repo['qualityGaps'][0]['message']} |"
             )
             continue
@@ -824,6 +827,8 @@ def format_markdown_report(payload: dict[str, Any]) -> str:
             f"`{repo['fileCoverage']['status']}` | "
             f"{repo['componentOverflow']['includedCount']}/"
             f"{repo['componentOverflow']['totalCount']} | "
+            f"{repo['indexSummary']['sourceOfTruthCount']}/"
+            f"{repo['indexSummary']['localDocCount']} | "
             f"{verification['commandCount']} {verification_classes} | "
             f"{repo['nestedInstructionPlan']['candidateCount']} candidates | "
             f"{gaps} |"

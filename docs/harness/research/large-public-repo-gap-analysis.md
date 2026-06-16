@@ -238,19 +238,20 @@ and VS Code also surfaced many nested README files under third-party, generated,
 or highly local directories. That is useful inventory, not necessarily root
 source-of-truth.
 
-Deterministic fix:
+Implemented deterministic fix:
 
-- Rank root and docs/architecture/spec files above nested package README files.
-- Downrank third-party, vendor, generated, fixture, and example docs unless the
-  task scope is inside those directories.
-- Separate `sourceOfTruth` from `localDocs`.
-- Cite why a document is recommended as a source of truth.
+- Rank root instructions, root project docs, high-signal global docs, and
+  structured spec files above nested package README files.
+- Keep component-local READMEs and local docs in `localDocs` instead of
+  `sourceOfTruth`.
+- Cite why a document is recommended as global source-of-truth or local docs.
 
 Definition of done:
 
-- `repoMap.sourceOfTruth` stays small and high-signal.
-- Local component docs remain discoverable without polluting root startup
-  guidance.
+- Initial implementation: `repoMap.sourceOfTruth` stays smaller and
+  high-signal, while `repoMap.localDocs` keeps component docs discoverable.
+- Remaining: use `localDocs` and verification-command metadata to improve
+  nested instruction ranking and scoped guidance.
 
 ### 7. Existing Instruction Enhancement Needs Large-Repo Awareness
 
@@ -309,9 +310,9 @@ Definition of done:
 6. Done for initial verification metadata: add verification command
    classification and source attribution to `index`, `report`, generated
    manifests, and large-public-repo field evidence.
-7. Split source-of-truth ranking from local component docs and use it to
-   improve component/nested instruction ranking without increasing default
-   generated size.
+7. Done for initial source/local-doc split: separate global `sourceOfTruth`
+   from component-local `localDocs` in index, report, repo map, Action summary,
+   and large-public-repo field evidence.
 8. Expand the real public corpus run after each deterministic slice.
 
 ## Optional Adapters

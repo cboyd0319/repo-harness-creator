@@ -650,7 +650,8 @@ def _report_summary_markdown(payload: dict[str, Any]) -> str:
         "| Repo map | "
         f"`{payload['index']['summary']['componentCount']}`/"
         f"`{payload['index']['summary']['componentTotalCount']}` components, "
-        f"`{repo_map['sourceOfTruthCount']}` source docs |",
+        f"`{repo_map['sourceOfTruthCount']}` source docs, "
+        f"`{repo_map['localDocCount']}` local docs |",
         "| Verification commands | "
         f"`{verification['commandCount']}` "
         f"({verification_classes}) |",

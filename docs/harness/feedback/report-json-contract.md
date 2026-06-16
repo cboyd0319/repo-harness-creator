@@ -68,6 +68,17 @@ truncated.
 Do not treat `index.summary.fileCount` as total repository size when
 `index.fileCoverage.coverageComplete` is `false`.
 
+## Source And Local Docs
+
+`index.sourceOfTruth` is intentionally narrow. It includes root instruction
+files, root project docs, high-signal global docs, and structured spec-system
+files. Nested component README files and local documentation stay under
+`index.localDocs` and `index.repoMap.localDocs`.
+
+Use `sourceOfTruth` for startup routing and repo-wide instruction quality.
+Use `localDocs` for component-specific review, nested instruction candidates,
+and scoped implementation context.
+
 ## Verification Commands
 
 `index.verificationCommands` has schema

@@ -141,7 +141,8 @@ instruction quality, first-agent lifecycle, maturity, policy preset status,
 SBOM adapter status, feature-state status, observability status,
 index-adapter status, unresolved review-work count, accepted advisory
 inventory count, nested instruction-plan status, repo-map counts, file
-coverage, verification-command count/classes, and SBOM file count.
+coverage, source-doc and local-doc counts, verification-command count/classes,
+and SBOM file count.
 
 Upload report artifacts in the caller workflow when that is useful. The
 HarnessForge Action does not upload artifacts by default:
