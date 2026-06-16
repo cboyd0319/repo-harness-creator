@@ -241,6 +241,12 @@ by the maintainer.
   exist, and proxy/gateway token logs only as API-level supplements.
   Controlled provider or agent task traces are still required before changing
   generated sizing, routing, summarization, or lazy-loading behavior.
+- The first token-economics normalizer slice is implemented. The
+  `harnessforge.tokenEconomicsMetric.v1` schema now has a nullable
+  `reasoningOutput` token bucket, `harnessforge.evidence.token_economics`
+  parses reviewed Codex JSONL events into schema-shaped records, and
+  `scripts/normalize_token_trace.py --source codex-jsonl` writes normalized
+  records from an input trace plus metadata sidecar without running agents.
 - Research refresh now allows normal fetch mode to regenerate stale generated
   lock and inbox files after source allowlist changes while keeping
   `--check` strict about generated-output consistency.
@@ -421,6 +427,13 @@ by the maintainer.
   `.gitignore` checks, durable-doc local-path scan, diff hygiene, and
   self-audit `100/100` passed. Controlled provider or agent task traces remain
   the unclosed evidence gap.
+- Current token-economics normalizer verification: `tests.test_token_economics`
+  passed red/green with 2 tests; targeted parser and local-entrypoint tests
+  passed with 8 tests; `scripts/normalize_token_trace.py --source codex-jsonl`
+  smoke passed; full unit discovery passed with 309 tests; compileall,
+  research source check, JSON validation, durable local-path scan, diff
+  hygiene, and self-audit `100/100` passed. No live agent trace was run in
+  this slice.
 - Current known local verification gap: `pwsh -NoProfile -File ./init.ps1`
   cannot run in this shell because PowerShell command execution fails before
   repo code loads with a .NET `System.IO.FileLoadException`. `pwsh -v` reports
@@ -441,9 +454,12 @@ by the maintainer.
 - `docs/harness/research/research-sources.lock.json`
 - `docs/harness/research/sources.md`
 - `docs/harness/research/token-economics-metric.schema.json`
+- `scripts/normalize_token_trace.py`
 - `scripts/refresh_research.py`
+- `src/harnessforge/evidence/token_economics.py`
 - `src/harnessforge/templates/research-sources.json.tmpl`
 - `tests/test_refresh_research.py`
+- `tests/test_token_economics.py`
 
 ## Blockers
 
@@ -457,8 +473,9 @@ by the maintainer.
 
 Continue the Harness Token Economics Research item by running controlled
 minimal, moderate, and comprehensive harness task traces using
-`harnessforge.tokenEconomicsMetric.v1`. Start with a tiny Codex
-`exec --json` parser or one captured JSONL run that emits a single normalized
-record, then repeat one low-risk task across the three profiles in isolated
-roots. Release prep should remain last and should start only after accepted
-non-release work is closed or explicitly deferred by the maintainer.
+`harnessforge.tokenEconomicsMetric.v1`. Start by feeding one reviewed Codex
+JSONL trace and metadata sidecar through
+`scripts/normalize_token_trace.py --source codex-jsonl`, then repeat one
+low-risk task across the three profiles in isolated roots. Release prep should
+remain last and should start only after accepted non-release work is closed or
+explicitly deferred by the maintainer.

@@ -677,7 +677,8 @@ Remaining closure work:
   `docs/harness/research/harness-token-economics-research.md`: native agent
   telemetry first, Codex JSONL before optional dashboards, Claude Code
   OpenTelemetry for cache read/write and tool-span buckets, and proxies only
-  as API-level cost supplements;
+  as API-level cost supplements; the first repo-local normalizer is
+  `scripts/normalize_token_trace.py --source codex-jsonl`;
 - run controlled minimal, moderate, and comprehensive harness task traces on
   representative repos;
 - capture provider-reported or agent-reported token buckets, cache reads and

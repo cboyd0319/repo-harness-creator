@@ -145,8 +145,10 @@ runs.
 
 Evidence-source order:
 
-1. Capture `codex exec --json` for the first spike. Parse completed-turn token
-   usage and event/item streams into one token-economics record.
+1. Capture `codex exec --json` for the first spike. Use
+   `scripts/normalize_token_trace.py --source codex-jsonl` to parse
+   completed-turn token usage and event/item streams into one
+   token-economics record.
 2. Add Claude Code OpenTelemetry when the evaluation needs separate cache-read,
    cache-creation, LLM request, tool, and tool-result token spans.
 3. Consider Promptfoo around Codex SDK runs when HarnessForge needs a repeatable
@@ -198,6 +200,7 @@ Minimum useful record:
 - static and dynamic context sizes;
 - provider-reported token buckets when available;
 - cache read/write buckets when available;
+- reasoning output tokens when the trace source exposes them;
 - token source, because char proxies and provider counts are not comparable;
 - tool, retry, turn, latency, and verification outcomes;
 - quality floor and evidence references;
@@ -224,7 +227,8 @@ Until trace evidence exists:
 
 Run a small controlled evaluation before closing this backlog item:
 
-1. Build or run a tiny parser for one `codex exec --json` trace and emit one
+1. Use `scripts/normalize_token_trace.py --source codex-jsonl` against one
+   reviewed Codex JSONL trace plus metadata sidecar and emit one
    `harnessforge.tokenEconomicsMetric.v1` record.
 2. Run one low-risk repository task across minimal, moderate, and comprehensive
    profiles in isolated roots, then repeat once to expose variance.
