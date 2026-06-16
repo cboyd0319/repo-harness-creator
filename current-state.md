@@ -10,9 +10,9 @@ high-risk surface acceptance, review finalization, state migration, manifest
 refresh, skill-wiring validation, and related report/maturity fixes are
 implemented or explicitly deferred by maintainers. Structured high-risk surface
 acceptance, review-finalization automation, structured review status fields,
-and split-state migration are implemented. The next slice is generated and
-enhanced harness skill-wiring validation, followed by compact verification
-evidence, report polish, and a RunHaven-shaped fixture.
+split-state migration, and generated/enhanced harness skill-wiring validation
+are implemented. The next slice is compact verification evidence capture,
+followed by report polish and a RunHaven-shaped fixture.
 
 ## Product State
 
@@ -106,6 +106,11 @@ evidence, report polish, and a RunHaven-shaped fixture.
   `session-handoff.md` into `current-state.md`. Apply mode preserves the
   legacy files, requires `--yes` for non-interactive CLI writes, and does not
   run target commands. Audit scoring now penalizes stale split root state.
+- Readiness, report, release-check, and Action summaries now validate
+  repo-local harness skill wiring when a HarnessForge-style harness is present.
+  The validator checks skill frontmatter, reference file presence, reference
+  paths, zero-install guidance, and whether root instructions route
+  harness-maintenance work to `.agents/skills/harness/SKILL.md`.
 
 ## Trusted Verification
 
@@ -157,6 +162,14 @@ evidence, report polish, and a RunHaven-shaped fixture.
   release-check JSON smoke returned the expected strict-gate `blocked` verdict
   because current run-mode verify evidence is not committed; public-repo corpus
   stayed at 13 fixtures with minimum score `100`.
+- After implementing skill-wiring validation, focused CLI/Action tests passed;
+  related CLI/Action/generated-audit/maturity suites passed with 188 tests;
+  full unit discovery passed with 282 tests; compileall passed; pin check
+  passed; JSON validation passed; `git diff --check` passed; self-audit stayed
+  `100/100`; report JSON smoke showed `skillWiring.status` as `wired` with
+  `AGENTS.md` as the instruction route; release-check JSON smoke showed the
+  `skill-wiring` gate passed while the overall release verdict remained
+  blocked only because current run-mode verify evidence is not committed.
 - `PYTHONPATH=src:. python3 -m harnessforge release-check --target . --since HEAD --json`
   produced parseable JSON and returned the expected strict-gate blocked exit.
 - `PYTHONPATH=src:. python3 -m harnessforge quickstart --target . --interactive --json`
@@ -192,6 +205,8 @@ evidence, report polish, and a RunHaven-shaped fixture.
 - `src/harnessforge/project/state_migration.py`
 - `src/harnessforge/project/readiness.py`
 - `src/harnessforge/assessment/audit.py`
+- `src/harnessforge/evidence/skill_wiring.py`
+- `src/harnessforge/evidence/release_check.py`
 - `src/harnessforge/evidence/report.py`
 - `src/harnessforge/generation/`
 - `src/harnessforge/project/`
@@ -204,6 +219,5 @@ evidence, report polish, and a RunHaven-shaped fixture.
 
 ## Next Step
 
-Implement generated and enhanced harness skill-wiring validation, then continue
-the remaining RunHaven-derived backlog in `docs/roadmap.md` before release prep
-resumes.
+Implement compact verification evidence capture, then continue the remaining
+RunHaven-derived backlog in `docs/roadmap.md` before release prep resumes.

@@ -87,6 +87,9 @@ boundaries it preserves. See [Usage](usage.md) for commands and
   `effectiveness`, `session`, `report`, `release-check`, `finalize-review`,
   `migrate-state`, `sync --check`, `audit`, `update --drift-report`, or default
   `verify`. Use `verify --run` when command execution is explicitly wanted.
+- It validates repo-local harness skill wiring when a harness is present, but
+  the generated skill remains project-owned guidance unless the repo owner
+  adopts HarnessForge checks as a gate.
 - It does not clone public repositories or use network access during the
   offline `corpus` quality gate.
 - It does not generate SBOMs during normal flows. Existing SPDX and

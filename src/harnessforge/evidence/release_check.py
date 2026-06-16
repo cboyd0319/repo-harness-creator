@@ -87,6 +87,7 @@ def format_release_check(payload: dict[str, Any]) -> str:
             f"- Verify evidence: `{summary['verifyEvidenceVerdict']}`",
             f"- Generated drift: {summary['generatedDriftActionable']} actionable",
             f"- Instruction quality: `{summary['instructionQualityStatus']}`",
+            f"- Skill wiring: `{summary['skillWiringStatus']}`",
             f"- First-agent lifecycle: `{summary['firstAgentLifecycleStatus']}`",
             f"- Maturity level: `{summary['maturityLevel']}`",
             f"- Docs fan-out: `{summary['docsFanoutVerdict']}`",
@@ -144,6 +145,7 @@ def _release_gates(
         _verify_evidence_gate(report),
         _generated_drift_gate(report),
         _instruction_quality_gate(report),
+        _skill_wiring_gate(report),
         _first_agent_gate(report),
         _docs_fanout_gate(report),
         _release_controls_gate(release_controls_present),
@@ -279,6 +281,22 @@ def _instruction_quality_gate(report: dict[str, Any]) -> dict[str, Any]:
         "instruction-quality",
         gate_status,
         f"instruction quality is {status} with average score {average or 'none'}",
+        value=status,
+    )
+
+
+def _skill_wiring_gate(report: dict[str, Any]) -> dict[str, Any]:
+    status = str(report["skillWiring"]["status"])
+    if status == "wired":
+        gate_status = "passed"
+    elif status == "not_applicable":
+        gate_status = "warning"
+    else:
+        gate_status = "blocked"
+    return _gate(
+        "skill-wiring",
+        gate_status,
+        f"repo-local harness skill wiring is {status}",
         value=status,
     )
 
@@ -430,6 +448,7 @@ def _summary(report: dict[str, Any]) -> dict[str, Any]:
         "verifyEvidenceVerdict": latest["verdict"] if latest else "missing",
         "generatedDriftActionable": report["drift"]["summary"]["actionable"],
         "instructionQualityStatus": report["instructionQuality"]["summary"]["status"],
+        "skillWiringStatus": report["skillWiring"]["status"],
         "firstAgentLifecycleStatus": report["firstAgentTask"]["lifecycle"]["status"],
         "docsFanoutVerdict": report["docsFanout"]["contract"]["verdict"],
         "featureStateStatus": report["featureState"]["status"],
@@ -450,6 +469,7 @@ def _source_report_summary(report: dict[str, Any]) -> dict[str, Any]:
         "detectedStack": report["detectedStack"],
         "readiness": report["readiness"],
         "audit": report["audit"],
+        "skillWiring": report["skillWiring"],
         "verifyEvidence": report["verifyEvidence"],
         "maturity": report["maturity"],
         "releaseControls": report["releaseControls"],

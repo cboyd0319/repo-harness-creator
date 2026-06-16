@@ -530,6 +530,7 @@ def _sync_summary_markdown(report: Any, exit_code: int) -> str:
         f"`{len(report.high_risk_acceptance.accepted_surfaces)}`",
         f"- Runnable checks: `{len(report.runnable_checks)}`",
         f"- Instruction quality: `{report.instruction_quality.status}`",
+        f"- Skill wiring: `{report.skill_wiring.status}`",
         f"- First-agent lifecycle: `{report.first_agent_lifecycle.lifecycle_status}`",
         f"- Verify evidence required: `{str(report.verify_evidence_required).lower()}`",
     ]
@@ -584,6 +585,7 @@ def _report_summary_markdown(payload: dict[str, Any]) -> str:
         f"| Verify evidence | `{verify_status}` |",
         f"| Effectiveness | `{payload['effectiveness']['verdict']}` |",
         f"| Instruction quality | `{payload['instructionQuality']['summary']['status']}` |",
+        f"| Skill wiring | `{payload['skillWiring']['status']}` |",
         f"| First-agent lifecycle | `{payload['firstAgentTask']['lifecycle']['status']}` |",
         f"| Maturity level | `{payload['maturity']['currentLevel']}` |",
         "| Policy presets | "
@@ -613,6 +615,7 @@ def _release_check_summary_markdown(payload: dict[str, Any]) -> str:
         f"`{payload['summary']['acceptedHighRiskSurfaces']}`",
         f"- Verify evidence: `{payload['summary']['verifyEvidenceVerdict']}`",
         f"- Maturity level: `{payload['summary']['maturityLevel']}`",
+        f"- Skill wiring: `{payload['summary']['skillWiringStatus']}`",
         f"- Feature state: `{payload['summary']['featureStateStatus']}`",
         f"- Observability: `{payload['summary']['observabilityStatus']}`",
         "",

@@ -372,11 +372,12 @@ When `GITHUB_STEP_SUMMARY` is available, the Action writes a concise Markdown
 summary. `command: report` summarizes readiness, accepted high-risk surface
 count, structured review-surface status counts, audit score, drift, docs
 fan-out, verify evidence, effectiveness evidence, instruction quality,
-first-agent lifecycle, maturity level, feature state, observability, index
-adapters, repo-map component/source counts, and SBOM file count.
+skill wiring, first-agent lifecycle, maturity level, feature state,
+observability, index adapters, repo-map component/source counts, and SBOM file
+count.
 `command: release-check` summarizes the release verdict, audit score,
 readiness, accepted high-risk surface count, verify evidence, maturity level,
-feature state, observability, and individual release gates.
+skill wiring, feature state, observability, and individual release gates.
 `command: finalize-review` summarizes dry-run/apply mode, planned writes,
 changed files, high-risk surface count, and whether high-risk acceptance is
 still missing.
@@ -384,7 +385,7 @@ still missing.
 found, planned writes, changed files, and truncated excerpts.
 `command: sync` includes readiness, warning, review-required, structured
 review-surface status, accepted high-risk surface, runnable-check,
-instruction-quality, and first-agent lifecycle counts.
+instruction-quality, skill-wiring, and first-agent lifecycle counts.
 
 ## Version Pinning
 

@@ -932,7 +932,9 @@ Implemented shape:
 4. Implemented: `migrate-state` plans and explicitly applies bounded,
    idempotent migration from `progress.md` and `session-handoff.md` to
    `current-state.md` while preserving legacy files.
-5. Add generated and enhanced harness skill-wiring validation.
+5. Implemented: readiness, report, release-check, and Action summaries validate
+   generated and enhanced repo-local harness skill wiring, reference paths,
+   trigger frontmatter, and instruction routing.
 6. Add the RunHaven-shaped fixture to the public-repo quality corpus and assert
    the reviewed maturity/report behavior.
 7. Re-run real-repo quality passes against RunHaven and selected sibling repos.

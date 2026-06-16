@@ -37,6 +37,11 @@ from ..evidence.instruction_quality import (
     analyze_instruction_quality,
     instruction_quality_to_dict,
 )
+from ..evidence.skill_wiring import (
+    SkillWiringReport,
+    analyze_skill_wiring,
+    skill_wiring_to_dict,
+)
 from ..evidence.verify_evidence import (
     VerifyEvidenceReport,
     analyze_verify_evidence,
@@ -103,6 +108,7 @@ class ReadinessReport:
     governance_inventory: tuple[GovernanceItem, ...]
     effectiveness_inventory: tuple[EffectivenessItem, ...]
     instruction_quality: InstructionQualityReport
+    skill_wiring: SkillWiringReport
     verify_evidence: VerifyEvidenceReport
     verify_evidence_required: bool
     first_agent_lifecycle: FirstAgentLifecycleReport
@@ -121,6 +127,7 @@ def inspect_readiness(
     governance_inventory = analyze_governance_inventory(profile.files)
     effectiveness_inventory = analyze_effectiveness_inventory(profile.files)
     instruction_quality = analyze_instruction_quality(profile.root, profile.files)
+    skill_wiring = analyze_skill_wiring(profile.root, profile.files)
     verify_evidence = analyze_verify_evidence(profile.root, profile.files)
     first_agent_lifecycle = analyze_first_agent_lifecycle(profile.root, profile.files)
     high_risk_acceptance = analyze_high_risk_acceptance(
@@ -185,6 +192,7 @@ def inspect_readiness(
     )
     warnings.extend(effectiveness_inventory.warnings)
     warnings.extend(instruction_quality.warnings)
+    warnings.extend(skill_wiring.warnings)
     warnings.extend(verify_evidence.warnings)
     warnings.extend(first_agent_lifecycle.warnings)
     warnings.extend(high_risk_acceptance.warnings)
@@ -227,6 +235,7 @@ def inspect_readiness(
         next_actions.append(
             "Review instruction quality and context budget findings before expanding startup instructions."
         )
+    next_actions.extend(skill_wiring.next_actions)
     next_actions.extend(verify_evidence.next_actions)
     next_actions.extend(first_agent_lifecycle.next_actions)
     instruction_text = _instruction_text(profile.root, file_set)
@@ -304,6 +313,7 @@ def inspect_readiness(
         governance_inventory=governance_inventory.items,
         effectiveness_inventory=effectiveness_inventory.items,
         instruction_quality=instruction_quality,
+        skill_wiring=skill_wiring,
         verify_evidence=verify_evidence,
         verify_evidence_required=require_verify_evidence,
         first_agent_lifecycle=first_agent_lifecycle,
@@ -342,6 +352,7 @@ def readiness_to_dict(report: ReadinessReport) -> dict[str, Any]:
             for item in report.effectiveness_inventory
         ],
         "instructionQuality": instruction_quality_to_dict(report.instruction_quality),
+        "skillWiring": skill_wiring_to_dict(report.skill_wiring),
         "verifyEvidence": verify_evidence_report_to_dict(report.verify_evidence),
         "verifyEvidenceRequired": report.verify_evidence_required,
         "firstAgentLifecycle": first_agent_lifecycle_to_dict(
@@ -410,6 +421,14 @@ def format_readiness(report: ReadinessReport) -> str:
             f"{item.path}: {item.status}, score={item.score}/100, "
             f"budget={item.budget_status}, words={item.word_count}"
             for item in report.instruction_quality.files
+        ),
+    )
+    _append_section(
+        lines,
+        "Skill wiring",
+        (
+            f"{report.skill_wiring.skill_path}: {report.skill_wiring.status}, "
+            f"routes={', '.join(report.skill_wiring.instruction_routes) or 'none'}",
         ),
     )
     _append_section(

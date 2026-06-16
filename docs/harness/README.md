@@ -140,11 +140,12 @@ present, state-file presence, and next actions without running target commands.
 
 `report` is a read-only unified harness status artifact. It composes readiness,
 audit, generated drift, structural index summary, verify evidence,
-effectiveness evidence, first-agent task status, and platform contract without
-running target commands. It also reports policy preset recommendations and SBOM
-adapter status while keeping preset application and SBOM generation explicit
-opt-ins. Use `--json-report` or `--markdown-report` with a target-relative path
-to persist review evidence.
+effectiveness evidence, first-agent task status, platform contract,
+instruction quality, skill wiring, feature state, observability, index-adapter
+status, and docs fan-out without running target commands. It also reports
+policy preset recommendations and SBOM adapter status while keeping preset
+application and SBOM generation explicit opt-ins. Use `--json-report` or
+`--markdown-report` with a target-relative path to persist review evidence.
 
 `corpus` is an offline generated-content quality gate. It creates temporary
 fixtures modeled on pinned popular public repositories, runs detection,

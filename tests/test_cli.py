@@ -859,6 +859,16 @@ class CliTests(unittest.TestCase):
         self.assertGreaterEqual(
             payload["instructionQuality"]["summary"]["averageScore"], 80
         )
+        self.assertEqual(
+            payload["skillWiring"]["schemaVersion"],
+            "harnessforge.skillWiring.v1",
+        )
+        self.assertEqual(payload["skillWiring"]["status"], "wired")
+        self.assertIn("AGENTS.md", payload["skillWiring"]["instructionRoutes"])
+        self.assertIn(
+            "docs/harness/feedback/verification-matrix.md",
+            payload["skillWiring"]["resolvedReferences"],
+        )
         self.assertEqual(payload["firstAgentTask"]["status"], "pending_review")
         self.assertEqual(payload["firstAgentTask"]["lifecycle"]["status"], "pending")
         self.assertEqual(
@@ -914,6 +924,28 @@ class CliTests(unittest.TestCase):
         self.assertIn("Run harnessforge report", payload["nextActions"][0])
         self.assertTrue(
             any("first-agent-review.json" in item for item in payload["nextActions"])
+        )
+
+    def test_inspect_readiness_reports_broken_skill_wiring(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            with contextlib.redirect_stdout(io.StringIO()):
+                init_code = main(["init", "--target", str(root)])
+            (root / ".agents/skills/harness/references/repo-harness.md").unlink()
+            stdout = io.StringIO()
+            with contextlib.redirect_stdout(stdout):
+                code = main(["inspect", "--target", str(root), "--readiness", "--json"])
+
+            payload = json.loads(stdout.getvalue())
+
+        self.assertEqual(init_code, 0)
+        self.assertEqual(code, 0)
+        self.assertEqual(payload["skillWiring"]["status"], "incomplete")
+        self.assertTrue(
+            any("repo-harness.md is missing" in item for item in payload["warnings"])
+        )
+        self.assertTrue(
+            any("skill wiring" in item for item in payload["nextActions"])
         )
 
     def test_report_json_includes_policy_presets_and_sbom_adapter_status(self) -> None:
@@ -1302,8 +1334,12 @@ class CliTests(unittest.TestCase):
             "REVIEW REQUIRED",
             manifest["requiredHarnessSnippets"]["docs/harness/state/first-agent-task.md"],
         )
-        self.assertEqual(report["readiness"]["verdict"], "ready")
+        self.assertEqual(report["readiness"]["verdict"], "warning")
         self.assertEqual(report["readiness"]["reviewRequiredCount"], 0)
+        self.assertEqual(report["skillWiring"]["status"], "incomplete")
+        self.assertTrue(
+            any("harness skill wiring" in item for item in report["nextActions"])
+        )
         self.assertEqual(
             report["readiness"]["highRiskAcceptance"]["summary"]["acceptedCount"],
             2,
@@ -3640,13 +3676,20 @@ class CliTests(unittest.TestCase):
                 audit_code = main(
                     ["audit", "--target", str(root), "--min-score", "100"]
                 )
+            report_stdout = io.StringIO()
+            with contextlib.redirect_stdout(report_stdout):
+                report_code = main(["report", "--target", str(root), "--json"])
             agents = (root / "AGENTS.md").read_text(encoding="utf-8")
+            report = json.loads(report_stdout.getvalue())
 
         self.assertEqual(init_code, 0)
         self.assertEqual(audit_code, 0)
+        self.assertEqual(report_code, 0)
         self.assertIn("ENHANCED AGENTS.md", stdout.getvalue())
         self.assertIn("Keep local instructions.", agents)
         self.assertIn("HarnessForge Quality Addendum", agents)
+        self.assertEqual(report["skillWiring"]["status"], "wired")
+        self.assertIn("AGENTS.md", report["skillWiring"]["instructionRoutes"])
 
     def test_init_enhance_existing_dry_run_json_reports_review_plan(self) -> None:
         repeated = (
