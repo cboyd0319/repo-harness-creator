@@ -18,23 +18,83 @@
 
 Give AI coding agents a real repo harness, not just another prompt.
 
-HarnessForge creates the operating layer an agent needs before it can work well
-inside a repository: concise instructions, detected project context,
-verification commands, durable state, source-of-truth routing, security
-boundaries, and handoff rules. It turns agent readiness from scattered tribal
-knowledge into a reviewable product surface that lives with the code.
+## What This Is
 
-The important design choice is the boundary. HarnessForge generates portable
-harness infrastructure, detects repo-local systems, and routes agents toward the
-right source of truth. It does not copy one repo's personal preferences, local
-research habits, or workflow engines into another project.
+HarnessForge is a Python 3.13+ CLI and composite GitHub Action for creating,
+assessing, and safely updating AI coding-agent harnesses in existing
+repositories.
 
-This repository ships two related surfaces:
+A good harness is the operating layer around the model: instructions, tools,
+environment, state, and feedback. HarnessForge turns that layer into files a
+repo can review, version, test, and improve. It generates compact agent
+instructions, detects project context, routes agents to source-of-truth docs,
+records durable state, declares verification commands, and captures security
+and workflow boundaries.
 
-- `harnessforge`, a Python CLI for local generation, inspection, audit, and
-  maintenance.
-- `cboyd0319/harnessforge`, a composite GitHub Action that runs the same
-  library code in CI.
+This repo ships two related surfaces:
+
+- `harnessforge`, the local CLI for generation, inspection, audit, reporting,
+  release evidence, and maintenance.
+- `cboyd0319/harnessforge`, a composite GitHub Action that runs the same Python
+  library in CI.
+
+## Why You Want It
+
+AI coding agents often fail because they start with too little repo context,
+unclear verification, stale docs, and no durable handoff path. The result is
+expensive context burn, repeated rediscovery, accidental edits to the wrong
+files, and reviews that have to reconstruct what the agent thought it was
+doing.
+
+HarnessForge gives a repo an explicit agent operating model:
+
+- New agents get a clear startup route instead of hunting through random docs.
+- Existing `AGENTS.md`, `CLAUDE.md`, `GEMINI.md`, and Copilot instructions can
+  be reviewed and improved without taking ownership away from the project.
+- Verification commands, state files, evidence docs, and first-agent review
+  tasks live with the code instead of in chat history.
+- Large or unfamiliar repos get structural indexing, source-of-truth routing,
+  workflow inventory, and review-required surface detection before writes.
+- Maintainers can inspect harness drift, readiness, maturity, and release
+  evidence with read-only commands before trusting generated changes.
+
+## What Makes It Cool
+
+- It treats agent readiness as real repository infrastructure, not prompt
+  decoration.
+- It keeps product boundaries explicit: this repo's local harness, generated
+  target harnesses, and the GitHub Action are separate surfaces.
+- It respects existing project systems. It detects specs, work items, ASPEC
+  style folders, workflow definitions, verification commands, SBOM evidence,
+  and source-of-truth docs before generating guidance.
+- It creates a zero-install repo skill at `.agents/skills/harness/SKILL.md`, so
+  future agents can improve the harness using repo-owned guidance even when
+  HarnessForge is not installed.
+- It adds a first-agent harness improvement task so the first agent session can
+  deepen the generated harness with repo-specific knowledge.
+- It can produce one `harnessforge report` artifact with readiness, audit,
+  generated drift, repo map, instruction quality, review work, verify evidence,
+  effectiveness evidence, policy recommendations, skill wiring, and maturity.
+- It can prepare release evidence with `harnessforge release-check` without
+  publishing, tagging, uploading, pushing, or running target project commands.
+- It has an offline public-repo `corpus` quality gate that tests generated
+  content against realistic fixture shapes without cloning public repos.
+- The GitHub Action gives CI the same core library behavior as the local CLI
+  instead of duplicating product logic in workflow shell.
+- It keeps safety boring by default: explicit writes, no networked generation,
+  no autonomous target workflows, and structural scores kept separate from
+  real-agent performance claims.
+
+## Product Boundary
+
+HarnessForge generates portable harness infrastructure, detects repo-local
+systems, and routes agents toward the right source of truth. It does not copy
+one repo's personal preferences, local research habits, self-healing workflow,
+MCP setup, memory tree, or platform permission files into another project.
+
+Generated target repos should treat HarnessForge as an optional owner tool
+after initial generation unless the repo owner explicitly adopts the CLI or
+GitHub Action as a maintenance gate.
 
 ## Start Here
 
@@ -49,24 +109,11 @@ This repository ships two related surfaces:
 | Report a vulnerability | [Security](SECURITY.md) |
 | Contribute changes | [Contributing](CONTRIBUTING.md) |
 
-## At A Glance
-
-| Need | HarnessForge answer |
-| --- | --- |
-| Help agents orient in a repo | Generate compact instruction routers and durable project state |
-| Avoid overwriting local work | Preserve existing files by default and track generated ownership |
-| Know whether a repo is ready | Run read-only readiness and sync preflight checks |
-| Review harness health in one place | Compose readiness, audit, drift, index, review work, and evidence into one report |
-| Prepare release evidence | Run a read-only release check over audit, compact verify evidence, drift, docs fan-out, and lifecycle gates |
-| Keep generated harnesses honest | Audit structure, drift, security boundaries, and lifecycle controls |
-| Respect existing spec systems | Detect `.specify`, `specs/`, `aspec/`, work-item templates, and workflow surfaces |
-| Build deeper project operating models | Apply optional blueprints for agentic apps, SDD, web services, data/ML, security, and automation |
-| Run the same checks in CI | Use the composite GitHub Action backed by the same Python library |
-
 ## Status
 
-HarnessForge is usable for local harness generation and structural assessment.
-It is still pre-`v1`.
+HarnessForge is usable for local harness generation, existing-instruction
+review, structural assessment, reporting, and release evidence assembly. It is
+still pre-`v1`.
 
 The core loop is already useful: inspect a repo, preview a harness, create
 missing files, audit the result, and keep drift visible over time. The audit
@@ -74,22 +121,6 @@ score is structural. It checks whether a harness is coherent, portable,
 reviewable, and wired to useful feedback loops. It does not prove that a
 specific agent will complete a specific project task correctly. Real agent
 effectiveness still needs representative task runs and human review.
-
-## Why It Is Different
-
-- It treats agent readiness as repository infrastructure, not a one-off prompt.
-- It separates generated harness files from repo-local instructions and
-  preferences.
-- It improves existing instruction surfaces without taking ownership away from
-  the project.
-- It detects source-of-truth systems before generating guidance, including
-  Spec Kit-style SDD, ASPEC-style folders, work items, and workflow definitions.
-- It gives humans and CI the same read-only readiness signal through
-  `sync --check`.
-- It can produce one unified read-only report for review or release evidence
-  without running target commands.
-- It keeps the default runtime boring: Python standard library, explicit file
-  writes, pinned build tooling, and no network access for normal generation.
 
 ## Quick Start
 
@@ -132,7 +163,7 @@ Create one review artifact:
 harnessforge report --target /path/to/repo --markdown-report docs/harness/evidence/report.md
 ```
 
-Assemble release readiness evidence:
+Prepare release evidence:
 
 ```bash
 harnessforge release-check --target /path/to/repo --markdown-report docs/harness/evidence/release-check.md

@@ -4,10 +4,11 @@ Last Updated: 2026-06-16 UTC
 
 ## Current Objective
 
-Repo-local `.github/` inspection and repair is complete when live workflows,
-Copilot routing, PR template guidance, manifest snippets, and recurring
-verification gates are checked; focused and full local verification pass; and
-any commit or push decision is explicit. Release prep resumes next.
+Main README refresh and dedupe is complete when the public landing page clearly
+explains what HarnessForge is, why repo owners want it, what makes it useful,
+and the current alpha/product boundaries; required README snippets are intact;
+focused docs checks pass; and the result is committed and pushed to `main`.
+Release prep resumes next.
 
 ## Product State
 
@@ -130,6 +131,11 @@ any commit or push decision is explicit. Release prep resumes next.
   `.agents/skills/harness`, fails on unstaged or untracked output, and uses
   signed-off commits. Generated target-repo templates still keep the generic
   audit default and do not receive repo-local self-healing.
+- The main README has been reorganized around the public product questions:
+  what HarnessForge is, why repo owners want it, what makes it useful, and the
+  repo-local versus generated versus Action boundaries. The duplicate
+  at-a-glance/value-prop table was removed, while required README snippets and
+  command references remain intact.
 
 ## Trusted Verification
 
@@ -153,6 +159,10 @@ any commit or push decision is explicit. Release prep resumes next.
   63 tests; full unit discovery passed with 287 tests; compileall, pin check,
   research source check, JSON validation, self-audit `100/100`, and `./init.sh`
   passed.
+- Current README pass verification: required README manifest snippet check
+  passed with no missing snippets; duplicate literal prose scan found no
+  repeated meaningful lines; `tests.test_generate_audit` passed with 59 tests;
+  self-audit passed at `100/100`; `git diff --check` passed.
 - Current cleanup pass removed ignored local artifacts: `__pycache__`, `*.pyc`,
   `.DS_Store`, `.pytest_cache`, `htmlcov`, and `.coverage` if present.
 - Current known local verification gap: `pwsh -NoProfile -File ./init.ps1`
@@ -165,15 +175,7 @@ any commit or push decision is explicit. Release prep resumes next.
 ## Touched Surfaces
 
 - `current-state.md`
-- `.github/workflows/ci.yml`
-- `.github/workflows/harness-self-heal.yml`
-- `AGENTS.md`
-- `init.sh`
-- `init.ps1`
-- `tests/test_pins.py`
-- `docs/harness/manifest.json`
-- `docs/harness/feedback/sensor-registry.md`
-- `docs/harness/evidence/evidence-log.md`
+- `README.md`
 
 ## Blockers
 
@@ -185,6 +187,6 @@ any commit or push decision is explicit. Release prep resumes next.
 
 ## Next Step
 
-Review the final diff, then commit and push only if requested. Otherwise resume
-release prep with release evidence, packaging/publish checks, and real-repo
-field quality passes as release-prep evidence.
+Commit and push the README refresh, then resume release prep with release
+evidence, packaging/publish checks, and real-repo field quality passes as
+release-prep evidence.
