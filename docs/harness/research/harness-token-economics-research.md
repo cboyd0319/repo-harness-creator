@@ -81,6 +81,11 @@ harness behavior that caused them.
 | [ContextBench](https://arxiv.org/abs/2602.05892) | End-to-end success hides whether agents retrieve and use the right code context; intermediate recall, precision, and efficiency metrics expose context quality. | Token economics should measure context precision and recall, not only total tokens. |
 | [SWE-Effi](https://arxiv.org/abs/2509.09853) and [SWE-agent ACI](https://proceedings.neurips.cc/paper_files/paper/2024/file/5a7c947568c1b1328ccc5230172e1e7c-Paper-Conference.pdf) | Software-agent effectiveness needs token, time, turn, and trajectory metrics in addition to resolve rate. Failures and long trajectories can be disproportionately expensive. | The schema records tokens, turns, tool calls, retries, verification results, and failure outcomes. |
 | [CodeMonkeys field report](https://scalingintelligence.stanford.edu/blogs/codemonkeys/) | High-performing SWE-bench systems can be expensive, and public reports increasingly publish cost and full trajectories. | HarnessForge should require cost and trace evidence before claiming an effectiveness or economics win. |
+| [Codex non-interactive JSONL docs](https://developers.openai.com/codex/noninteractive) | `codex exec --json` emits event streams with completed-turn usage buckets such as input, cached input, output, and reasoning output tokens. | Use Codex JSONL as the first native trace source because it can be captured locally without adopting a separate observability platform. |
+| [Claude Code monitoring docs](https://code.claude.com/docs/en/monitoring-usage) | Claude Code can export OpenTelemetry metrics, logs, and traces for usage, cost, tool activity, LLM request spans, cache-read tokens, cache-creation tokens, output tokens, tool spans, and tool result tokens. | Use Claude Code OpenTelemetry as the second trace source when cache read/write buckets and tool spans must be separated more precisely. |
+| [Promptfoo Codex SDK provider docs](https://www.promptfoo.dev/docs/providers/openai-codex-sdk/) | Promptfoo can evaluate Codex SDK coding-agent runs with token usage, session identifiers, shell commands, file changes, MCP calls, search/file steps, and assertions. | Treat Promptfoo as a candidate repeatable eval runner after the native Codex JSONL parser proves the record shape. |
+| [Langfuse token and cost tracking docs](https://langfuse.com/docs/observability/features/token-and-cost-tracking), [Phoenix docs](https://github.com/Arize-ai/phoenix/blob/main/docs/phoenix/skill.md), and [OpenLLMetry](https://github.com/traceloop/openllmetry) | Current open observability projects can store or export LLM traces, token/cost usage, OpenTelemetry data, tool calls, and agent steps. | Use these as optional storage, dashboard, or OpenTelemetry plumbing after native traces exist; do not make them the source of truth by themselves. |
+| [LiteLLM cost tracking docs](https://docs.litellm.ai/docs/proxy/cost_tracking) and [Helicone cost tracking docs](https://docs.helicone.ai/guides/cookbooks/cost-tracking) | Proxy or gateway tools can track model request tokens, cost, sessions, call IDs, and caching behavior. | Use a proxy only when agent traffic can be safely routed through it. Proxy totals are insufficient alone because they miss local file reads, searches, command retries, verification runs, and quality outcomes. |
 
 ## HarnessForge Static Field Evidence
 
@@ -131,6 +136,54 @@ task traces or controlled evaluations that compare:
 - cold-start cost, repeated-session savings, rework savings, and instruction
   bloat failures.
 
+## Evidence Path
+
+Use native agent telemetry as the evidence source, then normalize it into
+`harnessforge.tokenEconomicsMetric.v1`. Observability platforms can help store,
+query, or visualize traces, but they do not replace controlled repeated task
+runs.
+
+Evidence-source order:
+
+1. Capture `codex exec --json` for the first spike. Parse completed-turn token
+   usage and event/item streams into one token-economics record.
+2. Add Claude Code OpenTelemetry when the evaluation needs separate cache-read,
+   cache-creation, LLM request, tool, and tool-result token spans.
+3. Consider Promptfoo around Codex SDK runs when HarnessForge needs a repeatable
+   task matrix with assertions, session IDs, file changes, shell commands, MCP
+   calls, and token usage.
+4. Consider Langfuse, Phoenix/OpenInference, or OpenLLMetry only as optional
+   storage, dashboard, or OpenTelemetry plumbing after native traces are
+   captured.
+5. Consider LiteLLM or Helicone only for provider-agnostic API request, cost,
+   session, call ID, or cache evidence. They are not enough by themselves
+   because they do not observe local repo reads, command execution, retries,
+   verification, or human quality review.
+6. Treat SWE-agent trajectories and similar agent-run formats as baseline or
+   schema inspiration, not the default HarnessForge runner.
+
+Controlled-run rules:
+
+- Freeze the target repo commit, task text, agent version, model, sandbox,
+  network setting, environment variables, and verification command for every
+  profile comparison.
+- Run each task in an isolated copy or worktree. Do not let one profile's edits,
+  caches, or generated artifacts leak into another profile.
+- Compare minimal, moderate, and comprehensive harness profiles as available
+  startup and repository guidance, then record the harness files actually loaded
+  by the agent. Do not assume the comprehensive profile means every durable doc
+  entered the prompt.
+- Start with one repository, two representative tasks, three profiles, and two
+  repeats before expanding to the larger 3-5 task, multi-repo matrix.
+- Keep raw traces ignored and local until reviewed. Commit only redacted,
+  target-relative normalized records or summaries that avoid private code,
+  secrets, local absolute paths, and long command output.
+- Keep provider-reported tokens, agent-reported tokens, tokenizer estimates,
+  character proxies, and estimated cost in separate fields. Do not compare
+  them as if they are the same measurement.
+- Require a do-no-harm quality floor before accepting a token or latency
+  reduction as an improvement.
+
 ## Metric Schema
 
 Use [token-economics-metric.schema.json](token-economics-metric.schema.json)
@@ -171,11 +224,13 @@ Until trace evidence exists:
 
 Run a small controlled evaluation before closing this backlog item:
 
-1. Select 3-5 tasks across a small Python package, a TypeScript monorepo, and
-   one large public repo checkout.
-2. Run each task with minimal, moderate, and comprehensive harness profiles.
-3. Capture provider token usage, cache buckets, tool calls, retries, verification
-   result, elapsed time, and human quality review.
-4. Store records using `harnessforge.tokenEconomicsMetric.v1`.
+1. Build or run a tiny parser for one `codex exec --json` trace and emit one
+   `harnessforge.tokenEconomicsMetric.v1` record.
+2. Run one low-risk repository task across minimal, moderate, and comprehensive
+   profiles in isolated roots, then repeat once to expose variance.
+3. Expand to 3-5 tasks across a small Python package, a TypeScript monorepo, and
+   one large public repo checkout only after the parser and redaction path work.
+4. Capture provider or agent token usage, cache buckets when available, tool
+   calls, retries, verification result, elapsed time, and human quality review.
 5. Conclude net increase, net decrease, mixed, or insufficient evidence only
-   after reviewing the trace records.
+   after reviewing the normalized trace records.

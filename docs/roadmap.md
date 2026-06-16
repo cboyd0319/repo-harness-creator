@@ -673,6 +673,11 @@ Initial research slice:
 
 Remaining closure work:
 
+- follow the locked evidence path in
+  `docs/harness/research/harness-token-economics-research.md`: native agent
+  telemetry first, Codex JSONL before optional dashboards, Claude Code
+  OpenTelemetry for cache read/write and tool-span buckets, and proxies only
+  as API-level cost supplements;
 - run controlled minimal, moderate, and comprehensive harness task traces on
   representative repos;
 - capture provider-reported or agent-reported token buckets, cache reads and
