@@ -8,7 +8,7 @@ from pathlib import Path
 from typing import Any
 from xml.etree import ElementTree
 
-from ..core.models import ProjectProfile
+from ..core.models import ProjectProfile, VerificationCommandRecord
 from ..core.paths import is_inside_root
 from .spec_system import analyze_spec_system, has_spec_system
 
@@ -240,6 +240,11 @@ def detect_project(
         package_managers,
         stack,
     )
+    command_records = _verification_command_records(
+        tuple(commands),
+        file_set=file_set,
+        explicit=bool(explicit_commands),
+    )
     components, component_overflow = _detect_components(
         file_set,
         max_components=max_components,
@@ -273,6 +278,7 @@ def detect_project(
         component_scan_truncated=bool(component_overflow),
         component_scan_total=len(components) + len(component_overflow),
         component_overflow=component_overflow,
+        verification_command_records=command_records,
     )
 
 
@@ -999,6 +1005,478 @@ def _verification_commands(
     if not commands:
         commands = (MISSING_VERIFICATION_COMMAND,)
     return tuple(commands)
+
+
+def _verification_command_records(
+    commands: tuple[str, ...],
+    *,
+    file_set: set[str],
+    explicit: bool,
+) -> tuple[VerificationCommandRecord, ...]:
+    return tuple(
+        VerificationCommandRecord(
+            command=command,
+            command_class=_verification_command_class(command),
+            scope=_verification_command_scope(command),
+            source_type=source_type,
+            source_path=source_path,
+            source_detail=source_detail,
+            confidence=confidence,
+        )
+        for command in commands
+        for source_type, source_path, source_detail, confidence in (
+            _verification_command_source(
+                command,
+                file_set=file_set,
+                explicit=explicit,
+            ),
+        )
+    )
+
+
+def _verification_command_class(command: str) -> str:
+    lower = command.lower()
+    if command == MISSING_VERIFICATION_COMMAND:
+        return "missing"
+    if any(token in lower for token in ("fmt", "format")):
+        return "format"
+    if any(token in lower for token in (" test", "pytest", "unittest", "nextest")):
+        return "test"
+    if any(
+        token in lower
+        for token in (
+            "lint",
+            "ruff",
+            "mypy",
+            "clippy",
+            "typecheck",
+            "type-check",
+            "compileall",
+        )
+    ):
+        return "static-analysis"
+    if "build" in lower:
+        return "build"
+    if any(token in lower for token in ("ci", "check", "validate", "verify")):
+        return "aggregate"
+    return "other"
+
+
+def _verification_command_scope(command: str) -> str:
+    lower = command.lower()
+    if command == MISSING_VERIFICATION_COMMAND:
+        return "none"
+    if any(
+        token in lower
+        for token in (
+            " --prefix ",
+            " --project ",
+            " --working-dir ",
+            " --manifest-path ",
+            " -f ",
+            " -p ",
+        )
+    ):
+        return "component"
+    if re.search(r"\s\./[^.\s][^\s]*/\.\.\.", lower):
+        return "component"
+    if any(
+        token in lower
+        for token in (
+            "./...",
+            "//...",
+            " --workspace",
+            " --all",
+            " ::",
+            " .",
+        )
+    ):
+        return "repo"
+    if any(
+        part in lower
+        for part in (
+            " apps/",
+            " packages/",
+            " services/",
+            " crates/",
+            " src/",
+            " tools/",
+        )
+    ):
+        return "component"
+    return "repo"
+
+
+def _verification_command_source(
+    command: str,
+    *,
+    file_set: set[str],
+    explicit: bool,
+) -> tuple[str, str, str, str]:
+    if command == MISSING_VERIFICATION_COMMAND:
+        return ("missing-placeholder", "", "review-required placeholder", "high")
+    if explicit:
+        return ("cli", "", "--command", "high")
+    tokens = _split_command(command)
+    if not tokens:
+        return ("unknown", "", "empty command", "low")
+    source = _make_command_source(tokens, file_set)
+    if source:
+        return source
+    source = _just_command_source(tokens, file_set)
+    if source:
+        return source
+    source = _node_command_source(tokens, file_set)
+    if source:
+        return source
+    source = _python_command_source(tokens, file_set)
+    if source:
+        return source
+    source = _go_command_source(tokens, file_set)
+    if source:
+        return source
+    source = _rust_command_source(tokens, file_set)
+    if source:
+        return source
+    source = _jvm_command_source(tokens, file_set)
+    if source:
+        return source
+    source = _swift_command_source(tokens, file_set)
+    if source:
+        return source
+    source = _dotnet_command_source(tokens, file_set)
+    if source:
+        return source
+    source = _composer_command_source(tokens, file_set)
+    if source:
+        return source
+    source = _ruby_command_source(tokens, file_set)
+    if source:
+        return source
+    source = _terraform_command_source(tokens, file_set)
+    if source:
+        return source
+    source = _bazel_command_source(tokens, file_set)
+    if source:
+        return source
+    source = _pants_command_source(tokens, file_set)
+    if source:
+        return source
+    source = _buck_command_source(tokens, file_set)
+    if source:
+        return source
+    source = _script_command_source(tokens, file_set)
+    if source:
+        return source
+    return ("heuristic", "", "detected from project stack", "low")
+
+
+def _split_command(command: str) -> list[str]:
+    try:
+        return shlex.split(command)
+    except ValueError:
+        return command.split()
+
+
+def _make_command_source(
+    tokens: list[str], file_set: set[str]
+) -> tuple[str, str, str, str] | None:
+    if tokens[0] != "make" or len(tokens) < 2:
+        return None
+    makefile = _first_existing(file_set, "Makefile", "makefile")
+    return ("makefile-target", makefile, f"target:{tokens[1]}", "high")
+
+
+def _just_command_source(
+    tokens: list[str], file_set: set[str]
+) -> tuple[str, str, str, str] | None:
+    if tokens[0] != "just" or len(tokens) < 2:
+        return None
+    justfile = _first_existing(file_set, "Justfile", "justfile")
+    return ("justfile-recipe", justfile, f"recipe:{tokens[1]}", "high")
+
+
+def _node_command_source(
+    tokens: list[str], file_set: set[str]
+) -> tuple[str, str, str, str] | None:
+    manager = tokens[0]
+    if manager not in {"npm", "pnpm", "yarn", "bun"}:
+        return None
+    directory = "."
+    script = ""
+    if manager == "npm" and "--prefix" in tokens:
+        index = tokens.index("--prefix")
+        if index + 1 < len(tokens):
+            directory = tokens[index + 1]
+        for candidate in tokens[index + 2 :]:
+            if not candidate.startswith("-"):
+                script = "test" if candidate == "test" else candidate
+                break
+    elif "run" in tokens:
+        index = tokens.index("run")
+        if index + 1 < len(tokens):
+            script = tokens[index + 1]
+    elif manager == "npm" and len(tokens) > 1 and tokens[1] == "test":
+        script = "test"
+    elif manager in {"yarn", "bun"} and len(tokens) > 1:
+        script = tokens[1]
+    source_path = _manifest_in_directory(file_set, directory, "package.json")
+    detail = f"{manager} script:{script}" if script else f"{manager} package command"
+    return ("package-script", source_path, detail, "high" if source_path else "medium")
+
+
+def _python_command_source(
+    tokens: list[str], file_set: set[str]
+) -> tuple[str, str, str, str] | None:
+    runner = ""
+    project_directory = "."
+    explicit_project_directory = False
+    if tokens[:3] == ["uv", "run", "--project"] and len(tokens) >= 5:
+        runner = "uv"
+        project_directory = tokens[3]
+        explicit_project_directory = True
+    elif tokens[:2] in (["poetry", "run"], ["pipenv", "run"]):
+        runner = tokens[0]
+    python_index = next(
+        (
+            index
+            for index, token in enumerate(tokens)
+            if token in {"python", "python3"} or token.endswith("/python")
+        ),
+        -1,
+    )
+    if python_index < 0:
+        return None
+    module = ""
+    if "-m" in tokens[python_index:]:
+        module_index = tokens.index("-m", python_index)
+        if module_index + 1 < len(tokens):
+            module = tokens[module_index + 1]
+        for argument in tokens[module_index + 2 :]:
+            if argument and not argument.startswith("-") and argument != ".":
+                argument_directory = _project_directory_for_argument(
+                    argument,
+                    file_set,
+                )
+                if argument_directory != "." or not explicit_project_directory:
+                    project_directory = argument_directory
+                break
+    source_path = _python_source_path(file_set, project_directory)
+    detail = f"{runner + ' ' if runner else ''}python module:{module or 'unknown'}"
+    return ("python-project", source_path, detail, "high" if source_path else "medium")
+
+
+def _go_command_source(
+    tokens: list[str], file_set: set[str]
+) -> tuple[str, str, str, str] | None:
+    if tokens[:2] != ["go", "test"]:
+        return None
+    directory = "."
+    for token in tokens[2:]:
+        if token == "./...":
+            directory = "."
+            break
+        if token.startswith("./") and token.endswith("/..."):
+            directory = token[2:-4]
+            break
+    source_path = _manifest_in_directory(file_set, directory, "go.mod")
+    return ("go-module", source_path, "go test", "high" if source_path else "medium")
+
+
+def _rust_command_source(
+    tokens: list[str], file_set: set[str]
+) -> tuple[str, str, str, str] | None:
+    if not tokens or tokens[0] != "cargo":
+        return None
+    if "--manifest-path" in tokens:
+        index = tokens.index("--manifest-path")
+        if index + 1 < len(tokens):
+            source_path = tokens[index + 1]
+            return ("rust-manifest", source_path, "cargo manifest-path", "high")
+    source_path = _first_existing(file_set, "Cargo.toml")
+    return ("rust-manifest", source_path, f"cargo {tokens[1] if len(tokens) > 1 else ''}".strip(), "high" if source_path else "medium")
+
+
+def _jvm_command_source(
+    tokens: list[str], file_set: set[str]
+) -> tuple[str, str, str, str] | None:
+    executable = tokens[0]
+    if executable in {"mvn", "./mvnw"}:
+        source_path = _flag_value(tokens, "-f") or _first_existing(file_set, "pom.xml")
+        return ("jvm-build", source_path, "maven", "high" if source_path else "medium")
+    if executable in {"gradle", "./gradlew"}:
+        directory = _flag_value(tokens, "-p") or "."
+        source_path = _manifest_in_directory(
+            file_set, directory, "build.gradle", "build.gradle.kts"
+        )
+        return ("jvm-build", source_path, "gradle", "high" if source_path else "medium")
+    return None
+
+
+def _swift_command_source(
+    tokens: list[str], file_set: set[str]
+) -> tuple[str, str, str, str] | None:
+    if not tokens or tokens[0] != "swift":
+        return None
+    source_path = _first_existing(file_set, "Package.swift")
+    return (
+        "swift-package",
+        source_path,
+        f"swift {tokens[1] if len(tokens) > 1 else ''}".strip(),
+        "high" if source_path else "medium",
+    )
+
+
+def _dotnet_command_source(
+    tokens: list[str], file_set: set[str]
+) -> tuple[str, str, str, str] | None:
+    if tokens[:2] != ["dotnet", "test"]:
+        return None
+    source_path = next(
+        (
+            file_name
+            for file_name in sorted(file_set)
+            if Path(file_name).parent == Path(".")
+            and file_name.endswith((".sln", ".slnx", ".csproj", ".fsproj", ".vbproj"))
+        ),
+        "",
+    )
+    return ("dotnet-project", source_path, "dotnet test", "high" if source_path else "medium")
+
+
+def _composer_command_source(
+    tokens: list[str], file_set: set[str]
+) -> tuple[str, str, str, str] | None:
+    if not tokens or tokens[0] != "composer":
+        return None
+    directory = "."
+    for token in tokens:
+        if token.startswith("--working-dir="):
+            directory = token.split("=", 1)[1]
+    if "--working-dir" in tokens:
+        index = tokens.index("--working-dir")
+        if index + 1 < len(tokens):
+            directory = tokens[index + 1]
+    source_path = _manifest_in_directory(file_set, directory, "composer.json")
+    return ("php-composer", source_path, "composer script", "high" if source_path else "medium")
+
+
+def _ruby_command_source(
+    tokens: list[str], file_set: set[str]
+) -> tuple[str, str, str, str] | None:
+    if not tokens or tokens[0] != "bundle":
+        return None
+    source_path = _first_existing(file_set, "Gemfile")
+    for token in tokens:
+        if token.startswith("--gemfile"):
+            _, _, value = token.partition("=")
+            if value:
+                source_path = value
+    return ("ruby-gemfile", source_path, "bundle rake", "high" if source_path else "medium")
+
+
+def _terraform_command_source(
+    tokens: list[str], file_set: set[str]
+) -> tuple[str, str, str, str] | None:
+    if not tokens or tokens[0] != "terraform":
+        return None
+    source_path = _first_existing(
+        file_set, "terraform.tf", "versions.tf", "main.tf", "providers.tf"
+    )
+    return (
+        "terraform-config",
+        source_path,
+        f"terraform {tokens[1] if len(tokens) > 1 else ''}".strip(),
+        "medium",
+    )
+
+
+def _bazel_command_source(
+    tokens: list[str], file_set: set[str]
+) -> tuple[str, str, str, str] | None:
+    if not tokens or tokens[0] != "bazel":
+        return None
+    source_path = _first_existing(
+        file_set,
+        "MODULE.bazel",
+        "WORKSPACE.bazel",
+        "WORKSPACE",
+        ".bazelrc",
+    )
+    return ("bazel-workspace", source_path, "bazel target pattern", "high" if source_path else "medium")
+
+
+def _pants_command_source(
+    tokens: list[str], file_set: set[str]
+) -> tuple[str, str, str, str] | None:
+    if not tokens or tokens[0] != "pants":
+        return None
+    source_path = _first_existing(file_set, "pants.toml")
+    return ("pants-config", source_path, "pants goal", "high" if source_path else "medium")
+
+
+def _buck_command_source(
+    tokens: list[str], file_set: set[str]
+) -> tuple[str, str, str, str] | None:
+    if not tokens or tokens[0] != "buck2":
+        return None
+    source_path = _first_existing(file_set, ".buckconfig")
+    return ("buck-config", source_path, "buck2 target pattern", "high" if source_path else "medium")
+
+
+def _script_command_source(
+    tokens: list[str], file_set: set[str]
+) -> tuple[str, str, str, str] | None:
+    script = tokens[0]
+    if not script.startswith("./"):
+        return None
+    source_path = script.removeprefix("./")
+    if source_path not in file_set:
+        return ("script", source_path, "script path", "medium")
+    return ("script", source_path, "script path", "high")
+
+
+def _flag_value(tokens: list[str], flag: str) -> str:
+    if flag not in tokens:
+        return ""
+    index = tokens.index(flag)
+    if index + 1 >= len(tokens):
+        return ""
+    return tokens[index + 1]
+
+
+def _first_existing(file_set: set[str], *paths: str) -> str:
+    return next((path for path in paths if path in file_set), "")
+
+
+def _manifest_in_directory(file_set: set[str], directory: str, *names: str) -> str:
+    normalized = "." if directory in {"", "."} else directory.strip("/")
+    candidates = [
+        name if normalized == "." else f"{normalized}/{name}"
+        for name in names
+    ]
+    return _first_existing(file_set, *candidates)
+
+
+def _python_source_path(file_set: set[str], directory: str) -> str:
+    return _manifest_in_directory(
+        file_set,
+        directory,
+        "pyproject.toml",
+        "setup.py",
+        "requirements.txt",
+        "Pipfile",
+    )
+
+
+def _project_directory_for_argument(argument: str, file_set: set[str]) -> str:
+    path = Path(argument)
+    candidates = [path.as_posix()]
+    candidates.extend(parent.as_posix() for parent in path.parents if parent != Path("."))
+    for candidate in candidates:
+        if _python_source_path(file_set, candidate):
+            return candidate
+    return "."
 
 
 def _root_jvm_commands(file_set: set[str]) -> list[str]:

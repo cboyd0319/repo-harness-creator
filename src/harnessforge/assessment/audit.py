@@ -626,6 +626,8 @@ def _generated_target_boundary_check(
 
 
 def _is_generated_target_manifest(manifest: dict[str, Any]) -> bool:
+    if manifest.get("manifestScope") == "repo-local":
+        return False
     generator = manifest.get("generator")
     return (
         isinstance(generator, dict)

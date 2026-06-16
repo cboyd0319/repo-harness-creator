@@ -1655,6 +1655,7 @@ def _profile_to_dict(profile: ProjectProfile) -> dict[str, object]:
         "packageManagers": list(profile.package_managers),
         "runtimeFiles": list(profile.runtime_files),
         "verificationCommands": list(profile.verification_commands),
+        "verificationCommandDetails": _verification_command_details_to_dict(profile),
         "components": list(profile.components),
         "fileScan": _scan_to_dict(profile),
         "componentScan": _component_scan_to_dict(profile),
@@ -1683,6 +1684,23 @@ def _component_scan_to_dict(profile: ProjectProfile) -> dict[str, object]:
         "truncated": profile.component_scan_truncated,
         "omittedExamples": list(profile.component_overflow[:20]),
     }
+
+
+def _verification_command_details_to_dict(
+    profile: ProjectProfile,
+) -> list[dict[str, str]]:
+    return [
+        {
+            "command": record.command,
+            "commandClass": record.command_class,
+            "scope": record.scope,
+            "sourceType": record.source_type,
+            "sourcePath": record.source_path,
+            "sourceDetail": record.source_detail,
+            "confidence": record.confidence,
+        }
+        for record in profile.verification_command_records
+    ]
 
 
 def _nested_instruction_lines(profile: ProjectProfile) -> tuple[str, ...]:

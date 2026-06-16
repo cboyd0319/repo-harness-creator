@@ -213,6 +213,12 @@ monorepo scopes.
   already expose file scan limits. Field evidence now reports Kubernetes
   `44/44`, VS Code `80/145`, and Bazel `80/186` included/detected
   components at the default cap.
+- Verification command metadata now uses
+  `harnessforge.verificationCommands.v1`. Detection keeps the existing command
+  strings but adds command class, scope, source type, source path, source
+  detail, and confidence. `index`, `report`, generated manifests, Action report
+  summaries, quickstart/init profile JSON, and large-public-repo field evidence
+  consume the metadata without executing target commands.
 
 ## Trusted Verification
 
@@ -258,6 +264,14 @@ monorepo scopes.
   self-audit `100/100` passed. Refreshed Kubernetes, VS Code, and Bazel field
   evidence analyzed 3/3 repos with zero failures and records included/total
   component counts.
+- Current verification-command metadata verification: focused detect, CLI,
+  Action, generated-audit, and large-public-repo analyzer tests passed with
+  107 tests; full unit discovery passed with 302 tests; compileall, pin check,
+  research source check, JSON validation, report JSON smoke, expected-block
+  release-check JSON smoke, durable-doc local-path scan, diff hygiene, and
+  self-audit `100/100` passed. Refreshed Kubernetes, VS Code, and Bazel field
+  evidence analyzed 3/3 repos with zero failures and records high-confidence
+  source attribution for detected verification commands.
 - Current README pass verification: required README manifest snippet check
   passed with no missing snippets; duplicate literal prose scan found no
   repeated meaningful lines; `tests.test_generate_audit` passed with 59 tests;
@@ -325,6 +339,7 @@ monorepo scopes.
 ## Touched Surfaces
 
 - `current-state.md`
+- `feature_list.json`
 - `docs/capabilities.md`
 - `docs/harness/research/`
 - `docs/harness/evidence/large-public-repo-analysis.md`
@@ -341,6 +356,8 @@ monorepo scopes.
 - `src/harnessforge/generation/generate.py`
 - `src/harnessforge/generation/update.py`
 - `src/harnessforge/project/detect.py`
+- `src/harnessforge/project/indexer.py`
+- `src/harnessforge/core/models.py`
 - `src/harnessforge/cli.py`
 - `src/harnessforge/github_action.py`
 - `action.yml`
@@ -348,6 +365,7 @@ monorepo scopes.
 - `docs/usage.md`
 - `docs/harness/evidence/evidence-log.md`
 - `src/harnessforge/core/harness_paths.py`
+- `src/harnessforge/assessment/audit.py`
 - `tests/test_generate_audit.py`
 - `tests/test_cli.py`
 - `tests/test_github_action.py`
@@ -362,6 +380,6 @@ monorepo scopes.
 
 ## Next Step
 
-Implement deterministic file coverage reporting with git inventory so
-`index`, `report`, `quickstart`, and `init --dry-run --json` can say which
-high-signal categories were covered and which were budget-limited.
+Continue to source-of-truth ranking versus local component docs, then use the
+ranking to improve component and nested-instruction guidance without increasing
+default generated file size.

@@ -51,6 +51,19 @@ class DetectProjectTests(unittest.TestCase):
         self.assertIn(". (pyproject.toml)", profile.components)
         self.assertIn("python -m compileall .", profile.verification_commands)
         self.assertIn("python -m unittest discover", profile.verification_commands)
+        records = {record.command: record for record in profile.verification_command_records}
+        self.assertEqual(
+            records["python -m compileall ."].source_path,
+            "pyproject.toml",
+        )
+        self.assertEqual(
+            records["python -m compileall ."].command_class,
+            "static-analysis",
+        )
+        self.assertEqual(
+            records["python -m unittest discover"].command_class,
+            "test",
+        )
 
     def test_detects_python_tooling_defaults_from_config(self) -> None:
         with tempfile.TemporaryDirectory() as tmp:
@@ -462,6 +475,33 @@ class DetectProjectTests(unittest.TestCase):
         self.assertIn("pnpm", profile.package_managers)
         self.assertIn("pnpm run test", profile.verification_commands)
         self.assertIn("pnpm run build", profile.verification_commands)
+        records = {record.command: record for record in profile.verification_command_records}
+        self.assertEqual(records["pnpm run test"].source_type, "package-script")
+        self.assertEqual(records["pnpm run test"].source_path, "package.json")
+        self.assertEqual(records["pnpm run test"].command_class, "test")
+        self.assertEqual(records["pnpm run build"].command_class, "build")
+
+    def test_go_verification_commands_include_source_and_scope(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            (root / "go.mod").write_text(
+                "module example.com/root\n",
+                encoding="utf-8",
+            )
+            (root / "tools").mkdir()
+            (root / "tools" / "go.mod").write_text(
+                "module example.com/tools\n",
+                encoding="utf-8",
+            )
+
+            profile = detect_project(root)
+
+        records = {record.command: record for record in profile.verification_command_records}
+        self.assertEqual(records["go test ./..."].source_path, "go.mod")
+        self.assertEqual(records["go test ./..."].scope, "repo")
+        self.assertEqual(records["go test ./tools/..."].source_path, "tools/go.mod")
+        self.assertEqual(records["go test ./tools/..."].scope, "component")
+        self.assertEqual(records["go test ./tools/..."].command_class, "test")
 
     def test_detects_nested_components_without_installing_them(self) -> None:
         with tempfile.TemporaryDirectory() as tmp:
@@ -484,6 +524,16 @@ class DetectProjectTests(unittest.TestCase):
         self.assertEqual(profile.stack, "monorepo")
         self.assertIn("npm --prefix apps/web test", profile.verification_commands)
         self.assertIn("python -m compileall services/api", profile.verification_commands)
+        records = {record.command: record for record in profile.verification_command_records}
+        self.assertEqual(
+            records["npm --prefix apps/web test"].source_path,
+            "apps/web/package.json",
+        )
+        self.assertEqual(records["npm --prefix apps/web test"].scope, "component")
+        self.assertEqual(
+            records["python -m compileall services/api"].source_path,
+            "services/api/pyproject.toml",
+        )
         self.assertNotIn(
             "No project verification check detected",
             "\n".join(profile.verification_commands),
@@ -514,6 +564,13 @@ class DetectProjectTests(unittest.TestCase):
         self.assertIn(
             "uv run --project models python -m pytest scripts/tests",
             profile.verification_commands,
+        )
+        records = {record.command: record for record in profile.verification_command_records}
+        self.assertEqual(
+            records[
+                "uv run --project models python -m pytest scripts/tests"
+            ].source_path,
+            "models/pyproject.toml",
         )
         self.assertNotIn(
             "python -m unittest discover -s scripts/tests",

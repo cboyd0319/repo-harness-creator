@@ -297,8 +297,33 @@ Remaining:
 
 - Use component overflow to improve nested instruction candidate ranking and
   generated component guidance without increasing default generated size.
-- Improve ranking with verification-command source attribution and CI
-  path-filter evidence.
+- Improve ranking with CI path-filter evidence.
+
+### Verification Command Classification
+
+Status: initial source attribution implemented.
+
+Large repos often expose multiple possible verification paths. HarnessForge now
+keeps the existing command strings but adds machine-readable classification and
+source attribution in `harnessforge.verificationCommands.v1`.
+
+Implemented behavior:
+
+- Detection records command class, scope, source type, source path, source
+  detail, and attribution confidence for repo-owned command sources such as
+  package scripts, Makefiles, Justfiles, language manifests, scripts, Bazel,
+  Pants, Buck, and explicit CLI commands.
+- `index --json`, report JSON, compact `repoMap`, generated manifests, and
+  large-public-repo field evidence include the metadata without executing
+  target commands.
+- Markdown reports summarize the command count and command classes.
+
+Remaining:
+
+- Use workflow path filters and working-directory data to improve
+  component-specific verification routing.
+- Feed command metadata into nested instruction candidate ranking without
+  increasing default generated file size.
 
 ### SBOM-Aware Indexing
 

@@ -328,6 +328,7 @@ class GitHubActionTests(unittest.TestCase):
         self.assertIn("Skill wiring", summary_text)
         self.assertIn("First-agent lifecycle", summary_text)
         self.assertIn("Repo map", summary_text)
+        self.assertIn("Verification commands", summary_text)
         self.assertIn("File coverage", summary_text)
         self.assertIn("Feature state", summary_text)
         self.assertIn("Observability", summary_text)

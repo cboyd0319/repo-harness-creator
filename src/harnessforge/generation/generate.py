@@ -2380,6 +2380,7 @@ def _manifest_content(
     manifest = {
         "version": 1,
         "generatedBy": "harnessforge",
+        "manifestScope": "generated-target",
         "generator": {
             "name": "harnessforge",
             "version": __version__,
@@ -2404,6 +2405,18 @@ def _manifest_content(
         "generatedFiles": generated_files or {},
         "reviewRequired": list(REVIEW_REQUIRED_FILES),
         "verificationCommands": list(profile.verification_commands),
+        "verificationCommandDetails": [
+            {
+                "command": record.command,
+                "commandClass": record.command_class,
+                "scope": record.scope,
+                "sourceType": record.source_type,
+                "sourcePath": record.source_path,
+                "sourceDetail": record.source_detail,
+                "confidence": record.confidence,
+            }
+            for record in profile.verification_command_records
+        ],
         "detectedFileCount": len(profile.files),
         "fileScanLimit": profile.file_scan_limit,
         "fileScanTruncated": profile.file_scan_truncated,

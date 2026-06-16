@@ -128,7 +128,8 @@ execute them. Use `report-max-files` to raise the bounded structural index
 scan limit for large repositories and `report-component-limit` to raise the
 included component inventory for large monorepos; report JSON and the step
 summary include file coverage from `git ls-files` when the caller target is a
-git checkout.
+git checkout and verification-command class/source metadata from detected
+repo-owned command sources.
 Use `report-since` to add read-only docs fan-out analysis for changed files
 since a git ref. Use
 `require-docs-fanout-budget: "true"` when that analysis should fail the Action
@@ -140,7 +141,7 @@ instruction quality, first-agent lifecycle, maturity, policy preset status,
 SBOM adapter status, feature-state status, observability status,
 index-adapter status, unresolved review-work count, accepted advisory
 inventory count, nested instruction-plan status, repo-map counts, file
-coverage, and SBOM file count.
+coverage, verification-command count/classes, and SBOM file count.
 
 Upload report artifacts in the caller workflow when that is useful. The
 HarnessForge Action does not upload artifacts by default:

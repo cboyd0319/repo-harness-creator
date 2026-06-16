@@ -228,6 +228,7 @@ def build_index_report(profile: ProjectProfile) -> dict[str, Any]:
     review_required = _review_required_records(records)
     components = _component_records(profile.components)
     component_overflow = _component_overflow_report(profile)
+    verification_commands = _verification_command_report(profile)
     language_breakdown = _language_breakdown(records)
     entrypoints = _entrypoints(records, profile.verification_commands)
     sboms = _sbom_records(records)
@@ -280,6 +281,7 @@ def build_index_report(profile: ProjectProfile) -> dict[str, Any]:
         "fileClasses": class_totals,
         "components": components,
         "componentOverflow": component_overflow,
+        "verificationCommands": verification_commands,
         "manifests": manifests,
         "entrypoints": entrypoints,
         "sourceOfTruth": source_of_truth,
@@ -358,6 +360,20 @@ def format_index_report(report: dict[str, Any]) -> str:
         lines.append("SBOM:")
         for item in report["sbom"][:10]:
             lines.append(f"  - {item['path']}: {item['format']}")
+    runnable_commands = [
+        item
+        for item in report["verificationCommands"]["commands"]
+        if item["commandClass"] != "missing"
+    ]
+    if runnable_commands:
+        lines.append("")
+        lines.append("Verification commands:")
+        for item in runnable_commands[:10]:
+            source = item["sourcePath"] or item["sourceType"]
+            lines.append(
+                f"  - `{item['command']}`: {item['commandClass']} "
+                f"({item['scope']}, {source})"
+            )
     if report["reviewRequired"]:
         lines.append("")
         lines.append("Review required:")
@@ -470,6 +486,55 @@ def _component_overflow_report(profile: ProjectProfile) -> dict[str, Any]:
             if profile.component_scan_truncated
             else "none"
         ),
+    }
+
+
+def _verification_command_report(profile: ProjectProfile) -> dict[str, Any]:
+    records = [
+        {
+            "command": record.command,
+            "commandClass": record.command_class,
+            "scope": record.scope,
+            "sourceType": record.source_type,
+            "sourcePath": record.source_path,
+            "sourceDetail": record.source_detail,
+            "confidence": record.confidence,
+        }
+        for record in profile.verification_command_records
+    ]
+    if not records:
+        records = [
+            {
+                "command": command,
+                "commandClass": (
+                    "missing" if _verification_missing((command,)) else "other"
+                ),
+                "scope": "unknown",
+                "sourceType": "legacy",
+                "sourcePath": "",
+                "sourceDetail": "unattributed command",
+                "confidence": "low",
+            }
+            for command in profile.verification_commands
+        ]
+    runnable = [record for record in records if record["commandClass"] != "missing"]
+    class_counts: dict[str, int] = defaultdict(int)
+    source_counts: dict[str, int] = defaultdict(int)
+    for record in records:
+        class_counts[str(record["commandClass"])] += 1
+        source_counts[str(record["sourceType"])] += 1
+    return {
+        "schemaVersion": "harnessforge.verificationCommands.v1",
+        "commands": records,
+        "summary": {
+            "commandCount": len(runnable),
+            "missing": not runnable,
+            "classes": dict(sorted(class_counts.items())),
+            "sourceTypes": dict(sorted(source_counts.items())),
+            "lowConfidenceCount": sum(
+                1 for record in records if record["confidence"] == "low"
+            ),
+        },
     }
 
 
@@ -720,10 +785,11 @@ def _repo_map(
         )
         if class_by_name.get(name, {}).get("files", 0)
     ]
+    verification = _verification_command_report(profile)
     verification_commands = [
-        command
-        for command in profile.verification_commands
-        if not _verification_missing((command,))
+        record["command"]
+        for record in verification["commands"]
+        if record["commandClass"] != "missing"
     ]
     unknowns: list[str] = []
     if not source_of_truth:
@@ -766,8 +832,10 @@ def _repo_map(
         "boundaries": boundaries,
         "sbom": sboms[:10],
         "verification": {
-            "commands": verification_commands[:10],
+            "schemaVersion": verification["schemaVersion"],
+            "commands": verification["commands"][:10],
             "missing": not verification_commands,
+            "summary": verification["summary"],
         },
         "reviewRequired": review_required[:10],
         "unknowns": unknowns,

@@ -344,6 +344,9 @@ def analyze_repo(
                 "packageManagers": list(profile.package_managers),
                 "runtimeFiles": list(profile.runtime_files[:20]),
                 "verificationCommands": list(profile.verification_commands[:12]),
+                "verificationCommandSummary": verification_command_summary(
+                    index["verificationCommands"]
+                ),
                 "workspaceMarkers": list(profile.workspace_markers),
                 "routingMarkers": list(profile.routing_markers),
                 "fileScanLimit": profile.file_scan_limit,
@@ -354,10 +357,14 @@ def analyze_repo(
             },
             "indexSummary": index["summary"],
             "componentOverflow": component_overflow_summary(index["componentOverflow"]),
+            "verificationCommands": verification_command_summary(
+                index["verificationCommands"]
+            ),
             "repoMap": {
                 "primaryLanguages": index["repoMap"]["summary"]["primaryLanguages"],
                 "components": index["repoMap"]["components"][:12],
                 "sourceOfTruth": index["repoMap"]["sourceOfTruth"][:12],
+                "verification": index["repoMap"]["verification"],
                 "unknowns": index["repoMap"]["unknowns"][:12],
             },
             "fileCoverage": file_coverage_summary(index["fileCoverage"]),
@@ -602,6 +609,22 @@ def quality_gaps(
                 "message": "no runnable verification command was detected",
             }
         )
+    verification = index["verificationCommands"]
+    if (
+        verification["summary"]["commandCount"] > 0
+        and verification["summary"]["lowConfidenceCount"]
+        == verification["summary"]["commandCount"]
+    ):
+        gaps.append(
+            {
+                "code": "verification_source_low_confidence",
+                "severity": "medium",
+                "message": (
+                    "all detected runnable verification commands came from "
+                    "low-confidence attribution"
+                ),
+            }
+        )
     if nested_plan["candidateCount"] > 0:
         gaps.append(
             {
@@ -778,18 +801,20 @@ def format_markdown_report(payload: dict[str, Any]) -> str:
             "",
             "## Repository Results",
             "",
-            "| Repo | Status | Stack | Tracked | Eligible | Scanned | Skipped | Coverage | Components | Nested Plan | Top Gaps |",
-            "| --- | --- | --- | ---: | ---: | ---: | ---: | --- | ---: | --- | --- |",
+            "| Repo | Status | Stack | Tracked | Eligible | Scanned | Skipped | Coverage | Components | Verification | Nested Plan | Top Gaps |",
+            "| --- | --- | --- | ---: | ---: | ---: | ---: | --- | ---: | --- | --- | --- |",
         ]
     )
     for repo in payload["repositories"]:
         if repo["status"] != "analyzed":
             lines.append(
-                f"| `{repo['id']}` | `{repo['status']}` | n/a | 0 | 0 | 0 | 0 | n/a | 0 | n/a | "
+                f"| `{repo['id']}` | `{repo['status']}` | n/a | 0 | 0 | 0 | 0 | n/a | 0 | n/a | n/a | "
                 f"{repo['qualityGaps'][0]['message']} |"
             )
             continue
         gaps = ", ".join(gap["code"] for gap in repo["qualityGaps"][:4]) or "none"
+        verification = repo["verificationCommands"]["summary"]
+        verification_classes = ",".join(sorted(verification["classes"])) or "none"
         lines.append(
             f"| `{repo['id']}` | `analyzed` | `{repo['detected']['stack']}` | "
             f"{repo['trackedFileCount']} | "
@@ -799,6 +824,7 @@ def format_markdown_report(payload: dict[str, Any]) -> str:
             f"`{repo['fileCoverage']['status']}` | "
             f"{repo['componentOverflow']['includedCount']}/"
             f"{repo['componentOverflow']['totalCount']} | "
+            f"{verification['commandCount']} {verification_classes} | "
             f"{repo['nestedInstructionPlan']['candidateCount']} candidates | "
             f"{gaps} |"
         )
@@ -863,6 +889,25 @@ def component_overflow_summary(component_overflow: dict[str, Any]) -> dict[str, 
         "truncated": component_overflow["truncated"],
         "groupCounts": component_overflow["groupCounts"],
         "omittedExamples": component_overflow["omittedExamples"][:12],
+    }
+
+
+def verification_command_summary(verification: dict[str, Any]) -> dict[str, Any]:
+    commands = [
+        {
+            "command": item["command"],
+            "commandClass": item["commandClass"],
+            "scope": item["scope"],
+            "sourceType": item["sourceType"],
+            "sourcePath": item["sourcePath"],
+            "confidence": item["confidence"],
+        }
+        for item in verification["commands"][:12]
+    ]
+    return {
+        "schemaVersion": verification["schemaVersion"],
+        "summary": verification["summary"],
+        "commands": commands,
     }
 
 

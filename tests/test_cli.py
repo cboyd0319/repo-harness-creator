@@ -416,6 +416,29 @@ class CliTests(unittest.TestCase):
         self.assertIn("AGENTS.md", {item["path"] for item in payload["sourceOfTruth"]})
         self.assertEqual(payload["summary"]["sbomCount"], 1)
         self.assertEqual(payload["sbom"][0]["format"], "cyclonedx")
+        verification = payload["verificationCommands"]
+        self.assertEqual(
+            verification["schemaVersion"],
+            "harnessforge.verificationCommands.v1",
+        )
+        self.assertGreaterEqual(verification["summary"]["commandCount"], 2)
+        commands = {item["command"]: item for item in verification["commands"]}
+        self.assertEqual(
+            commands["python -m compileall ."]["sourcePath"],
+            "pyproject.toml",
+        )
+        self.assertEqual(
+            commands["python -m unittest discover"]["commandClass"],
+            "test",
+        )
+        self.assertEqual(
+            payload["repoMap"]["verification"]["schemaVersion"],
+            "harnessforge.verificationCommands.v1",
+        )
+        self.assertEqual(
+            payload["repoMap"]["verification"]["commands"][0]["sourceType"],
+            "python-project",
+        )
         self.assertEqual(payload["repoMap"]["summary"]["sbomCount"], 1)
         self.assertTrue(
             any(item["class"] == "sbom" for item in payload["repoMap"]["boundaries"])

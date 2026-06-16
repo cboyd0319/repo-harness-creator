@@ -75,12 +75,16 @@ category. For non-git targets it reports coverage from the bounded filesystem
 scan. The JSON report also includes `componentOverflow` with included, total,
 omitted, grouped, and example component boundaries so humans can add important
 omitted boundaries to `docs/harness/boundaries/component-inventory.md`.
+It also includes `verificationCommands` with schema
+`harnessforge.verificationCommands.v1`, which classifies detected commands as
+test, build, static-analysis, format, aggregate, or other and cites the
+repo-owned source file or explicit CLI input used for attribution.
 
 `index --json` includes a compact `repoMap` built from the structural index:
 primary languages, component candidates, source-of-truth docs, manifest kinds,
-entrypoints, boundary examples, verification commands, review-required files,
-unknowns, and existing SBOM evidence. It does not summarize private code or run
-target commands.
+entrypoints, boundary examples, attributed verification commands,
+review-required files, unknowns, and existing SBOM evidence. It does not
+summarize private code or run target commands.
 
 Existing SPDX or CycloneDX-style SBOM files are detected and cited under
 `sbom`. HarnessForge does not generate SBOMs during normal `init`, `inspect`,
@@ -122,8 +126,10 @@ signals for startup instruction files, the compact repo-map summary from
 `index`, policy preset recommendations, feature-state scope, runtime/process
 observability, optional index-adapter status, repo-local harness skill wiring,
 file-coverage status, SBOM adapter status, and review-required nested
-`AGENTS.md` scope candidates for monorepos. It also reports accepted high-risk
-surface review evidence,
+`AGENTS.md` scope candidates for monorepos. Index-derived verification command
+metadata records command class, scope, source type, source path, confidence,
+and missing-command status without executing those commands. It also reports
+accepted high-risk surface review evidence,
 separates unresolved actionable review work from accepted advisory inventory in
 `reviewWork`, and includes an evidence-gated maturity level from `generated` to
 `measured` without treating structural audit score as proof of real-agent

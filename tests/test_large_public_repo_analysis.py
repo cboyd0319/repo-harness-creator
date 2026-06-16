@@ -124,6 +124,22 @@ class LargePublicRepoAnalysisTests(unittest.TestCase):
                 repo["componentOverflow"]["schemaVersion"],
                 "harnessforge.componentOverflow.v1",
             )
+            self.assertEqual(
+                repo["verificationCommands"]["schemaVersion"],
+                "harnessforge.verificationCommands.v1",
+            )
+            self.assertIn(
+                "package-script",
+                repo["verificationCommands"]["summary"]["sourceTypes"],
+            )
+            self.assertEqual(
+                repo["verificationCommands"]["commands"][0]["sourcePath"],
+                "package.json",
+            )
+            self.assertEqual(
+                repo["repoMap"]["verification"]["schemaVersion"],
+                "harnessforge.verificationCommands.v1",
+            )
             self.assertIn(
                 "file_coverage_budget_limited",
                 {gap["code"] for gap in repo["qualityGaps"]},

@@ -68,6 +68,22 @@ truncated.
 Do not treat `index.summary.fileCount` as total repository size when
 `index.fileCoverage.coverageComplete` is `false`.
 
+## Verification Commands
+
+`index.verificationCommands` has schema
+`harnessforge.verificationCommands.v1`. It keeps the existing command strings
+but adds command class, scope, source type, source path, source detail, and
+confidence for each detected command.
+
+Command classes are currently `test`, `build`, `static-analysis`, `format`,
+`aggregate`, `other`, or `missing`. Source types identify the attribution
+surface, such as `package-script`, `makefile-target`, `justfile-recipe`,
+`python-project`, `script`, `bazel-workspace`, or explicit `cli` input.
+
+This is structural attribution only. `report` and `index` do not execute the
+commands, install dependencies, or prove the command is sufficient for a
+specific change.
+
 ## Verify Evidence
 
 `verifyEvidence.reports[*].schemaVersion` may be either:

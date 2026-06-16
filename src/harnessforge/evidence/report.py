@@ -155,6 +155,7 @@ def build_report(
 def format_report(payload: dict[str, Any]) -> str:
     instruction_average = payload["instructionQuality"]["summary"]["averageScore"]
     file_coverage = payload["index"]["fileCoverage"]
+    verification = payload["index"]["verificationCommands"]
     total_files = (
         file_coverage["totalFileCount"]
         if file_coverage["totalFileCount"] is not None
@@ -206,6 +207,9 @@ def format_report(payload: dict[str, Any]) -> str:
         f"- Manifests: {payload['index']['summary']['manifestCount']}",
         f"- Source-of-truth docs: {payload['index']['summary']['sourceOfTruthCount']}",
         f"- SBOM files: {payload['index']['summary']['sbomCount']}",
+        f"- Verification commands: {verification['summary']['commandCount']}",
+        "- Verification command classes: "
+        f"`{', '.join(sorted(verification['summary']['classes'])) or 'none'}`",
         f"- Repo-map unknowns: {len(payload['index']['repoMap']['unknowns'])}",
         "- File coverage: "
         f"`{file_coverage['scannedFileCount']}` scanned / "
@@ -439,6 +443,7 @@ def _index_summary(index: dict[str, Any]) -> dict[str, Any]:
         "fileClasses": index["fileClasses"],
         "fileCoverage": index["fileCoverage"],
         "componentOverflow": index["componentOverflow"],
+        "verificationCommands": index["verificationCommands"],
         "repoMap": index["repoMap"],
         "sbom": index["sbom"],
         "sourceOfTruth": index["sourceOfTruth"][:10],

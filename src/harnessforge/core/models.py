@@ -5,6 +5,17 @@ from pathlib import Path
 
 
 @dataclass(frozen=True)
+class VerificationCommandRecord:
+    command: str
+    command_class: str
+    scope: str
+    source_type: str
+    source_path: str = ""
+    source_detail: str = ""
+    confidence: str = "medium"
+
+
+@dataclass(frozen=True)
 class ProjectProfile:
     root: Path
     name: str
@@ -24,6 +35,7 @@ class ProjectProfile:
     component_scan_truncated: bool = False
     component_scan_total: int = 0
     component_overflow: tuple[str, ...] = ()
+    verification_command_records: tuple[VerificationCommandRecord, ...] = ()
 
 
 @dataclass(frozen=True)

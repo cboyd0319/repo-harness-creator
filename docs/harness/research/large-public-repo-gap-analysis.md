@@ -306,7 +306,9 @@ Definition of done:
 5. Done for report and dry-run flows: surface nested plans in report,
    quickstart, and init dry-run JSON. Enhance and index integration remain
    follow-up work.
-6. Add verification command classification and source attribution.
+6. Done for initial verification metadata: add verification command
+   classification and source attribution to `index`, `report`, generated
+   manifests, and large-public-repo field evidence.
 7. Split source-of-truth ranking from local component docs and use it to
    improve component/nested instruction ranking without increasing default
    generated size.

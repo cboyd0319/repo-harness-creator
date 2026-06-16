@@ -606,6 +606,8 @@ def _report_summary_markdown(payload: dict[str, Any]) -> str:
     verify_status = latest_verify["verdict"] if latest_verify else "missing"
     repo_map = payload["index"]["repoMap"]["summary"]
     file_coverage = payload["index"]["fileCoverage"]
+    verification = payload["index"]["verificationCommands"]["summary"]
+    verification_classes = ", ".join(sorted(verification["classes"])) or "none"
     total_files = (
         file_coverage["totalFileCount"]
         if file_coverage["totalFileCount"] is not None
@@ -649,6 +651,9 @@ def _report_summary_markdown(payload: dict[str, Any]) -> str:
         f"`{payload['index']['summary']['componentCount']}`/"
         f"`{payload['index']['summary']['componentTotalCount']}` components, "
         f"`{repo_map['sourceOfTruthCount']}` source docs |",
+        "| Verification commands | "
+        f"`{verification['commandCount']}` "
+        f"({verification_classes}) |",
         "| File coverage | "
         f"`{file_coverage['scannedFileCount']}` scanned / `{total_files}` total "
         f"from `{file_coverage['inventorySource']}` |",

@@ -34,7 +34,7 @@
     "normalHarnessGenerationNetworkAccess": false,
     "targetWritesPerformed": false
   },
-  "generatedAt": "2026-06-16T18:17:19+00:00",
+  "generatedAt": "2026-06-16T18:34:15+00:00",
   "mode": "real_public_repo_field_analysis",
   "repositories": [
     {
@@ -95,6 +95,118 @@
           "go.work"
         ],
         "stack": "go",
+        "verificationCommandSummary": {
+          "commands": [
+            {
+              "command": "go test ./...",
+              "commandClass": "test",
+              "confidence": "high",
+              "scope": "repo",
+              "sourcePath": "go.mod",
+              "sourceType": "go-module"
+            },
+            {
+              "command": "go test ./hack/tools/...",
+              "commandClass": "test",
+              "confidence": "high",
+              "scope": "component",
+              "sourcePath": "hack/tools/go.mod",
+              "sourceType": "go-module"
+            },
+            {
+              "command": "go test ./hack/tools/golangci-lint/...",
+              "commandClass": "test",
+              "confidence": "high",
+              "scope": "component",
+              "sourcePath": "hack/tools/golangci-lint/go.mod",
+              "sourceType": "go-module"
+            },
+            {
+              "command": "go test ./hack/tools/instrumentation/...",
+              "commandClass": "test",
+              "confidence": "high",
+              "scope": "component",
+              "sourcePath": "hack/tools/instrumentation/go.mod",
+              "sourceType": "go-module"
+            },
+            {
+              "command": "go test ./staging/src/k8s.io/api/...",
+              "commandClass": "test",
+              "confidence": "high",
+              "scope": "component",
+              "sourcePath": "staging/src/k8s.io/api/go.mod",
+              "sourceType": "go-module"
+            },
+            {
+              "command": "go test ./staging/src/k8s.io/apiextensions-apiserver/...",
+              "commandClass": "test",
+              "confidence": "high",
+              "scope": "component",
+              "sourcePath": "staging/src/k8s.io/apiextensions-apiserver/go.mod",
+              "sourceType": "go-module"
+            },
+            {
+              "command": "go test ./staging/src/k8s.io/apimachinery/...",
+              "commandClass": "test",
+              "confidence": "high",
+              "scope": "component",
+              "sourcePath": "staging/src/k8s.io/apimachinery/go.mod",
+              "sourceType": "go-module"
+            },
+            {
+              "command": "go test ./staging/src/k8s.io/apiserver/...",
+              "commandClass": "test",
+              "confidence": "high",
+              "scope": "component",
+              "sourcePath": "staging/src/k8s.io/apiserver/go.mod",
+              "sourceType": "go-module"
+            },
+            {
+              "command": "go test ./staging/src/k8s.io/cli-runtime/...",
+              "commandClass": "test",
+              "confidence": "high",
+              "scope": "component",
+              "sourcePath": "staging/src/k8s.io/cli-runtime/go.mod",
+              "sourceType": "go-module"
+            },
+            {
+              "command": "go test ./staging/src/k8s.io/client-go/...",
+              "commandClass": "test",
+              "confidence": "high",
+              "scope": "component",
+              "sourcePath": "staging/src/k8s.io/client-go/go.mod",
+              "sourceType": "go-module"
+            },
+            {
+              "command": "go test ./staging/src/k8s.io/cloud-provider/...",
+              "commandClass": "test",
+              "confidence": "high",
+              "scope": "component",
+              "sourcePath": "staging/src/k8s.io/cloud-provider/go.mod",
+              "sourceType": "go-module"
+            },
+            {
+              "command": "go test ./staging/src/k8s.io/cluster-bootstrap/...",
+              "commandClass": "test",
+              "confidence": "high",
+              "scope": "component",
+              "sourcePath": "staging/src/k8s.io/cluster-bootstrap/go.mod",
+              "sourceType": "go-module"
+            }
+          ],
+          "schemaVersion": "harnessforge.verificationCommands.v1",
+          "summary": {
+            "classes": {
+              "test": 21
+            },
+            "commandCount": 21,
+            "lowConfidenceCount": 0,
+            "missing": false,
+            "sourceTypes": {
+              "go-module": 21
+            }
+          }
+        },
         "verificationCommands": [
           "go test ./...",
           "go test ./hack/tools/...",
@@ -609,12 +721,231 @@
         ],
         "unknowns": [
           "No existing project-owned SBOM detected."
-        ]
+        ],
+        "verification": {
+          "commands": [
+            {
+              "command": "go test ./...",
+              "commandClass": "test",
+              "confidence": "high",
+              "scope": "repo",
+              "sourceDetail": "go test",
+              "sourcePath": "go.mod",
+              "sourceType": "go-module"
+            },
+            {
+              "command": "go test ./hack/tools/...",
+              "commandClass": "test",
+              "confidence": "high",
+              "scope": "component",
+              "sourceDetail": "go test",
+              "sourcePath": "hack/tools/go.mod",
+              "sourceType": "go-module"
+            },
+            {
+              "command": "go test ./hack/tools/golangci-lint/...",
+              "commandClass": "test",
+              "confidence": "high",
+              "scope": "component",
+              "sourceDetail": "go test",
+              "sourcePath": "hack/tools/golangci-lint/go.mod",
+              "sourceType": "go-module"
+            },
+            {
+              "command": "go test ./hack/tools/instrumentation/...",
+              "commandClass": "test",
+              "confidence": "high",
+              "scope": "component",
+              "sourceDetail": "go test",
+              "sourcePath": "hack/tools/instrumentation/go.mod",
+              "sourceType": "go-module"
+            },
+            {
+              "command": "go test ./staging/src/k8s.io/api/...",
+              "commandClass": "test",
+              "confidence": "high",
+              "scope": "component",
+              "sourceDetail": "go test",
+              "sourcePath": "staging/src/k8s.io/api/go.mod",
+              "sourceType": "go-module"
+            },
+            {
+              "command": "go test ./staging/src/k8s.io/apiextensions-apiserver/...",
+              "commandClass": "test",
+              "confidence": "high",
+              "scope": "component",
+              "sourceDetail": "go test",
+              "sourcePath": "staging/src/k8s.io/apiextensions-apiserver/go.mod",
+              "sourceType": "go-module"
+            },
+            {
+              "command": "go test ./staging/src/k8s.io/apimachinery/...",
+              "commandClass": "test",
+              "confidence": "high",
+              "scope": "component",
+              "sourceDetail": "go test",
+              "sourcePath": "staging/src/k8s.io/apimachinery/go.mod",
+              "sourceType": "go-module"
+            },
+            {
+              "command": "go test ./staging/src/k8s.io/apiserver/...",
+              "commandClass": "test",
+              "confidence": "high",
+              "scope": "component",
+              "sourceDetail": "go test",
+              "sourcePath": "staging/src/k8s.io/apiserver/go.mod",
+              "sourceType": "go-module"
+            },
+            {
+              "command": "go test ./staging/src/k8s.io/cli-runtime/...",
+              "commandClass": "test",
+              "confidence": "high",
+              "scope": "component",
+              "sourceDetail": "go test",
+              "sourcePath": "staging/src/k8s.io/cli-runtime/go.mod",
+              "sourceType": "go-module"
+            },
+            {
+              "command": "go test ./staging/src/k8s.io/client-go/...",
+              "commandClass": "test",
+              "confidence": "high",
+              "scope": "component",
+              "sourceDetail": "go test",
+              "sourcePath": "staging/src/k8s.io/client-go/go.mod",
+              "sourceType": "go-module"
+            }
+          ],
+          "missing": false,
+          "schemaVersion": "harnessforge.verificationCommands.v1",
+          "summary": {
+            "classes": {
+              "test": 21
+            },
+            "commandCount": 21,
+            "lowConfidenceCount": 0,
+            "missing": false,
+            "sourceTypes": {
+              "go-module": 21
+            }
+          }
+        }
       },
       "repository": "kubernetes/kubernetes",
       "status": "analyzed",
       "trackedFileCount": 30513,
-      "url": "https://github.com/kubernetes/kubernetes"
+      "url": "https://github.com/kubernetes/kubernetes",
+      "verificationCommands": {
+        "commands": [
+          {
+            "command": "go test ./...",
+            "commandClass": "test",
+            "confidence": "high",
+            "scope": "repo",
+            "sourcePath": "go.mod",
+            "sourceType": "go-module"
+          },
+          {
+            "command": "go test ./hack/tools/...",
+            "commandClass": "test",
+            "confidence": "high",
+            "scope": "component",
+            "sourcePath": "hack/tools/go.mod",
+            "sourceType": "go-module"
+          },
+          {
+            "command": "go test ./hack/tools/golangci-lint/...",
+            "commandClass": "test",
+            "confidence": "high",
+            "scope": "component",
+            "sourcePath": "hack/tools/golangci-lint/go.mod",
+            "sourceType": "go-module"
+          },
+          {
+            "command": "go test ./hack/tools/instrumentation/...",
+            "commandClass": "test",
+            "confidence": "high",
+            "scope": "component",
+            "sourcePath": "hack/tools/instrumentation/go.mod",
+            "sourceType": "go-module"
+          },
+          {
+            "command": "go test ./staging/src/k8s.io/api/...",
+            "commandClass": "test",
+            "confidence": "high",
+            "scope": "component",
+            "sourcePath": "staging/src/k8s.io/api/go.mod",
+            "sourceType": "go-module"
+          },
+          {
+            "command": "go test ./staging/src/k8s.io/apiextensions-apiserver/...",
+            "commandClass": "test",
+            "confidence": "high",
+            "scope": "component",
+            "sourcePath": "staging/src/k8s.io/apiextensions-apiserver/go.mod",
+            "sourceType": "go-module"
+          },
+          {
+            "command": "go test ./staging/src/k8s.io/apimachinery/...",
+            "commandClass": "test",
+            "confidence": "high",
+            "scope": "component",
+            "sourcePath": "staging/src/k8s.io/apimachinery/go.mod",
+            "sourceType": "go-module"
+          },
+          {
+            "command": "go test ./staging/src/k8s.io/apiserver/...",
+            "commandClass": "test",
+            "confidence": "high",
+            "scope": "component",
+            "sourcePath": "staging/src/k8s.io/apiserver/go.mod",
+            "sourceType": "go-module"
+          },
+          {
+            "command": "go test ./staging/src/k8s.io/cli-runtime/...",
+            "commandClass": "test",
+            "confidence": "high",
+            "scope": "component",
+            "sourcePath": "staging/src/k8s.io/cli-runtime/go.mod",
+            "sourceType": "go-module"
+          },
+          {
+            "command": "go test ./staging/src/k8s.io/client-go/...",
+            "commandClass": "test",
+            "confidence": "high",
+            "scope": "component",
+            "sourcePath": "staging/src/k8s.io/client-go/go.mod",
+            "sourceType": "go-module"
+          },
+          {
+            "command": "go test ./staging/src/k8s.io/cloud-provider/...",
+            "commandClass": "test",
+            "confidence": "high",
+            "scope": "component",
+            "sourcePath": "staging/src/k8s.io/cloud-provider/go.mod",
+            "sourceType": "go-module"
+          },
+          {
+            "command": "go test ./staging/src/k8s.io/cluster-bootstrap/...",
+            "commandClass": "test",
+            "confidence": "high",
+            "scope": "component",
+            "sourcePath": "staging/src/k8s.io/cluster-bootstrap/go.mod",
+            "sourceType": "go-module"
+          }
+        ],
+        "schemaVersion": "harnessforge.verificationCommands.v1",
+        "summary": {
+          "classes": {
+            "test": 21
+          },
+          "commandCount": 21,
+          "lowConfidenceCount": 0,
+          "missing": false,
+          "sourceTypes": {
+            "go-module": 21
+          }
+        }
+      }
     },
     {
       "analysisFocus": [
@@ -813,6 +1144,121 @@
           ".devcontainer/devcontainer.json"
         ],
         "stack": "typescript-react",
+        "verificationCommandSummary": {
+          "commands": [
+            {
+              "command": "npm test",
+              "commandClass": "test",
+              "confidence": "high",
+              "scope": "repo",
+              "sourcePath": "package.json",
+              "sourceType": "package-script"
+            },
+            {
+              "command": "npm --prefix .eslint-plugin-local run typecheck",
+              "commandClass": "static-analysis",
+              "confidence": "high",
+              "scope": "component",
+              "sourcePath": ".eslint-plugin-local/package.json",
+              "sourceType": "package-script"
+            },
+            {
+              "command": "npm --prefix .vscode/extensions/vscode-selfhost-test-provider test",
+              "commandClass": "test",
+              "confidence": "high",
+              "scope": "component",
+              "sourcePath": ".vscode/extensions/vscode-selfhost-test-provider/package.json",
+              "sourceType": "package-script"
+            },
+            {
+              "command": "cargo test --manifest-path cli/Cargo.toml",
+              "commandClass": "test",
+              "confidence": "high",
+              "scope": "component",
+              "sourcePath": "cli/Cargo.toml",
+              "sourceType": "rust-manifest"
+            },
+            {
+              "command": "npm --prefix extensions/copilot/chat-lib test",
+              "commandClass": "test",
+              "confidence": "high",
+              "scope": "component",
+              "sourcePath": "extensions/copilot/chat-lib/package.json",
+              "sourceType": "package-script"
+            },
+            {
+              "command": "npm --prefix extensions/copilot/chat-lib run build",
+              "commandClass": "build",
+              "confidence": "high",
+              "scope": "component",
+              "sourcePath": "extensions/copilot/chat-lib/package.json",
+              "sourceType": "package-script"
+            },
+            {
+              "command": "npm --prefix extensions/copilot run typecheck",
+              "commandClass": "static-analysis",
+              "confidence": "high",
+              "scope": "component",
+              "sourcePath": "extensions/copilot/package.json",
+              "sourceType": "package-script"
+            },
+            {
+              "command": "npm --prefix extensions/copilot run lint",
+              "commandClass": "static-analysis",
+              "confidence": "high",
+              "scope": "component",
+              "sourcePath": "extensions/copilot/package.json",
+              "sourceType": "package-script"
+            },
+            {
+              "command": "npm --prefix extensions/copilot test",
+              "commandClass": "test",
+              "confidence": "high",
+              "scope": "component",
+              "sourcePath": "extensions/copilot/package.json",
+              "sourceType": "package-script"
+            },
+            {
+              "command": "npm --prefix extensions/copilot run build",
+              "commandClass": "build",
+              "confidence": "high",
+              "scope": "component",
+              "sourcePath": "extensions/copilot/package.json",
+              "sourceType": "package-script"
+            },
+            {
+              "command": "npm --prefix extensions/css-language-features test",
+              "commandClass": "test",
+              "confidence": "high",
+              "scope": "component",
+              "sourcePath": "extensions/css-language-features/package.json",
+              "sourceType": "package-script"
+            },
+            {
+              "command": "npm --prefix extensions/css-language-features/server test",
+              "commandClass": "test",
+              "confidence": "high",
+              "scope": "component",
+              "sourcePath": "extensions/css-language-features/server/package.json",
+              "sourceType": "package-script"
+            }
+          ],
+          "schemaVersion": "harnessforge.verificationCommands.v1",
+          "summary": {
+            "classes": {
+              "build": 2,
+              "static-analysis": 3,
+              "test": 12
+            },
+            "commandCount": 17,
+            "lowConfidenceCount": 0,
+            "missing": false,
+            "sourceTypes": {
+              "package-script": 16,
+              "rust-manifest": 1
+            }
+          }
+        },
         "verificationCommands": [
           "npm test",
           "npm --prefix .eslint-plugin-local run typecheck",
@@ -1335,12 +1781,237 @@
         ],
         "unknowns": [
           "No existing project-owned SBOM detected."
-        ]
+        ],
+        "verification": {
+          "commands": [
+            {
+              "command": "npm test",
+              "commandClass": "test",
+              "confidence": "high",
+              "scope": "repo",
+              "sourceDetail": "npm script:test",
+              "sourcePath": "package.json",
+              "sourceType": "package-script"
+            },
+            {
+              "command": "npm --prefix .eslint-plugin-local run typecheck",
+              "commandClass": "static-analysis",
+              "confidence": "high",
+              "scope": "component",
+              "sourceDetail": "npm script:run",
+              "sourcePath": ".eslint-plugin-local/package.json",
+              "sourceType": "package-script"
+            },
+            {
+              "command": "npm --prefix .vscode/extensions/vscode-selfhost-test-provider test",
+              "commandClass": "test",
+              "confidence": "high",
+              "scope": "component",
+              "sourceDetail": "npm script:test",
+              "sourcePath": ".vscode/extensions/vscode-selfhost-test-provider/package.json",
+              "sourceType": "package-script"
+            },
+            {
+              "command": "cargo test --manifest-path cli/Cargo.toml",
+              "commandClass": "test",
+              "confidence": "high",
+              "scope": "component",
+              "sourceDetail": "cargo manifest-path",
+              "sourcePath": "cli/Cargo.toml",
+              "sourceType": "rust-manifest"
+            },
+            {
+              "command": "npm --prefix extensions/copilot/chat-lib test",
+              "commandClass": "test",
+              "confidence": "high",
+              "scope": "component",
+              "sourceDetail": "npm script:test",
+              "sourcePath": "extensions/copilot/chat-lib/package.json",
+              "sourceType": "package-script"
+            },
+            {
+              "command": "npm --prefix extensions/copilot/chat-lib run build",
+              "commandClass": "build",
+              "confidence": "high",
+              "scope": "component",
+              "sourceDetail": "npm script:run",
+              "sourcePath": "extensions/copilot/chat-lib/package.json",
+              "sourceType": "package-script"
+            },
+            {
+              "command": "npm --prefix extensions/copilot run typecheck",
+              "commandClass": "static-analysis",
+              "confidence": "high",
+              "scope": "component",
+              "sourceDetail": "npm script:run",
+              "sourcePath": "extensions/copilot/package.json",
+              "sourceType": "package-script"
+            },
+            {
+              "command": "npm --prefix extensions/copilot run lint",
+              "commandClass": "static-analysis",
+              "confidence": "high",
+              "scope": "component",
+              "sourceDetail": "npm script:run",
+              "sourcePath": "extensions/copilot/package.json",
+              "sourceType": "package-script"
+            },
+            {
+              "command": "npm --prefix extensions/copilot test",
+              "commandClass": "test",
+              "confidence": "high",
+              "scope": "component",
+              "sourceDetail": "npm script:test",
+              "sourcePath": "extensions/copilot/package.json",
+              "sourceType": "package-script"
+            },
+            {
+              "command": "npm --prefix extensions/copilot run build",
+              "commandClass": "build",
+              "confidence": "high",
+              "scope": "component",
+              "sourceDetail": "npm script:run",
+              "sourcePath": "extensions/copilot/package.json",
+              "sourceType": "package-script"
+            }
+          ],
+          "missing": false,
+          "schemaVersion": "harnessforge.verificationCommands.v1",
+          "summary": {
+            "classes": {
+              "build": 2,
+              "static-analysis": 3,
+              "test": 12
+            },
+            "commandCount": 17,
+            "lowConfidenceCount": 0,
+            "missing": false,
+            "sourceTypes": {
+              "package-script": 16,
+              "rust-manifest": 1
+            }
+          }
+        }
       },
       "repository": "microsoft/vscode",
       "status": "analyzed",
       "trackedFileCount": 15783,
-      "url": "https://github.com/microsoft/vscode"
+      "url": "https://github.com/microsoft/vscode",
+      "verificationCommands": {
+        "commands": [
+          {
+            "command": "npm test",
+            "commandClass": "test",
+            "confidence": "high",
+            "scope": "repo",
+            "sourcePath": "package.json",
+            "sourceType": "package-script"
+          },
+          {
+            "command": "npm --prefix .eslint-plugin-local run typecheck",
+            "commandClass": "static-analysis",
+            "confidence": "high",
+            "scope": "component",
+            "sourcePath": ".eslint-plugin-local/package.json",
+            "sourceType": "package-script"
+          },
+          {
+            "command": "npm --prefix .vscode/extensions/vscode-selfhost-test-provider test",
+            "commandClass": "test",
+            "confidence": "high",
+            "scope": "component",
+            "sourcePath": ".vscode/extensions/vscode-selfhost-test-provider/package.json",
+            "sourceType": "package-script"
+          },
+          {
+            "command": "cargo test --manifest-path cli/Cargo.toml",
+            "commandClass": "test",
+            "confidence": "high",
+            "scope": "component",
+            "sourcePath": "cli/Cargo.toml",
+            "sourceType": "rust-manifest"
+          },
+          {
+            "command": "npm --prefix extensions/copilot/chat-lib test",
+            "commandClass": "test",
+            "confidence": "high",
+            "scope": "component",
+            "sourcePath": "extensions/copilot/chat-lib/package.json",
+            "sourceType": "package-script"
+          },
+          {
+            "command": "npm --prefix extensions/copilot/chat-lib run build",
+            "commandClass": "build",
+            "confidence": "high",
+            "scope": "component",
+            "sourcePath": "extensions/copilot/chat-lib/package.json",
+            "sourceType": "package-script"
+          },
+          {
+            "command": "npm --prefix extensions/copilot run typecheck",
+            "commandClass": "static-analysis",
+            "confidence": "high",
+            "scope": "component",
+            "sourcePath": "extensions/copilot/package.json",
+            "sourceType": "package-script"
+          },
+          {
+            "command": "npm --prefix extensions/copilot run lint",
+            "commandClass": "static-analysis",
+            "confidence": "high",
+            "scope": "component",
+            "sourcePath": "extensions/copilot/package.json",
+            "sourceType": "package-script"
+          },
+          {
+            "command": "npm --prefix extensions/copilot test",
+            "commandClass": "test",
+            "confidence": "high",
+            "scope": "component",
+            "sourcePath": "extensions/copilot/package.json",
+            "sourceType": "package-script"
+          },
+          {
+            "command": "npm --prefix extensions/copilot run build",
+            "commandClass": "build",
+            "confidence": "high",
+            "scope": "component",
+            "sourcePath": "extensions/copilot/package.json",
+            "sourceType": "package-script"
+          },
+          {
+            "command": "npm --prefix extensions/css-language-features test",
+            "commandClass": "test",
+            "confidence": "high",
+            "scope": "component",
+            "sourcePath": "extensions/css-language-features/package.json",
+            "sourceType": "package-script"
+          },
+          {
+            "command": "npm --prefix extensions/css-language-features/server test",
+            "commandClass": "test",
+            "confidence": "high",
+            "scope": "component",
+            "sourcePath": "extensions/css-language-features/server/package.json",
+            "sourceType": "package-script"
+          }
+        ],
+        "schemaVersion": "harnessforge.verificationCommands.v1",
+        "summary": {
+          "classes": {
+            "build": 2,
+            "static-analysis": 3,
+            "test": 12
+          },
+          "commandCount": 17,
+          "lowConfidenceCount": 0,
+          "missing": false,
+          "sourceTypes": {
+            "package-script": 16,
+            "rust-manifest": 1
+          }
+        }
+      }
     },
     {
       "analysisFocus": [
@@ -1539,6 +2210,30 @@
           ".devcontainer/devcontainer.json"
         ],
         "stack": "bazel",
+        "verificationCommandSummary": {
+          "commands": [
+            {
+              "command": "bazel test //...",
+              "commandClass": "test",
+              "confidence": "high",
+              "scope": "repo",
+              "sourcePath": "MODULE.bazel",
+              "sourceType": "bazel-workspace"
+            }
+          ],
+          "schemaVersion": "harnessforge.verificationCommands.v1",
+          "summary": {
+            "classes": {
+              "test": 1
+            },
+            "commandCount": 1,
+            "lowConfidenceCount": 0,
+            "missing": false,
+            "sourceTypes": {
+              "bazel-workspace": 1
+            }
+          }
+        },
         "verificationCommands": [
           "bazel test //..."
         ],
@@ -2017,12 +2712,62 @@
             "reason": "High-signal project documentation name."
           }
         ],
-        "unknowns": []
+        "unknowns": [],
+        "verification": {
+          "commands": [
+            {
+              "command": "bazel test //...",
+              "commandClass": "test",
+              "confidence": "high",
+              "scope": "repo",
+              "sourceDetail": "bazel target pattern",
+              "sourcePath": "MODULE.bazel",
+              "sourceType": "bazel-workspace"
+            }
+          ],
+          "missing": false,
+          "schemaVersion": "harnessforge.verificationCommands.v1",
+          "summary": {
+            "classes": {
+              "test": 1
+            },
+            "commandCount": 1,
+            "lowConfidenceCount": 0,
+            "missing": false,
+            "sourceTypes": {
+              "bazel-workspace": 1
+            }
+          }
+        }
       },
       "repository": "bazelbuild/bazel",
       "status": "analyzed",
       "trackedFileCount": 13265,
-      "url": "https://github.com/bazelbuild/bazel"
+      "url": "https://github.com/bazelbuild/bazel",
+      "verificationCommands": {
+        "commands": [
+          {
+            "command": "bazel test //...",
+            "commandClass": "test",
+            "confidence": "high",
+            "scope": "repo",
+            "sourcePath": "MODULE.bazel",
+            "sourceType": "bazel-workspace"
+          }
+        ],
+        "schemaVersion": "harnessforge.verificationCommands.v1",
+        "summary": {
+          "classes": {
+            "test": 1
+          },
+          "commandCount": 1,
+          "lowConfidenceCount": 0,
+          "missing": false,
+          "sourceTypes": {
+            "bazel-workspace": 1
+          }
+        }
+      }
     }
   ],
   "schemaVersion": "harnessforge.largePublicRepoAnalysis.v1",

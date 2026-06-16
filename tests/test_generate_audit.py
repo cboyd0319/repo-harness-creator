@@ -572,6 +572,7 @@ class GenerateAuditTests(unittest.TestCase):
             )
 
         self.assertEqual(manifest["version"], 1)
+        self.assertEqual(manifest["manifestScope"], "generated-target")
         self.assertIn("CLAUDE.md", manifest["requiredFiles"])
         self.assertIn("GEMINI.md", manifest["requiredFiles"])
         self.assertIn(".github/copilot-instructions.md", manifest["requiredFiles"])
@@ -603,6 +604,7 @@ class GenerateAuditTests(unittest.TestCase):
             )
 
         self.assertEqual(manifest["generator"]["name"], "harnessforge")
+        self.assertEqual(manifest["manifestScope"], "generated-target")
         self.assertEqual(manifest["generatedFiles"]["AGENTS.md"]["ownership"], "generated")
         self.assertEqual(
             manifest["generatedFiles"]["AGENTS.md"]["template"],
