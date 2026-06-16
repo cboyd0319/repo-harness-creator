@@ -65,6 +65,7 @@ def _write_first_agent_review(
     root: Path,
     *,
     status: str = "completed",
+    high_risk_surfaces: list[dict[str, str]] | None = None,
 ) -> Path:
     path = root / "docs/harness/evidence/first-agent-review.json"
     path.parent.mkdir(parents=True, exist_ok=True)
@@ -96,6 +97,16 @@ def _write_first_agent_review(
             "reason": "Project-specific harness guidance was accepted.",
         },
     }
+    if high_risk_surfaces is not None:
+        payload["highRiskSurfaceReview"] = {
+            "status": "accepted_advisory",
+            "reviewedAt": "2026-06-15T05:00:00Z",
+            "surfaces": high_risk_surfaces,
+            "evidenceRefs": [
+                "docs/harness/boundaries/component-inventory.md",
+                "docs/harness/evidence/evidence-log.md",
+            ],
+        }
     path.write_text(json.dumps(payload, indent=2), encoding="utf-8")
     return path
 
@@ -915,6 +926,124 @@ class CliTests(unittest.TestCase):
         self.assertTrue(lifecycle["schemaValid"])
         self.assertEqual(lifecycle["blockers"], [])
         self.assertEqual(lifecycle["warnings"], [])
+
+    def test_report_consumes_high_risk_surface_acceptance(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            (root / "pyproject.toml").write_text(
+                "[project]\nname='demo'\n",
+                encoding="utf-8",
+            )
+            (root / "tests").mkdir()
+            (root / "tests" / "test_demo.py").write_text("", encoding="utf-8")
+            (root / "AGENTS.md").write_text(
+                "# AGENTS.md\n\n"
+                "## Project overview\n"
+                "This project is a Python repository with repo-owned harness docs.\n\n"
+                "## Startup\n"
+                "Read `README.md`, `feature_list.json`, and `current-state.md`.\n\n"
+                "## Verification\n"
+                "Run `python -m unittest discover -s tests` before completion.\n\n"
+                "## Constraints\n"
+                "Do not expose secrets. Preserve security boundaries and "
+                "project docs.\n\n"
+                "## State\n"
+                "Use `current-state.md` and `docs/roadmap.md` for current work.\n\n"
+                "## Routing\n"
+                "See `docs/harness/README.md` for harness maintenance guidance.\n",
+                encoding="utf-8",
+            )
+            (root / "Dockerfile").write_text(
+                "FROM python:3.13\n",
+                encoding="utf-8",
+            )
+            (root / ".github" / "workflows").mkdir(parents=True)
+            (root / ".github" / "workflows" / "ci.yml").write_text(
+                "name: ci\n"
+                "on:\n"
+                "  push:\n"
+                "  pull_request:\n"
+                "jobs:\n"
+                "  test:\n"
+                "    steps:\n"
+                "      - run: python -m unittest discover -s tests\n"
+                "        env:\n"
+                "          TOKEN: ${{ secrets.GITHUB_TOKEN }}\n",
+                encoding="utf-8",
+            )
+            with contextlib.redirect_stdout(io.StringIO()):
+                init_code = main(
+                    [
+                        "init",
+                        "--target",
+                        str(root),
+                        "--command",
+                        "python -m unittest discover -s tests",
+                    ]
+                )
+            task = root / "docs/harness/state/first-agent-task.md"
+            task.write_text(
+                task.read_text(encoding="utf-8").replace("REVIEW REQUIRED: ", ""),
+                encoding="utf-8",
+            )
+            _write_verify_report(
+                root,
+                "docs/harness/evidence/verify-2026-06-15.json",
+            )
+            _write_first_agent_review(
+                root,
+                status="completed",
+                high_risk_surfaces=[
+                    {
+                        "path": "AGENTS.md",
+                        "category": "instruction-router",
+                        "decision": "accepted",
+                    },
+                    {
+                        "path": "Dockerfile",
+                        "category": "container-runtime",
+                        "decision": "accepted",
+                    },
+                    {
+                        "path": ".github/workflows/ci.yml",
+                        "category": "workflow",
+                        "decision": "accepted",
+                    },
+                ],
+            )
+            stdout = io.StringIO()
+            with contextlib.redirect_stdout(stdout):
+                code = main(["report", "--target", str(root), "--json"])
+
+            payload = json.loads(stdout.getvalue())
+
+        self.assertEqual(init_code, 0)
+        self.assertEqual(code, 0)
+        self.assertEqual(payload["readiness"]["reviewRequiredCount"], 0)
+        self.assertEqual(
+            payload["readiness"]["highRiskAcceptance"]["status"],
+            "accepted_advisory",
+        )
+        self.assertEqual(
+            payload["readiness"]["highRiskAcceptance"]["summary"]["acceptedCount"],
+            3,
+        )
+        self.assertFalse(
+            any(
+                "AGENTS.md already exists" in item
+                for item in payload["readiness"]["reviewRequired"]
+            )
+        )
+        self.assertFalse(
+            any("Dockerfile" in item for item in payload["readiness"]["reviewRequired"])
+        )
+        self.assertFalse(
+            any(
+                ".github/workflows/ci.yml" in item
+                for item in payload["readiness"]["reviewRequired"]
+            )
+        )
+        self.assertNotEqual(payload["maturity"]["currentLevel"], "generated")
 
     def test_readiness_warns_when_first_agent_evidence_is_missing(self) -> None:
         with tempfile.TemporaryDirectory() as tmp:

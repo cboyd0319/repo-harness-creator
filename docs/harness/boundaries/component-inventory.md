@@ -113,18 +113,18 @@ work as pre-release product shaping.
   This is product code; generated target-repo content still lives under
   `src/harnessforge/templates/`.
 - `src/harnessforge/evidence/`: report, release, readiness-signal, maturity,
-  policy preset, SBOM adapter, first-agent, verify-evidence, and effectiveness
-  helpers. These modules are product evidence and reporting code, not generated
-  target-repo templates.
+  policy preset, SBOM adapter, first-agent, high-risk surface acceptance,
+  verify-evidence, and effectiveness helpers. These modules are product
+  evidence and reporting code, not generated target-repo templates.
 - `src/harnessforge/evidence/effectiveness.py`: read-only effectiveness
   evidence assessor used by the CLI to validate stored benchmark or real-agent
   evidence without running benchmarks or producing unsupported performance
   scores.
 - `src/harnessforge/evidence/report.py`: read-only unified report composer used
   by the CLI and composite Action. It combines readiness, audit, drift, index,
-  verify evidence, effectiveness evidence, first-agent status, platform
-  contract, policy presets, and SBOM adapter status without running target
-  commands.
+  verify evidence, effectiveness evidence, first-agent status, accepted
+  high-risk surface evidence, platform contract, policy presets, and SBOM
+  adapter status without running target commands.
 - `docs/harness/feedback/sensor-registry.md`: review-required ownership, source,
   purpose, and retirement record for checks and recurring gates.
 - `docs/harness/research/source-record.schema.json`: generated schema for project-owned

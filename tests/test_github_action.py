@@ -245,6 +245,7 @@ class GitHubActionTests(unittest.TestCase):
         self.assertFalse((root / "marker.txt").exists())
         self.assertIn("# HarnessForge Report", markdown)
         self.assertIn("HarnessForge Report", summary_text)
+        self.assertIn("Accepted high-risk surfaces", summary_text)
         self.assertIn("Docs fan-out verdict", summary_text)
         self.assertIn("Instruction quality", summary_text)
         self.assertIn("First-agent lifecycle", summary_text)
@@ -305,6 +306,7 @@ class GitHubActionTests(unittest.TestCase):
         self.assertEqual(outputs["docs-fanout-verdict"], "not_required")
         self.assertIn("# HarnessForge Release Check", markdown)
         self.assertIn("HarnessForge Release Check", summary_text)
+        self.assertIn("Accepted high-risk surfaces", summary_text)
         self.assertIn("Maturity level", summary_text)
         self.assertIn("Feature state", summary_text)
         self.assertIn("Observability", summary_text)
@@ -355,6 +357,7 @@ class GitHubActionTests(unittest.TestCase):
         self.assertEqual(outputs["verify-verdict"], "")
         self.assertFalse((root / "AGENTS.md").exists())
         self.assertIn("HarnessForge Sync", summary_text)
+        self.assertIn("Accepted high-risk surfaces", summary_text)
         self.assertIn("Instruction quality", summary_text)
         self.assertIn("First-agent lifecycle", summary_text)
 

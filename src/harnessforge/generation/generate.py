@@ -2141,6 +2141,7 @@ def _manifest_content(
             "freshSession",
             "updatedSurfaces",
             "evidenceRefs",
+            "highRiskSurfaceReview",
             "REVIEW REQUIRED",
         ],
         "docs/harness/state/roadmap.md": [

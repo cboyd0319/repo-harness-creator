@@ -8,7 +8,8 @@ RunHaven field testing exposed review-finalization gaps that are now accepted
 as the next product buildout. Release prep stays paused until structured
 high-risk surface acceptance, review finalization, state migration, manifest
 refresh, skill-wiring validation, and related report/maturity fixes are
-implemented or explicitly deferred by maintainers.
+implemented or explicitly deferred by maintainers. Structured high-risk surface
+acceptance is implemented; review-finalization automation is next.
 
 ## Product State
 
@@ -79,10 +80,16 @@ implemented or explicitly deferred by maintainers.
   metadata refresh, harness skill-wiring validation, compact verification
   evidence capture, clearer advisory-versus-actionable report output, and a
   RunHaven-shaped regression fixture.
+- High-risk surface acceptance is now target-contained evidence in
+  `docs/harness/evidence/first-agent-review.json`. Readiness, report,
+  release-check, GitHub Action summaries, and local self-reporting consume the
+  evidence without treating generated pending placeholders as accepted review.
+  This repo records accepted advisory review for its four instruction entry
+  points and two workflows; generated target repos still start pending.
 
 ## Trusted Verification
 
-- `PYTHONPATH=src:. python3 -m unittest discover -s tests` passed with 265 tests.
+- `PYTHONPATH=src:. python3 -m unittest discover -s tests` passed with 266 tests.
 - `PYTHONPATH=src:. python3 scripts/check_pins.py --root .` passed.
 - `PYTHONPATH=src:. python3 scripts/refresh_research.py --root . --check`
   passed.
@@ -99,6 +106,13 @@ implemented or explicitly deferred by maintainers.
   The report showed audit `100`, feature-state `aligned`, docs fan-out
   `not_required`, readiness `warning`, and maturity `generated` with next
   level `reviewed`.
+- After implementing structured high-risk acceptance, focused CLI/generator/
+  Action/maturity tests passed with 172 tests; full unit discovery passed with
+  266 tests; compileall passed; pin check passed; `git diff --check` passed;
+  self-audit stayed `100/100`; report JSON smoke showed readiness `ready`,
+  review-required `0`, accepted high-risk surfaces `6`, docs fan-out `warning`,
+  maturity `reviewed`, and audit `100`. `python3 -m ruff check .` could not
+  run because Ruff is not installed in the active interpreter.
 - `PYTHONPATH=src:. python3 -m harnessforge release-check --target . --since HEAD --json`
   produced parseable JSON and returned the expected strict-gate blocked exit.
 - `PYTHONPATH=src:. python3 -m harnessforge quickstart --target . --interactive --json`
@@ -121,12 +135,15 @@ implemented or explicitly deferred by maintainers.
 - `docs/harness/boundaries/component-inventory.md`
 - `docs/harness/evidence/first-agent-review.json`
 - `docs/harness/manifest.json`
+- `docs/harness/research/source-record.schema.json`
+- `docs/harness/research/source-record-example.json`
 - `docs/harness/state/first-agent-task.md`
 - `docs/harness/state/roadmap.md`
 - `.agents/skills/harness/`
 - `scripts/refresh_public_repo_corpus.py`
 - `src/harnessforge/assessment/`
 - `src/harnessforge/core/`
+- `src/harnessforge/evidence/high_risk_acceptance.py`
 - `src/harnessforge/generation/`
 - `src/harnessforge/project/`
 - `src/harnessforge/`
@@ -138,5 +155,5 @@ implemented or explicitly deferred by maintainers.
 
 ## Next Step
 
-Implement the RunHaven-derived review-finalization buildout from
+Implement the RunHaven-derived review-finalization command or mode from
 `docs/roadmap.md` before release prep resumes.

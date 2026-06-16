@@ -12,7 +12,7 @@
   "purpose": "REVIEW REQUIRED: explain why this source should guide agents or maintainers",
   "reviewedOn": "2026-06-15",
   "reviewCadence": "REVIEW REQUIRED: set cadence, trigger, or release checkpoint",
-  "reviewStatus": "REVIEW REQUIRED",
+  "reviewStatus": "review_required",
   "trustBoundary": "repo-owned",
   "harnessUsage": [
     "instructions",

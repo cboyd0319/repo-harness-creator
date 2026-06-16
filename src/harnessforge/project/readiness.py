@@ -27,6 +27,11 @@ from ..evidence.governance_inventory import (
     analyze_governance_inventory,
     governance_item_to_dict,
 )
+from ..evidence.high_risk_acceptance import (
+    HighRiskAcceptanceReport,
+    analyze_high_risk_acceptance,
+    high_risk_acceptance_to_dict,
+)
 from ..evidence.instruction_quality import (
     InstructionQualityReport,
     analyze_instruction_quality,
@@ -88,6 +93,7 @@ class ReadinessReport:
     verify_evidence: VerifyEvidenceReport
     verify_evidence_required: bool
     first_agent_lifecycle: FirstAgentLifecycleReport
+    high_risk_acceptance: HighRiskAcceptanceReport
 
 
 def inspect_readiness(
@@ -104,6 +110,10 @@ def inspect_readiness(
     instruction_quality = analyze_instruction_quality(profile.root, profile.files)
     verify_evidence = analyze_verify_evidence(profile.root, profile.files)
     first_agent_lifecycle = analyze_first_agent_lifecycle(profile.root, profile.files)
+    high_risk_acceptance = analyze_high_risk_acceptance(
+        profile.root,
+        profile.files,
+    )
     runnable_checks = tuple(
         command
         for command in profile.verification_commands
@@ -135,10 +145,12 @@ def inspect_readiness(
 
     for file_name in INSTRUCTION_FILES:
         if file_name in file_set and ownership.get(file_name) != "generated":
-            review_required.append(
+            message = (
                 f"{file_name} already exists; confirm it routes agents to "
                 "current project instructions."
             )
+            if not high_risk_acceptance.accepts_path(file_name):
+                review_required.append(message)
 
     for marker in source_of_truth:
         warnings.append(
@@ -146,13 +158,16 @@ def inspect_readiness(
             "source of truth."
         )
     warnings.extend(spec_report.quality_warnings)
-    warnings.extend(inventory.warnings)
+    warnings.extend(_workflow_warnings(inventory, high_risk_acceptance))
     warnings.extend(context_budget.warnings)
-    warnings.extend(governance_inventory.warnings)
+    warnings.extend(
+        _governance_warnings(governance_inventory.items, high_risk_acceptance)
+    )
     warnings.extend(effectiveness_inventory.warnings)
     warnings.extend(instruction_quality.warnings)
     warnings.extend(verify_evidence.warnings)
     warnings.extend(first_agent_lifecycle.warnings)
+    warnings.extend(high_risk_acceptance.warnings)
     if require_verify_evidence:
         verify_evidence_blockers = verify_evidence_gate_blockers(verify_evidence)
         blocked.extend(verify_evidence_blockers)
@@ -166,7 +181,10 @@ def inspect_readiness(
             "Review detected source-of-truth docs before enhancing or generating "
             "instruction files."
         )
-    if inventory.workflows or inventory.work_items:
+    if (
+        _unaccepted_workflow_review_required(inventory.workflows, high_risk_acceptance)
+        or inventory.work_items
+    ):
         next_actions.append(
             "Review workflow and work-item inventory before agent automation relies on it."
         )
@@ -174,7 +192,10 @@ def inspect_readiness(
         next_actions.append(
             "Review context budget findings before expanding instruction files."
         )
-    if governance_inventory.items:
+    if _unaccepted_governance_review_required(
+        governance_inventory.items,
+        high_risk_acceptance,
+    ):
         next_actions.append(
             "Review governance inventory before giving agents tool, environment, or runner access."
         )
@@ -194,10 +215,23 @@ def inspect_readiness(
             "Instruction files do not route agents to detected source-of-truth specs."
         )
 
-    review_required.extend(governance_inventory.review_required)
+    review_required.extend(
+        _unaccepted_governance_review_required(
+            governance_inventory.items,
+            high_risk_acceptance,
+        )
+    )
     review_required.extend(effectiveness_inventory.review_required)
-    review_required.extend(inventory.review_required)
-    if any(item in file_set for item in AGENT_SETUP_WORKFLOWS):
+    review_required.extend(
+        _unaccepted_workflow_review_required(
+            inventory.workflows,
+            high_risk_acceptance,
+        )
+    )
+    if any(
+        item in file_set and not high_risk_acceptance.accepts_path(item)
+        for item in AGENT_SETUP_WORKFLOWS
+    ):
         warnings.append(
             "GitHub agent setup workflow detected; review runner, permissions, "
             "and credential scope."
@@ -236,6 +270,7 @@ def inspect_readiness(
         verify_evidence=verify_evidence,
         verify_evidence_required=require_verify_evidence,
         first_agent_lifecycle=first_agent_lifecycle,
+        high_risk_acceptance=high_risk_acceptance,
     )
 
 
@@ -270,6 +305,9 @@ def readiness_to_dict(report: ReadinessReport) -> dict[str, Any]:
         "verifyEvidenceRequired": report.verify_evidence_required,
         "firstAgentLifecycle": first_agent_lifecycle_to_dict(
             report.first_agent_lifecycle
+        ),
+        "highRiskAcceptance": high_risk_acceptance_to_dict(
+            report.high_risk_acceptance
         ),
     }
 
@@ -338,6 +376,14 @@ def format_readiness(report: ReadinessReport) -> str:
         tuple(
             f"{item.path}: {item.category}, surfaces={', '.join(item.surfaces)}"
             for item in report.governance_inventory
+        ),
+    )
+    _append_section(
+        lines,
+        "High-risk acceptance",
+        tuple(
+            f"{item.path}: {item.category}, decision={item.decision}"
+            for item in report.high_risk_acceptance.accepted_surfaces
         ),
     )
     _append_section(
@@ -426,6 +472,61 @@ def _is_actionable_drift(item: DriftResult) -> bool:
         "modified",
         "unsafe-path",
     } or item.template_status in {"changed", "missing"}
+
+
+def _workflow_warnings(
+    inventory: Any,
+    acceptance: HighRiskAcceptanceReport,
+) -> tuple[str, ...]:
+    if not inventory.warnings:
+        return ()
+    unresolved = _unaccepted_workflow_review_required(
+        inventory.workflows,
+        acceptance,
+    )
+    result: list[str] = []
+    for warning in inventory.warnings:
+        if warning.startswith("workflow inventory") and not unresolved:
+            continue
+        result.append(warning)
+    return tuple(result)
+
+
+def _governance_warnings(
+    items: tuple[GovernanceItem, ...],
+    acceptance: HighRiskAcceptanceReport,
+) -> tuple[str, ...]:
+    unresolved = _unaccepted_governance_review_required(items, acceptance)
+    if not items or not unresolved:
+        return ()
+    return (
+        f"governance inventory detected {len(items)} permission, "
+        "environment, or agent-control surface(s).",
+    )
+
+
+def _unaccepted_workflow_review_required(
+    workflows: tuple[WorkflowItem, ...],
+    acceptance: HighRiskAcceptanceReport,
+) -> tuple[str, ...]:
+    result: list[str] = []
+    for item in workflows:
+        if item.review_required and acceptance.accepts_path(item.path):
+            continue
+        result.extend(item.review_required)
+    return tuple(_dedupe(result))
+
+
+def _unaccepted_governance_review_required(
+    items: tuple[GovernanceItem, ...],
+    acceptance: HighRiskAcceptanceReport,
+) -> tuple[str, ...]:
+    result: list[str] = []
+    for item in items:
+        if item.review_required and acceptance.accepts_path(item.path):
+            continue
+        result.extend(item.review_required)
+    return tuple(_dedupe(result))
 
 
 def _append_section(lines: list[str], title: str, values: tuple[str, ...]) -> None:

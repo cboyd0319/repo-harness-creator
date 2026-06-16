@@ -406,6 +406,8 @@ def _sync_summary_markdown(report: Any, exit_code: int) -> str:
         f"- Exit code: `{exit_code}`",
         f"- Warnings: `{len(report.warnings)}`",
         f"- Review-required surfaces: `{len(report.review_required)}`",
+        "- Accepted high-risk surfaces: "
+        f"`{len(report.high_risk_acceptance.accepted_surfaces)}`",
         f"- Runnable checks: `{len(report.runnable_checks)}`",
         f"- Instruction quality: `{report.instruction_quality.status}`",
         f"- First-agent lifecycle: `{report.first_agent_lifecycle.lifecycle_status}`",
@@ -449,6 +451,8 @@ def _report_summary_markdown(payload: dict[str, Any]) -> str:
         "| Signal | Value |",
         "| --- | --- |",
         f"| Readiness | `{payload['readiness']['verdict']}` |",
+        "| Accepted high-risk surfaces | "
+        f"`{payload['readiness']['highRiskAcceptance']['summary']['acceptedCount']}` |",
         f"| Audit score | `{payload['audit']['overall']}/100` |",
         f"| Generated drift | `{payload['drift']['summary']['actionable']}` actionable |",
         f"| Docs fan-out verdict | `{payload['docsFanout']['contract']['verdict']}` ({payload['docsFanout']['diff']['classification']}) |",
@@ -476,6 +480,8 @@ def _release_check_summary_markdown(payload: dict[str, Any]) -> str:
         f"- Verdict: `{payload['verdict']}`",
         f"- Audit score: `{payload['summary']['auditScore']}/100`",
         f"- Readiness: `{payload['summary']['readinessVerdict']}`",
+        "- Accepted high-risk surfaces: "
+        f"`{payload['summary']['acceptedHighRiskSurfaces']}`",
         f"- Verify evidence: `{payload['summary']['verifyEvidenceVerdict']}`",
         f"- Maturity level: `{payload['summary']['maturityLevel']}`",
         f"- Feature state: `{payload['summary']['featureStateStatus']}`",

@@ -750,6 +750,8 @@ class GenerateAuditTests(unittest.TestCase):
         self.assertEqual(review["taskPath"], "docs/harness/state/first-agent-task.md")
         self.assertIn("freshSession", review)
         self.assertIn("evidenceRefs", review["verification"])
+        self.assertEqual(review["highRiskSurfaceReview"]["status"], "pending")
+        self.assertEqual(review["highRiskSurfaceReview"]["surfaces"], [])
         self.assertTrue(any("REVIEW REQUIRED" in item for item in review["remainingReview"]))
         self.assertNotIn("Antigravity", task)
         self.assertNotIn("AGY", task)
@@ -952,7 +954,7 @@ class GenerateAuditTests(unittest.TestCase):
         self.assertIn("project-owned records", schema_text)
         self.assertFalse((root / "docs/harness/research/research-sources.json").exists())
         self.assertEqual(example["id"], "source-record-example")
-        self.assertEqual(example["reviewStatus"], "REVIEW REQUIRED")
+        self.assertEqual(example["reviewStatus"], "review_required")
         self.assertEqual(
             example["source"]["targetRelativePath"],
             "docs/architecture.md",

@@ -82,6 +82,8 @@ def format_release_check(payload: dict[str, Any]) -> str:
         [
             f"- Audit score: {summary['auditScore']}/100",
             f"- Readiness: `{summary['readinessVerdict']}`",
+            "- Accepted high-risk surfaces: "
+            f"`{summary['acceptedHighRiskSurfaces']}`",
             f"- Verify evidence: `{summary['verifyEvidenceVerdict']}`",
             f"- Generated drift: {summary['generatedDriftActionable']} actionable",
             f"- Instruction quality: `{summary['instructionQualityStatus']}`",
@@ -173,6 +175,10 @@ def _audit_gate(report: dict[str, Any], min_score: int) -> dict[str, Any]:
 def _readiness_gate(report: dict[str, Any]) -> dict[str, Any]:
     readiness = report["readiness"]
     verdict = str(readiness["verdict"])
+    accepted = readiness.get("highRiskAcceptance", {}).get("summary", {}).get(
+        "acceptedCount",
+        0,
+    )
     if verdict == "ready":
         status = "passed"
     elif verdict == "warning":
@@ -186,7 +192,8 @@ def _readiness_gate(report: dict[str, Any]) -> dict[str, Any]:
             f"readiness is {verdict} with "
             f"{readiness['blockedCount']} blockers, "
             f"{readiness['warningCount']} warnings, and "
-            f"{readiness['reviewRequiredCount']} review-required surfaces"
+            f"{readiness['reviewRequiredCount']} review-required surfaces "
+            f"({accepted} accepted high-risk surfaces)"
         ),
         value=verdict,
     )
@@ -417,6 +424,9 @@ def _summary(report: dict[str, Any]) -> dict[str, Any]:
     return {
         "auditScore": report["audit"]["overall"],
         "readinessVerdict": report["readiness"]["verdict"],
+        "acceptedHighRiskSurfaces": report["readiness"]["highRiskAcceptance"][
+            "summary"
+        ]["acceptedCount"],
         "verifyEvidenceVerdict": latest["verdict"] if latest else "missing",
         "generatedDriftActionable": report["drift"]["summary"]["actionable"],
         "instructionQualityStatus": report["instructionQuality"]["summary"]["status"],
