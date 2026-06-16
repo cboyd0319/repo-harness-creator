@@ -195,6 +195,12 @@ _EDIT_TERMS = ("apply_patch", "edit", "file_change", "write_file", "patch")
 _VERIFICATION_TERMS = (
     "unittest",
     "pytest",
+    "vitest",
+    "npm test",
+    "pnpm test",
+    "yarn test",
+    "node --test",
+    "playwright test",
     "compileall",
     "check_pins",
     "refresh_research",

@@ -131,6 +131,15 @@ class TokenEconomicsTests(unittest.TestCase):
                             {
                                 "type": "item.completed",
                                 "item": {
+                                    "type": "command_execution",
+                                    "command": "npm test -- --run react/tests/trust-ui.test.tsx",
+                                },
+                            }
+                        ),
+                        json.dumps(
+                            {
+                                "type": "item.completed",
+                                "item": {
                                     "type": "tool_call",
                                     "name": "apply_patch",
                                 },
@@ -198,11 +207,11 @@ class TokenEconomicsTests(unittest.TestCase):
             record["trajectory"],
             {
                 "turns": 2,
-                "toolCalls": 6,
+                "toolCalls": 7,
                 "fileReads": 3,
                 "searchCalls": 0,
                 "editCalls": 2,
-                "verificationRuns": 1,
+                "verificationRuns": 2,
                 "retries": 0,
                 "durationSeconds": None,
             },

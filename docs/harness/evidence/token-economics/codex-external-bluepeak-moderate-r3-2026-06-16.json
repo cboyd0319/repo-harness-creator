@@ -1,0 +1,92 @@
+{
+  "agent": {
+    "model": "configured-default-unrecorded",
+    "name": "Codex CLI isolated",
+    "provider": "OpenAI",
+    "version": "0.140.0"
+  },
+  "context": {
+    "contextWindowTokens": null,
+    "dynamicContextChars": 583,
+    "lazyLoadedFiles": [],
+    "loadedHarnessChars": 2164,
+    "startupFiles": [
+      "AGENTS.md",
+      "current-state.md",
+      "feature_list.json",
+      "docs/harness/README.md"
+    ],
+    "staticPrefixChars": 2164
+  },
+  "evidenceRefs": [
+    "docs/harness/evidence/token-economics/codex-external-bluepeak-moderate-r3-2026-06-16.json",
+    "docs/harness/evidence/evidence-log.md"
+  ],
+  "harnessProfile": {
+    "changedSurfaces": [
+      "AGENTS.md",
+      "current-state.md",
+      "feature_list.json",
+      "docs/harness/README.md"
+    ],
+    "description": "Root instruction surface plus current state, feature state, and compact harness README for the external Bluepeak TrustBadge repair.",
+    "name": "moderate"
+  },
+  "limitations": [
+    "External public repo scratch copy from Bluepeak-AI commit 8049dd4, not an upstream issue or pull request.",
+    "Seeded React source regression forced TrustBadge aria-expanded to remain false, so the task is not benchmark-held-out.",
+    "Human review verified raw file_change events were limited to react/src/components/TrustBadge.tsx and focused post-run verification passed with 1 Vitest test.",
+    "All final scratch component files matched the upstream clean component after repair, preserving the public component API and accessibility behavior.",
+    "Scratch runs reused a prepared local node_modules symlink to avoid modifying the original checkout; raw traces remain ignored under .harnessforge/.",
+    "Codex JSONL did not emit the configured model name in this run.",
+    "Prompt/cache state from nearby runs may affect cached input buckets."
+  ],
+  "mechanism": {
+    "expectedExecutionEffect": "improve",
+    "expectedTokenEffect": "mixed",
+    "name": "verification_feedback",
+    "notes": "External Bluepeak React/TypeScript scratch repair used focused Vitest feedback first, profile-specific startup routing, per-run scratch HOME and CODEX_HOME, ignore-user-config, ignore-rules, disabled hooks/plugins/memories/apps/multi_agent, and workspace-write sandboxing.",
+    "risk": "Richer startup guidance can add context reads without improving a focused UI source repair."
+  },
+  "outcome": {
+    "completed": true,
+    "failureMode": null,
+    "qualityScore": 1.0,
+    "verificationVerdict": "passed",
+    "worstCaseQuality": 1.0
+  },
+  "promotionStatus": "inconclusive",
+  "recordedAt": "2026-06-16T23:15:00Z",
+  "schemaVersion": "harnessforge.tokenEconomicsMetric.v1",
+  "target": {
+    "commit": "bluepeak-ai-8049dd4-scratch-external-2026-06-16-moderate-r3",
+    "platform": "macOS-26.5.1-arm64-arm-64bit-Mach-O",
+    "repoLabel": "bluepeak-ai-frontend-scratch-external-react-repair"
+  },
+  "task": {
+    "category": "external-frontend-repair",
+    "description": "Fix the failing Bluepeak frontend focused test in this external TypeScript scratch copy. Follow the repository startup path for the current profile. Start by running `npm test -- --run react/tests/trust-ui.test.tsx` to observe the failure; this scratch copy already has prepared node_modules. Then make the smallest source-only TypeScript/React change needed. Do not edit tests, docs, package metadata, or lockfiles unless the failure proves they are wrong. Rerun the same focused test. Do not commit or push. Final answer: one sentence with the changed file and verification result.",
+    "heldOut": false,
+    "id": "token-economics.external-bluepeak.moderate.r3"
+  },
+  "tokens": {
+    "cacheReadInput": 267776,
+    "cacheWriteInput": null,
+    "output": 2652,
+    "reasoningOutput": 642,
+    "source": "agent_usage_report",
+    "startupInput": 301440,
+    "total": 304734,
+    "uncachedRepeatedInput": null
+  },
+  "trajectory": {
+    "durationSeconds": 62.474,
+    "editCalls": 1,
+    "fileReads": 6,
+    "retries": 0,
+    "searchCalls": 4,
+    "toolCalls": 16,
+    "turns": 1,
+    "verificationRuns": 5
+  }
+}

@@ -355,6 +355,60 @@ Initial interpretation:
   a true held-out issue, and the task used a small Python package rather than a
   broader multi-repo matrix.
 
+## External Bluepeak React Repair Batch
+
+A sixth clean comparison used ignored scratch copies of the public Bluepeak-AI
+frontend at commit `8049dd4`. The source regression forced the `TrustBadge`
+disclosure button to report `aria-expanded="false"` even after opening. The
+prompt did not name the source line; it asked the agent to run
+`npm test -- --run react/tests/trust-ui.test.tsx`, inspect the failure, make a
+smallest source-only TypeScript/React fix, and rerun the same command.
+
+The runner used the same isolated Codex setup as the prior repair batches:
+per-run scratch `HOME` and `CODEX_HOME`, symlinked auth only,
+`--ignore-user-config`, `--ignore-rules`, disabled
+hooks/plugins/memories/apps and multi-agent features, workspace-write
+sandboxing, and a prepared local `node_modules` symlink inside ignored scratch
+space. Raw JSONL remains ignored under `.harnessforge/`; the committed records
+are normalized.
+
+Summary:
+
+| Profile | Repeats | Loaded harness chars | Total visible tokens | Median total | Cached input range | Median duration seconds | Tool calls | File reads | Verification runs | Outcome |
+| --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | --- |
+| minimal | 3 | 434 | 269,155-378,017 | 352,355 | 226,816-286,976 | 76.572 | 19-26 | 6-11 | 4-6 | 3/3 passed |
+| moderate | 3 | 2,164 | 304,734-353,176 | 306,817 | 209,792-291,968 | 67.195 | 16-23 | 6-12 | 5-6 | 3/3 passed |
+| comprehensive | 3 | 4,079 | 260,553-464,436 | 313,196 | 221,184-396,416 | 84.365 | 16-33 | 8-15 | 4-10 | 3/3 passed |
+
+Human quality review:
+
+- raw `file_change` events were limited to
+  `react/src/components/TrustBadge.tsx`;
+- all nine scratch targets passed
+  `npm test -- --run react/tests/trust-ui.test.tsx` after repair;
+- no tests, docs, package metadata, lockfiles, or harness files were edited by
+  the agent runs;
+- final component files matched the upstream clean component, preserving the
+  public component API and accessible disclosure behavior.
+
+Initial interpretation:
+
+- Minimal loaded the fewest harness chars but had the highest median visible
+  tokens. Its trajectories included more tool calls than moderate on this
+  focused UI repair.
+- Moderate had the lowest median total and duration in this React/TypeScript
+  batch.
+- Comprehensive had one very long trajectory, which widened the range and
+  raised its median above moderate. It did not improve final quality for this
+  focused UI repair.
+- This second external ecosystem strengthens the mixed conclusion. Token cost
+  followed trajectory and task framing more than profile label or stored
+  harness size alone.
+
+This batch also expanded the Codex JSONL normalizer's verification-command
+recognition for JavaScript/TypeScript checks such as `npm test`, `vitest`,
+`pnpm test`, `yarn test`, `node --test`, and `playwright test`.
+
 ## Required Trace Evidence Still Missing
 
 The accepted backlog item is not complete until HarnessForge has representative
@@ -368,10 +422,10 @@ task traces or controlled evaluations that compare:
 - cold-start cost, repeated-session savings, rework savings, and instruction
   bloat failures.
 
-Still missing after the external pytm batch: true held-out tasks, more
-representative multi-repo coverage such as a TypeScript monorepo or large
-public repo checkout, and a second telemetry source such as Claude Code
-OpenTelemetry for cache-creation and tool-span buckets.
+Still missing after the external pytm and Bluepeak batches: true held-out tasks,
+larger-repo coverage such as a large public checkout, and a second telemetry
+source such as Claude Code OpenTelemetry for cache-creation and tool-span
+buckets.
 
 ## Evidence Path
 
@@ -465,11 +519,11 @@ Until trace evidence exists:
 Run a small controlled evaluation before closing this backlog item:
 
 1. Add a true held-out task where the expected source fix is not seeded by this
-   repo's evaluator, or run a second external public repo task in another
-   ecosystem such as TypeScript.
-2. Expand to 3-5 tasks across a small Python package, a TypeScript monorepo, and
-   one large public repo checkout only after the external-repair redaction path
-   stays clean.
+   repo's evaluator, or run a larger public-repo checkout task that exercises
+   broader discovery and routing.
+2. Expand to 3-5 tasks across a small Python package, a frontend TypeScript
+   app, and one large public repo checkout only after the external-repair
+   redaction path stays clean.
 3. Capture provider or agent token usage, cache buckets when available, tool
    calls, retries, verification result, elapsed time, and human quality review.
 4. Add Claude Code OpenTelemetry only when the Codex JSONL record is

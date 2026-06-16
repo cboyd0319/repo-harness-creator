@@ -711,6 +711,14 @@ Initial research slice:
   lowest median visible tokens and duration on this external seeded repair,
   moderate had one long trajectory, and comprehensive loaded more harness
   guidance without improving final quality.
+- An external Bluepeak-AI React/TypeScript repair batch is committed with three
+  repeats per profile. The prompt did not name the seeded `TrustBadge`
+  accessibility-state regression; all nine runs changed only
+  `react/src/components/TrustBadge.tsx`, passed
+  `npm test -- --run react/tests/trust-ui.test.tsx`, and received human review
+  for source-only scope and behavior-preserving repair shape. Moderate had the
+  lowest median visible tokens and duration on this batch, while minimal loaded
+  the least harness context but had the highest median total.
 
 Remaining closure work:
 
@@ -721,7 +729,7 @@ Remaining closure work:
   as API-level cost supplements; the first repo-local normalizer is
   `scripts/normalize_token_trace.py --source codex-jsonl`;
 - run controlled minimal, moderate, and comprehensive harness task traces on
-  true held-out tasks and broader representative repos with human quality
+  true held-out tasks or larger representative public repos with human quality
   review;
 - keep the isolated trace runner so user-level skills, plugins, hooks, memory,
   and other non-target startup context do not enter the trace unless recorded
@@ -1315,8 +1323,9 @@ Done when:
 13. Accepted before release prep: complete Harness Token Economics Research
    before changing generated harness sizing, routing, summarization, or lazy
    loading behavior. Initial Codex JSONL traces now include orientation, local
-   repair, unrevealed local failure, and external OWASP pytm repair batches;
-   true held-out and broader multi-repo evidence remain open.
+   repair, unrevealed local failure, external OWASP pytm repair, and external
+   Bluepeak-AI React/TypeScript repair batches; true held-out and larger-repo
+   evidence remain open.
 14. Accepted before release prep: finish Kubernetes-scale discovery ranking,
    generated guidance quality improvements, and expanded large-public-repo
    field runs.

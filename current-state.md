@@ -317,6 +317,22 @@ by the maintainer.
   `37.801`, moderate `39.238`, and comprehensive `44.365` seconds. This is the
   first external-real-repo repair evidence, but it remains `inconclusive`
   because the regression was seeded rather than true held-out.
+- An external Bluepeak-AI React/TypeScript repair batch is now recorded from
+  ignored scratch copies of public commit `8049dd4`. Three repeats each ran
+  under minimal, moderate, and comprehensive scratch profiles against the
+  focused `npm test -- --run react/tests/trust-ui.test.tsx` contract. All nine
+  runs changed only `react/src/components/TrustBadge.tsx`, passed the focused
+  Vitest file with 1 test, and received human review for source-only scope and
+  behavior-preserving repair shape. Median totals were minimal `352,355`,
+  moderate `306,817`, and comprehensive `313,196` visible tokens; median
+  durations were minimal `76.572`, moderate `67.195`, and comprehensive
+  `84.365` seconds. The result remains `inconclusive`: moderate was cheapest
+  in this React/TypeScript batch, while minimal was cheapest in the external
+  pytm batch.
+- Token-economics normalization now counts common JavaScript/TypeScript
+  verification commands including `npm test`, `vitest`, `pnpm test`,
+  `yarn test`, `node --test`, and `playwright test` so non-Python repair
+  trajectories do not undercount verification runs.
 - Research refresh now allows normal fetch mode to regenerate stale generated
   lock and inbox files after source allowlist changes while keeping
   `--check` strict about generated-output consistency.
@@ -580,6 +596,22 @@ by the maintainer.
   unit discovery passed with 311 tests; compileall, research source check,
   JSON validation, durable local-path scan, diff hygiene, and self-audit
   `100/100` passed after the external batch.
+- Current external Bluepeak repair verification: isolated
+  minimal/moderate/comprehensive `codex exec --json --ephemeral
+  --ignore-user-config --ignore-rules --disable hooks --disable plugins
+  --disable memories --disable apps --disable multi_agent --sandbox
+  workspace-write` runs completed three repeats each against ignored
+  Bluepeak-AI frontend scratch copies. Raw-trace review found no non-target
+  user-level skill/plugin loading or secret-shaped strings; raw file-change
+  events touched only `react/src/components/TrustBadge.tsx`. Scratch target
+  post-checks passed in all nine targets with
+  `npm test -- --run react/tests/trust-ui.test.tsx`; nine normalized records
+  were generated under `docs/harness/evidence/token-economics/`.
+  Focused token-economics/local-entrypoint tests passed with 10 tests; full
+  unit discovery passed with 311 tests; compileall, research source check,
+  JSON validation, durable local-path scan, diff hygiene, and self-audit
+  `100/100` passed after adding the JavaScript/TypeScript
+  verification-command regression.
 - Current known local verification gap: `pwsh -NoProfile -File ./init.ps1`
   cannot run in this shell because PowerShell command execution fails before
   repo code loads with a .NET `System.IO.FileLoadException`. `pwsh -v` reports
@@ -593,8 +625,10 @@ by the maintainer.
 - `feature_list.json`
 - `docs/roadmap.md`
 - `docs/harness/evidence/evidence-log.md`
-- `docs/harness/evidence/token-economics/codex-external-pytm-*-2026-06-16.json`
+- `docs/harness/evidence/token-economics/codex-external-bluepeak-*-2026-06-16.json`
 - `docs/harness/research/harness-token-economics-research.md`
+- `src/harnessforge/evidence/token_economics.py`
+- `tests/test_token_economics.py`
 
 ## Blockers
 
@@ -609,8 +643,8 @@ by the maintainer.
 Continue the Harness Token Economics Research item by running controlled
 minimal, moderate, and comprehensive harness task traces using
 `harnessforge.tokenEconomicsMetric.v1`. The next useful slice is true held-out
-repair evidence or a second external ecosystem, preferably a TypeScript
-monorepo or larger public checkout, with human quality review. Keep the
+repair evidence or a larger public checkout that exercises broader discovery
+and routing, with human quality review. Keep the
 isolated Codex runner so non-target skills/plugins/hooks/memory do not enter
 the traces. Add Claude Code OpenTelemetry only when native Codex JSONL is
 insufficient for cache-creation or tool-span buckets. Release prep should
