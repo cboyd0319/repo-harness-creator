@@ -28,9 +28,10 @@ The main boundary remains unchanged:
 
 Release prep is not the next default step. The RunHaven-derived
 review-finalization work and deterministic large-repo/script cleanup slices are
-complete, but accepted non-release work remains. New field-test findings should
-stay as release-prep evidence or candidate roadmap items until maintainers
-explicitly accept them as product work.
+complete, but the maintainer has accepted the remaining non-release follow-up
+work below as pre-release backlog. New field-test findings should stay as
+release-prep evidence or candidate roadmap items until maintainers explicitly
+accept them as product work.
 
 HarnessForge is still alpha/pre-release, has not been deployed, and has no
 external users. Accepted backlog work should optimize for the clean current
@@ -43,6 +44,32 @@ When the maintainer explicitly moves the repo to release prep, that work should
 focus on clean package evidence, release notes, tags, Action pin guidance,
 optional SBOM/provenance decisions, and any manual platform checks the
 maintainer wants before publishing.
+
+## Accepted Non-Release Backlog Before Release Prep
+
+Complete or explicitly defer this accepted backlog before release prep starts:
+
+1. Harness token economics research with receipts and a metric schema.
+2. Kubernetes-scale large-repo discovery ranking and generated guidance
+   quality improvements.
+3. Feature-state gates and scope-surface reporting.
+4. Instruction lifecycle and signal-to-noise review.
+5. Generated harness fallback hardening from real generated target reviews.
+6. Better `enhance` planning for project-owned rules, generated routers,
+   stale generated blocks, conflicts, deduplication, and reviewed cleanup
+   application.
+7. Optional index adapter ingestion where adapter evidence improves reports or
+   generated output without changing the standard-library default.
+8. Explicit opt-in SBOM generation/import adapter work, with provenance and no
+   compliance claims without reviewed policy.
+9. Policy preset source rationale, dry-run output, and fixture coverage.
+10. More real-repo golden fixtures and expanded large-public-repo field runs.
+11. Deeper instruction-quality scoring beyond the current section, budget,
+    placeholder, and duplicate-guidance checks.
+
+Release evidence work stays last. Package builds, tags, provenance, optional
+platform CI evidence, and release notes belong to the release-prep phase, not
+to the non-release backlog above.
 
 ## Surface Impact Checklist
 
@@ -234,7 +261,8 @@ commit embeddings, private code summaries, or machine-local paths by default.
 ### Deterministic Large-Repo File Discovery Priority
 
 Status: initial priority pre-pass and eligible/skipped coverage distinction
-implemented.
+implemented; remaining Kubernetes-scale ranking and generated guidance quality
+improvements are accepted before release prep.
 
 The 2026-06-16 Kubernetes, VS Code, and Bazel field refresh shows
 `harnessforge.fileCoverage.v1` is now visible and distinguishes scan-eligible
@@ -265,11 +293,11 @@ Definition of done:
 - Done: `fileCoverage.categories[*]` distinguishes budget limits from
   intentionally skipped categories when the scanner excludes tracked
   vendor/generated files or symlinks.
-- Remaining: Kubernetes-scale repos still need deeper ranking for tests,
+- Accepted remaining work: Kubernetes-scale repos still need deeper ranking for tests,
   manifests, source-of-truth docs, and remaining files when the eligible set is
   larger than the scan cap.
-- Remaining: generated guidance quality should improve from the new signals
-  without increasing default harness size.
+- Accepted remaining work: generated guidance quality should improve from the
+  new signals without increasing default harness size.
 
 ### Component Inventory Ranking And Overflow
 
@@ -372,8 +400,8 @@ Default behavior should detect existing SPDX or CycloneDX-style SBOM files and
 report them as review surfaces. HarnessForge should not generate SBOMs during
 normal `init`, `inspect`, `index`, or `sync --check`.
 
-Optional generation behavior can add an explicit SBOM adapter later. That
-adapter must:
+Optional generation behavior is now accepted opt-in backlog before release
+prep: add an explicit SBOM adapter. That adapter must:
 
 - require an explicit command or flag;
 - use installed or project-owned tooling only;
@@ -500,10 +528,13 @@ Done when:
 
 ### Feature-State Gate And Scope Surface
 
+Status: accepted before release prep; initial report/scope signals exist, but
+the stricter state-machine and scope-surface work is not complete.
+
 Improve `feature_list.json`, roadmap guidance, reports, and optional future
 helpers around a stricter feature/task state machine.
 
-Candidate behavior:
+Accepted behavior:
 
 - every feature or task has behavior, verification, status, and evidence fields;
 - only one active item by default unless explicit multi-agent ownership exists;
@@ -521,10 +552,14 @@ automation.
 
 ### Instruction Lifecycle And SNR Review
 
+Status: accepted before release prep; initial instruction-quality and
+context-budget reporting exists, but lifecycle classification and cleanup
+planning remain open.
+
 Improve instruction-file quality rather than only checking whether instruction
 files exist.
 
-Candidate behavior:
+Accepted behavior:
 
 - detect oversized root instruction files and repeated rules across AGENTS,
   Claude, Gemini, and Copilot surfaces;
@@ -623,14 +658,16 @@ into generated behavior until the receipts show the tradeoff.
 
 ### Generated Harness Skill Fallback
 
-Status: implemented for the current generated-harness contract.
+Status: implemented for the current generated-harness contract; real generated
+target review and consolidation-hardening follow-up is accepted before release
+prep.
 
 Generated target harness docs should not imply HarnessForge is the canonical
 status source for a repository. Repository-owned docs and state are canonical by
 default. The HarnessForge GitHub Action can become a repo's recurring harness
 quality/check surface only when the repo owner explicitly adopts it.
 
-Candidate behavior:
+Accepted follow-on behavior:
 
 - make generated harnesses usable by contributors who only have the repository
   checkout and normal project tooling; do not assume `harnessforge` is
@@ -656,7 +693,7 @@ Candidate behavior:
 - prefer repo-native verification scripts, checked-in instructions, and
   structured target-owned state over generated docs that tell every
   contributor to install or run HarnessForge;
-- keep future generated-doc consolidation behind quality evidence instead of
+- keep generated-doc consolidation behind quality evidence instead of
   deleting review-required safety surfaces blindly;
 - test the result against real generated target repos, including RunHaven-style
   evaluations that inspect content quality instead of only structural score.
@@ -767,7 +804,7 @@ Implemented behavior:
 ### Golden Public-Repo Fixture Corpus
 
 Status: implemented as an offline pinned fixture corpus with a metadata refresh
-check.
+check; more real-repo golden fixtures are accepted before release prep.
 
 Build a stable quality corpus from popular public open-source repositories.
 The corpus should test generated-content quality, not only command success.
@@ -819,7 +856,8 @@ Quality checks should include:
 
 Status: first repo-local field slice implemented; deterministic product
 follow-up implemented for current report, index, enhance, quickstart, and
-dry-run surfaces.
+dry-run surfaces; remaining field expansion and measurable index-reuse
+decisions are accepted before release prep.
 
 The deterministic `harnessforge corpus` command remains offline. Separately,
 this repo now has `docs/harness/research/large-public-repo-corpus.json` and
@@ -853,14 +891,18 @@ Accepted product follow-up:
   dry-run init, quickstart, report, index, and enhance flows;
 - implemented: keep component-overflow-derived nested candidates separate with
   explicit omitted-candidate fields and `--component-limit` guidance;
-- keep nested `AGENTS.md` writes review-required and off by default;
-- optional optimization: reuse a detected profile or persisted structural
+- accepted before release: keep nested `AGENTS.md` writes review-required and
+  off by default;
+- accepted before release: reuse a detected profile or persisted structural
   index across repeated report, quickstart, generation, and enhance planning
   if repeated scan cost becomes measurable;
-- continue expanding field runs across the remaining pinned repos before
-  release.
+- accepted before release: continue expanding field runs across the remaining
+  pinned repos before release.
 
 ### Better `--enhance-existing` Mode
+
+Status: accepted before release prep; initial read-only plan, task-class,
+rule-lifecycle, scan-coverage, and nested-candidate slices are implemented.
 
 This is one of the highest-value quality areas. HarnessForge should become much
 better at improving existing instruction files without taking ownership away
@@ -889,7 +931,7 @@ Current implemented slice:
 - keeps patch previews review-only and never rewrites existing instruction
   files automatically.
 
-Further candidate behavior:
+Accepted follow-on behavior:
 
 - extend section parsing beyond the current Markdown-heading pass;
 - classify project-owned rules, generated routers, stale generated blocks,
@@ -936,12 +978,14 @@ with a dry-run summary, then ask before writes.
 
 ### Optional Index Adapters
 
-Status: implemented as a read-only report plan and detection surface.
+Status: implemented as a read-only report plan and detection surface; selected
+adapter ingestion work is accepted before release prep when adapter evidence
+improves reports or generated output without changing the default indexer.
 
 Keep the standard-library structural index as the default. Add optional
 adapters only where they improve generated artifact quality or report evidence.
 
-Candidate adapters:
+Accepted adapter candidates:
 
 - symbol indexes, such as ctags;
 - structural search or parser tools;
@@ -1037,13 +1081,14 @@ score should remain separate.
 ### Policy Presets
 
 Status: initial expanded preset catalog and report recommendations
-implemented.
+implemented; source-reviewed preset rationale, dry-run output, and fixture
+coverage are accepted before release prep.
 
 Expand policy presets beyond the current blueprint packs. Presets should tune
 readiness checks, report sections, suggested sensors, and review gates. They
 should not inject personal preferences or platform-specific config by default.
 
-Candidate presets:
+Accepted preset families:
 
 - open-source library;
 - internal service;
@@ -1190,22 +1235,33 @@ Done when:
 12. Implemented: script cleanup and organization added purpose headers to live
    and generated scripts, kept referenced utilities in their current locations,
    added a focused header regression, and refreshed `.gitignore` hygiene.
-13. Next accepted non-release item: complete Harness Token Economics Research
+13. Accepted before release prep: complete Harness Token Economics Research
    before changing generated harness sizing, routing, summarization, or lazy
    loading behavior.
-14. Remaining large-repo improvement candidates: Kubernetes-scale discovery
-   ranking and generated guidance improvements should stay bounded by field
-   evidence and be promoted only when maintainers accept them as product work.
-15. Release-prep field evidence: re-run real-repo quality passes against
+14. Accepted before release prep: finish Kubernetes-scale discovery ranking,
+   generated guidance quality improvements, and expanded large-public-repo
+   field runs.
+15. Accepted before release prep: finish feature-state gate and scope-surface
+   reporting improvements.
+16. Accepted before release prep: finish instruction lifecycle and
+   signal-to-noise review improvements.
+17. Accepted before release prep: finish generated harness fallback hardening
+   from real generated target reviews.
+18. Accepted before release prep: finish the deeper `enhance` planning and
+   reviewed cleanup application design.
+19. Accepted before release prep: finish selected optional index adapters,
+   explicit SBOM adapter work, policy preset evidence, more real-repo golden
+   fixtures, and deeper instruction-quality scoring.
+20. Release-prep field evidence: re-run real-repo quality passes against
    RunHaven, selected sibling repos, and the remaining large public corpus only
    after accepted non-release work is closed or explicitly deferred.
-16. Keep new findings in the roadmap only after maintainers accept them as
+21. Keep new findings in the roadmap only after maintainers accept them as
    product work.
-17. Keep the generated target wording advisory unless the repo owner opts into
+22. Keep the generated target wording advisory unless the repo owner opts into
    the Action, and continue quality passes against real repositories.
-18. Keep the pinned public-repo quality corpus and generated-artifact scorer
+23. Keep the pinned public-repo quality corpus and generated-artifact scorer
    green as quality and detection gates evolve.
-19. Previously completed: policy preset report status, evidence-gated
+24. Previously completed: policy preset report status, evidence-gated
    feature-state and instruction-quality reporting, read-only SBOM adapter
    status, expanded policy presets, interactive quickstart decision plan, and
    source package reorganization.

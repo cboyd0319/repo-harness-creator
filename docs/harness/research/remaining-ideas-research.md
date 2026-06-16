@@ -52,9 +52,10 @@ Current release boundary:
 | Action summary and release evidence automation | Implemented for report, sync, and release-check | Read-only unless report paths are explicitly requested |
 | Harness maturity levels | Implemented as evidence-gated report/release-check output | Separate from structural score and real-agent effectiveness |
 
-## Future Release Candidates
+## Promoted Pre-Release Backlog
 
-These remain useful but should stay behind explicit roadmap/release decisions:
+These ideas were promoted into `docs/roadmap.md` as accepted non-release
+backlog before release prep:
 
 - More real-repo golden fixtures built from popular public open-source repos.
 - Optional SBOM generation or project-owned SBOM command import when dependency

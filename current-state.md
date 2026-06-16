@@ -4,10 +4,15 @@ Last Updated: 2026-06-16 UTC
 
 ## Current Objective
 
-The current accepted non-release work is complete when HarnessForge has
-evidence-backed token economics research for comprehensive repo harnesses,
-without changing generated sizing, routing, summarization, or lazy-loading
-behavior before the receipts justify the tradeoff.
+The accepted non-release backlog is complete when HarnessForge has completed or
+explicitly deferred every accepted pre-release item in `docs/roadmap.md`:
+token economics research, Kubernetes-scale discovery ranking, generated
+guidance quality, feature-state gates, instruction lifecycle/SNR review,
+generated harness fallback hardening, deeper `enhance` planning, selected
+index/SBOM adapters, policy preset evidence, more real-repo fixtures, expanded
+large-public-repo field runs, and deeper instruction-quality scoring.
+Release prep starts only after that backlog is closed or intentionally deferred
+by the maintainer.
 
 ## Product State
 
@@ -71,8 +76,8 @@ behavior before the receipts justify the tradeoff.
 - Audit scoring now accepts completed or retired first-agent lifecycle state
   and correctly scores this repo's roadmap router against `docs/roadmap.md`.
 - The RunHaven-derived backlog, deterministic large-repo slices, and script
-  cleanup are closed. Accepted non-release work still remains before release
-  prep: Harness Token Economics Research.
+  cleanup are closed. The maintainer has promoted the remaining non-release
+  follow-up work into accepted pre-release backlog before release prep.
   Optional package/release evidence imports remain release-prep decisions, not
   current buildout blockers.
 - RunHaven's manual harness repair exposed accepted next tasks: target-side
@@ -209,6 +214,13 @@ behavior before the receipts justify the tradeoff.
   economics task requiring receipts on whether comprehensive repo harnesses
   increase or decrease agent token consumption before generated sizing or
   loading behavior changes.
+- `docs/roadmap.md` now treats all remaining non-release follow-up work as
+  accepted pre-release backlog before release prep: Kubernetes-scale discovery
+  ranking, generated guidance quality, feature-state gates, instruction
+  lifecycle/SNR review, generated harness fallback hardening, deeper
+  `enhance`, selected index/SBOM adapters, policy preset evidence, more
+  real-repo fixtures, expanded large-public-repo field runs, and deeper
+  instruction-quality scoring.
 - `script cleanup and organization` is implemented. Root verification entrypoints,
   repo-local maintenance utilities under `scripts/`, and generated script
   templates have compact top-of-file purpose headers. The current script layout
@@ -397,19 +409,9 @@ behavior before the receipts justify the tradeoff.
 
 - `current-state.md`
 - `feature_list.json`
-- `.gitignore`
-- `init.sh`
-- `init.ps1`
 - `docs/roadmap.md`
 - `docs/harness/evidence/evidence-log.md`
-- `scripts/analyze_large_public_repos.py`
-- `scripts/check_pins.py`
-- `scripts/refresh_public_repo_corpus.py`
-- `scripts/refresh_research.py`
-- `src/harnessforge/templates/init.sh.tmpl`
-- `src/harnessforge/templates/init.ps1.tmpl`
-- `src/harnessforge/templates/check-pins.py.tmpl`
-- `tests/test_local_entrypoints.py`
+- `docs/harness/research/remaining-ideas-research.md`
 
 ## Blockers
 
@@ -421,6 +423,6 @@ behavior before the receipts justify the tradeoff.
 
 ## Next Step
 
-Continue with the accepted Harness Token Economics Research item. Release prep
-should remain last and should start only after accepted non-release work is
-closed or explicitly deferred by the maintainer.
+Start the expanded accepted non-release backlog with Harness Token Economics
+Research. Release prep should remain last and should start only after accepted
+non-release work is closed or explicitly deferred by the maintainer.
