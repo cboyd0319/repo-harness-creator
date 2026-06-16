@@ -1,10 +1,15 @@
 # OS and editor noise
 .DS_Store
 Thumbs.db
+Desktop.ini
+.directory
 .vscode/
 .idea/
 *.swp
 *.swo
+*.bak
+*.orig
+*.rej
 
 # Local secrets and agent/tool credentials
 .env
@@ -33,6 +38,7 @@ harness.local.*
 __pycache__/
 *.py[cod]
 *$py.class
+.cache/
 *.egg-info/
 .eggs/
 *.egg
@@ -40,6 +46,8 @@ __pycache__/
 .ruff_cache/
 .mypy_cache/
 .pyright/
+.pyre/
+.pytype/
 .hypothesis/
 .tox/
 .nox/
@@ -48,17 +56,31 @@ __pycache__/
 venv/
 env/
 ENV/
+__pypackages__/
+
+# Node/package-manager artifacts from inspected or temporary fixtures
+node_modules/
+.pnpm-store/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
 
 # Build, coverage, and reports
 build/
 dist/
 pip-wheel-metadata/
+*.whl
 .harnessforge/
 htmlcov/
+coverage/
 .coverage
 .coverage.*
 coverage.xml
+*.lcov
 *.cover
+junit*.xml
+test-results/
 *.log
 *.json.tmp
 *.tmp

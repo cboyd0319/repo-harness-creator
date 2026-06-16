@@ -4,11 +4,11 @@ Last Updated: 2026-06-16 UTC
 
 ## Current Objective
 
-Large public repo quality work is complete when HarnessForge has converted the
-real public corpus evidence into deterministic generation/report fixes,
-review-required nested instruction planning, optional adapter decisions, and
-release-prep evidence needs without adding default writes for unreviewed
-monorepo scopes.
+The accepted pre-release backlog is complete when HarnessForge has converted
+the real public corpus evidence into deterministic generation/report fixes,
+review-required nested instruction planning, optional adapter decisions,
+release-prep evidence needs, and repo-local script hygiene without adding
+default writes for unreviewed monorepo scopes.
 
 ## Product State
 
@@ -207,10 +207,15 @@ monorepo scopes.
   economics task requiring receipts on whether comprehensive repo harnesses
   increase or decrease agent token consumption before generated sizing or
   loading behavior changes.
-- `docs/roadmap.md` now includes an accepted script cleanup and organization
-  task: inventory root and `scripts/` utilities, remove or merge stale scripts,
-  and ensure every remaining repo-local or generated script has a short
-  top-of-file purpose description.
+- `script cleanup and organization` is implemented. Root verification entrypoints,
+  repo-local maintenance utilities under `scripts/`, and generated script
+  templates have compact top-of-file purpose headers. The current script layout
+  stayed in place because each script remains referenced by docs, entrypoints,
+  tests, corpus tooling, or generated target harnesses.
+- `.gitignore` now covers the repo's current OS/editor noise, local secrets,
+  agent/tool overrides, Python caches and environments, temporary
+  package-manager artifacts, build and coverage outputs, HarnessForge scratch
+  space, transient reports, and root AI-generated scratch reports.
 - Large-repo file coverage reporting now uses `harnessforge.fileCoverage.v1`.
   `index`, `report`, `quickstart`, `init --dry-run`, Action report summaries,
   and large-public-repo field evidence expose scanned count, total tracked
@@ -370,6 +375,15 @@ monorepo scopes.
   all three repos.
 - Current cleanup pass removed ignored local artifacts: `__pycache__`, `*.pyc`,
   `.DS_Store`, `.pytest_cache`, `htmlcov`, and `.coverage` if present.
+- Current script cleanup verification: focused local-entrypoint, generated
+  harness, pin, public-corpus, and large-public-repo script tests passed with
+  93 tests; compileall across `scripts`, `src`, and `tests` passed;
+  `git check-ignore` confirmed representative `.harnessforge`, `.DS_Store`,
+  `__pycache__`, `node_modules`, virtualenv, coverage, test-results, and
+  dist artifacts are ignored; a direct purpose-header scan checked 9 live and
+  generated script/template files; `git diff --check` passed; `./init.sh`
+  passed with 306 tests, pin check, research source check, and self-audit
+  `100/100`.
 - Current known local verification gap: `pwsh -NoProfile -File ./init.ps1`
   cannot run in this shell because PowerShell command execution fails before
   repo code loads with a .NET `System.IO.FileLoadException`. `pwsh -v` reports
@@ -381,20 +395,19 @@ monorepo scopes.
 
 - `current-state.md`
 - `feature_list.json`
-- `docs/harness/evidence/large-public-repo-analysis.md`
-- `docs/harness/evidence/large-public-repo-analysis.json`
-- `docs/harness/manifest.json`
-- `docs/harness/feedback/report-json-contract.md`
-- `docs/harness/research/large-public-repo-gap-analysis.md`
+- `.gitignore`
+- `init.sh`
+- `init.ps1`
 - `docs/roadmap.md`
-- `docs/usage.md`
-- `src/harnessforge/project/nested_instructions.py`
-- `src/harnessforge/project/indexer.py`
-- `src/harnessforge/cli.py`
-- `scripts/analyze_large_public_repos.py`
 - `docs/harness/evidence/evidence-log.md`
-- `tests/test_cli.py`
-- `tests/test_large_public_repo_analysis.py`
+- `scripts/analyze_large_public_repos.py`
+- `scripts/check_pins.py`
+- `scripts/refresh_public_repo_corpus.py`
+- `scripts/refresh_research.py`
+- `src/harnessforge/templates/init.sh.tmpl`
+- `src/harnessforge/templates/init.ps1.tmpl`
+- `src/harnessforge/templates/check-pins.py.tmpl`
+- `tests/test_local_entrypoints.py`
 
 ## Blockers
 
@@ -406,5 +419,6 @@ monorepo scopes.
 
 ## Next Step
 
-Continue the accepted backlog with script cleanup and organization unless the
-user chooses to expand the remaining large public repo field corpus first.
+Pause for review or commit the current local cleanup slice. Release-prep field
+evidence is the next known candidate after that, but only when the maintainer
+explicitly moves the repo past the release-prep boundary.

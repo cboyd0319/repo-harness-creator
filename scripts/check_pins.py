@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+"""Purpose: Validate hard pins for HarnessForge repository tooling."""
+
 from __future__ import annotations
 
 import argparse

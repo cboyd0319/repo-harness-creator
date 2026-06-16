@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+"""Purpose: Validate the offline public-repo fixture corpus metadata."""
+
 from __future__ import annotations
 
 import argparse

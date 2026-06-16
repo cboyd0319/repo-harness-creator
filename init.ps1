@@ -1,3 +1,4 @@
+# Purpose: Run the local PowerShell verification contract for HarnessForge.
 param(
   [switch] $NoEnv
 )

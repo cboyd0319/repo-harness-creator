@@ -1111,7 +1111,7 @@ Implemented shape:
 
 ### Script Cleanup And Organization
 
-Status: accepted, not started.
+Status: implemented.
 
 Do a serious cleanup and reorganization pass across repository scripts. Every
 script that remains should have a short top-of-file description explaining what
@@ -1119,14 +1119,17 @@ the script is and what it does.
 
 Scope:
 
-- inventory root scripts and `scripts/` utilities;
-- delete or merge scripts that are stale, duplicated, one-off, or better
-  represented as CLI commands;
-- group remaining scripts by purpose when that improves discoverability without
-  adding ceremony;
-- ensure every remaining script starts with a compact description comment or
-  docstring;
-- keep command examples and docs aligned with any path moves.
+- implemented: inventoried root scripts and `scripts/` utilities;
+- implemented: kept the current script layout because each script remains
+  referenced by docs, entrypoints, tests, corpus tooling, or generated target
+  harnesses;
+- implemented: added compact purpose headers to every live repo script and to
+  generated script templates;
+- implemented: added a focused regression that discovers root, `scripts/`,
+  and generated script-template files and requires purpose headers;
+- implemented: updated `.gitignore` for current local OS/editor, secret,
+  agent override, Python cache/environment, temporary package-manager,
+  build/coverage, report, and HarnessForge scratch outputs.
 
 Boundary:
 
@@ -1143,9 +1146,10 @@ Boundary:
 Done when:
 
 - no script remains without a short purpose header;
-- obsolete scripts are removed or folded into the CLI;
+- obsolete scripts are removed or folded into the CLI, or the inventory shows
+  that the current scripts are still referenced and useful;
 - docs, parked workflows, tests, manifest snippets, and generated templates
-  reference the new script locations;
+  reference current script locations;
 - focused script-path, generated-harness, pin, and self-audit checks pass.
 
 ## Suggested Build Order
@@ -1181,14 +1185,14 @@ Done when:
 11. Implemented: `index` and `enhance` surface the ranked nested instruction
    plan, and component-overflow candidates stay under omitted-candidate fields
    with `--component-limit` guidance.
-12. Current deterministic large-repo slice is verified. Next accepted backlog
-   item is script cleanup and organization unless the maintainer chooses to
-   expand the remaining large public repo field corpus first.
+12. Implemented: script cleanup and organization added purpose headers to live
+   and generated scripts, kept referenced utilities in their current locations,
+   added a focused header regression, and refreshed `.gitignore` hygiene.
 13. Release-prep field evidence: re-run real-repo quality passes against
    RunHaven, selected sibling repos, and the remaining large public corpus.
-14. Remaining accepted backlog: script cleanup and organization. Resume
-   release prep after that cleanup or when the maintainer explicitly moves it
-   past the release boundary.
+14. Remaining accepted backlog: no deterministic buildout item is currently
+   open. Resume release prep when the maintainer explicitly moves it past the
+   release boundary.
 15. Keep new findings in the roadmap only after maintainers accept them as
    product work.
 16. Keep the generated target wording advisory unless the repo owner opts into

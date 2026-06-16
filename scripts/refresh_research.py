@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+"""Purpose: Refresh and validate reviewed research source metadata."""
+
 from __future__ import annotations
 
 import argparse

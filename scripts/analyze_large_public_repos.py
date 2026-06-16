@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+"""Purpose: Analyze pinned large public repositories for HarnessForge gaps."""
+
 from __future__ import annotations
 
 import argparse
