@@ -1,0 +1,90 @@
+{
+  "agent": {
+    "model": "configured-default-unrecorded",
+    "name": "Codex CLI isolated",
+    "provider": "OpenAI",
+    "version": "0.140.0"
+  },
+  "context": {
+    "contextWindowTokens": null,
+    "dynamicContextChars": 253,
+    "lazyLoadedFiles": [
+      "AGENTS.md",
+      "README.md"
+    ],
+    "loadedHarnessChars": 755,
+    "startupFiles": [
+      "AGENTS.md"
+    ],
+    "staticPrefixChars": 657
+  },
+  "evidenceRefs": [
+    "docs/harness/evidence/token-economics/codex-isolated-implementation-minimal-r1-2026-06-16.json",
+    "docs/harness/evidence/evidence-log.md"
+  ],
+  "harnessProfile": {
+    "changedSurfaces": [
+      "AGENTS.md",
+      "CLAUDE.md",
+      "GEMINI.md",
+      ".github/copilot-instructions.md"
+    ],
+    "description": "Self-contained root instruction surface plus simple platform routers.",
+    "name": "minimal"
+  },
+  "limitations": [
+    "Single tiny implementation repair task; not held out.",
+    "Profile roots are ignored scratch fixtures, not long-lived target repositories.",
+    "Codex JSONL did not emit the configured model name in this run.",
+    "Prompt/cache state from nearby runs may affect cached input buckets.",
+    "Raw JSONL contains local working-directory output and remains ignored under .harnessforge/."
+  ],
+  "mechanism": {
+    "expectedExecutionEffect": "improve",
+    "expectedTokenEffect": "mixed",
+    "name": "verification_feedback",
+    "notes": "Runner used scratch HOME and CODEX_HOME, ignore-user-config, ignore-rules, disabled hooks/plugins/memories/apps/multi_agent, and workspace-write sandboxing.",
+    "risk": "Minimal startup guidance may require more rediscovery before editing."
+  },
+  "outcome": {
+    "completed": true,
+    "failureMode": null,
+    "qualityScore": 1.0,
+    "verificationVerdict": "passed",
+    "worstCaseQuality": 1.0
+  },
+  "promotionStatus": "inconclusive",
+  "recordedAt": "2026-06-16T21:20:00Z",
+  "schemaVersion": "harnessforge.tokenEconomicsMetric.v1",
+  "target": {
+    "commit": "scratch-isolated-implementation-2026-06-16-minimal-r1",
+    "platform": "macOS-26.5.1-arm64-arm-64bit-Mach-O",
+    "repoLabel": "token-economics-demo"
+  },
+  "task": {
+    "category": "implementation-repair",
+    "description": "Fix the failing test in this tiny Python repo. Make the smallest code change, then run python3 -m unittest discover -s tests. Do not edit harness docs unless required for the fix. Final answer: one sentence with the changed file and verification result.",
+    "heldOut": false,
+    "id": "token-economics.implementation-fix.minimal.r1"
+  },
+  "tokens": {
+    "cacheReadInput": 57088,
+    "cacheWriteInput": null,
+    "output": 958,
+    "reasoningOutput": 79,
+    "source": "agent_usage_report",
+    "startupInput": 81081,
+    "total": 82118,
+    "uncachedRepeatedInput": null
+  },
+  "trajectory": {
+    "durationSeconds": null,
+    "editCalls": 1,
+    "fileReads": 5,
+    "retries": 0,
+    "searchCalls": 1,
+    "toolCalls": 11,
+    "turns": 1,
+    "verificationRuns": 2
+  }
+}

@@ -169,7 +169,7 @@ _SEARCH_TERMS = (
     "web_search",
     "tool_search",
 )
-_EDIT_TERMS = ("apply_patch", "edit", "write_file", "patch")
+_EDIT_TERMS = ("apply_patch", "edit", "file_change", "write_file", "patch")
 _VERIFICATION_TERMS = (
     "unittest",
     "pytest",
@@ -190,6 +190,8 @@ def _is_tool_event(event: Mapping[str, Any]) -> bool:
     item = event.get("item")
     if isinstance(item, Mapping):
         item_type = str(item.get("type", "")).lower()
+        if item_type == "file_change":
+            return True
         if "tool" in item_type or "function" in item_type or "command" in item_type:
             return True
         for key in ("name", "tool_name"):

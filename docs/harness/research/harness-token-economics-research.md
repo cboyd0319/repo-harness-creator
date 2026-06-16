@@ -200,6 +200,33 @@ read-only, non-held-out orientation task and does not measure edits,
 verification loops, retries, implementation quality, or worst-case failure
 cost.
 
+## Initial Implementation Repair Comparison
+
+A second clean comparison used the same isolated Codex runner on a tiny Python
+repair task. Each profile started with `demo.py` returning `41` while
+`tests/test_demo.py` expected `42`. The task asked the agent to make the
+smallest code change and run `python3 -m unittest discover -s tests`.
+
+| Profile | Loaded harness chars | Input | Cached input | Output | Reasoning output | Total | Tool calls | File reads | Edits | Verification runs | Verdict |
+| --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | --- |
+| minimal | 755 | 81,081 | 57,088 | 958 | 79 | 82,118 | 11 | 5 | 1 | 2 | passed |
+| moderate | 7,617 | 73,912 | 59,776 | 918 | 41 | 74,871 | 9 | 5 | 1 | 2 | passed |
+| comprehensive | 7,617 | 73,970 | 59,776 | 892 | 0 | 74,862 | 9 | 5 | 1 | 2 | passed |
+
+Initial interpretation:
+
+- All three profiles completed the repair, changed only `demo.py`, and passed
+  the target unittest.
+- On this task, minimal used more visible tokens and more tool calls than
+  moderate or comprehensive. The extra cost came from trajectory, not from
+  stored harness size alone.
+- Moderate and comprehensive were effectively identical because the agent
+  loaded the same startup/state files and did not need deeper harness docs.
+
+This comparison is still too small to close the backlog item. It strengthens
+the evidence that token economics depend on loaded context, cache behavior,
+and execution trajectory, not merely on how many harness files exist.
+
 ## Required Trace Evidence Still Missing
 
 The accepted backlog item is not complete until HarnessForge has representative

@@ -270,6 +270,14 @@ by the maintainer.
   product behavior because the task was a tiny non-held-out read-only
   orientation task, but it proves clean profile tracing and shows stored
   harness size is not the same as loaded context.
+- A clean isolated Codex implementation repair comparison is also recorded.
+  One tiny Python repair task ran under minimal, moderate, and comprehensive
+  profiles with workspace-write sandboxing. All three changed `demo.py` from
+  `41` to `42` and passed `python3 -m unittest discover -s tests`. Totals were
+  minimal `82,118`, moderate `74,871`, and comprehensive `74,862` visible
+  tokens, each with one edit and two verification runs. This is still
+  `inconclusive` for product behavior, but it adds the first edit plus
+  verification trace evidence.
 - Research refresh now allows normal fetch mode to regenerate stale generated
   lock and inbox files after source allowlist changes while keeping
   `--check` strict about generated-output consistency.
@@ -482,6 +490,17 @@ by the maintainer.
   full unit discovery passed with 310 tests; compileall, research source
   check, diff hygiene, and self-audit `100/100` passed. The raw JSONL remains
   ignored under `.harnessforge/`.
+- Current isolated implementation-comparison verification: isolated
+  minimal/moderate/comprehensive `codex exec --json --ephemeral
+  --ignore-user-config --ignore-rules --disable hooks --disable plugins
+  --disable memories --disable apps --disable multi_agent --sandbox
+  workspace-write` runs completed once each. Raw-trace review found no
+  user-level skill/plugin leakage. Scratch target verification passed for all
+  three profiles with `python3 -m unittest discover -s tests`; normalized
+  implementation records parse as JSON and passed local-path scans. Focused
+  parser/local-entrypoint tests passed with 9 tests; full unit discovery
+  passed with 310 tests; compileall, research source check, diff hygiene, and
+  self-audit `100/100` passed.
 - Current known local verification gap: `pwsh -NoProfile -File ./init.ps1`
   cannot run in this shell because PowerShell command execution fails before
   repo code loads with a .NET `System.IO.FileLoadException`. `pwsh -v` reports
@@ -498,6 +517,9 @@ by the maintainer.
 - `docs/harness/evidence/token-economics/codex-jsonl-smoke-2026-06-16.json`
 - `docs/harness/evidence/token-economics/codex-isolated-profile-comprehensive-r1-2026-06-16.json`
 - `docs/harness/evidence/token-economics/codex-isolated-profile-comprehensive-r2-2026-06-16.json`
+- `docs/harness/evidence/token-economics/codex-isolated-implementation-comprehensive-r1-2026-06-16.json`
+- `docs/harness/evidence/token-economics/codex-isolated-implementation-minimal-r1-2026-06-16.json`
+- `docs/harness/evidence/token-economics/codex-isolated-implementation-moderate-r1-2026-06-16.json`
 - `docs/harness/evidence/token-economics/codex-isolated-profile-minimal-r1-2026-06-16.json`
 - `docs/harness/evidence/token-economics/codex-isolated-profile-minimal-r2-2026-06-16.json`
 - `docs/harness/evidence/token-economics/codex-isolated-profile-moderate-r1-2026-06-16.json`
@@ -528,9 +550,10 @@ by the maintainer.
 
 Continue the Harness Token Economics Research item by running controlled
 minimal, moderate, and comprehensive harness task traces using
-`harnessforge.tokenEconomicsMetric.v1`. Expand beyond the initial read-only
-orientation task to representative implementation or repair tasks that include
-edits, verification, retries, elapsed time, and human quality review. Keep the
-isolated Codex runner so non-target skills/plugins/hooks/memory do not enter
-the traces. Release prep should remain last and should start only after
-accepted non-release work is closed or explicitly deferred by the maintainer.
+`harnessforge.tokenEconomicsMetric.v1`. Expand beyond the tiny scratch
+orientation and repair tasks to representative repo tasks with more realistic
+source structure, retries or failure modes, elapsed time, and human quality
+review. Keep the isolated Codex runner so non-target skills/plugins/hooks/memory
+do not enter the traces. Release prep should remain last and should start only
+after accepted non-release work is closed or explicitly deferred by the
+maintainer.

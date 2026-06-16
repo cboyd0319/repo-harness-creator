@@ -685,6 +685,10 @@ Initial research slice:
   `docs/harness/evidence/token-economics/`. It remains inconclusive for
   product behavior because it does not cover edits, verification loops,
   retries, or held-out implementation quality.
+- The first isolated implementation repair comparison is also committed. All
+  three profiles fixed the same tiny Python failure and passed the target
+  unittest. It remains inconclusive because the fixture is intentionally small,
+  but it adds edit and verification-loop trace evidence.
 
 Remaining closure work:
 
@@ -695,7 +699,7 @@ Remaining closure work:
   as API-level cost supplements; the first repo-local normalizer is
   `scripts/normalize_token_trace.py --source codex-jsonl`;
 - run controlled minimal, moderate, and comprehensive harness task traces on
-  representative repos and implementation or repair tasks;
+  representative repos and more realistic implementation or repair tasks;
 - keep the isolated trace runner so user-level skills, plugins, hooks, memory,
   and other non-target startup context do not enter the trace unless recorded
   as part of the harness under test;

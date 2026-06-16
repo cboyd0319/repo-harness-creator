@@ -138,6 +138,15 @@ class TokenEconomicsTests(unittest.TestCase):
                         ),
                         json.dumps(
                             {
+                                "type": "item.completed",
+                                "item": {
+                                    "type": "file_change",
+                                    "path": "demo.py",
+                                },
+                            }
+                        ),
+                        json.dumps(
+                            {
                                 "type": "turn.completed",
                                 "usage": {
                                     "input_tokens": 800,
@@ -189,10 +198,10 @@ class TokenEconomicsTests(unittest.TestCase):
             record["trajectory"],
             {
                 "turns": 2,
-                "toolCalls": 5,
+                "toolCalls": 6,
                 "fileReads": 3,
                 "searchCalls": 0,
-                "editCalls": 1,
+                "editCalls": 2,
                 "verificationRuns": 1,
                 "retries": 0,
                 "durationSeconds": None,
