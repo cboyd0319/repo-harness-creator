@@ -4,10 +4,11 @@ Last Updated: 2026-06-16 UTC
 
 ## Current Objective
 
-Large public repo gap-analysis work is complete when HarnessForge has a
-repo-local gap analysis from the real public corpus evidence, with deterministic
-fixes, review-required heuristics, optional adapters, and release-prep evidence
-needs separated clearly.
+Large public repo quality work is complete when HarnessForge has converted the
+real public corpus evidence into deterministic generation/report fixes,
+review-required nested instruction planning, optional adapter decisions, and
+release-prep evidence needs without adding default writes for unreviewed
+monorepo scopes.
 
 ## Product State
 
@@ -178,6 +179,11 @@ needs separated clearly.
   field evidence into a build-order gap analysis. It separates deterministic
   product fixes from review-required heuristics, optional adapters, and
   release-prep evidence needs.
+- The first deterministic large-repo fix is implemented. `create_harness`,
+  `quickstart`, `init`, applied `update`, and Action generation paths accept
+  explicit file scan limits; dry-run JSON and generated manifests report scan
+  coverage; `.harnessforge/` scratch checkouts are ignored by repo detection.
+  Refreshed field evidence no longer reports `generator_default_scan_limit`.
 
 ## Trusted Verification
 
@@ -241,6 +247,14 @@ needs separated clearly.
 - Current gap-analysis verification: `docs/harness/research/large-public-repo-gap-analysis.md`
   was checked against the field evidence JSON and roadmap source; JSON
   validation and diff hygiene passed.
+- Current large-repo scan-limit verification: focused generator, CLI, Action,
+  and field-analysis regressions passed with 8 tests; full unit discovery
+  passed with 294 tests; pin check, research check, self-audit `100/100`, JSON
+  validation, local-path scan, and diff hygiene passed; index/report smokes
+  showed 174 files with no truncation; real field analysis against Kubernetes,
+  VS Code, and Bazel passed with 3 analyzed repos, 0 failures, and no
+  `generator_default_scan_limit` finding. Remaining cross-repo finding is
+  `nested_agents_plan`.
 - Current cleanup pass removed ignored local artifacts: `__pycache__`, `*.pyc`,
   `.DS_Store`, `.pytest_cache`, `htmlcov`, and `.coverage` if present.
 - Current known local verification gap: `pwsh -NoProfile -File ./init.ps1`
@@ -257,14 +271,25 @@ needs separated clearly.
 - `docs/harness/research/`
 - `docs/harness/evidence/large-public-repo-analysis.md`
 - `docs/harness/evidence/large-public-repo-analysis.json`
+- `docs/harness/manifest.json`
 - `docs/harness/research/large-public-repo-gap-analysis.md`
 - `scripts/analyze_large_public_repos.py`
 - `tests/test_large_public_repo_analysis.py`
 - `.gitignore`
 - `src/harnessforge/templates/`
 - `src/harnessforge/generation/generate.py`
+- `src/harnessforge/generation/update.py`
+- `src/harnessforge/project/detect.py`
+- `src/harnessforge/cli.py`
+- `src/harnessforge/github_action.py`
+- `action.yml`
+- `docs/action.md`
+- `docs/usage.md`
+- `docs/harness/evidence/evidence-log.md`
 - `src/harnessforge/core/harness_paths.py`
 - `tests/test_generate_audit.py`
+- `tests/test_cli.py`
+- `tests/test_github_action.py`
 
 ## Blockers
 
@@ -276,6 +301,6 @@ needs separated clearly.
 
 ## Next Step
 
-Implement the first deterministic large-repo quality fix: generation dry-runs
-should accept or reuse the same `max-files` scan context as index/report so
-large repos do not fall back to the default 4,000-file generation scan.
+Implement the next real-repo quality fix: product report and dry-run planning
+should surface review-required nested `AGENTS.md` scope candidates for large
+monorepos without writing nested instruction files by default.

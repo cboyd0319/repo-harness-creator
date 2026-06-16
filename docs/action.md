@@ -300,6 +300,9 @@ their project text but receive a reviewed HarnessForge quality addendum.
 Generated harness files are project-owned generated files after review; use the
 manifest and drift report to distinguish template-owned changes from local
 project edits.
+For large repositories, set `generation-max-files` so `command: init` or
+applied `command: update` renders generated content from the same deeper scan
+you expect from `report-max-files`.
 
 The optional CI workflow scaffold is off by default:
 
@@ -334,6 +337,7 @@ and not behavior embedded in the composite Action runtime.
 | `agent-file` | `AGENTS.md` | Root instruction file to generate |
 | `platform-contract` | `cross-platform` | Generated harness platform contract: `cross-platform`, `macos-only`, `windows-only`, or `linux-only` |
 | `with-ci-workflow` | `false` | Include optional manual HarnessForge CI workflow scaffolding during `init` or applied `update` |
+| `generation-max-files` | `4000` | Maximum number of files scanned while rendering generated files for `command: init` or applied `command: update` |
 | `verify-run` | `false` | Execute checks when `command` is `verify`; default verify mode is read-only plan mode |
 | `verify-command` | empty | Optional newline-separated repo-owned verification commands for `command: verify` |
 | `verify-timeout-seconds` | `300` | Per-command timeout when `command` is `verify` and `verify-run` is `true` |

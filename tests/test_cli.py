@@ -455,6 +455,57 @@ class CliTests(unittest.TestCase):
         self.assertEqual(payload["limits"]["maxFiles"], 3)
         self.assertIn("3-file detection limit", " ".join(payload["warnings"]))
 
+    def test_init_dry_run_json_accepts_explicit_file_scan_limit(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            for index in range(5):
+                (root / f"doc-{index}.md").write_text("# Doc\n", encoding="utf-8")
+            stdout = io.StringIO()
+            with contextlib.redirect_stdout(stdout):
+                code = main(
+                    [
+                        "init",
+                        "--target",
+                        str(root),
+                        "--dry-run",
+                        "--json",
+                        "--max-files",
+                        "3",
+                    ]
+                )
+            payload = json.loads(stdout.getvalue())
+
+        self.assertEqual(code, 0)
+        self.assertEqual(payload["repositoryScan"]["maxFiles"], 3)
+        self.assertEqual(payload["repositoryScan"]["fileCount"], 3)
+        self.assertTrue(payload["repositoryScan"]["truncated"])
+
+    def test_index_ignores_harnessforge_scratch_directory(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            (root / "README.md").write_text("# Demo\n", encoding="utf-8")
+            scratch = root / ".harnessforge" / "large-public-repos"
+            scratch.mkdir(parents=True)
+            for index in range(10):
+                (scratch / f"external-{index}.md").write_text(
+                    "# External\n",
+                    encoding="utf-8",
+                )
+            stdout = io.StringIO()
+            with contextlib.redirect_stdout(stdout):
+                code = main(
+                    ["index", "--target", str(root), "--max-files", "3", "--json"]
+                )
+            payload = json.loads(stdout.getvalue())
+
+        self.assertEqual(code, 0)
+        self.assertEqual(payload["summary"]["fileCount"], 1)
+        self.assertFalse(payload["summary"]["truncated"])
+        self.assertEqual(
+            [item["path"] for item in payload["sourceOfTruth"]],
+            ["README.md"],
+        )
+
     def test_index_json_reports_component_inventory_limit(self) -> None:
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp)
@@ -2474,6 +2525,8 @@ class CliTests(unittest.TestCase):
                         "--target",
                         str(root),
                         "--interactive",
+                        "--max-files",
+                        "3",
                         "--json",
                     ]
                 )
@@ -2487,7 +2540,10 @@ class CliTests(unittest.TestCase):
         self.assertEqual(payload["target"]["root"], None)
         self.assertFalse(payload["execution"]["writesPerformed"])
         self.assertEqual(payload["decisions"]["agentFile"], "AGENTS.md")
+        self.assertEqual(payload["decisions"]["maxFiles"], 3)
+        self.assertEqual(payload["repositoryScan"]["maxFiles"], 3)
         self.assertIn("--platform-contract", payload["reproducibleCommands"]["init"])
+        self.assertIn("--max-files 3", payload["reproducibleCommands"]["init"])
         self.assertIn("harnessforge init", payload["reproducibleCommands"]["init"])
 
     def test_quickstart_interactive_skips_prompts_without_tty(self) -> None:

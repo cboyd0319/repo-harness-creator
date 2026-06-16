@@ -304,7 +304,7 @@ def analyze_repo(
         index = build_index_report(profile)
         readiness = readiness_to_dict(inspect_readiness(profile))
         audit = audit_to_dict(audit_target(checkout))
-        dry_run = dry_run_generation(checkout)
+        dry_run = dry_run_generation(checkout, max_files=max_files)
         nested_plan = nested_instruction_plan(profile, repo)
         gaps = quality_gaps(
             profile=profile,
@@ -468,15 +468,17 @@ def git_output(root: Path, command: list[str], timeout_seconds: int) -> str:
     return result.stdout
 
 
-def dry_run_generation(checkout: Path) -> dict[str, Any]:
+def dry_run_generation(checkout: Path, *, max_files: int) -> dict[str, Any]:
     try:
-        profile, writes = create_harness(checkout, dry_run=True)
+        profile, writes = create_harness(checkout, dry_run=True, max_files=max_files)
     except Exception as exc:  # pragma: no cover - defensive field-run boundary
         return {
             "status": "failed",
             "error": sanitize(str(exc)),
             "writeStatusCounts": {},
-            "usesDefaultFileScanLimit": True,
+            "usesRequestedFileScanLimit": False,
+            "usesDefaultFileScanLimit": False,
+            "requestedFileScanLimit": max_files,
             "fileScanLimit": 4000,
         }
     counts = Counter(write.status for write in writes)
@@ -484,7 +486,11 @@ def dry_run_generation(checkout: Path) -> dict[str, Any]:
         "status": "planned",
         "writeStatusCounts": dict(sorted(counts.items())),
         "plannedWriteCount": sum(counts.values()),
-        "usesDefaultFileScanLimit": True,
+        "usesRequestedFileScanLimit": profile.file_scan_limit == max_files,
+        "usesDefaultFileScanLimit": (
+            profile.file_scan_limit == 4000 and max_files != 4000
+        ),
+        "requestedFileScanLimit": max_files,
         "fileScanLimit": profile.file_scan_limit,
         "fileScanTruncated": profile.file_scan_truncated,
     }
@@ -577,12 +583,12 @@ def quality_gaps(
                 "message": "component inventory reached the bounded component limit",
             }
         )
-    if dry_run.get("fileScanTruncated"):
+    if dry_run.get("usesDefaultFileScanLimit"):
         gaps.append(
             {
                 "code": "generator_default_scan_limit",
                 "severity": "high",
-                "message": "dry-run generation is still limited to the default 4000-file scan",
+                "message": "dry-run generation ignored the requested max-files scan limit",
             }
         )
     if not index["sourceOfTruth"]:

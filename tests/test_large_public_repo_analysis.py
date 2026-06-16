@@ -80,7 +80,7 @@ class LargePublicRepoAnalysisTests(unittest.TestCase):
                     "--repo",
                     "sample-monorepo",
                     "--max-files",
-                    "200",
+                    "4",
                     "--json-report",
                     str(json_report),
                     "--markdown-report",
@@ -104,6 +104,18 @@ class LargePublicRepoAnalysisTests(unittest.TestCase):
             self.assertFalse(payload["execution"]["networkAccess"])
             self.assertEqual(repo["status"], "analyzed")
             self.assertTrue(repo["headMatchesPinnedRef"])
+            self.assertEqual(repo["dryRunGeneration"]["requestedFileScanLimit"], 4)
+            self.assertEqual(repo["dryRunGeneration"]["fileScanLimit"], 4)
+            self.assertTrue(repo["dryRunGeneration"]["usesRequestedFileScanLimit"])
+            self.assertFalse(repo["dryRunGeneration"]["usesDefaultFileScanLimit"])
+            self.assertIn(
+                "file_scan_truncated",
+                {gap["code"] for gap in repo["qualityGaps"]},
+            )
+            self.assertNotIn(
+                "generator_default_scan_limit",
+                {gap["code"] for gap in repo["qualityGaps"]},
+            )
             self.assertEqual(repo["nestedInstructionPlan"]["status"], "review_required")
             self.assertFalse(repo["nestedInstructionPlan"]["writeByDefault"])
             self.assertGreater(repo["nestedInstructionPlan"]["candidateCount"], 0)

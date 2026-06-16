@@ -163,6 +163,12 @@ def build_parser() -> argparse.ArgumentParser:
     quickstart.add_argument("--command", dest="commands", action="append", default=[])
     quickstart.add_argument("--project-name")
     quickstart.add_argument(
+        "--max-files",
+        type=int,
+        default=4000,
+        help="maximum number of repository files to scan for the dry-run plan",
+    )
+    quickstart.add_argument(
         "--enhance-existing",
         action="store_true",
         help="preview instruction-file enhancement instead of preserving existing routers",
@@ -282,6 +288,12 @@ def build_parser() -> argparse.ArgumentParser:
     init.add_argument("--command", dest="commands", action="append", default=[])
     init.add_argument("--project-name")
     init.add_argument(
+        "--max-files",
+        type=int,
+        default=4000,
+        help="maximum number of repository files to scan while generating the harness",
+    )
+    init.add_argument(
         "--with-ci-workflow",
         action="store_true",
         help="also scaffold a manual HarnessForge CI workflow",
@@ -329,6 +341,12 @@ def build_parser() -> argparse.ArgumentParser:
         "--with-ci-workflow",
         action="store_true",
         help="include the optional manual HarnessForge CI workflow",
+    )
+    update.add_argument(
+        "--max-files",
+        type=int,
+        default=4000,
+        help="maximum number of repository files to scan while updating the harness",
     )
     update.add_argument("--apply", action="store_true")
     update.add_argument("--force", action="store_true")
@@ -633,12 +651,13 @@ def _quickstart(args: argparse.Namespace) -> int:
         commands=tuple(args.commands),
         project_name=args.project_name,
         platform_contract=args.platform_contract,
+        max_files=args.max_files,
     )
     report = inspect_readiness(profile)
     if args.json:
         print(json.dumps(_quickstart_to_dict(args, profile, report, writes), indent=2))
     else:
-        print(_format_quickstart(profile, report, writes))
+        print(_format_quickstart(profile, report, writes, max_files=args.max_files))
         if args.interactive:
             return _quickstart_interactive_prompt(args, writes)
     return 0
@@ -674,6 +693,7 @@ def _quickstart_interactive_prompt(
         commands=tuple(args.commands),
         project_name=args.project_name,
         platform_contract=args.platform_contract,
+        max_files=args.max_files,
     )
     print("Writes:")
     for write in applied:
@@ -705,6 +725,7 @@ def _quickstart_to_dict(
         "projectName": args.project_name,
         "enhanceExisting": bool(args.enhance_existing),
         "verificationCommands": list(args.commands),
+        "maxFiles": args.max_files,
         "writeMode": "dry_run",
     }
     return {
@@ -716,6 +737,7 @@ def _quickstart_to_dict(
             "root": None,
         },
         "detectedStack": profile.stack,
+        "repositoryScan": _scan_to_dict(profile),
         "execution": {
             "commandsExecuted": False,
             "writesPerformed": False,
@@ -743,6 +765,8 @@ def _quickstart_repro_command(args: argparse.Namespace) -> str:
         args.agent_file,
         "--platform-contract",
         args.platform_contract,
+        "--max-files",
+        str(args.max_files),
     ]
     if args.package_manager:
         parts.extend(["--package-manager", args.package_manager])
@@ -768,6 +792,8 @@ def _quickstart_init_repro_command(args: argparse.Namespace) -> str:
         args.agent_file,
         "--platform-contract",
         args.platform_contract,
+        "--max-files",
+        str(args.max_files),
     ]
     if args.package_manager:
         parts.extend(["--package-manager", args.package_manager])
@@ -1029,6 +1055,7 @@ def _init(args: argparse.Namespace) -> int:
         project_name=args.project_name,
         with_ci_workflow=args.with_ci_workflow,
         platform_contract=args.platform_contract,
+        max_files=args.max_files,
     )
     if args.json:
         print(
@@ -1077,6 +1104,7 @@ def _init_plan_to_dict(
             "root": None,
         },
         "detectedStack": profile.stack,
+        "repositoryScan": _scan_to_dict(profile),
         "execution": {
             "commandsExecuted": False,
             "writesPerformed": False,
@@ -1146,6 +1174,7 @@ def _update(args: argparse.Namespace) -> int:
         agent_file=args.agent_file,
         with_ci_workflow=args.with_ci_workflow,
         platform_contract=args.platform_contract,
+        max_files=args.max_files,
     )
     if args.json:
         payload = {
@@ -1428,6 +1457,8 @@ def _format_quickstart(
     profile: ProjectProfile,
     report: ReadinessReport,
     writes: tuple[WriteResult, ...],
+    *,
+    max_files: int = 4000,
 ) -> str:
     would_create = tuple(
         _relative(result.path, profile.root)
@@ -1484,7 +1515,7 @@ def _format_quickstart(
     _append_cli_section(
         lines,
         "Next commands",
-        _quickstart_commands(report, has_planned_writes),
+        _quickstart_commands(report, has_planned_writes, max_files=max_files),
     )
     return "\n".join(lines).rstrip()
 
@@ -1502,7 +1533,7 @@ def _quickstart_next_actions(
 
 
 def _quickstart_commands(
-    report: ReadinessReport, has_planned_writes: bool
+    report: ReadinessReport, has_planned_writes: bool, *, max_files: int = 4000
 ) -> tuple[str, ...]:
     if report.verdict == "blocked":
         return (
@@ -1512,10 +1543,13 @@ def _quickstart_commands(
         )
     commands = []
     if has_planned_writes:
+        max_files_suffix = (
+            f" --max-files {max_files}" if max_files != 4000 else ""
+        )
         commands.extend(
             [
-                "harnessforge init --target <repo> --dry-run",
-                "harnessforge init --target <repo>",
+                f"harnessforge init --target <repo> --dry-run{max_files_suffix}",
+                f"harnessforge init --target <repo>{max_files_suffix}",
             ]
         )
     commands.extend(
@@ -1536,6 +1570,7 @@ def _profile_to_dict(profile: ProjectProfile) -> dict[str, object]:
         "runtimeFiles": list(profile.runtime_files),
         "verificationCommands": list(profile.verification_commands),
         "components": list(profile.components),
+        "fileScan": _scan_to_dict(profile),
         "componentScan": {
             "limit": profile.component_scan_limit,
             "truncated": profile.component_scan_truncated,
@@ -1543,6 +1578,14 @@ def _profile_to_dict(profile: ProjectProfile) -> dict[str, object]:
         "workspaceMarkers": list(profile.workspace_markers),
         "routingMarkers": list(profile.routing_markers),
         "configPrecedence": list(profile.config_precedence),
+    }
+
+
+def _scan_to_dict(profile: ProjectProfile) -> dict[str, object]:
+    return {
+        "fileCount": len(profile.files),
+        "maxFiles": profile.file_scan_limit,
+        "truncated": profile.file_scan_truncated,
     }
 
 

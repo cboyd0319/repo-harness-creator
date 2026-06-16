@@ -124,6 +124,7 @@ def create_harness(
     project_name: str | None = None,
     with_ci_workflow: bool = False,
     platform_contract: str = "cross-platform",
+    max_files: int = 4000,
     update_generated_paths: frozenset[str] = frozenset(),
 ) -> tuple[ProjectProfile, tuple[WriteResult, ...]]:
     agent_file = _validate_agent_file(agent_file)
@@ -132,6 +133,7 @@ def create_harness(
         target,
         explicit_package_manager=package_manager,
         explicit_commands=commands,
+        max_files=max_files,
     )
     context = _template_context(
         profile,
@@ -2400,6 +2402,9 @@ def _manifest_content(
         "generatedFiles": generated_files or {},
         "reviewRequired": list(REVIEW_REQUIRED_FILES),
         "verificationCommands": list(profile.verification_commands),
+        "detectedFileCount": len(profile.files),
+        "fileScanLimit": profile.file_scan_limit,
+        "fileScanTruncated": profile.file_scan_truncated,
         "detectedComponents": list(profile.components),
         "componentInventoryLimit": profile.component_scan_limit,
         "componentInventoryTruncated": profile.component_scan_truncated,

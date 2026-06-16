@@ -60,6 +60,12 @@ def run_from_env(env: Mapping[str, str]) -> int:
     html_report = env.get("INPUT_HTML_REPORT", "").strip()
     json_report = env.get("INPUT_JSON_REPORT", "").strip()
     markdown_report = env.get("INPUT_MARKDOWN_REPORT", "").strip()
+    generation_max_files = _int_input(
+        env.get("INPUT_GENERATION_MAX_FILES", "4000"),
+        "generation-max-files",
+    )
+    if generation_max_files <= 0:
+        raise ValueError("generation-max-files must be greater than 0")
     changed_files = 0
 
     if command == "doctor":
@@ -93,6 +99,7 @@ def run_from_env(env: Mapping[str, str]) -> int:
             enhance_existing=_bool_input(env.get("INPUT_ENHANCE_EXISTING", "false")),
             with_ci_workflow=_bool_input(env.get("INPUT_WITH_CI_WORKFLOW", "false")),
             platform_contract=env.get("INPUT_PLATFORM_CONTRACT", "cross-platform"),
+            max_files=generation_max_files,
         )
         changed_files = sum(
             1 for write in writes if write.status in {"written", "enhanced"}
@@ -108,6 +115,7 @@ def run_from_env(env: Mapping[str, str]) -> int:
             agent_file=env.get("INPUT_AGENT_FILE", "AGENTS.md"),
             with_ci_workflow=_bool_input(env.get("INPUT_WITH_CI_WORKFLOW", "false")),
             platform_contract=env.get("INPUT_PLATFORM_CONTRACT", "cross-platform"),
+            max_files=generation_max_files,
         )
         changed_files = sum(
             1 for write in writes if write.status in {"written", "enhanced"}

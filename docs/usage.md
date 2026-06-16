@@ -30,6 +30,10 @@ verification commands, planned writes, preserved files, readiness report, and
 equivalent non-interactive `quickstart`, `init`, and `sync` commands.
 Without `--json`, `--interactive` prints the dry-run summary first, skips
 prompts when stdin is not a TTY, and asks before writing in a real terminal.
+Use `--max-files` with `quickstart`, `init`, or applied `update` when a large
+repository needs generated content rendered from a deeper file scan than the
+default 4,000 files. Dry-run JSON reports the file count, limit, and truncation
+status, and generated manifests retain the same scan coverage metadata.
 
 After `init`, the generated canonical agent instruction routes the first agent
 session to `docs/harness/state/first-agent-task.md` and the generated

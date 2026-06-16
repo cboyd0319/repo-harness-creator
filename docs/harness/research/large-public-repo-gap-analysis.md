@@ -44,29 +44,43 @@ Cross-repo signals:
 
 ### 1. Generation Uses A Different Scan Than Analysis
 
-Severity: high.
+Severity: high. Status: implemented for explicit scan limits; persisted index
+reuse remains an optional optimization.
 
-Observed: field analysis used `--max-files 20000`, but dry-run generation still
-called `create_harness(checkout, dry_run=True)` with the default 4,000-file
-scan. That makes the preview weaker than the analysis that preceded it.
+Observed in the initial field run: field analysis used `--max-files 20000`,
+but dry-run generation still called `create_harness(checkout, dry_run=True)`
+with the default 4,000-file scan. That made the preview weaker than the
+analysis that preceded it.
 
-Deterministic fix:
+Implemented deterministic fix:
 
-- Add `max_files` to `create_harness`.
-- Add `--max-files` to `init`, `quickstart`, and any dry-run path that renders
-  generation plans.
-- Reuse a single detected `ProjectProfile` or persisted structural index across
-  quickstart, dry-run generation, report, and enhance planning when the caller
-  requests deeper analysis.
-- Include scan coverage in generated manifests and dry-run JSON:
-  scanned files, tracked files when git is available, scan limit, and
+- `create_harness` accepts `max_files` and records generated manifest scan
+  coverage.
+- `quickstart`, `init`, and applied `update` accept `--max-files`.
+- The GitHub Action exposes `generation-max-files` for `command: init` and
+  applied `command: update`, separate from `report-max-files`.
+- `quickstart --json` and `init --dry-run --json` report scan count, limit, and
   truncation status.
+- The field analyzer passes its requested `--max-files` into dry-run
+  generation and only reports `generator_default_scan_limit` if that requested
+  limit is ignored.
+
+Remaining optimization:
+
+- Reuse a single detected `ProjectProfile` or persisted structural index across
+  quickstart, dry-run generation, report, and enhance planning when repeated
+  scans become a measurable cost.
 
 Definition of done:
 
 - `init --dry-run --json --max-files 20000` reports the same scan limit used by
   `index --max-files 20000`.
 - Large-repo corpus evidence no longer reports `generator_default_scan_limit`.
+
+Verification: the 2026-06-16 field refresh across Kubernetes, VS Code, and
+Bazel shows dry-run generation using the requested 20,000-file scan limit for
+all three repositories. The remaining cross-repo finding is nested instruction
+planning.
 
 ### 2. File Discovery Needs Large-Repo Coverage Signals
 

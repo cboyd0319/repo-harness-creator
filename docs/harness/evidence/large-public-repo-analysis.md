@@ -1,6 +1,6 @@
 # Large Public Repo Analysis
 
-Generated: 2026-06-16T16:35:13+00:00
+Generated: 2026-06-16T17:07:04+00:00
 
 ## Boundary
 
@@ -20,16 +20,15 @@ Generated: 2026-06-16T16:35:13+00:00
 
 ## Cross-Repo Findings
 
-- `generator_max_files_option`: init and dry-run generation need an explicit max-files or index-reuse path for very large repositories.
 - `nested_agents_plan`: large monorepos should get a review-required nested AGENTS.md plan instead of only a root instruction file.
 
 ## Repository Results
 
 | Repo | Status | Stack | Tracked | Scanned | Components | Nested Plan | Top Gaps |
 | --- | --- | --- | ---: | ---: | ---: | --- | --- |
-| `kubernetes-kubernetes` | `analyzed` | `go` | 30513 | 20000 | 44 | 20 candidates | file_scan_truncated, generator_default_scan_limit, nested_agents_review_needed, no_existing_sbom_detected |
-| `microsoft-vscode` | `analyzed` | `typescript-react` | 15783 | 15407 | 80 | 20 candidates | component_scan_truncated, generator_default_scan_limit, nested_agents_review_needed, no_existing_sbom_detected |
-| `bazelbuild-bazel` | `analyzed` | `bazel` | 13265 | 8333 | 80 | 20 candidates | component_scan_truncated, generator_default_scan_limit, nested_agents_review_needed |
+| `kubernetes-kubernetes` | `analyzed` | `go` | 30513 | 20000 | 44 | 20 candidates | file_scan_truncated, nested_agents_review_needed, no_existing_sbom_detected |
+| `microsoft-vscode` | `analyzed` | `typescript-react` | 15783 | 15407 | 80 | 20 candidates | component_scan_truncated, nested_agents_review_needed, no_existing_sbom_detected |
+| `bazelbuild-bazel` | `analyzed` | `bazel` | 13265 | 8333 | 80 | 20 candidates | component_scan_truncated, nested_agents_review_needed |
 
 ## Nested Instruction Candidate Examples
 

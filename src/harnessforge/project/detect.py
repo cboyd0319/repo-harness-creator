@@ -20,6 +20,7 @@ MISSING_VERIFICATION_COMMAND = (
 IGNORED_DIRS = {
     ".git",
     ".hg",
+    ".harnessforge",
     ".DS_Store",
     ".mypy_cache",
     ".nox",

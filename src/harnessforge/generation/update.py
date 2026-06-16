@@ -19,6 +19,7 @@ def plan_or_apply_update(
     agent_file: str = "AGENTS.md",
     with_ci_workflow: bool = False,
     platform_contract: str = "cross-platform",
+    max_files: int = 4000,
 ) -> tuple[AuditResult, ProjectProfile | None, tuple[WriteResult, ...]]:
     before = audit_target(target)
     if not apply:
@@ -31,6 +32,7 @@ def plan_or_apply_update(
         enhance_existing=enhance_existing,
         with_ci_workflow=with_ci_workflow,
         platform_contract=platform_contract,
+        max_files=max_files,
         update_generated_paths=update_generated_paths if not force else frozenset(),
     )
     return before, profile, writes

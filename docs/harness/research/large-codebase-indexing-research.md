@@ -188,8 +188,8 @@ Any future HarnessForge index should be:
 - Which confidence model is useful enough without pretending to be exact?
 - Which optional adapters measurably improve generated harness quality enough
   to justify the extra project review surface?
-- Should `init` and `create_harness(..., dry_run=True)` accept `--max-files` or
-  reuse a persisted structural index so generated guidance does not fall back
-  to the default 4,000-file scan on very large repositories?
+- Should generation eventually reuse a persisted structural index after
+  `init`, `quickstart`, and applied `update` have explicit `--max-files`
+  controls?
 - What threshold should promote nested instruction candidates from advisory
   report evidence into a review-required generated placeholder?

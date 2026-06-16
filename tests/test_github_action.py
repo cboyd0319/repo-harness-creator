@@ -176,6 +176,7 @@ class GitHubActionTests(unittest.TestCase):
         self.assertIn("markdown-report", action)
         self.assertIn("report-command", action)
         self.assertIn("report-max-files", action)
+        self.assertIn("generation-max-files", action)
         self.assertIn("report-since", action)
         self.assertIn("require-docs-fanout-budget", action)
         self.assertIn("docs-fanout-verdict", action)
@@ -183,6 +184,7 @@ class GitHubActionTests(unittest.TestCase):
         self.assertIn("Unified Harness Report", docs)
         self.assertIn("report-markdown", docs)
         self.assertIn("report-since", docs)
+        self.assertIn("generation-max-files", docs)
         self.assertIn("require-docs-fanout-budget", docs)
 
     def test_action_manifest_and_docs_expose_release_check_command(self) -> None:
@@ -751,6 +753,28 @@ class GitHubActionTests(unittest.TestCase):
         self.assertEqual(code, 0)
         self.assertTrue(ci_exists)
         self.assertFalse(self_heal_exists)
+
+    def test_action_init_accepts_generation_file_scan_limit(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            for index in range(5):
+                (root / f"doc-{index}.md").write_text("# Doc\n", encoding="utf-8")
+            env = {
+                "INPUT_COMMAND": "init",
+                "INPUT_TARGET": str(root),
+                "INPUT_GENERATION_MAX_FILES": "3",
+            }
+
+            with contextlib.redirect_stdout(io.StringIO()):
+                code = run_from_env(env)
+            manifest = json.loads(
+                (root / "docs/harness/manifest.json").read_text(encoding="utf-8")
+            )
+
+        self.assertEqual(code, 0)
+        self.assertEqual(manifest["fileScanLimit"], 3)
+        self.assertEqual(manifest["detectedFileCount"], 3)
+        self.assertTrue(manifest["fileScanTruncated"])
 
     def test_action_init_can_enhance_existing_instruction_files(self) -> None:
         with tempfile.TemporaryDirectory() as tmp:

@@ -46,6 +46,27 @@ def _supports_file_symlink() -> bool:
 
 
 class GenerateAuditTests(unittest.TestCase):
+    def test_create_harness_accepts_explicit_file_scan_limit(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            for index in range(5):
+                (root / f"doc-{index}.md").write_text("# Doc\n", encoding="utf-8")
+
+            profile, writes = create_harness(root, dry_run=True, max_files=3)
+            _, applied = create_harness(root, max_files=3)
+            manifest = json.loads(
+                (root / "docs/harness/manifest.json").read_text(encoding="utf-8")
+            )
+
+        self.assertEqual(profile.file_scan_limit, 3)
+        self.assertEqual(len(profile.files), 3)
+        self.assertTrue(profile.file_scan_truncated)
+        self.assertTrue(all(write.status.startswith("would_") for write in writes))
+        self.assertTrue(any(write.status == "written" for write in applied))
+        self.assertEqual(manifest["fileScanLimit"], 3)
+        self.assertEqual(manifest["detectedFileCount"], 3)
+        self.assertTrue(manifest["fileScanTruncated"])
+
     def test_agents_files_follow_required_section_contract(self) -> None:
         repo_root = Path(__file__).resolve().parents[1]
         root_agents = (repo_root / "AGENTS.md").read_text(encoding="utf-8")
