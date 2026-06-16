@@ -95,7 +95,7 @@ work as pre-release product shaping.
 | Research refresh | `scripts/refresh_research.py`, `research-sources.lock.json`, and `research-inbox.md` support this repo's fixed-allowlist research maintenance. | Generated research files are project-owned review scaffolds. They may describe how to run a reviewed fixed-allowlist refresh, but no scheduled refresh is generated. | The Action does not refresh research. |
 | Generated ownership and drift | This repo tracks product code, templates, and local harness docs as project-owned maintenance surfaces. | Generated target manifests must include ownership metadata, content hashes, template hashes, platform contract metadata, review-required placeholders, and drift report inputs. | Action reports should expose target-relative generated drift and never depend on this repo's working tree. |
 | Platform contracts | This repo supports Python 3.13+, macOS 15+, Windows 11+, and Ubuntu 22.04+ unless a component says otherwise. | Generated target harnesses record the selected `platformContract`, supported platforms, and primary-source review date. Unsupported platform scripts are omitted. | The Action passes the selected platform contract to generation and reporting, but does not broaden target support. |
-| Assessment scoring | This repo's self-audit must enforce the current product boundary, including local-only self-healing, generated ownership metadata, platform contracts, first-agent lifecycle, verify/effectiveness evidence slots, and stale local-path command detection. | A generated target harness must not score as complete if it contains HarnessForge repo-local self-healing, sibling-checkout commands, missing generated-file metadata, missing platform metadata, or no first-agent/roadmap/sensor lifecycle. Structural score still does not prove real-agent effectiveness. | Action summaries and reports should surface the same audit/readiness/evidence boundaries without treating Action success as a real-agent performance claim. |
+| Assessment scoring | This repo's self-audit must enforce the current product boundary, including local-only self-healing, generated ownership metadata, platform contracts, first-agent lifecycle, verify/effectiveness evidence slots, stale local-path command detection, and split-state cleanup. | A generated target harness must not score as complete if it contains HarnessForge repo-local self-healing, sibling-checkout commands, missing generated-file metadata, missing platform metadata, no first-agent/roadmap/sensor lifecycle, or stale split root state as the active handoff contract. Structural score still does not prove real-agent effectiveness. | Action summaries and reports should surface the same audit/readiness/evidence boundaries without treating Action success as a real-agent performance claim. |
 | Optional overlays | Product blueprints and internal roadmap docs can evolve in this repo. | Blueprints are explicit opt-ins and land in review-required areas separate from normal `init`. | The Action may invoke explicit commands only from inputs. |
 
 ## Manual Additions
@@ -107,7 +107,8 @@ work as pre-release product shaping.
   CLI, Action, audit, and reports.
 - `src/harnessforge/project/`: target-repository analysis and explicit
   project-write helpers, including detection, indexing, readiness, review
-  finalization, planning, session, sync, spec-system, and verify helpers.
+  finalization, state migration, planning, session, sync, spec-system, and
+  verify helpers.
 - `src/harnessforge/generation/`: generated harness creation, optional
   blueprint writing, update planning, and offline public-repo fixture corpus.
   This is product code; generated target-repo content still lives under

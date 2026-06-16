@@ -261,6 +261,8 @@ def _load_known_files(root: Path, manifest: dict[str, Any]) -> dict[str, str]:
         "feature_list.json",
         "feature-list.json",
         "current-state.md",
+        "progress.md",
+        "session-handoff.md",
         "init.sh",
         "init.ps1",
         "scripts/check_pins.py",
@@ -1083,6 +1085,9 @@ def _state_checks(files: dict[str, str]) -> list[CheckResult]:
     feature = files.get("feature_list.json") or files.get("feature-list.json") or ""
     privacy = first_existing_text(files, "feature_privacy_labels")
     current_state = files.get("current-state.md", "")
+    split_state_files = tuple(
+        path for path in ("progress.md", "session-handoff.md") if files.get(path)
+    )
     return [
         _check(bool(feature), "Feature state file exists"),
         _check(_valid_feature_list(feature), "Feature state JSON has usable feature records"),
@@ -1099,6 +1104,11 @@ def _state_checks(files: dict[str, str]) -> list[CheckResult]:
             current_state,
             ("Blockers", "Touched Surfaces", "Trusted Verification"),
             "Current state captures blockers, touched surfaces, and verification",
+        ),
+        _check(
+            not split_state_files,
+            "Current state is not split across legacy root state files",
+            ", ".join(split_state_files),
         ),
     ]
 

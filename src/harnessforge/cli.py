@@ -59,6 +59,10 @@ from .project.session import (
     format_session_report,
     session_report_to_dict,
 )
+from .project.state_migration import (
+    build_state_migration_plan,
+    format_state_migration_plan,
+)
 from .project.sync import format_sync_check, sync_check_to_dict, sync_exit_code
 from .project.verify import (
     DEFAULT_TIMEOUT_SECONDS,
@@ -242,6 +246,28 @@ def build_parser() -> argparse.ArgumentParser:
         help="write finalization JSON to a target-relative path",
     )
     finalize_review.set_defaults(func=_finalize_review)
+
+    migrate_state = subparsers.add_parser(
+        "migrate-state",
+        help="plan or apply legacy progress/session state migration",
+    )
+    migrate_state.add_argument("--target", type=Path, default=Path.cwd())
+    migrate_state.add_argument(
+        "--apply",
+        action="store_true",
+        help="write the current-state.md migration section; default is dry-run",
+    )
+    migrate_state.add_argument(
+        "--yes",
+        action="store_true",
+        help="confirm apply-mode state migration in non-interactive runs",
+    )
+    migrate_state.add_argument("--json", action="store_true")
+    migrate_state.add_argument(
+        "--json-report",
+        help="write migration JSON to a target-relative path",
+    )
+    migrate_state.set_defaults(func=_migrate_state)
 
     init = subparsers.add_parser("init", help="create missing harness artifacts")
     init.add_argument("--target", type=Path, default=Path.cwd())
@@ -944,6 +970,29 @@ def _finalize_review(args: argparse.Namespace) -> int:
         print(json.dumps(output, indent=2))
     else:
         print(format_review_finalization_plan(plan.payload), end="")
+        if json_path:
+            print(f"JSON report written: {json_path}")
+    return 0
+
+
+def _migrate_state(args: argparse.Namespace) -> int:
+    if args.apply:
+        _confirm_destructive(
+            "migrate-state --apply",
+            confirmed=args.yes,
+            details=(
+                "writes or updates current-state.md in the target repository",
+                "preserves legacy progress.md and session-handoff.md for review",
+            ),
+        )
+    plan = build_state_migration_plan(args.target, apply=args.apply)
+    json_path = write_json_payload(args.json_report or "", args.target, plan.payload)
+    if args.json:
+        output = dict(plan.payload)
+        output["jsonReport"] = json_path
+        print(json.dumps(output, indent=2))
+    else:
+        print(format_state_migration_plan(plan.payload), end="")
         if json_path:
             print(f"JSON report written: {json_path}")
     return 0

@@ -26,6 +26,10 @@ from .project.finalize_review import (
     format_review_finalization_plan,
 )
 from .project.readiness import inspect_readiness
+from .project.state_migration import (
+    build_state_migration_plan,
+    format_state_migration_plan,
+)
 from .project.sync import format_sync_check, sync_check_to_dict, sync_exit_code
 from .project.verify import (
     DEFAULT_TIMEOUT_SECONDS,
@@ -142,10 +146,18 @@ def run_from_env(env: Mapping[str, str]) -> int:
             html_report,
             markdown_report,
         )
+    elif command == "migrate-state":
+        return _run_migrate_state_command(
+            env,
+            target,
+            json_report,
+            html_report,
+            markdown_report,
+        )
     else:
         raise ValueError(
             "command must be one of: audit, init, update, sync, verify, "
-            "report, release-check, finalize-review, doctor"
+            "report, release-check, finalize-review, migrate-state, doctor"
         )
 
     json_path = _write_json_report(json_report, target, result)
@@ -420,6 +432,45 @@ def _run_finalize_review_command(
     return 0
 
 
+def _run_migrate_state_command(
+    env: Mapping[str, str],
+    target: Path,
+    json_report: str,
+    html_report: str,
+    markdown_report: str,
+) -> int:
+    if html_report:
+        raise ValueError("html-report is not supported for command=migrate-state")
+    if markdown_report:
+        raise ValueError("markdown-report is not supported for command=migrate-state")
+    plan = build_state_migration_plan(
+        target,
+        apply=_bool_input(env.get("INPUT_APPLY", "false")),
+    )
+    payload = plan.payload
+    json_path = write_json_payload(json_report, target, payload)
+    text_report = format_state_migration_plan(payload)
+    print(text_report)
+    _summary(env, "HarnessForge State Migration", _state_migration_summary(payload))
+    _output(
+        env,
+        {
+            "overall-score": "",
+            "bottleneck": "",
+            "report-json": json_path,
+            "report-html": "",
+            "report-markdown": "",
+            "changed-files": str(payload["changedFiles"]),
+            "verify-verdict": "",
+            "readiness-verdict": "",
+            "sync-exit-code": "",
+            "docs-fanout-verdict": "",
+            "release-verdict": "",
+        },
+    )
+    return 0
+
+
 def _write_json_report(path_text: str, target: Path, result: Any) -> str:
     return write_json_payload(path_text, target, audit_to_dict(result))
 
@@ -586,6 +637,20 @@ def _finalize_review_summary_markdown(payload: dict[str, Any]) -> str:
             f"- High-risk surfaces: `{len(payload['highRiskSurfaces'])}`",
             "- Requires high-risk acceptance flag: "
             f"`{str(payload['review']['requiresHighRiskAcceptanceFlag']).lower()}`",
+        ]
+    )
+
+
+def _state_migration_summary(payload: dict[str, Any]) -> str:
+    legacy_count = sum(1 for item in payload["legacyFiles"] if item["exists"])
+    truncated_count = sum(1 for item in payload["legacyFiles"] if item["truncated"])
+    return "\n".join(
+        [
+            f"- Mode: `{payload['mode']}`",
+            f"- Legacy files found: `{legacy_count}`",
+            f"- Planned writes: `{len(payload['plannedWrites'])}`",
+            f"- Changed files: `{payload['changedFiles']}`",
+            f"- Truncated excerpts: `{truncated_count}`",
         ]
     )
 

@@ -929,8 +929,9 @@ Implemented shape:
 3. Implemented in part: `finalize-review` can retire the first-agent task,
    record high-risk acceptance evidence, and refresh manifest metadata. Compact
    verification evidence capture remains.
-4. Add split-state migration planning and optional safe application for
-   `progress.md` plus `session-handoff.md` to `current-state.md`.
+4. Implemented: `migrate-state` plans and explicitly applies bounded,
+   idempotent migration from `progress.md` and `session-handoff.md` to
+   `current-state.md` while preserving legacy files.
 5. Add generated and enhanced harness skill-wiring validation.
 6. Add the RunHaven-shaped fixture to the public-repo quality corpus and assert
    the reviewed maturity/report behavior.

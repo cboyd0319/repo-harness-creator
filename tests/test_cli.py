@@ -1310,6 +1310,103 @@ class CliTests(unittest.TestCase):
         )
         self.assertEqual(report["maturity"]["currentLevel"], "reviewed")
 
+    def test_migrate_state_dry_run_reports_legacy_sources(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            (root / "progress.md").write_text("# Progress\n\nDone.\n", encoding="utf-8")
+            (root / "session-handoff.md").write_text(
+                "# Handoff\n\nNext step.\n",
+                encoding="utf-8",
+            )
+            stdout = io.StringIO()
+            with contextlib.redirect_stdout(stdout):
+                code = main(["migrate-state", "--target", str(root), "--json"])
+
+            payload = json.loads(stdout.getvalue())
+            current_exists = (root / "current-state.md").exists()
+
+        self.assertEqual(code, 0)
+        self.assertEqual(payload["schemaVersion"], "harnessforge.stateMigration.v1")
+        self.assertEqual(payload["mode"], "dry_run")
+        self.assertFalse(payload["execution"]["writesPerformed"])
+        self.assertFalse(current_exists)
+        self.assertEqual(
+            {item["path"] for item in payload["legacyFiles"] if item["exists"]},
+            {"progress.md", "session-handoff.md"},
+        )
+        self.assertEqual(payload["plannedWrites"][0]["path"], "current-state.md")
+        self.assertEqual(payload["plannedWrites"][0]["status"], "would_write")
+
+    def test_migrate_state_apply_requires_yes_non_interactive(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            (root / "progress.md").write_text("# Progress\n", encoding="utf-8")
+            stderr = io.StringIO()
+            with contextlib.redirect_stdout(io.StringIO()), contextlib.redirect_stderr(
+                stderr
+            ):
+                code = main(["migrate-state", "--target", str(root), "--apply"])
+            current_exists = (root / "current-state.md").exists()
+
+        self.assertEqual(code, 2)
+        self.assertFalse(current_exists)
+        self.assertIn("requires --yes", stderr.getvalue())
+
+    def test_migrate_state_apply_preserves_legacy_and_is_idempotent(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            (root / "current-state.md").write_text(
+                "# Current State\n\n## Current Objective\n\nExisting.\n",
+                encoding="utf-8",
+            )
+            (root / "progress.md").write_text("# Progress\n\nDone.\n", encoding="utf-8")
+            (root / "session-handoff.md").write_text(
+                "# Handoff\n\nNext step.\n",
+                encoding="utf-8",
+            )
+            first_stdout = io.StringIO()
+            with contextlib.redirect_stdout(first_stdout):
+                first_code = main(
+                    [
+                        "migrate-state",
+                        "--target",
+                        str(root),
+                        "--apply",
+                        "--yes",
+                        "--json",
+                    ]
+                )
+            second_stdout = io.StringIO()
+            with contextlib.redirect_stdout(second_stdout):
+                second_code = main(
+                    [
+                        "migrate-state",
+                        "--target",
+                        str(root),
+                        "--apply",
+                        "--yes",
+                        "--json",
+                    ]
+                )
+
+            first_payload = json.loads(first_stdout.getvalue())
+            second_payload = json.loads(second_stdout.getvalue())
+            current = (root / "current-state.md").read_text(encoding="utf-8")
+            progress_preserved = (root / "progress.md").exists()
+            handoff_preserved = (root / "session-handoff.md").exists()
+
+        self.assertEqual(first_code, 0)
+        self.assertEqual(second_code, 0)
+        self.assertEqual(first_payload["mode"], "apply")
+        self.assertEqual(first_payload["changedFiles"], 1)
+        self.assertEqual(second_payload["changedFiles"], 0)
+        self.assertEqual(second_payload["appliedWrites"][0]["status"], "unchanged")
+        self.assertTrue(progress_preserved)
+        self.assertTrue(handoff_preserved)
+        self.assertIn("<!-- harnessforge-state-migration:start -->", current)
+        self.assertIn("### progress.md", current)
+        self.assertIn("### session-handoff.md", current)
+
     def test_readiness_warns_when_first_agent_evidence_is_missing(self) -> None:
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp)

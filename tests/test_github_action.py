@@ -154,7 +154,7 @@ class GitHubActionTests(unittest.TestCase):
 
         self.assertIn(
             "audit, init, update, sync, verify, report, release-check, "
-            "finalize-review, or doctor",
+            "finalize-review, migrate-state, or doctor",
             action,
         )
         self.assertIn("require-verify-evidence", action)
@@ -208,6 +208,17 @@ class GitHubActionTests(unittest.TestCase):
         self.assertIn("command: finalize-review", docs)
         self.assertIn("accept-detected-high-risk", docs)
         self.assertIn("Review Finalization", docs)
+
+    def test_action_manifest_and_docs_expose_migrate_state_command(self) -> None:
+        root = Path(__file__).resolve().parents[1]
+        action = (root / "action.yml").read_text(encoding="utf-8")
+        docs = (root / "docs/action.md").read_text(encoding="utf-8")
+
+        self.assertIn("migrate-state", action)
+        self.assertIn("command: migrate-state", docs)
+        self.assertIn("State Migration", docs)
+        self.assertIn("progress.md", docs)
+        self.assertIn("session-handoff.md", docs)
 
     def test_action_audit_writes_outputs_and_reports(self) -> None:
         with tempfile.TemporaryDirectory() as tmp:
@@ -471,6 +482,50 @@ class GitHubActionTests(unittest.TestCase):
         )
         self.assertIn("HarnessForge Review Finalization", summary_text)
         self.assertIn("High-risk surfaces", summary_text)
+
+    def test_action_migrate_state_applies_explicit_state_migration(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            (root / "progress.md").write_text("# Progress\n\nDone.\n", encoding="utf-8")
+            (root / "session-handoff.md").write_text(
+                "# Handoff\n\nNext step.\n",
+                encoding="utf-8",
+            )
+            output = root / "outputs.txt"
+            summary = root / "summary.md"
+            env = {
+                "INPUT_COMMAND": "migrate-state",
+                "INPUT_TARGET": str(root),
+                "INPUT_APPLY": "true",
+                "INPUT_JSON_REPORT": "reports/state-migration.json",
+                "GITHUB_OUTPUT": str(output),
+                "GITHUB_STEP_SUMMARY": str(summary),
+            }
+
+            with contextlib.redirect_stdout(io.StringIO()):
+                code = run_from_env(env)
+
+            payload = json.loads(
+                (root / "reports" / "state-migration.json").read_text(
+                    encoding="utf-8"
+                )
+            )
+            current = (root / "current-state.md").read_text(encoding="utf-8")
+            progress_preserved = (root / "progress.md").exists()
+            handoff_preserved = (root / "session-handoff.md").exists()
+            outputs = _parse_github_output(output.read_text(encoding="utf-8"))
+            summary_text = summary.read_text(encoding="utf-8")
+
+        self.assertEqual(code, 0)
+        self.assertEqual(payload["mode"], "apply")
+        self.assertEqual(payload["changedFiles"], 1)
+        self.assertTrue(progress_preserved)
+        self.assertTrue(handoff_preserved)
+        self.assertIn("<!-- harnessforge-state-migration:start -->", current)
+        self.assertEqual(outputs["changed-files"], "1")
+        self.assertEqual(outputs["report-json"], "reports/state-migration.json")
+        self.assertIn("HarnessForge State Migration", summary_text)
+        self.assertIn("Legacy files found", summary_text)
 
     def test_action_sync_verify_evidence_gate_blocks_missing_evidence(self) -> None:
         with tempfile.TemporaryDirectory() as tmp:

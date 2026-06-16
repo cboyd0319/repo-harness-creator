@@ -32,6 +32,10 @@ state files, or release process are present in the caller repository.
   finalization, and writes only when `apply: "true"` is explicit. It records
   accepted advisory high-risk surface evidence only when
   `accept-detected-high-risk: "true"` is explicit.
+- `migrate-state` reads the declared `target`, plans split state migration from
+  `progress.md` and `session-handoff.md` into `current-state.md`, and writes
+  only when `apply: "true"` is explicit. It preserves legacy files and never
+  runs target commands.
 - `init` and applied `update` may write generated harness files inside
   `target`; callers should grant write permissions only when they intend to
   commit or open a pull request.
@@ -209,6 +213,33 @@ Because GitHub Actions cannot prompt, `apply: "true"` and
 `accept-detected-high-risk: "true"` are the explicit confirmation boundary for
 this write-capable command.
 
+## State Migration
+
+Plan legacy state consolidation without writing:
+
+```yaml
+- uses: cboyd0319/harnessforge@<reviewed-commit-sha> # v1
+  with:
+    command: migrate-state
+    json-report: docs/harness/evidence/state-migration.json
+```
+
+Apply the reviewed migration only when the repo owner wants
+`current-state.md` updated:
+
+```yaml
+- uses: cboyd0319/harnessforge@<reviewed-commit-sha> # v1
+  with:
+    command: migrate-state
+    apply: "true"
+    json-report: docs/harness/evidence/state-migration.json
+```
+
+`command: migrate-state` writes or updates a bounded migration section in
+`current-state.md`, preserves `progress.md` and `session-handoff.md`, and does
+not delete legacy files. Because GitHub Actions cannot prompt, `apply: "true"`
+is the explicit confirmation boundary.
+
 ## Verify Project Checks
 
 Plan verification checks without running target commands:
@@ -287,12 +318,12 @@ and not behavior embedded in the composite Action runtime.
 
 | Input | Default | Purpose |
 | --- | --- | --- |
-| `command` | `audit` | `audit`, `init`, `update`, `sync`, `verify`, `report`, `release-check`, `finalize-review`, or `doctor` |
+| `command` | `audit` | `audit`, `init`, `update`, `sync`, `verify`, `report`, `release-check`, `finalize-review`, `migrate-state`, or `doctor` |
 | `target` | `.` | Repository path to inspect or modify |
 | `python-version` | `3.13.14` | Python version passed to `actions/setup-python` |
 | `min-score` | `85` | Minimum passing structural audit score from 0 to 100 |
 | `fail-on-score` | `true` | Fail the action when score is below threshold |
-| `apply` | `false` | Apply safe corrections for `update` or review finalization for `finalize-review` |
+| `apply` | `false` | Apply safe corrections for `update`, review finalization for `finalize-review`, or state migration for `migrate-state` |
 | `force` | `false` | Allow overwrites for generated files |
 | `enhance-existing` | `false` | Append reviewed guidance to existing instruction files without replacing project text |
 | `agent-file` | `AGENTS.md` | Root instruction file to generate |
@@ -312,7 +343,7 @@ and not behavior embedded in the composite Action runtime.
 | `reviewed-by` | empty | Optional newline-separated reviewer names for `command: finalize-review` |
 | `evidence-ref` | empty | Optional newline-separated evidence references for `command: finalize-review` |
 | `html-report` | empty | Optional target-relative HTML report path; POSIX and Windows absolute/rooted paths are rejected |
-| `json-report` | empty | Optional target-relative audit, sync, verify, report, release-check, or finalize-review JSON report path; POSIX and Windows absolute/rooted paths are rejected |
+| `json-report` | empty | Optional target-relative audit, sync, verify, report, release-check, finalize-review, or migrate-state JSON report path; POSIX and Windows absolute/rooted paths are rejected |
 | `markdown-report` | empty | Optional target-relative Markdown report path for `command: report` or `command: release-check`; POSIX and Windows absolute/rooted paths are rejected |
 
 Report paths must be relative and stay inside `target`. Absolute paths and
@@ -327,7 +358,7 @@ traversal outside the target repository are rejected.
 | `report-json` | Target-relative JSON report path when requested |
 | `report-html` | Target-relative HTML report path when requested |
 | `report-markdown` | Target-relative Markdown report path when requested |
-| `changed-files` | Number of files written by `init`, applied `update`, or applied `finalize-review` |
+| `changed-files` | Number of files written by `init`, applied `update`, applied `finalize-review`, or applied `migrate-state` |
 | `verify-verdict` | Verify verdict when `command` is `verify` |
 | `readiness-verdict` | Readiness verdict when `command` is `sync`, `report`, or `release-check` |
 | `sync-exit-code` | Sync readiness exit code when `command` is `sync` |
@@ -349,6 +380,8 @@ feature state, observability, and individual release gates.
 `command: finalize-review` summarizes dry-run/apply mode, planned writes,
 changed files, high-risk surface count, and whether high-risk acceptance is
 still missing.
+`command: migrate-state` summarizes dry-run/apply mode, legacy state files
+found, planned writes, changed files, and truncated excerpts.
 `command: sync` includes readiness, warning, review-required, structured
 review-surface status, accepted high-risk surface, runnable-check,
 instruction-quality, and first-agent lifecycle counts.

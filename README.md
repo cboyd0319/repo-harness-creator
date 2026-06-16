@@ -138,6 +138,12 @@ Assemble release readiness evidence:
 harnessforge release-check --target /path/to/repo --markdown-report docs/harness/evidence/release-check.md
 ```
 
+Plan legacy state consolidation:
+
+```bash
+harnessforge migrate-state --target /path/to/repo
+```
+
 See [Usage](docs/usage.md) for readiness checks, repo indexing,
 existing-instruction review, verification plans, unified reports, explicit
 verify runs, `harnessforge update` drift workflows, blueprints, and CI
@@ -154,6 +160,7 @@ preflight.
 | `report` | Unified read-only harness status and maturity report with optional JSON and Markdown outputs |
 | `release-check` | Read-only release readiness and maturity gate over existing harness evidence |
 | `finalize-review` | Explicit first-agent review finalization and high-risk acceptance evidence |
+| `migrate-state` | Dry-run or explicitly apply migration from split root state files into `current-state.md` |
 | `enhance` | Review existing instruction files without writing files |
 | `plan` | Diff-aware verification planning without command execution |
 | `sync --check` | CI-oriented readiness preflight with stable exit codes |

@@ -9,9 +9,9 @@ as the next product buildout. Release prep stays paused until structured
 high-risk surface acceptance, review finalization, state migration, manifest
 refresh, skill-wiring validation, and related report/maturity fixes are
 implemented or explicitly deferred by maintainers. Structured high-risk surface
-acceptance, review-finalization automation, and structured review status
-fields are implemented. The next slice is split-state migration planning and
-safe application, followed by skill-wiring validation, compact verification
+acceptance, review-finalization automation, structured review status fields,
+and split-state migration are implemented. The next slice is generated and
+enhanced harness skill-wiring validation, followed by compact verification
 evidence, report polish, and a RunHaven-shaped fixture.
 
 ## Product State
@@ -101,6 +101,11 @@ evidence, report polish, and a RunHaven-shaped fixture.
 - Readiness and report JSON now expose structured `reviewSurfaces` plus
   `reviewStatusSummary` with machine status values. `finalize-review` consumes
   those fields instead of parsing human-readable review-required strings.
+- `harnessforge migrate-state` and Action `command: migrate-state` now plan
+  and explicitly apply bounded migration from root `progress.md` and
+  `session-handoff.md` into `current-state.md`. Apply mode preserves the
+  legacy files, requires `--yes` for non-interactive CLI writes, and does not
+  run target commands. Audit scoring now penalizes stale split root state.
 
 ## Trusted Verification
 
@@ -142,6 +147,16 @@ evidence, report polish, and a RunHaven-shaped fixture.
   report JSON smoke showed audit `100`, readiness `ready`,
   `reviewStatusSummary` with `0` pending and `10` accepted advisory surfaces,
   and maturity `reviewed`.
+- After implementing split-state migration, focused migration and audit tests
+  passed; related CLI/Action/generated-audit suites passed with 184 tests; full
+  unit discovery passed with 281 tests; compileall passed; pin check passed;
+  JSON validation passed; `git diff --check` passed; self-audit stayed
+  `100/100`; `migrate-state --target . --json` produced parseable dry-run JSON
+  with zero writes; report JSON smoke showed audit `100`, readiness `ready`,
+  docs fan-out `warning`, `0` pending review surfaces, and maturity `reviewed`;
+  release-check JSON smoke returned the expected strict-gate `blocked` verdict
+  because current run-mode verify evidence is not committed; public-repo corpus
+  stayed at 13 fixtures with minimum score `100`.
 - `PYTHONPATH=src:. python3 -m harnessforge release-check --target . --since HEAD --json`
   produced parseable JSON and returned the expected strict-gate blocked exit.
 - `PYTHONPATH=src:. python3 -m harnessforge quickstart --target . --interactive --json`
@@ -174,7 +189,9 @@ evidence, report polish, and a RunHaven-shaped fixture.
 - `src/harnessforge/core/`
 - `src/harnessforge/evidence/high_risk_acceptance.py`
 - `src/harnessforge/project/finalize_review.py`
+- `src/harnessforge/project/state_migration.py`
 - `src/harnessforge/project/readiness.py`
+- `src/harnessforge/assessment/audit.py`
 - `src/harnessforge/evidence/report.py`
 - `src/harnessforge/generation/`
 - `src/harnessforge/project/`
@@ -187,6 +204,6 @@ evidence, report polish, and a RunHaven-shaped fixture.
 
 ## Next Step
 
-Implement split-state migration planning and optional safe application, then
-continue the remaining RunHaven-derived backlog in `docs/roadmap.md` before
-release prep resumes.
+Implement generated and enhanced harness skill-wiring validation, then continue
+the remaining RunHaven-derived backlog in `docs/roadmap.md` before release prep
+resumes.

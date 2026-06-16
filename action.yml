@@ -8,7 +8,7 @@ branding:
 
 inputs:
   command:
-    description: "Command to run: audit, init, update, sync, verify, report, release-check, finalize-review, or doctor."
+    description: "Command to run: audit, init, update, sync, verify, report, release-check, finalize-review, migrate-state, or doctor."
     required: false
     default: audit
   target:
@@ -28,7 +28,7 @@ inputs:
     required: false
     default: "true"
   apply:
-    description: Apply safe missing-file corrections when command is update or review finalization when command is finalize-review.
+    description: Apply safe missing-file corrections for update, review finalization for finalize-review, or state migration for migrate-state.
     required: false
     default: "false"
   force:
@@ -108,11 +108,11 @@ inputs:
     required: false
     default: ""
   json-report:
-    description: Optional target-relative path for an audit, sync, verify, or report JSON report.
+    description: Optional target-relative path for an audit, sync, verify, report, release-check, finalize-review, or migrate-state JSON report.
     required: false
     default: ""
   markdown-report:
-    description: Optional target-relative path for a Markdown report when command is report.
+    description: Optional target-relative path for a Markdown report when command is report or release-check.
     required: false
     default: ""
 
@@ -133,7 +133,7 @@ outputs:
     description: Markdown report path when requested.
     value: ${{ steps.harnessforge.outputs.report-markdown }}
   changed-files:
-    description: Number of files written by init or update.
+    description: Number of files written by init, update, finalize-review, or migrate-state.
     value: ${{ steps.harnessforge.outputs.changed-files }}
   verify-verdict:
     description: Verify verdict when command is verify.

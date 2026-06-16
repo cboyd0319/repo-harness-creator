@@ -2110,6 +2110,7 @@ def _manifest_content(
             "harnessforge session",
             "harnessforge report",
             "harnessforge enhance",
+            "harnessforge migrate-state",
             "harnessforge plan",
         ],
         "docs/harness/authoritative-facts.md": [

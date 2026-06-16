@@ -65,7 +65,10 @@ boundaries it preserves. See [Usage](usage.md) for commands and
   metadata offline by default and checks remote heads only with
   `--verify-remote`.
 - Provides a composite GitHub Action for audit, init, update, sync, verify,
-  report, release-check, finalize-review, and doctor workflows.
+  report, release-check, finalize-review, migrate-state, and doctor workflows.
+- Provides explicit legacy state migration from root `progress.md` and
+  `session-handoff.md` into `current-state.md`; apply mode preserves the
+  legacy files and requires confirmation in the CLI.
 
 ## Default Boundaries
 
@@ -82,8 +85,8 @@ boundaries it preserves. See [Usage](usage.md) for commands and
   HarnessForge CI scaffold.
 - It does not run target repository commands during `inspect`, `index`,
   `effectiveness`, `session`, `report`, `release-check`, `finalize-review`,
-  `sync --check`, `audit`, `update --drift-report`, or default `verify`. Use
-  `verify --run` when command execution is explicitly wanted.
+  `migrate-state`, `sync --check`, `audit`, `update --drift-report`, or default
+  `verify`. Use `verify --run` when command execution is explicitly wanted.
 - It does not clone public repositories or use network access during the
   offline `corpus` quality gate.
 - It does not generate SBOMs during normal flows. Existing SPDX and

@@ -251,7 +251,28 @@ Destructive, overwrite-capable, apply-mode, or command-executing CLI
 operations warn and require confirmation. In an interactive terminal, type
 `yes` at the prompt. In non-interactive runs, pass `--yes` intentionally. This
 applies to `finalize-review --apply`, `update --apply`, `init --force`,
-non-dry-run `blueprint apply`, and `verify --run`.
+`migrate-state --apply`, non-dry-run `blueprint apply`, and `verify --run`.
+
+## State Migration
+
+Plan migration from old split root state files to `current-state.md`:
+
+```bash
+harnessforge migrate-state --target /path/to/repo
+harnessforge migrate-state --target /path/to/repo --json
+```
+
+Apply the migration only after review:
+
+```bash
+harnessforge migrate-state --target /path/to/repo --apply --yes
+```
+
+`migrate-state` is dry-run by default. Apply mode writes or updates a bounded,
+idempotent migration section in `current-state.md`, preserves `progress.md` and
+`session-handoff.md` in place, never runs target commands, and never deletes
+legacy files. Use it to consolidate still-current restart facts, then handle
+legacy file removal through a separate reviewed repo decision.
 
 ## Verify Project Checks
 
@@ -486,6 +507,7 @@ alone unless `--force` is supplied.
 | `harnessforge report` | Compose readiness, audit, drift, index, and evidence into one read-only report |
 | `harnessforge release-check` | Assemble read-only release readiness gates from existing evidence |
 | `harnessforge finalize-review` | Finalize first-agent review evidence with explicit apply and acceptance flags |
+| `harnessforge migrate-state` | Consolidate legacy `progress.md` and `session-handoff.md` state into `current-state.md` with explicit apply |
 | `harnessforge enhance` | Review existing instruction files without writing files |
 | `harnessforge plan` | Map changed files to a read-only verification plan |
 | `harnessforge sync --check` | Run a read-only CI preflight with readiness exit codes |

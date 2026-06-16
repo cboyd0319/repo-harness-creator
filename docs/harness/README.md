@@ -96,6 +96,7 @@ harnessforge effectiveness --target . --json
 harnessforge session --target .
 harnessforge report --target .
 harnessforge enhance --target .
+harnessforge migrate-state --target .
 harnessforge plan --target . --since HEAD
 harnessforge corpus --min-score 90
 harnessforge audit --target .
@@ -127,6 +128,11 @@ benchmark evidence. It scans target-contained
 target-relative `--evidence` path, and reports whether evidence is reviewable,
 inconclusive, not better, or blocked without running benchmarks or turning
 structural scores into performance claims.
+
+`migrate-state` is dry-run by default. It plans consolidation from old root
+`progress.md` and `session-handoff.md` files into `current-state.md`; apply
+mode requires confirmation, preserves legacy files, and does not run target
+commands.
 
 `session` is a read-only restart snapshot. It reports git state when available,
 detected stack, readiness verdict, harness audit score when a harness surface is

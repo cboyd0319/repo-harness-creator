@@ -1809,6 +1809,25 @@ class GenerateAuditTests(unittest.TestCase):
         self.assertEqual(result.bottleneck, "state")
         self.assertLess(result.overall, 85)
 
+    def test_audit_penalizes_legacy_split_state_files(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            create_harness(root)
+            (root / "progress.md").write_text("# Progress\n", encoding="utf-8")
+            (root / "session-handoff.md").write_text("# Handoff\n", encoding="utf-8")
+
+            result = audit_target(root)
+
+        state = next(domain for domain in result.domains if domain.name == "state")
+        split_check = next(
+            check
+            for check in state.checks
+            if check.message == "Current state is not split across legacy root state files"
+        )
+        self.assertFalse(split_check.passed)
+        self.assertIn("progress.md", split_check.detail)
+        self.assertLess(result.overall, 100)
+
     def test_powershell_uses_windows_gradle_wrapper_when_available(self) -> None:
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp)
