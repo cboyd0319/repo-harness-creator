@@ -167,7 +167,7 @@ The default generated harness includes:
 | Feedback | `docs/harness/feedback/verification-matrix.md`, `sensor-registry.md`, `quality-document.md`, `evaluator-rubric.md` |
 | State and lifecycle | `docs/harness/state/first-agent-task.md`, `roadmap.md`, `entropy-control.md`, `clean-state-checklist.md` |
 | Evidence | `docs/harness/evidence/evidence-log.md` |
-| Research | `docs/harness/research/sources.md`, `research-sources.json`, `research-inbox.md`, `source-record.schema.json`, `source-record-example.json` |
+| Research | `docs/harness/research/README.md`, `sources.md`, `research-inbox.md`, `source-record.schema.json`, `source-record-example.json` |
 | Release | `docs/harness/release/release-controls.md` |
 
 Each generated file is recorded in `docs/harness/manifest.json` with ownership

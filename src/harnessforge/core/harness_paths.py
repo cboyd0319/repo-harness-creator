@@ -27,6 +27,7 @@ CANONICAL_HARNESS_PATHS = {
     "evaluator_rubric": "docs/harness/feedback/evaluator-rubric.md",
     "quality_document": "docs/harness/feedback/quality-document.md",
     "release_controls": "docs/harness/release/release-controls.md",
+    "research_readme": "docs/harness/research/README.md",
     "source_record_schema": "docs/harness/research/source-record.schema.json",
     "source_record_example": "docs/harness/research/source-record-example.json",
     "research_sources": "docs/harness/research/research-sources.json",

@@ -408,6 +408,9 @@ class GenerateAuditTests(unittest.TestCase):
                 if path.is_file()
             )
             sources = (root / "docs/harness/research/sources.md").read_text(encoding="utf-8")
+            research_readme = (
+                root / "docs/harness/research/README.md"
+            ).read_text(encoding="utf-8")
 
         self.assertNotRegex(generated_text, r"(?i)\blocal commits?\b")
         self.assertNotRegex(generated_text, r"(?i)\bself-heal(?:ing)?\b")
@@ -417,6 +420,8 @@ class GenerateAuditTests(unittest.TestCase):
         self.assertIn("https://agentskills.io/skill-creation/best-practices.md", sources)
         self.assertIn("https://agentskills.io/skill-creation/evaluating-skills.md", sources)
         self.assertIn("project checkpoints", generated_text)
+        self.assertIn("product-level HarnessForge research allowlists", research_readme)
+        self.assertIn("project-owned source records", research_readme)
 
     def test_generated_pin_checker_is_advisory_unless_strict(self) -> None:
         with tempfile.TemporaryDirectory() as tmp:
@@ -554,6 +559,7 @@ class GenerateAuditTests(unittest.TestCase):
         self.assertIn("docs/harness/boundaries/component-inventory.md", manifest["requiredFiles"])
         self.assertIn("scripts/check_pins.py", manifest["requiredFiles"])
         self.assertIn("docs/harness/release/release-controls.md", manifest["requiredFiles"])
+        self.assertIn("docs/harness/research/README.md", manifest["requiredFiles"])
         self.assertNotIn("docs/harness/research/research-sources.json", manifest["requiredFiles"])
         self.assertIn("docs/harness/state/roadmap.md", manifest["requiredFiles"])
         self.assertIn("docs/harness/feedback/sensor-registry.md", manifest["requiredFiles"])

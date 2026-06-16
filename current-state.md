@@ -4,11 +4,12 @@ Last Updated: 2026-06-16 UTC
 
 ## Current Objective
 
-Capabilities and research-doc cleanup is complete when
-`docs/capabilities.md` is easier to read, repo-local research docs are current
-and clear about generated versus human-maintained surfaces, required manifest
-snippets remain intact, focused docs verification passes, and the result is
-committed and pushed to `main`. Release prep resumes next.
+Research directory README work is complete when the repo-local
+`docs/harness/research/README.md` exists, generated target harnesses receive a
+compact portable research README, product-local research allowlists stay out of
+target repos, generated Markdown budgets still pass, focused verification
+passes, and the result is committed and pushed to `main`. Release prep resumes
+next.
 
 ## Product State
 
@@ -156,6 +157,12 @@ committed and pushed to `main`. Release prep resumes next.
   research notes now distinguish implemented work from future candidates, and
   `sources.md` records which research files are generated versus
   human-maintained.
+- `docs/harness/research/README.md` now owns the repo-local research directory
+  map, generated-file boundary, update rules, and verification commands.
+  Generated target harnesses now include a compact
+  `docs/harness/research/README.md` that points to `sources.md`,
+  `research-inbox.md`, and source-record schema/example files while keeping
+  HarnessForge product-level research allowlists out of target repos.
 
 ## Trusted Verification
 
@@ -201,6 +208,13 @@ committed and pushed to `main`. Release prep resumes next.
   `tests.test_pins`, and `tests.test_verify_contract` passed with 85 tests;
   self-audit passed at `100/100`; `git diff --check` passed; `./init.sh`
   passed with 287 tests and self-audit `100/100`.
+- Current research README verification: generated harness smoke confirmed
+  `docs/harness/research/README.md` is generated and
+  `docs/harness/research/research-sources.json` is not; required live manifest
+  snippet check passed; `tests.test_generate_audit`, `tests.test_refresh_research`,
+  and `tests.test_pins` passed with 100 tests; `scripts/refresh_research.py
+  --root . --check` passed; self-audit passed at `100/100`; `git diff --check`
+  passed; `./init.sh` passed with 287 tests and self-audit `100/100`.
 - Current cleanup pass removed ignored local artifacts: `__pycache__`, `*.pyc`,
   `.DS_Store`, `.pytest_cache`, `htmlcov`, and `.coverage` if present.
 - Current known local verification gap: `pwsh -NoProfile -File ./init.ps1`
@@ -215,6 +229,10 @@ committed and pushed to `main`. Release prep resumes next.
 - `current-state.md`
 - `docs/capabilities.md`
 - `docs/harness/research/`
+- `src/harnessforge/templates/`
+- `src/harnessforge/generation/generate.py`
+- `src/harnessforge/core/harness_paths.py`
+- `tests/test_generate_audit.py`
 
 ## Blockers
 
@@ -226,5 +244,4 @@ committed and pushed to `main`. Release prep resumes next.
 
 ## Next Step
 
-Commit and push the capabilities and research-doc cleanup, then resume release
-prep.
+Commit and push the research README work, then resume release prep.

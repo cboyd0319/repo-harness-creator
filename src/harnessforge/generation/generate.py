@@ -271,6 +271,7 @@ def _template_specs(
             ("evaluator-rubric.md.tmpl", harness_path("evaluator_rubric"), False),
             ("quality-document.md.tmpl", harness_path("quality_document"), False),
             ("release-controls.md.tmpl", harness_path("release_controls"), False),
+            ("research-readme.md.tmpl", harness_path("research_readme"), False),
             (
                 "source-record.schema.json.tmpl",
                 harness_path("source_record_schema"),
@@ -2030,6 +2031,7 @@ def _manifest_content(
         "docs/harness/feedback/evaluator-rubric.md",
         "docs/harness/feedback/quality-document.md",
         "docs/harness/release/release-controls.md",
+        "docs/harness/research/README.md",
         "docs/harness/research/source-record.schema.json",
         "docs/harness/research/source-record-example.json",
         "docs/harness/research/research-inbox.md",
@@ -2296,6 +2298,12 @@ def _manifest_content(
             "machine-local absolute paths",
             "project-owned records",
             "harnessUsage",
+        ],
+        "docs/harness/research/README.md": [
+            "Research And Source Records",
+            "product-level HarnessForge research allowlists",
+            "project-owned source records",
+            "machine-local paths",
         ],
         "docs/harness/research/source-record-example.json": [
             "source-record-example",

@@ -18,7 +18,7 @@ surfaces listed in the routing table when the change affects them.
 | Optional workflow scaffolds | Generated CI workflow template and manifest ownership metadata |
 | Tests and fixture corpus | `tests/`, `src/harnessforge/generation/public_repo_corpus.py` |
 | Release/package surface | `docs/harness/release/release-controls.md`, package metadata, release evidence |
-| Research and source ledger | `docs/harness/research/research-sources.json`, lock file, `docs/harness/research/sources.md` |
+| Research and source ledger | `docs/harness/research/README.md`, `docs/harness/research/research-sources.json`, lock file, `docs/harness/research/sources.md` |
 | Security and privacy | `docs/harness/boundaries/security-boundary-map.md`, `feature-privacy-labels.json` |
 | Platform contracts | `docs/harness/manifest.json`, platform source review metadata |
 | Docs and UX | README, usage, capabilities, Action docs, and this routing map |
@@ -38,7 +38,7 @@ surfaces listed in the routing table when the change affects them.
 | Accepted roadmap and backlog boundary | `docs/roadmap.md` | Reference from state files instead of duplicating full lists. |
 | Current work state and evidence | `feature_list.json`, `current-state.md`, `docs/harness/evidence/evidence-log.md` | Use the specific file that owns the fact. Do not update state files as a routine bundle. |
 | Verification commands and recurring gates | `docs/harness/feedback/verification-matrix.md`, `docs/harness/feedback/sensor-registry.md`, root entrypoints | Update only when a command, owner, or gate changes. |
-| Research source allowlist and review evidence | `docs/harness/research/research-sources.json`, `docs/harness/research/research-sources.lock.json`, `docs/harness/research/sources.md` | Do not paste source catalogs into other docs. |
+| Research source allowlist, directory policy, and review evidence | `docs/harness/research/README.md`, `docs/harness/research/research-sources.json`, `docs/harness/research/research-sources.lock.json`, `docs/harness/research/sources.md` | Do not paste source catalogs into other docs. |
 
 ## Change-To-Docs Routing
 
@@ -52,7 +52,7 @@ surfaces listed in the routing table when the change affects them.
 | GitHub Action behavior change | `action.yml`, `docs/action.md`, Action tests, pin check if dependencies/actions change | Generated target docs unless Action output changes generated guidance |
 | Audit/report scoring change | `docs/capabilities.md` or `docs/usage.md` if user-visible, scoring/report tests, `docs/harness/manifest.json` only for snippet contract | README unless positioning changes |
 | Platform, dependency, workflow, or pin change | `docs/harness/boundaries/dependency-change-policy.md`, `pins.toml`, `scripts/check_pins.py`, relevant workflow/docs | Roadmap unless it changes accepted scope |
-| Research source or source policy change | `docs/harness/research/sources.md`, `docs/harness/research/research-sources.json`, lock file, research check | CLI docs unless command behavior changes |
+| Research source, directory policy, or source policy change | `docs/harness/research/README.md`, `docs/harness/research/sources.md`, `docs/harness/research/research-sources.json`, lock file, research check | CLI docs unless command behavior changes |
 | Release-prep evidence change | `docs/harness/release/release-controls.md` when the release process changes, `docs/harness/evidence/evidence-log.md` when evidence must be preserved | Generated templates unless release guidance changes; state files unless stopping, handing off, or changing the objective |
 
 ## State File Write Thresholds

@@ -56,7 +56,7 @@ with scope, verification, and rollback.
 | Environment | `pyproject.toml`, CI matrix, `component-inventory.md`, `dependency-change-policy.md` | Python, OS, package, component, and Action support contract |
 | State | `feature_list.json`, `current-state.md`, `evidence-log.md`, `docs/roadmap.md`, `authoritative-facts.md` | Feature state, current objective, evidence, docs routing, and restart state |
 | Feedback | tests, self-audit, CI, `first-agent-task.md`, `verification-matrix.md`, `sensor-registry.md`, `evaluator-rubric.md`, `verify-json-contract.md`, `effectiveness-eval-contract.md`, research refresh | First-agent harness improvement, deterministic quality checks, sensor ownership, machine-readable verification output, benchmark-claim boundaries, and source drift signal |
-| Research | `sources.md`, `research-sources.json`, `source-record.schema.json`, `source-record-example.json` | Fixed research allowlist, source provenance, and project-owned source records |
+| Research | `research/README.md`, `sources.md`, `research-sources.json`, `source-record.schema.json`, `source-record-example.json` | Research directory map, fixed research allowlist, source provenance, and project-owned source records |
 | Scope | `docs/harness/boundaries/change-contract.md`, `security-boundary-map.md`, `feature-privacy-labels.json` | Acceptance, rollback, security, and data-flow discipline |
 | Lifecycle | `current-state.md`, `clean-state-checklist.md`, `quality-document.md`, `release-controls.md`, `self-healing.md`, entropy control | Restart, roadmap freshness, release readiness, recurring maintenance, and reviewed automation |
 
