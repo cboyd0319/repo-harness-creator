@@ -298,6 +298,7 @@ class GitHubActionTests(unittest.TestCase):
         self.assertIn("# HarnessForge Report", markdown)
         self.assertIn("HarnessForge Report", summary_text)
         self.assertIn("Accepted high-risk surfaces", summary_text)
+        self.assertIn("Review surfaces", summary_text)
         self.assertIn("Docs fan-out verdict", summary_text)
         self.assertIn("Instruction quality", summary_text)
         self.assertIn("First-agent lifecycle", summary_text)
@@ -410,6 +411,7 @@ class GitHubActionTests(unittest.TestCase):
         self.assertFalse((root / "AGENTS.md").exists())
         self.assertIn("HarnessForge Sync", summary_text)
         self.assertIn("Accepted high-risk surfaces", summary_text)
+        self.assertIn("Review surface statuses", summary_text)
         self.assertIn("Instruction quality", summary_text)
         self.assertIn("First-agent lifecycle", summary_text)
 

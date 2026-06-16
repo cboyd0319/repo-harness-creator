@@ -9,9 +9,10 @@ as the next product buildout. Release prep stays paused until structured
 high-risk surface acceptance, review finalization, state migration, manifest
 refresh, skill-wiring validation, and related report/maturity fixes are
 implemented or explicitly deferred by maintainers. Structured high-risk surface
-acceptance and review-finalization automation are implemented. The next slice
-is structured review status fields plus the remaining state, skill-wiring,
-verification-evidence, report, and RunHaven-shaped fixture work.
+acceptance, review-finalization automation, and structured review status
+fields are implemented. The next slice is split-state migration planning and
+safe application, followed by skill-wiring validation, compact verification
+evidence, report polish, and a RunHaven-shaped fixture.
 
 ## Product State
 
@@ -97,6 +98,9 @@ verification-evidence, report, and RunHaven-shaped fixture work.
   interactive terminals must type `yes`. Covered paths include `init --force`,
   `update --apply`, `blueprint apply`, `verify --run`, and
   `finalize-review --apply`.
+- Readiness and report JSON now expose structured `reviewSurfaces` plus
+  `reviewStatusSummary` with machine status values. `finalize-review` consumes
+  those fields instead of parsing human-readable review-required strings.
 
 ## Trusted Verification
 
@@ -131,6 +135,13 @@ verification-evidence, report, and RunHaven-shaped fixture work.
   `100`, readiness `ready`, docs fan-out `warning`, and maturity `reviewed`;
   `finalize-review --target . --json` produced parseable dry-run JSON with no
   missing high-risk acceptance flag.
+- After implementing structured review status fields, focused readiness,
+  report, finalize-review, and Action tests passed; broader CLI/Action/
+  generator/maturity tests passed with 181 tests; compileall passed; JSON
+  validation passed; `git diff --check` passed; self-audit stayed `100/100`;
+  report JSON smoke showed audit `100`, readiness `ready`,
+  `reviewStatusSummary` with `0` pending and `10` accepted advisory surfaces,
+  and maturity `reviewed`.
 - `PYTHONPATH=src:. python3 -m harnessforge release-check --target . --since HEAD --json`
   produced parseable JSON and returned the expected strict-gate blocked exit.
 - `PYTHONPATH=src:. python3 -m harnessforge quickstart --target . --interactive --json`
@@ -163,6 +174,8 @@ verification-evidence, report, and RunHaven-shaped fixture work.
 - `src/harnessforge/core/`
 - `src/harnessforge/evidence/high_risk_acceptance.py`
 - `src/harnessforge/project/finalize_review.py`
+- `src/harnessforge/project/readiness.py`
+- `src/harnessforge/evidence/report.py`
 - `src/harnessforge/generation/`
 - `src/harnessforge/project/`
 - `src/harnessforge/`
@@ -174,5 +187,6 @@ verification-evidence, report, and RunHaven-shaped fixture work.
 
 ## Next Step
 
-Implement structured review status fields, then continue the remaining
-RunHaven-derived backlog in `docs/roadmap.md` before release prep resumes.
+Implement split-state migration planning and optional safe application, then
+continue the remaining RunHaven-derived backlog in `docs/roadmap.md` before
+release prep resumes.

@@ -16,7 +16,7 @@ from ..evidence.high_risk_acceptance import (
     ACCEPTED_SURFACE_DECISIONS,
 )
 from .detect import detect_project
-from .readiness import INSTRUCTION_FILES, ReadinessReport, inspect_readiness
+from .readiness import REVIEW_STATUS_PENDING, ReadinessReport, inspect_readiness
 
 REVIEW_FINALIZATION_SCHEMA_VERSION = "harnessforge.reviewFinalization.v1"
 DEFAULT_REVIEWER = "maintainer"
@@ -45,7 +45,7 @@ def build_review_finalization_plan(
         explicit_commands=explicit_commands,
     )
     readiness = inspect_readiness(profile)
-    detected_surfaces = _detected_high_risk_surfaces(readiness, profile.files)
+    detected_surfaces = _detected_high_risk_surfaces(readiness)
     if detected_surfaces and apply and not accept_detected_high_risk:
         raise ValueError(
             "review finalization detected high-risk surfaces; rerun with "
@@ -402,30 +402,18 @@ def _target_path(root: Path, relative_path: str) -> Path:
 
 def _detected_high_risk_surfaces(
     readiness: ReadinessReport,
-    files: tuple[str, ...],
 ) -> tuple[dict[str, str], ...]:
-    accepted = readiness.high_risk_acceptance
     result: list[dict[str, str]] = []
-    file_set = set(files)
-    review_required = set(readiness.review_required)
-    for path in INSTRUCTION_FILES:
-        if (
-            path in file_set
-            and not accepted.accepts_path(path)
-            and _instruction_review_required(path, review_required)
-        ):
-            result.append(_surface(path, "instruction-router"))
-    for item in readiness.workflow_inventory:
-        if item.review_required and not accepted.accepts_path(item.path):
-            result.append(_surface(item.path, "workflow"))
-    for item in readiness.governance_inventory:
-        if item.review_required and not accepted.accepts_path(item.path):
-            result.append(_surface(item.path, item.category))
+    high_risk_sources = {
+        "instruction-files",
+        "workflow-inventory",
+        "governance-inventory",
+    }
+    for item in readiness.review_surfaces:
+        if item.status != REVIEW_STATUS_PENDING or item.source not in high_risk_sources:
+            continue
+        result.append(_surface(item.path, item.category))
     return tuple(_dedupe_surfaces(result))
-
-
-def _instruction_review_required(path: str, review_required: set[str]) -> bool:
-    return any(item.startswith(f"{path} already exists;") for item in review_required)
 
 
 def _surface(path: str, category: str) -> dict[str, str]:

@@ -71,6 +71,18 @@ AGENT_SETUP_WORKFLOWS = (
     ".github/workflows/copilot-setup-steps.yaml",
 )
 
+REVIEW_STATUS_PENDING = "pending_review"
+REVIEW_STATUS_ACCEPTED = "accepted_advisory"
+
+
+@dataclass(frozen=True)
+class ReviewSurface:
+    path: str
+    category: str
+    status: str
+    source: str
+    message: str
+
 
 @dataclass(frozen=True)
 class ReadinessReport:
@@ -83,6 +95,7 @@ class ReadinessReport:
     runnable_checks: tuple[str, ...]
     generated_drift: tuple[DriftResult, ...]
     review_required: tuple[str, ...]
+    review_surfaces: tuple[ReviewSurface, ...]
     config_precedence: tuple[str, ...]
     workflow_inventory: tuple[WorkflowItem, ...]
     work_item_inventory: tuple[WorkItem, ...]
@@ -123,7 +136,7 @@ def inspect_readiness(
     warnings: list[str] = []
     blocked: list[str] = []
     next_actions: list[str] = []
-    review_required: list[str] = []
+    review_surfaces: list[ReviewSurface] = []
     source_of_truth = _source_of_truth(profile, file_set, spec_report)
 
     if not runnable_checks:
@@ -149,8 +162,15 @@ def inspect_readiness(
                 f"{file_name} already exists; confirm it routes agents to "
                 "current project instructions."
             )
-            if not high_risk_acceptance.accepts_path(file_name):
-                review_required.append(message)
+            review_surfaces.append(
+                _review_surface(
+                    path=file_name,
+                    category="instruction-router",
+                    source="instruction-files",
+                    message=message,
+                    acceptance=high_risk_acceptance,
+                )
+            )
 
     for marker in source_of_truth:
         warnings.append(
@@ -211,19 +231,28 @@ def inspect_readiness(
     next_actions.extend(first_agent_lifecycle.next_actions)
     instruction_text = _instruction_text(profile.root, file_set)
     if instruction_text and not instruction_routes_to_specs(instruction_text, spec_report):
-        review_required.append(
-            "Instruction files do not route agents to detected source-of-truth specs."
+        review_surfaces.append(
+            ReviewSurface(
+                path=_primary_instruction_path(file_set),
+                category="source-of-truth-routing",
+                status=REVIEW_STATUS_PENDING,
+                source="spec-system",
+                message=(
+                    "Instruction files do not route agents to detected "
+                    "source-of-truth specs."
+                ),
+            )
         )
 
-    review_required.extend(
-        _unaccepted_governance_review_required(
+    review_surfaces.extend(
+        _governance_review_surfaces(
             governance_inventory.items,
             high_risk_acceptance,
         )
     )
-    review_required.extend(effectiveness_inventory.review_required)
-    review_required.extend(
-        _unaccepted_workflow_review_required(
+    review_surfaces.extend(_effectiveness_review_surfaces(effectiveness_inventory.items))
+    review_surfaces.extend(
+        _workflow_review_surfaces(
             inventory.workflows,
             high_risk_acceptance,
         )
@@ -236,6 +265,13 @@ def inspect_readiness(
             "GitHub agent setup workflow detected; review runner, permissions, "
             "and credential scope."
         )
+
+    review_surfaces = _dedupe_review_surfaces(review_surfaces)
+    review_required = [
+        surface.message
+        for surface in review_surfaces
+        if surface.status == REVIEW_STATUS_PENDING
+    ]
 
     if review_required:
         next_actions.append(
@@ -260,6 +296,7 @@ def inspect_readiness(
         runnable_checks=runnable_checks,
         generated_drift=drift_items,
         review_required=tuple(_dedupe(review_required)),
+        review_surfaces=tuple(review_surfaces),
         config_precedence=profile.config_precedence,
         workflow_inventory=inventory.workflows,
         work_item_inventory=inventory.work_items,
@@ -285,6 +322,10 @@ def readiness_to_dict(report: ReadinessReport) -> dict[str, Any]:
         "runnableChecks": list(report.runnable_checks),
         "generatedDrift": [_drift_to_dict(item) for item in report.generated_drift],
         "reviewRequired": list(report.review_required),
+        "reviewSurfaces": [
+            _review_surface_to_dict(item) for item in report.review_surfaces
+        ],
+        "reviewStatusSummary": _review_status_summary(report.review_surfaces),
         "configPrecedence": list(report.config_precedence),
         "workflowInventory": [
             workflow_to_dict(item) for item in report.workflow_inventory
@@ -328,6 +369,15 @@ def format_readiness(report: ReadinessReport) -> str:
         ),
     )
     _append_section(lines, "Review required", report.review_required)
+    _append_section(
+        lines,
+        "Review surfaces",
+        tuple(
+            f"{item.path}: {item.category}, status={item.status}, "
+            f"source={item.source}"
+            for item in report.review_surfaces
+        ),
+    )
     _append_section(lines, "Config precedence", report.config_precedence)
     _append_section(
         lines,
@@ -406,6 +456,114 @@ def format_readiness(report: ReadinessReport) -> str:
     )
     _append_section(lines, "Next actions", report.next_actions)
     return "\n".join(lines).rstrip()
+
+
+def _review_surface(
+    *,
+    path: str,
+    category: str,
+    source: str,
+    message: str,
+    acceptance: HighRiskAcceptanceReport,
+) -> ReviewSurface:
+    return ReviewSurface(
+        path=path,
+        category=category,
+        status=(
+            REVIEW_STATUS_ACCEPTED
+            if acceptance.accepts_path(path)
+            else REVIEW_STATUS_PENDING
+        ),
+        source=source,
+        message=message,
+    )
+
+
+def _workflow_review_surfaces(
+    workflows: tuple[WorkflowItem, ...],
+    acceptance: HighRiskAcceptanceReport,
+) -> tuple[ReviewSurface, ...]:
+    surfaces: list[ReviewSurface] = []
+    for item in workflows:
+        for message in item.review_required:
+            surfaces.append(
+                _review_surface(
+                    path=item.path,
+                    category="workflow",
+                    source="workflow-inventory",
+                    message=message,
+                    acceptance=acceptance,
+                )
+            )
+    return tuple(surfaces)
+
+
+def _governance_review_surfaces(
+    items: tuple[GovernanceItem, ...],
+    acceptance: HighRiskAcceptanceReport,
+) -> tuple[ReviewSurface, ...]:
+    surfaces: list[ReviewSurface] = []
+    for item in items:
+        for message in item.review_required:
+            surfaces.append(
+                _review_surface(
+                    path=item.path,
+                    category=item.category,
+                    source="governance-inventory",
+                    message=message,
+                    acceptance=acceptance,
+                )
+            )
+    return tuple(surfaces)
+
+
+def _effectiveness_review_surfaces(
+    items: tuple[EffectivenessItem, ...],
+) -> tuple[ReviewSurface, ...]:
+    surfaces: list[ReviewSurface] = []
+    for item in items:
+        for message in item.review_required:
+            surfaces.append(
+                ReviewSurface(
+                    path=item.path,
+                    category=item.category,
+                    status=REVIEW_STATUS_PENDING,
+                    source="effectiveness-inventory",
+                    message=message,
+                )
+            )
+    return tuple(surfaces)
+
+
+def _primary_instruction_path(file_set: set[str]) -> str:
+    for file_name in INSTRUCTION_FILES:
+        if file_name in file_set:
+            return file_name
+    return "AGENTS.md"
+
+
+def _review_surface_to_dict(surface: ReviewSurface) -> dict[str, str]:
+    return {
+        "path": surface.path,
+        "category": surface.category,
+        "status": surface.status,
+        "source": surface.source,
+        "message": surface.message,
+    }
+
+
+def _review_status_summary(
+    surfaces: tuple[ReviewSurface, ...],
+) -> dict[str, int]:
+    return {
+        "total": len(surfaces),
+        "pendingReview": sum(
+            1 for item in surfaces if item.status == REVIEW_STATUS_PENDING
+        ),
+        "acceptedAdvisory": sum(
+            1 for item in surfaces if item.status == REVIEW_STATUS_ACCEPTED
+        ),
+    }
 
 
 def _source_of_truth(
@@ -556,5 +714,23 @@ def _dedupe(values: list[str]) -> list[str]:
         if value in seen:
             continue
         seen.add(value)
+        result.append(value)
+    return result
+
+
+def _dedupe_review_surfaces(values: list[ReviewSurface]) -> list[ReviewSurface]:
+    seen: set[tuple[str, str, str, str, str]] = set()
+    result: list[ReviewSurface] = []
+    for value in values:
+        key = (
+            value.path,
+            value.category,
+            value.status,
+            value.source,
+            value.message,
+        )
+        if key in seen:
+            continue
+        seen.add(key)
         result.append(value)
     return result

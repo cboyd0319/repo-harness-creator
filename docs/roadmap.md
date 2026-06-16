@@ -923,8 +923,9 @@ Implemented shape:
 
 1. Implemented: structured high-risk surface acceptance evidence updates
    readiness, report, release-check, Action summaries, and maturity scoring.
-2. Replace raw marker-string review detection with structured status fields and
-   machine status values.
+2. Implemented: readiness and report JSON now expose structured
+   `reviewSurfaces` plus `reviewStatusSummary`, and review finalization uses
+   those machine status values instead of parsing human-readable messages.
 3. Implemented in part: `finalize-review` can retire the first-agent task,
    record high-risk acceptance evidence, and refresh manifest metadata. Compact
    verification evidence capture remains.

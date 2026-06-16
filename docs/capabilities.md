@@ -37,6 +37,9 @@ boundaries it preserves. See [Usage](usage.md) for commands and
 - Audits harness structure and reports actionable failures.
 - Reports generated-file drift and static readiness without running target
   project commands.
+- Reports structured review surfaces with machine-readable status values so
+  tools can distinguish pending review from accepted advisory high-risk
+  surfaces without parsing human-readable messages.
 - Composes readiness, audit, generated drift, structural index, verify
   evidence, effectiveness evidence, first-agent task status, platform
   contract, docs fan-out routing status, policy preset recommendations, SBOM

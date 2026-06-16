@@ -462,11 +462,19 @@ def _summary_markdown(result: Any, changed_files: int) -> str:
 
 
 def _sync_summary_markdown(report: Any, exit_code: int) -> str:
+    pending_surfaces = sum(
+        1 for item in report.review_surfaces if item.status == "pending_review"
+    )
+    accepted_surfaces = sum(
+        1 for item in report.review_surfaces if item.status == "accepted_advisory"
+    )
     lines = [
         f"- Verdict: `{report.verdict}`",
         f"- Exit code: `{exit_code}`",
         f"- Warnings: `{len(report.warnings)}`",
         f"- Review-required surfaces: `{len(report.review_required)}`",
+        "- Review surface statuses: "
+        f"`{pending_surfaces}` pending, `{accepted_surfaces}` accepted",
         "- Accepted high-risk surfaces: "
         f"`{len(report.high_risk_acceptance.accepted_surfaces)}`",
         f"- Runnable checks: `{len(report.runnable_checks)}`",
@@ -516,6 +524,9 @@ def _report_summary_markdown(payload: dict[str, Any]) -> str:
         f"`{payload['readiness']['highRiskAcceptance']['summary']['acceptedCount']}` |",
         f"| Audit score | `{payload['audit']['overall']}/100` |",
         f"| Generated drift | `{payload['drift']['summary']['actionable']}` actionable |",
+        "| Review surfaces | "
+        f"`{payload['readiness']['reviewStatusSummary']['pendingReview']}` pending, "
+        f"`{payload['readiness']['reviewStatusSummary']['acceptedAdvisory']}` accepted |",
         "| Docs fan-out verdict | "
         f"`{payload['docsFanout']['contract']['verdict']}` "
         f"({payload['docsFanout']['diff']['classification']}) |",

@@ -1106,6 +1106,20 @@ class CliTests(unittest.TestCase):
             payload["readiness"]["highRiskAcceptance"]["summary"]["acceptedCount"],
             3,
         )
+        surfaces = {
+            item["path"]: item
+            for item in payload["readiness"]["reviewSurfaces"]
+        }
+        self.assertEqual(surfaces["AGENTS.md"]["status"], "accepted_advisory")
+        self.assertEqual(
+            surfaces[".github/workflows/ci.yml"]["status"],
+            "accepted_advisory",
+        )
+        self.assertEqual(surfaces["Dockerfile"]["status"], "accepted_advisory")
+        self.assertGreaterEqual(
+            payload["readiness"]["reviewStatusSummary"]["acceptedAdvisory"],
+            3,
+        )
         self.assertFalse(
             any(
                 "AGENTS.md already exists" in item
@@ -2335,6 +2349,24 @@ class CliTests(unittest.TestCase):
         self.assertTrue(any("AGENTS.md" in item for item in payload["reviewRequired"]))
         self.assertTrue(any("MCP" in item for item in payload["reviewRequired"]))
         self.assertTrue(any("agent setup workflow" in item for item in payload["warnings"]))
+        surfaces = payload["reviewSurfaces"]
+        self.assertTrue(
+            any(
+                item["path"] == "AGENTS.md"
+                and item["category"] == "instruction-router"
+                and item["status"] == "pending_review"
+                for item in surfaces
+            )
+        )
+        self.assertTrue(
+            any(
+                item["path"] == ".mcp.json"
+                and item["source"] == "governance-inventory"
+                for item in surfaces
+            )
+        )
+        self.assertEqual(payload["reviewStatusSummary"]["pendingReview"], 5)
+        self.assertEqual(payload["reviewStatusSummary"]["acceptedAdvisory"], 0)
 
     def test_inspect_readiness_reports_spec_kit_quality_gaps(self) -> None:
         with tempfile.TemporaryDirectory() as tmp:

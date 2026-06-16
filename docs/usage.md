@@ -177,6 +177,8 @@ Readiness reports:
 - `effectivenessInventory`
 - `verifyEvidence`
 - `highRiskAcceptance`
+- `reviewSurfaces`
+- `reviewStatusSummary`
 
 `sync --check` wraps the same readiness report in a CI-friendly command with
 stable exit codes:

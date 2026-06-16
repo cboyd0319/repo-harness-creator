@@ -159,6 +159,9 @@ def format_report(payload: dict[str, Any]) -> str:
         f"- Warnings: {payload['readiness']['warningCount']}",
         f"- Blocked reasons: {payload['readiness']['blockedCount']}",
         f"- Review-required surfaces: {payload['readiness']['reviewRequiredCount']}",
+        "- Review surface statuses: "
+        f"{payload['readiness']['reviewStatusSummary']['pendingReview']} pending, "
+        f"{payload['readiness']['reviewStatusSummary']['acceptedAdvisory']} accepted",
         "- Accepted high-risk surfaces: "
         f"{payload['readiness']['highRiskAcceptance']['summary']['acceptedCount']}",
         "",
@@ -302,6 +305,8 @@ def _readiness_summary(readiness: dict[str, Any]) -> dict[str, Any]:
         "warnings": readiness["warnings"],
         "blockedReasons": readiness["blockedReasons"],
         "reviewRequired": readiness["reviewRequired"],
+        "reviewSurfaces": readiness["reviewSurfaces"],
+        "reviewStatusSummary": readiness["reviewStatusSummary"],
         "highRiskAcceptance": readiness["highRiskAcceptance"],
         "nextActions": readiness["nextActions"],
     }
