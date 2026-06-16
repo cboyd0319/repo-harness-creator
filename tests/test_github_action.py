@@ -3,7 +3,7 @@ from __future__ import annotations
 import contextlib
 import io
 import json
-import sys
+import os
 import tempfile
 import unittest
 from pathlib import Path
@@ -31,7 +31,8 @@ def _parse_github_output(text: str) -> dict[str, str]:
 
 
 def _python_command(script: str) -> str:
-    return f"{json.dumps(sys.executable)} -c {json.dumps(script)}"
+    executable = "python" if os.name == "nt" else "python3"
+    return f"{executable} -c {json.dumps(script)}"
 
 
 def _write_verify_report(

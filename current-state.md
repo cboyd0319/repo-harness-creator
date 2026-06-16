@@ -4,11 +4,10 @@ Last Updated: 2026-06-16 UTC
 
 ## Current Objective
 
-Main README refresh and dedupe is complete when the public landing page clearly
-explains what HarnessForge is, why repo owners want it, what makes it useful,
-and the current alpha/product boundaries; required README snippets are intact;
-focused docs checks pass; and the result is committed and pushed to `main`.
-Release prep resumes next.
+CI repair is complete when the latest failing GitHub Actions run is diagnosed,
+the failure is reproduced locally through the same editable-install test path,
+the portable fix is verified, and the result is committed and pushed to
+`main`. Release prep resumes next.
 
 ## Product State
 
@@ -136,6 +135,12 @@ Release prep resumes next.
   repo-local versus generated versus Action boundaries. The duplicate
   at-a-glance/value-prop table was removed, while required README snippets and
   command references remain intact.
+- Latest CI failure on `main` was traced to test helpers that used
+  `sys.executable` as a generated target verification command. In CI-style
+  editable installs that value is a temp venv path, so generated fixture
+  harnesses contained machine-local absolute paths and failed installed-package
+  report/audit expectations. CLI and Action tests now use portable `python3`
+  on POSIX and `python` on Windows for generated fixture commands.
 
 ## Trusted Verification
 
@@ -163,6 +168,11 @@ Release prep resumes next.
   passed with no missing snippets; duplicate literal prose scan found no
   repeated meaningful lines; `tests.test_generate_audit` passed with 59 tests;
   self-audit passed at `100/100`; `git diff --check` passed.
+- Current CI-fix verification: `gh run view 27628725293 --job 81697487692
+  --log` identified the failing CI `Tests` step; the three affected report and
+  release-check tests passed locally; a fresh Python 3.13 venv reproduced the
+  CI editable-install path; installed-package `python -m unittest discover -s
+  tests` passed with 287 tests after the fix.
 - Current cleanup pass removed ignored local artifacts: `__pycache__`, `*.pyc`,
   `.DS_Store`, `.pytest_cache`, `htmlcov`, and `.coverage` if present.
 - Current known local verification gap: `pwsh -NoProfile -File ./init.ps1`
@@ -175,7 +185,9 @@ Release prep resumes next.
 ## Touched Surfaces
 
 - `current-state.md`
-- `README.md`
+- `tests/test_cli.py`
+- `tests/test_github_action.py`
+- `docs/harness/evidence/evidence-log.md`
 
 ## Blockers
 
@@ -187,6 +199,4 @@ Release prep resumes next.
 
 ## Next Step
 
-Commit and push the README refresh, then resume release prep with release
-evidence, packaging/publish checks, and real-repo field quality passes as
-release-prep evidence.
+Commit and push the CI fix, then monitor the new `main` CI run.

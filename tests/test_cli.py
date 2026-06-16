@@ -6,7 +6,6 @@ import io
 import json
 import os
 import subprocess
-import sys
 import tempfile
 import unittest
 from pathlib import Path
@@ -15,7 +14,8 @@ from harnessforge.cli import main
 
 
 def _python_command(script: str) -> str:
-    return f"{json.dumps(sys.executable)} -c {json.dumps(script)}"
+    executable = "python" if os.name == "nt" else "python3"
+    return f"{executable} -c {json.dumps(script)}"
 
 
 def _write_verify_report(
