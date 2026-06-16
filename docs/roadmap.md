@@ -26,10 +26,11 @@ The main boundary remains unchanged:
 
 ## Current Release Boundary
 
-Release prep can resume. The accepted pre-release backlog and RunHaven-derived
-review-finalization work are complete. New field-test findings should stay as
-release-prep evidence or candidate roadmap items until maintainers explicitly
-accept them as product work.
+Release prep is not the next default step. The RunHaven-derived
+review-finalization work and deterministic large-repo/script cleanup slices are
+complete, but accepted non-release work remains. New field-test findings should
+stay as release-prep evidence or candidate roadmap items until maintainers
+explicitly accept them as product work.
 
 HarnessForge is still alpha/pre-release, has not been deployed, and has no
 external users. Accepted backlog work should optimize for the clean current
@@ -38,9 +39,10 @@ schemas, manifest formats, CLI outputs, Action behavior, or docs as backward
 compatibility promises. Add a shim only when a maintainer declares a release
 boundary or records a temporary evaluation bridge with removal criteria.
 
-Current release-prep work should focus on clean package evidence, release
-notes, tags, Action pin guidance, optional SBOM/provenance decisions, and any
-manual platform checks the maintainer wants before publishing.
+When the maintainer explicitly moves the repo to release prep, that work should
+focus on clean package evidence, release notes, tags, Action pin guidance,
+optional SBOM/provenance decisions, and any manual platform checks the
+maintainer wants before publishing.
 
 ## Surface Impact Checklist
 
@@ -1188,18 +1190,22 @@ Done when:
 12. Implemented: script cleanup and organization added purpose headers to live
    and generated scripts, kept referenced utilities in their current locations,
    added a focused header regression, and refreshed `.gitignore` hygiene.
-13. Release-prep field evidence: re-run real-repo quality passes against
-   RunHaven, selected sibling repos, and the remaining large public corpus.
-14. Remaining accepted backlog: no deterministic buildout item is currently
-   open. Resume release prep when the maintainer explicitly moves it past the
-   release boundary.
-15. Keep new findings in the roadmap only after maintainers accept them as
+13. Next accepted non-release item: complete Harness Token Economics Research
+   before changing generated harness sizing, routing, summarization, or lazy
+   loading behavior.
+14. Remaining large-repo improvement candidates: Kubernetes-scale discovery
+   ranking and generated guidance improvements should stay bounded by field
+   evidence and be promoted only when maintainers accept them as product work.
+15. Release-prep field evidence: re-run real-repo quality passes against
+   RunHaven, selected sibling repos, and the remaining large public corpus only
+   after accepted non-release work is closed or explicitly deferred.
+16. Keep new findings in the roadmap only after maintainers accept them as
    product work.
-16. Keep the generated target wording advisory unless the repo owner opts into
+17. Keep the generated target wording advisory unless the repo owner opts into
    the Action, and continue quality passes against real repositories.
-17. Keep the pinned public-repo quality corpus and generated-artifact scorer
+18. Keep the pinned public-repo quality corpus and generated-artifact scorer
    green as quality and detection gates evolve.
-18. Previously completed: policy preset report status, evidence-gated
+19. Previously completed: policy preset report status, evidence-gated
    feature-state and instruction-quality reporting, read-only SBOM adapter
    status, expanded policy presets, interactive quickstart decision plan, and
    source package reorganization.

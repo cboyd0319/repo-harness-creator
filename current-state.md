@@ -4,11 +4,10 @@ Last Updated: 2026-06-16 UTC
 
 ## Current Objective
 
-The accepted pre-release backlog is complete when HarnessForge has converted
-the real public corpus evidence into deterministic generation/report fixes,
-review-required nested instruction planning, optional adapter decisions,
-release-prep evidence needs, and repo-local script hygiene without adding
-default writes for unreviewed monorepo scopes.
+The current accepted non-release work is complete when HarnessForge has
+evidence-backed token economics research for comprehensive repo harnesses,
+without changing generated sizing, routing, summarization, or lazy-loading
+behavior before the receipts justify the tradeoff.
 
 ## Product State
 
@@ -71,8 +70,11 @@ default writes for unreviewed monorepo scopes.
   `--verify-remote` mode for networked owner checks.
 - Audit scoring now accepts completed or retired first-agent lifecycle state
   and correctly scores this repo's roadmap router against `docs/roadmap.md`.
-- The accepted pre-release backlog is closed. Optional package/release evidence
-  imports remain release-prep decisions, not current buildout blockers.
+- The RunHaven-derived backlog, deterministic large-repo slices, and script
+  cleanup are closed. Accepted non-release work still remains before release
+  prep: Harness Token Economics Research.
+  Optional package/release evidence imports remain release-prep decisions, not
+  current buildout blockers.
 - RunHaven's manual harness repair exposed accepted next tasks: target-side
   high-risk review evidence, a review-finalization command or mode, split-state
   migration to `current-state.md`, structured review status values, manifest
@@ -419,6 +421,6 @@ default writes for unreviewed monorepo scopes.
 
 ## Next Step
 
-Pause for review or commit the current local cleanup slice. Release-prep field
-evidence is the next known candidate after that, but only when the maintainer
-explicitly moves the repo past the release-prep boundary.
+Continue with the accepted Harness Token Economics Research item. Release prep
+should remain last and should start only after accepted non-release work is
+closed or explicitly deferred by the maintainer.
