@@ -3549,6 +3549,28 @@ class CliTests(unittest.TestCase):
         self.assertIsNone(payload["checks"][0]["exitCode"])
         self.assertIsNone(payload["target"]["root"])
 
+    def test_verify_json_plan_redacts_secret_like_command_text(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            stdout = io.StringIO()
+            with contextlib.redirect_stdout(stdout):
+                code = main(
+                    [
+                        "verify",
+                        "--target",
+                        str(root),
+                        "--json",
+                        "--command",
+                        "API_TOKEN=secret-value pytest",
+                    ]
+                )
+
+            payload = json.loads(stdout.getvalue())
+
+        self.assertEqual(code, 0)
+        self.assertNotIn("secret-value", payload["checks"][0]["command"])
+        self.assertEqual(payload["checks"][0]["command"], "API_TOKEN=<redacted> pytest")
+
     def test_verify_json_blocks_missing_verification(self) -> None:
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp)
@@ -3668,6 +3690,38 @@ class CliTests(unittest.TestCase):
         self.assertEqual(payload["checks"][0]["exitCode"], 7)
         self.assertIn("before failure", payload["checks"][0]["stdoutPreview"])
         self.assertIn("verification failed", payload["checks"][0]["stderrPreview"])
+
+    def test_verify_run_redacts_secret_like_output(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            command = _python_command(
+                "import sys; "
+                "print('API_TOKEN=secret-value'); "
+                "sys.stderr.write('Authorization: Bearer abc.def.ghi\\n')"
+            )
+            stdout = io.StringIO()
+            with contextlib.redirect_stdout(stdout):
+                code = main(
+                    [
+                        "verify",
+                        "--target",
+                        str(root),
+                        "--json",
+                        "--run",
+                        "--yes",
+                        "--command",
+                        command,
+                    ]
+                )
+
+            payload = json.loads(stdout.getvalue())
+
+        self.assertEqual(code, 0)
+        check = payload["checks"][0]
+        self.assertNotIn("secret-value", check["stdoutPreview"])
+        self.assertNotIn("abc.def.ghi", check["stderrPreview"])
+        self.assertIn("API_TOKEN=<redacted>", check["stdoutPreview"])
+        self.assertIn("Authorization: Bearer <redacted>", check["stderrPreview"])
 
     def test_verify_run_blocks_missing_verification(self) -> None:
         with tempfile.TemporaryDirectory() as tmp:

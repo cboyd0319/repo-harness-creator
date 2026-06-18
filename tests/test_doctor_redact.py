@@ -35,6 +35,32 @@ class DoctorRedactTests(unittest.TestCase):
         self.assertNotIn(home, redacted)
         self.assertIn("<home>", redacted)
 
+    def test_redacts_common_secret_assignments(self) -> None:
+        text = (
+            "API_TOKEN=secret-value "
+            "password: hunter2 "
+            "Authorization: Bearer abc.def.ghi "
+            "CLIENT_SECRET='value'"
+        )
+
+        redacted = redact_local_paths(text)
+
+        self.assertNotIn("secret-value", redacted)
+        self.assertNotIn("hunter2", redacted)
+        self.assertNotIn("abc.def.ghi", redacted)
+        self.assertNotIn("'value'", redacted)
+        self.assertEqual(redacted.count("<redacted>"), 4)
+
+    def test_keeps_github_secret_expressions_readable(self) -> None:
+        text = (
+            "TOKEN: ${{ secrets.GITHUB_TOKEN }}\n"
+            "persist-credentials: false"
+        )
+
+        redacted = redact_local_paths(text)
+
+        self.assertEqual(redacted, text)
+
     def test_doctor_report_shape(self) -> None:
         report = doctor_report()
 

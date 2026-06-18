@@ -216,7 +216,7 @@ def format_verify_plan(report: VerifyReport) -> str:
     for check in report.checks:
         lines.append(
             f"  - {check.id}: {check.status}, source={check.source}, "
-            f"exit={check.exit_code}, command={check.command}"
+            f"exit={check.exit_code}, command={redact_local_paths(check.command)}"
         )
     return "\n".join(lines).rstrip()
 
@@ -374,7 +374,7 @@ def _check_to_dict(check: VerifyCheck) -> dict[str, Any]:
     return {
         "id": check.id,
         "label": check.label,
-        "command": check.command,
+        "command": redact_local_paths(check.command),
         "source": check.source,
         "workingDirectory": check.working_directory,
         "required": check.required,
@@ -391,7 +391,7 @@ def _compact_check_to_dict(check: VerifyCheck) -> dict[str, Any]:
     return {
         "id": check.id,
         "label": check.label,
-        "command": check.command,
+        "command": redact_local_paths(check.command),
         "source": check.source,
         "workingDirectory": check.working_directory,
         "required": check.required,

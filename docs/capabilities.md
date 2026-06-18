@@ -194,7 +194,7 @@ reporting, scope, and severity guidance.
 | Dependencies | Normal local commands use the Python standard library and do not install runtime dependencies. |
 | Paths | Destination paths are preflighted. Absolute instruction paths, traversal, unsafe instruction filenames, symlink escapes, and outside-repo manifest targets are rejected or ignored. |
 | Discovery | Symlinked directories are skipped, and audit reads known files only when they resolve inside the target repository. |
-| Privacy | Local home paths are redacted from durable output. |
+| Privacy | Local home paths and common secret-like key/value output are redacted from durable output. |
 | GitHub Action | Report paths must be target-relative, stay inside the repository, use forward-slash output paths, and write multi-line values through GitHub environment-file delimiter blocks. The Action sets `PYTHONSAFEPATH=1` so caller repository files cannot shadow the Action library at Python startup. |
 | Training or fixture code | Intentionally vulnerable training, demo, or fixture code is preserved unless remediation is explicitly in scope. |
 | High-risk changes | Material AI/RAG/agent, tool, external-service, auth, secret, data-flow, deployment, or workflow-permission changes require boundary or threat-model evidence plus focused checks. |

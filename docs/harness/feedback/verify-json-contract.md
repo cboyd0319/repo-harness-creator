@@ -192,8 +192,11 @@ Check fields:
 ## Privacy And Safety
 
 The report must not include secrets, environment dumps, credentials, or
-unredacted home-directory paths. Output previews must be capped, redacted, and
-safe to store in CI artifacts.
+unredacted home-directory paths. Command strings and output previews must be
+redacted for common home paths, secret-like key/value strings, and
+authorization header values. Output previews must also be capped. Prefer
+compact summary evidence for durable release records because it omits command
+output entirely.
 
 Commands are represented as data before execution. Run mode uses explicit
 subprocess argument lists, the target repository root as the working directory,

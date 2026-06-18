@@ -42,14 +42,15 @@ Keep three surfaces separate:
 | GitHub workflows | Maintainers | Parked workflow definitions use least privilege, external Actions pinned to commit SHAs, `PYTHONSAFEPATH=1` for the reusable Action runtime, no persisted checkout credentials in read-only CI, cancellation for superseded CI runs, and target-contained Action report paths that reject POSIX and Windows absolute/rooted syntax. Restore runnable `.yml` suffixes only when maintainers intentionally re-enable Actions. |
 | Workflow surfaces | Maintainers | Keep the parked self-heal/research workflow definition, the optional generated CI scaffold, and published composite Action behavior separate. Repo-local workflows may refresh HarnessForge research metadata only if re-enabled later. The generated CI scaffold is manual by default. The published Action is input-driven and does not schedule, commit, push, or open pull requests. |
 | Published GitHub Action | Action users | The Action must not assume this repo's live harness state. It accepts explicit inputs, validates report paths inside `target`, emits delimiter-protected outputs, and only writes harness files for `init` or `update` when the caller chooses those commands and permissions. |
-| Secrets and credentials | Maintainers | No command should print, store, transform, or transmit secrets. |
+| Secrets and credentials | Maintainers | No command should print, store, transform, or transmit secrets. Durable output redacts common secret-like key/value strings and authorization header values as a backstop, not as permission to run commands that dump secrets. |
 | Cost-incurring systems | Maintainers | Prefer local verification and local commits during active work. Push only at explicit batch boundaries or by user request. Self-healing must not call paid model or cloud APIs unless a future reviewed workflow explicitly opts in. |
 
 ## Data Boundaries
 
 - Generated harness files are project-owned source, not telemetry.
 - Reports and durable harness files must avoid machine-specific absolute paths
-  unless an explicit user request is recorded.
+  unless an explicit user request is recorded. Durable reports must redact
+  common secret-like key/value strings and authorization header values.
 - Research refresh stores compact source metadata and links, not full articles.
 - Suspicious fetched metadata is withheld when it resembles agent instructions
   or credential-exfiltration prompts, including invisible Unicode and
