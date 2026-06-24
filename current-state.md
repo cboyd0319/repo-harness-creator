@@ -1,6 +1,6 @@
 # Current State
 
-Last Updated: 2026-06-16 UTC
+Last Updated: 2026-06-24 UTC
 
 ## Current Objective
 
@@ -14,6 +14,15 @@ large-public-repo field runs, deeper instruction-quality scoring, and the core
 harness model course correction.
 Release prep starts only after that backlog is closed or intentionally deferred
 by the maintainer.
+
+## Key Decisions
+
+Decisions that shape the implementation so a later session does not undo them.
+
+- Course-mining additions stay doc/template-only with no new dependencies; the
+  audit map-length cap stays at 300 lines rather than tightening to 220,
+  because rendered instruction files run longer than templates and a tighter
+  cap risks false audit failures on valid target repos.
 
 ## Product State
 
@@ -46,6 +55,23 @@ by the maintainer.
 
 ## Latest Verified Work
 
+- 2026-06-24: Deep Walking Labs course-mining pass added reviewed harness
+  primitives to generated templates and the matching own-harness docs
+  (evaluator independence, run-baseline-first startup, front-loaded
+  non-negotiables, a Key Decisions slot, clean-context review, simplification
+  ablation, golden-journey/runtime-observability/architecture-hot-spot prompts,
+  and a Date+Revisit-Trigger debt column). `feature_state` now reports an
+  advisory `verifiedCompletionRate`. Generated lean-footprint byte tripwires
+  were raised once (140k->144k total, 70k->73k markdown) with line guards
+  unchanged.
+- 2026-06-24: Re-verified all pins against live PyPI/GitHub. `setuptools==82.0.1`
+  and Action default Python `3.13.14` already latest; bumped `actions/checkout`
+  v6->v7.0.0 and `actions/setup-python` v6->v6.3.0 (full-SHA pinned) across
+  `action.yml`, workflows, templates, manifest snippets, and docs.
+- 2026-06-24: Docs accuracy pass corrected stale generated-footprint and
+  test-count figures (`docs/roadmap.md`, `quality-document.md`) and refreshed
+  pin-verification dates; full suite (316 tests), self-audit `100/100`, pin
+  check, and `git diff --check` pass.
 - `docs/` is organized into top-level product docs plus `docs/harness/`.
   `docs/harness/` uses the generated target layout: top-level `README.md`,
   `authoritative-facts.md`, and `manifest.json`, with detail under

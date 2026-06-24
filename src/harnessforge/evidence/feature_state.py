@@ -54,6 +54,9 @@ def analyze_feature_state(
             summary={
                 "featureCount": 0,
                 "activeCount": 0,
+                "activatedCount": 0,
+                "verifiedCount": 0,
+                "verifiedCompletionRate": None,
                 "evidenceGated": False,
                 "singleActiveRequired": False,
                 "statusCounts": {},
@@ -72,6 +75,9 @@ def analyze_feature_state(
             summary={
                 "featureCount": 0,
                 "activeCount": 0,
+                "activatedCount": 0,
+                "verifiedCount": 0,
+                "verifiedCompletionRate": None,
                 "evidenceGated": False,
                 "singleActiveRequired": False,
                 "statusCounts": {},
@@ -121,6 +127,22 @@ def analyze_feature_state(
             findings.append(f"{feature_id} is missing verification criteria.")
         if status in EVIDENCE_STATUSES and (not isinstance(evidence, list) or not evidence):
             findings.append(f"{feature_id} is {status} without evidence.")
+    activated = [
+        feature
+        for feature in features
+        if isinstance(feature, dict)
+        and str(feature.get("status", "not_started")) != "not_started"
+    ]
+    verified = [
+        feature
+        for feature in activated
+        if str(feature.get("status")) in EVIDENCE_STATUSES
+        and isinstance(feature.get("evidence"), list)
+        and feature.get("evidence")
+    ]
+    verified_completion_rate = (
+        round(len(verified) / len(activated), 2) if activated else None
+    )
     scope_drift = _scope_drift_summary(diff_plan, active_features=active)
     warnings.extend(scope_drift.get("warnings", []))
     if findings:
@@ -138,6 +160,9 @@ def analyze_feature_state(
         summary={
             "featureCount": len(features),
             "activeCount": len(active),
+            "activatedCount": len(activated),
+            "verifiedCount": len(verified),
+            "verifiedCompletionRate": verified_completion_rate,
             "evidenceGated": evidence_gated,
             "singleActiveRequired": single_active_required,
             "statusCounts": dict(sorted(status_counts.items())),

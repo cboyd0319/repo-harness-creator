@@ -8,7 +8,8 @@ task, explicit evidence, and a clean handoff.
 - Read `{{agent_file}}`.
 - Read `feature_list.json`, `current-state.md`, and any active plan.
 - Identify the current objective and non-goals.
-- Choose the verification path before editing.
+- Choose the verification path before editing, run it to establish a baseline,
+  and repair a broken baseline before starting new work.
 
 ## During Work
 
@@ -41,6 +42,9 @@ explicit user requirements.
 | Test | Propose runnable tests. | Reject stubbed, assertion-free, or shortcut tests; prefer fail-first where practical. | Test intent, coverage, edge cases. |
 | Review and document | Draft findings and summaries. | Keep feedback high-signal and verify important docs. | Merge decisions, public/security/legal-sensitive content. |
 | Deploy and maintain | Correlate logs, history, and root causes. | Validate reliability, rollback, and least privilege. | Production changes and final sign-off. |
+
+Run review with a clean context: a separate session or agent that did not write
+the change catches more than self-review, which skews positive.
 
 ## Finish
 

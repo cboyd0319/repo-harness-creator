@@ -13,6 +13,9 @@ They must serve the core contract or stay optional and reviewable.
 Changing instruction, tool, filesystem, git, startup, verification, hook, lint,
 or evaluator surfaces changes the effective agent.
 
+Non-negotiables: verify before done, one task at a time, no overwrite without
+approval, never commit secrets.
+
 Detected stack: {{detected_stack}}
 Languages: {{languages}}
 Package managers: {{package_managers}}
@@ -38,7 +41,9 @@ Startup path:
 7. For the first agent session after harness generation, review
    `docs/harness/state/first-agent-task.md` and improve the harness before unrelated
    feature work.
-8. Pick one current objective before editing.
+8. Run `./init.sh` (or `init.ps1`) for a clean baseline before feature work;
+   fix a broken baseline first.
+9. Pick one current objective before editing.
 
 ## Build and test commands
 

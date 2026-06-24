@@ -19,6 +19,11 @@ Use an evidence ladder for completion:
 Skipping a required layer means the change is not complete. Record the reason,
 risk, and next best evidence when a layer cannot run.
 
+Golden journeys: the critical paths this product must never break are
+`init`/generation, `audit` scoring, and `update` round-trips. Each must have a
+repeatable command and a clear pass/fail signal, and a broken golden journey is
+release-blocking.
+
 | Change Type | Required Checks |
 | --- | --- |
 | CLI parser or command output | Focused unit tests plus `python -m harnessforge --help` |

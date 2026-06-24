@@ -1,6 +1,9 @@
 # Evaluator Rubric
 
-Use this after non-trivial agent work or before accepting a large change.
+Use this after non-trivial agent work or before accepting a large change. Run
+the review in a session or role separate from the one that produced the change;
+an agent scoring its own work skews positive, so treat self-review as weaker
+evidence than an independent pass.
 
 Score each category from 0 to 2.
 
@@ -33,6 +36,10 @@ record the known ceiling and upgrade path.
 
 Record any rubric weakness here when human judgment and the rubric disagree.
 Update this file before using the same evaluation again.
+
+Agents are weak judges of their own work, so calibrate the rubric: run it
+against a finished change, compare the verdict to human judgment, sharpen the
+categories where they diverge, and repeat until they agree.
 
 ## Agent Review Signal
 

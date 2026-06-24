@@ -34,7 +34,7 @@ Downstream tools and GitHub Action summaries may rely on these fields:
 | `sbomAdapter` | Existing SBOM status and explicit opt-in generation boundary |
 | `releaseControls` | Release-control document presence |
 | `docsFanout` | Authoritative fact map, changed-surface budget, and duplicate fact summary |
-| `featureState` | Feature/task state alignment and scope-drift signals |
+| `featureState` | Feature/task state alignment, scope-drift signals, and an advisory `summary.verifiedCompletionRate` (verified-with-evidence over activated features) |
 | `observability` | Runtime and process signal coverage |
 | `indexAdapters` | Optional index-adapter availability and explicit opt-in status |
 | `maturity` | Evidence-gated maturity level |

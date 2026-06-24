@@ -25,6 +25,13 @@ For custom checks, prefer failure messages with:
 - where an agent should look first to repair it;
 - which evidence should be recorded after the fix.
 
+## Runtime Observability
+
+When the project runs a service, job, or long process, prefer structured logs
+(machine-readable fields) at startup, error, and boundary points, and carry a
+request or correlation id so a failure traces to one run. Register the startup,
+error, health, and trace signals as sensors above.
+
 ## Rules
 
 - A sensor is a signal, not a guarantee. It does not prove real-agent effectiveness.

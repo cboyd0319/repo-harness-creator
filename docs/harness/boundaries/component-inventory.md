@@ -55,6 +55,18 @@ route the change through `change-contract.md` and `verification-matrix.md`.
   `AGENTS.md` files only after review shows a component has distinct stack,
   command, ownership, constraint, or verification needs.
 
+## Architecture Hot Spots
+
+Areas that are hardest or riskiest to change safely. Promote the highest-cost
+boundary into a runnable check with an agent-oriented failure message instead of
+relying on review memory.
+
+| Hot Spot | Why Risky | Boundary Check |
+| --- | --- | --- |
+| `src/harnessforge/templates/` and `generation/` | Generated templates are user-facing API; drift breaks every target harness | Generator tests, temporary-repo integration test, and self-audit |
+| `src/harnessforge/assessment/audit.py` scoring | Score changes silently shift the product contract | Positive and negative audit tests |
+| Cross-platform paths and entrypoints | POSIX/Windows divergence is easy to miss | Doctor tests and `init.sh`/`init.ps1` parity review |
+
 ## Project Assets
 
 - `docs/assets/logo.png`: repository logo used by the root README and project

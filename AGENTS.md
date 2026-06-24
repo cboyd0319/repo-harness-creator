@@ -11,6 +11,9 @@ docs are support surfaces. They must serve the core contract or stay optional
 and reviewable. Changing instruction, tool, filesystem, git, startup,
 verification, hook, lint, or evaluator surfaces changes the effective agent.
 
+Non-negotiables (never skip): verify before claiming done, keep one active task,
+never overwrite user work without approval, and never commit secrets.
+
 Startup path:
 
 1. Confirm the working directory.
@@ -25,6 +28,8 @@ Startup path:
    release-prep, or product-scope work.
 7. Check `docs/harness/boundaries/component-inventory.md` before changing
    component boundaries, generated files, or verification routing.
+8. Run `./init.sh` (or `init.ps1`) to confirm a clean baseline before starting
+   feature work, and fix a broken baseline first.
 
 This repo is itself a harnessed project. Keep root instructions short and place
 durable detail in `docs/harness/`.

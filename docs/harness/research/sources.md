@@ -37,8 +37,8 @@ and update rules.
 | GitHub Actions metadata syntax and composite action docs | Root `action.yml` inputs, outputs, and composite action shape |
 | GitHub Actions hosted runner docs | Ubuntu 22.04, macOS 15, and `windows-2025-vs2026` runner labels |
 | `actions/setup-python` docs | Explicit Python 3.13 setup in the reusable action |
-| `actions/checkout` and `actions/setup-python` tag refs | Verified full-length SHA pins for v6 on 2026-06-14 |
-| PyPI setuptools JSON API | Verified `setuptools==82.0.1` as latest stable on 2026-06-14 |
+| `actions/checkout` and `actions/setup-python` tag refs | Verified full-length SHA pins: `actions/checkout` v7.0.0 and `actions/setup-python` v6.3.0 on 2026-06-24 |
+| PyPI setuptools JSON API | Verified `setuptools==82.0.1` as latest stable on 2026-06-24 |
 | Walking Labs learn-harness-engineering public repository, `https://github.com/walkinglabs/learn-harness-engineering` | Canonical harness-pattern source for five-subsystem framing, feature-list primitive, clean-state checklist, evaluator rubric, quality document, startup flow, and initializer baseline |
 | Walking Labs English lectures, resources, skills, and harness-creator skill | Canonical harness-pattern source for five-subsystem scoring, repo-as-system-of-record, instruction splitting, continuity, initialization, scope control, feature-state gating, termination checks, full-pipeline verification, observability, and clean-state discipline |
 | AgentPatterns.ai, "GitHub Copilot: Harness Engineering for Agent-Ready Code" | Backpressure, repo legibility, mechanical enforcement, multi-session scaffolding, and rollback-first operations |

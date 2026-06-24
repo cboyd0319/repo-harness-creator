@@ -332,7 +332,7 @@ class PinCheckTests(unittest.TestCase):
             (root / ".github/workflows/ci.yml").write_text(
                 "steps:\n"
                 "  - uses: actions/checkout@"
-                "df4cb1c069e1874edd31b4311f1884172cec0e10 # v6\n"
+                "9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0\n"
                 "  - uses: ./\n",
                 encoding="utf-8",
             )

@@ -65,6 +65,11 @@ Regularly review one harness component. Keep it when it prevents repeated
 failures. Remove or merge it when it adds upkeep without improving
 verification, restartability, or scope control.
 
+Run an ablation when validating a component's value: snapshot the benchmark
+evidence above, remove one component, rerun the same task set, and keep it
+removed when grades and completion do not drop. Log each ablation as a row in
+the benchmark table above.
+
 Structural harness scores do not prove real agent effectiveness. Record
 representative before/after agent-session evidence or benchmark notes before
 making release claims about agent reliability.

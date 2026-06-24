@@ -46,6 +46,13 @@ route the change through `change-contract.md` and `verification-matrix.md`.
   nested components unless the task needs it and the command is documented.
 - Preserve the declared platform contract: {{platform_contract_summary}}
 
+## Architecture Hot Spots
+
+REVIEW REQUIRED: list the areas hardest or riskiest to change safely (fragile
+modules, cross-layer boundaries, weakly tested code). Promote the highest-cost
+boundary rule into a runnable check with an agent-oriented failure message, and
+surface it in `sensor-registry.md` and `verification-matrix.md`.
+
 ## Harness Artifacts
 
 - `docs/harness/state/roadmap.md`: accepted roadmap and backlog boundary. Keep it in

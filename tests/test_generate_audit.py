@@ -198,9 +198,14 @@ class GenerateAuditTests(unittest.TestCase):
             result = audit_target(root)
 
         self.assertEqual(result.overall, 100)
-        self.assertLess(total_bytes, 140_000)
+        # Byte ceilings were raised once (140_000 -> 144_000 total, 70_000 ->
+        # 73_000 markdown) for the reviewed course-mining additions: independent
+        # review, run-baseline-first startup, decision-capture, and golden-
+        # journey/observability/hot-spot prompts. The line ceilings below are
+        # unchanged and remain the primary line-bloat tripwire.
+        self.assertLess(total_bytes, 144_000)
         self.assertLess(total_lines, 3_000)
-        self.assertLess(sum(sizes.values()), 70_000)
+        self.assertLess(sum(sizes.values()), 73_000)
         self.assertLess(line_count, 1_500)
         self.assertFalse((root / "docs/harness/research/research-sources.json").exists())
         self.assertLess(sizes["docs/harness/README.md"], 6_500)

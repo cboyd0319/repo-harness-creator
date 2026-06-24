@@ -31,6 +31,13 @@ risk, and next best evidence when a layer cannot run.
 | AI/RAG/agent tools, external data, auth, secrets, or deployment | Update security boundary/threat model evidence and run focused abuse-case tests |
 | Training, demo, or intentionally vulnerable fixtures | Confirm owner/path/risk, avoid automatic remediation unless in scope, and run targeted fixture tests |
 
+## Golden Journeys
+
+Name the few critical paths the project must never break (install and start,
+the primary user flow, the main CLI or API call). For each, record a repeatable
+command and its pass/fail signal in `sensor-registry.md`, and treat a broken
+golden journey as release-blocking.
+
 ## Detected Commands
 
 {{commands_markdown}}

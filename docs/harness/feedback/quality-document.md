@@ -1,6 +1,6 @@
 # Quality Document
 
-Last Updated: 2026-06-16
+Last Updated: 2026-06-24
 
 Use this as a periodic codebase health snapshot. It is separate from the
 evaluator rubric: the rubric scores one work session, while this document scores
@@ -10,7 +10,7 @@ the repo over time.
 
 | Domain | Grade | Verification Status | Agent Legibility | Key Gaps |
 | --- | --- | --- | --- | --- |
-| CLI package | A | 285 local tests pass | Clear module boundaries | No current cleanup gap |
+| CLI package | A | 316 local tests pass | Clear module boundaries | No current cleanup gap |
 | GitHub Action | A | Local adapter tests, pin checks, and prior hosted Action smoke pass | Action docs present | Manual platform workflow remains a release checkpoint |
 | Harness templates | A | Self-audit is 100/100 and generated update dry run is clean | Templates include state, security, privacy, component, and lifecycle docs | Real agent effectiveness still needs representative task runs |
 | Supply chain | A | Pin checker passes | Exact package pins and SHA-pinned Actions are documented and enforced | Release-time SBOM/provenance remains a decision |
@@ -54,7 +54,7 @@ Track these dimensions at session exit and during periodic cleanup.
 | Current and feature state are accurate | B | `current-state.md`, `feature_list.json`, and `docs/roadmap.md` are maintained during backlog work | Keep state writes limited to the file that owns the changed fact |
 | Complexity and scope stayed minimal | B | Root and generated instructions, change contract, rubric, and operating model now gate assumptions, speculative features, new dependencies, drive-by refactors, and intentional simplification ceilings | Need representative real-agent tasks to prove the guidance reduces rework |
 | Temporary or stale artifacts are removed or documented | A | Local-path scans and diff hygiene are part of verification | Keep scratch reports and generated evidence target-relative |
-| Standard startup path still works | B | `./init.sh` passed with 285 tests and self-audit `100/100`; local `pwsh` command execution currently fails before repo code loads | Re-run `init.ps1` on a healthy PowerShell host or after local `pwsh` is repaired before publishing release evidence |
+| Standard startup path still works | B | `./init.sh` passed with 316 tests and self-audit `100/100`; local `pwsh` command execution currently fails before repo code loads | Re-run `init.ps1` on a healthy PowerShell host or after local `pwsh` is repaired before publishing release evidence |
 
 ## Benchmark Or Task Evidence
 
@@ -70,6 +70,14 @@ cleanup impact, or agent effectiveness.
 At least monthly, review one harness component and decide whether it is still
 useful. Keep it when it prevents repeated failures. Remove or merge it when it
 adds upkeep without improving verification, restartability, or scope control.
+
+Run an ablation when validating a component's value: snapshot the benchmark
+evidence above, remove or disable one component, rerun the same task set, and
+compare. Keep the component removed when grades and completion do not drop.
+
+| Date | Component Reviewed | Ablation Result | Decision |
+| --- | --- | --- | --- |
+| REVIEW REQUIRED | Pending component | Degraded or unchanged | Restore or keep removed |
 
 Structural harness scores do not prove real agent effectiveness. Record
 representative before/after agent-session evidence or benchmark notes before

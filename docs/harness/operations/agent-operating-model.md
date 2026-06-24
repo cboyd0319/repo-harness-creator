@@ -6,7 +6,8 @@ Agents in this repo should work as maintainers of a CLI product.
 
 - Read `AGENTS.md`, `README.md`, and this harness directory.
 - Identify the current objective from `feature_list.json` and `current-state.md`.
-- Choose verification before editing.
+- Choose verification before editing, run it to establish a baseline, and
+  repair a broken baseline before starting new work.
 
 ## During Work
 
@@ -68,6 +69,9 @@ Use agents for first passes, but keep ownership explicit.
 | Test | Propose test cases and first-pass tests, preferably in a separate step for risky behavior changes. | Reject stubbed, assertion-free, or shortcut tests; confirm tests are runnable and, when practical, fail before the fix. | Test intent, coverage expectations, edge cases, and user-experience alignment. |
 | Review and document | Draft review findings, module summaries, diagrams, release notes, and internal docs. | Keep feedback high-signal, bug-focused, and concise; verify important, public, or safety-critical docs. | Final merge decisions, documentation structure, and public, legal, security-sensitive, or brand-sensitive content. |
 | Deploy and maintain | Correlate logs, git history, and candidate root causes; propose diagnostics or hotfixes. | Validate root cause, reliability, security, compliance, rollback, and least privilege. | Production changes, incident judgment, sensitive operations, and final sign-off. |
+
+Run review with a clean context: a separate session or agent that did not write
+the change catches more than self-review, which skews positive.
 
 ## Finish
 

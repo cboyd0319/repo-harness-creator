@@ -39,17 +39,19 @@ Record:
 
 - Reviewed package and runtime pins are recorded in `pins.toml`.
 - `setuptools==82.0.1` in `pyproject.toml`, verified against PyPI on
-  2026-06-14.
-- GitHub Actions use full-length commit SHAs with version comments.
+  2026-06-24.
+- GitHub Actions use full-length commit SHAs with version comments:
+  `actions/checkout` v7.0.0 and `actions/setup-python` v6.3.0, resolved from
+  upstream release tags on 2026-06-24.
 - CI tests Python `3.13.14` and `3.14.6`, the current 3.13 and 3.14 bugfix
-  releases checked on 2026-06-14.
+  releases checked on 2026-06-24.
 
 ## GitHub Actions
 
 External Actions must use full-length commit SHAs plus version comments:
 
 ```yaml
-uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6
+uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
 ```
 
 Refresh pins only after verifying the upstream tag or release from the action

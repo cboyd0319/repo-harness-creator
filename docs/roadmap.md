@@ -833,23 +833,24 @@ Latest optimization evidence:
   `docs/harness/`: `README.md`, `authoritative-facts.md`, and `manifest.json`.
 - RunHaven's current flat harness has 29 top-level files under `docs/harness/`,
   which made manual review harder.
-- The generated write count is currently 36 for the representative Python
+- The generated write count is currently 39 for the representative Python
   target after removing the product-local source allowlist. Further token and
   file-write savings should come from deliberate consolidation of overlapping
   lifecycle/status docs, not from deleting review-required safety surfaces
   blindly.
 - A rendered target with a real verification command audited at `100/100`, had
-  zero stale flat-path references, and generated `AGENTS.md` stayed at 140
-  lines.
+  zero stale flat-path references, and generated `AGENTS.md` is 134 lines.
 - Generated Markdown footprint was reduced from 85,839 bytes and 1,730 lines
-  to 69,009 bytes and 1,454 lines while preserving generated audit `100/100`.
-- Generated total artifact footprint is now 136,337 bytes and 2,911 lines,
+  during the optimization pass; after later reviewed harness additions the
+  current render is 71,415 bytes and 1,491 lines, with generated audit still
+  `100/100`.
+- Generated total artifact footprint is currently 141,861 bytes and 2,946 lines,
   down from 160,684 bytes and 4,190 lines at the start of the second
   optimization pass. Generated targets no longer receive this repo's
   product-local research source allowlist, and generated manifests are compact
   machine-readable JSON.
-- Regression tests now cap generated Markdown below 70,000 bytes and 1,500
-  lines, and total generated output below 140,000 bytes and 3,000 lines for the
+- Regression tests now cap generated Markdown below 73,000 bytes and 1,500
+  lines, and total generated output below 144,000 bytes and 3,000 lines for the
   representative Python target.
 
 Surface impact:

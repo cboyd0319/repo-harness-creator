@@ -50,6 +50,55 @@ class FeatureStateTests(unittest.TestCase):
         self.assertEqual(report.scope_drift["touchedAreas"], ["docs"])
         self.assertEqual(report.scope_drift["unexpectedAreas"], [])
 
+    def test_verified_completion_rate_is_advisory_metric(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            (root / "feature_list.json").write_text(
+                json.dumps(
+                    {
+                        "rules": {"passing_requires_evidence": True},
+                        "features": [
+                            {
+                                "id": "done",
+                                "area": "cli",
+                                "title": "Done",
+                                "status": "passing",
+                                "user_visible_behavior": "Behavior.",
+                                "verification": ["test"],
+                                "evidence": ["2026-06-24: passed"],
+                            },
+                            {
+                                "id": "wip",
+                                "area": "cli",
+                                "title": "WIP",
+                                "status": "active",
+                                "user_visible_behavior": "Behavior.",
+                                "verification": ["test"],
+                                "evidence": [],
+                            },
+                            {
+                                "id": "later",
+                                "area": "cli",
+                                "title": "Later",
+                                "status": "not_started",
+                                "user_visible_behavior": "Behavior.",
+                                "verification": ["test"],
+                                "evidence": [],
+                            },
+                        ],
+                    }
+                ),
+                encoding="utf-8",
+            )
+
+            report = analyze_feature_state(root)
+
+        # Activated = passing + active (not_started excluded); verified = passing
+        # with evidence. 1 verified / 2 activated = 0.5.
+        self.assertEqual(report.summary["activatedCount"], 2)
+        self.assertEqual(report.summary["verifiedCount"], 1)
+        self.assertEqual(report.summary["verifiedCompletionRate"], 0.5)
+
 
 if __name__ == "__main__":
     unittest.main()

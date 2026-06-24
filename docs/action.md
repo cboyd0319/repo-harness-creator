@@ -62,7 +62,7 @@ jobs:
   harness:
     runs-on: ubuntu-22.04
     steps:
-      - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
         with:
           persist-credentials: false
       - uses: cboyd0319/harnessforge@<reviewed-commit-sha> # v1
@@ -148,7 +148,7 @@ Upload report artifacts in the caller workflow when that is useful. The
 HarnessForge Action does not upload artifacts by default:
 
 ```yaml
-- uses: actions/upload-artifact@<reviewed-commit-sha> # v4
+- uses: actions/upload-artifact@<reviewed-commit-sha> # v7
   if: always()
   with:
     name: harness-report
