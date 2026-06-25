@@ -12,6 +12,7 @@ and update rules.
 
 | Source | Current use |
 | --- | --- |
+| Walking Labs, "Learn Harness Engineering" course and `harness-creator` skill, `https://github.com/walkinglabs/learn-harness-engineering` | Synthesis of the primary articles into the five-core model; conceptual ancestor of HarnessForge. See `harness-engineering-foundations.md` |
 | OpenAI, "Harness engineering: leveraging Codex in an agent-first world" | Repo-as-spec framing, environment design, intent, feedback loops |
 | OpenAI Codex guide, "Building an AI-Native Engineering Team" | Delegate/Review/Own boundaries across planning, design, build, test, review, documentation, and operations |
 | OpenAI prompt caching docs | Stable repeated prompt prefixes can reduce latency and cached input-token cost |

@@ -43,6 +43,18 @@ Treat verification as the highest-return subsystem. When agent output is weak,
 fix missing, stale, or vague checks before adding more instructions or support
 surfaces.
 
+`harnessforge audit` scores seven implementation buckets for diagnostic
+granularity and reports how each maps onto these five core subsystems. Five map
+directly (`instructions`, `state`, `feedback` as the verification core, `scope`,
+`lifecycle`); `tools` and `environment` are support surfaces, not peer core
+subsystems. The audit emits this mapping as `coreModel` in JSON and as inline
+labels in formatted output. The audit score is structural conformance, not proof
+of real-agent effectiveness, and a higher score is not automatically the goal: a
+correctly minimal harness can be complete. See
+[`research/harness-engineering-foundations.md`](research/harness-engineering-foundations.md)
+for the lineage, the two five-subsystem framings, the maturity ladder, and the
+structure-is-not-effectiveness boundary.
+
 ## Effective Agent Boundary
 
 The model is the LLM. The effective coding agent is the model plus the harness:

@@ -8,7 +8,7 @@ import tempfile
 import unittest
 from pathlib import Path
 
-from harnessforge.assessment.audit import audit_target
+from harnessforge.assessment.audit import audit_target, audit_to_dict, format_audit
 from harnessforge.generation.generate import create_harness
 AGENTS_SECTION_ORDER = [
     "## Project overview",
@@ -99,6 +99,37 @@ class GenerateAuditTests(unittest.TestCase):
             self.assertIn("Definition Of Done", content)
             self.assertIn("End of Session", content)
             self.assertIn("personal machines", content)
+
+    def test_audit_maps_seven_buckets_to_five_core_subsystems(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            (root / "pyproject.toml").write_text(
+                "[project]\nname='demo'\n", encoding="utf-8"
+            )
+            create_harness(root)
+            result = audit_target(root)
+            payload = audit_to_dict(result)
+
+            core_model = payload["coreModel"]
+            self.assertEqual(
+                core_model["coreSubsystems"],
+                ["instructions", "state", "verification", "scope", "lifecycle"],
+            )
+            # The feedback bucket is the implementation form of verification.
+            self.assertEqual(core_model["domainMapping"]["feedback"], "verification")
+            # Tools and environment are support surfaces, not peer core subsystems.
+            self.assertEqual(core_model["supportSurfaces"], ["tools", "environment"])
+
+            self.assertEqual(
+                payload["domains"]["feedback"]["coreSubsystem"], "verification"
+            )
+            self.assertEqual(payload["domains"]["feedback"]["surfaceClass"], "core")
+            self.assertIsNone(payload["domains"]["tools"]["coreSubsystem"])
+            self.assertEqual(payload["domains"]["tools"]["surfaceClass"], "support")
+
+            text = format_audit(result)
+            self.assertIn("feedback [verification core]:", text)
+            self.assertIn("tools [support surface]:", text)
 
     def test_init_writes_cross_platform_harness_and_audits_high(self) -> None:
         with tempfile.TemporaryDirectory() as tmp:

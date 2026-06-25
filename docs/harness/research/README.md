@@ -23,6 +23,7 @@ sibling-repo examples into instructions.
 | `large-public-repo-gap-analysis.md` | Human-maintained | Gap analysis from real large public repo field evidence |
 | `harness-token-economics-research.md` | Human-maintained | Initial source-backed token-economics note and measurement gap |
 | `token-economics-metric.schema.json` | Human-maintained | Compact record schema for future token, cache, trajectory, and quality measurements |
+| `harness-engineering-foundations.md` | Human-maintained | Harness-engineering theory basis, five-core model, and seven-to-five audit-bucket mapping |
 | `reference-mining-notes.md` | Human-maintained | Mined ideas from sibling repos and public harness references |
 | `remaining-ideas-research.md` | Human-maintained | Compact outcome of remaining-ideas research and future candidates |
 

@@ -34,6 +34,28 @@ DOMAIN_ORDER = (
     "lifecycle",
 )
 
+# The five core harness subsystems (Walking Labs harness-creator model).
+CORE_SUBSYSTEMS = ("instructions", "state", "verification", "scope", "lifecycle")
+
+# The audit scores seven implementation buckets for diagnostic granularity, then
+# reports how each maps onto the five-core model. Five buckets map directly to a
+# core subsystem; the "feedback" bucket is the implementation form of the
+# "verification" core subsystem. "tools" and "environment" are support surfaces
+# that serve the core subsystems rather than peer subsystems. See
+# docs/harness/research/harness-engineering-foundations.md for the rationale.
+DOMAIN_CORE_SUBSYSTEM = {
+    "instructions": "instructions",
+    "tools": None,
+    "environment": None,
+    "state": "state",
+    "feedback": "verification",
+    "scope": "scope",
+    "lifecycle": "lifecycle",
+}
+SUPPORT_SURFACE_DOMAINS = tuple(
+    name for name, core in DOMAIN_CORE_SUBSYSTEM.items() if core is None
+)
+
 LOCAL_ABSOLUTE_PATH_RE = re.compile(
     r"(?<![A-Za-z0-9_:/.-])("
     r"(?:[A-Za-z]:[\\/][^\s`'\"<>)]*)|"
@@ -121,6 +143,10 @@ def audit_to_dict(result: AuditResult) -> dict[str, Any]:
                 "score": domain.score,
                 "passed": domain.passed,
                 "total": domain.total,
+                "coreSubsystem": DOMAIN_CORE_SUBSYSTEM.get(domain.name),
+                "surfaceClass": (
+                    "core" if DOMAIN_CORE_SUBSYSTEM.get(domain.name) else "support"
+                ),
                 "checks": [
                     {
                         "passed": check.passed,
@@ -131,6 +157,11 @@ def audit_to_dict(result: AuditResult) -> dict[str, Any]:
                 ],
             }
             for domain in result.domains
+        },
+        "coreModel": {
+            "coreSubsystems": list(CORE_SUBSYSTEMS),
+            "domainMapping": dict(DOMAIN_CORE_SUBSYSTEM),
+            "supportSurfaces": list(SUPPORT_SURFACE_DOMAINS),
         },
         "manifestFailures": list(result.manifest_failures),
         "recommendations": list(result.recommendations),
@@ -145,7 +176,12 @@ def format_audit(result: AuditResult) -> str:
         "",
     ]
     for domain in result.domains:
-        lines.append(f"{domain.name}: {domain.score}/5 ({domain.passed}/{domain.total})")
+        core = DOMAIN_CORE_SUBSYSTEM.get(domain.name)
+        role = f"{core} core" if core else "support surface"
+        lines.append(
+            f"{domain.name} [{role}]: {domain.score}/5 "
+            f"({domain.passed}/{domain.total})"
+        )
         for check in domain.checks:
             status = "PASS" if check.passed else "FAIL"
             detail = f" ({check.detail})" if check.detail else ""

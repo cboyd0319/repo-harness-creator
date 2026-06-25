@@ -55,6 +55,21 @@ Decisions that shape the implementation so a later session does not undo them.
 
 ## Latest Verified Work
 
+- 2026-06-24: Harness-engineering foundations pass. Read the full Walking Labs
+  `learn-harness-engineering/docs/en` course (12 lectures, 6 projects,
+  references, templates, openai-advanced pack, SOPs) and recorded
+  `docs/harness/research/harness-engineering-foundations.md`: source lineage,
+  the two five-subsystem framings (academic instructions/tools/environment/
+  state/feedback vs the operational instructions/state/verification/scope/
+  lifecycle product contract), the seven-to-five audit-bucket mapping, the
+  maturity ladder, and the structure-is-not-effectiveness boundary.
+  `harnessforge audit` now reports the mapping in JSON (`coreModel`, per-domain
+  `coreSubsystem`/`surfaceClass`) and formatted output (`feedback [verification
+  core]`, `tools [support surface]`), owned by `DOMAIN_CORE_SUBSYSTEM` in
+  `audit.py`. This advances the roadmap Core Harness Model Course Correction
+  item by resolving the seven-vs-five question (report both with clear labels);
+  remaining work there is report/release-check/maturity wording alignment and a
+  generated-contract regression check.
 - 2026-06-24: Deep Walking Labs course-mining pass added reviewed harness
   primitives to generated templates and the matching own-harness docs
   (evaluator independence, run-baseline-first startup, front-loaded
@@ -651,13 +666,15 @@ Decisions that shape the implementation so a later session does not undo them.
 
 ## Touched Surfaces
 
+- `src/harnessforge/assessment/audit.py`
+- `tests/test_generate_audit.py`
+- `docs/harness/research/harness-engineering-foundations.md`
+- `docs/harness/research/README.md`
+- `docs/harness/research/sources.md`
+- `docs/harness/README.md`
+- `docs/roadmap.md`
 - `current-state.md`
-- `feature_list.json`
 - `docs/harness/evidence/evidence-log.md`
-- `docs/harness/evidence/token-economics/codex-external-bluepeak-*-2026-06-16.json`
-- `docs/harness/research/harness-token-economics-research.md`
-- `src/harnessforge/evidence/token_economics.py`
-- `tests/test_token_economics.py`
 
 ## Blockers
 

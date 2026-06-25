@@ -196,9 +196,14 @@ repo's docs or process wholesale.
 
 ### Core Harness Model Course Correction
 
-Status: accepted before release prep; root and generated docs now state the
-five-core model, but runtime scoring and report categories still need a
-deliberate alignment pass.
+Status: in progress. Root and generated docs state the five-core model, and
+`harnessforge audit` now reports the seven implementation buckets mapped onto the
+five core subsystems (`coreModel`, per-domain `coreSubsystem`/`surfaceClass`, and
+inline labels). `docs/harness/research/harness-engineering-foundations.md`
+records the mapping rationale and source lineage. Remaining work: realign
+report, release-check, and maturity wording the same way, and add a regression
+check that fails on the old support-surface-as-core formula in generated
+contracts.
 
 Keep the Walking Labs `harness-creator` model as the HarnessForge product
 contract: instructions, state, verification, scope, and lifecycle. Treat tools,
@@ -214,8 +219,9 @@ Accepted behavior:
   generated targets keep the five-core model;
 - realign audit, report, release-check, maturity, and quality-summary wording
   so implementation buckets do not redefine the core harness model;
-- review whether the current seven audit domains should remain implementation
-  buckets, collapse into five core domains, or report both with clear labels;
+- resolved: the seven audit domains stay as implementation buckets and report
+  both, with each labeled against the five-core model (`feedback` is the
+  verification core; `tools` and `environment` are support surfaces);
 - treat any new support surface as optional unless it has evidence tying it to
   instructions, state, verification, scope, or lifecycle;
 - add a regression check that fails on the old support-surface-as-core formula
