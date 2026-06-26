@@ -27,6 +27,7 @@ sibling-repo examples into instructions.
 | `reference-mining-notes.md` | Human-maintained | Mined ideas from sibling repos and public harness references |
 | `keel-field-mining.md` | Human-maintained | Field mining from the Keel phase-execution harness and candidate HarnessForge improvements |
 | `keel-derived-enhancement-plan.md` | Human-maintained | Implementation plan for Keel-derived HarnessForge improvements |
+| `keel-harnessforge-capability-comparison.md` | Human-maintained | Capability-by-capability comparison between Keel and HarnessForge |
 | `remaining-ideas-research.md` | Human-maintained | Compact outcome of remaining-ideas research and future candidates |
 
 ## Boundary
